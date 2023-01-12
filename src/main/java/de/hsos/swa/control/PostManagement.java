@@ -18,5 +18,4 @@ public class PostManagement {
         return postRepository.getAllPosts();
     }
 
-
 }

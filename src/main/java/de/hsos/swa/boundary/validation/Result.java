@@ -14,7 +14,7 @@ public class Result {
     public Result(Set<? extends ConstraintViolation<?>> violations) {
         this.success = false;
         this.message = violations.stream()
-                .map(cv -> cv.getMessage())
+                .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining(", "));
     }
 
