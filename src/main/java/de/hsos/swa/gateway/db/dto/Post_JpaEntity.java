@@ -11,11 +11,11 @@ import java.util.UUID;
 @NamedQuery(name = "PostJpaEntity.getPostById", query = "SELECT p FROM Post p WHERE p.id = :id")
 public class Post_JpaEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "post_seq")
-    private UUID id;
+    @GeneratedValue()
+    UUID id;
 
     @Basic
-    private String title;
+    String title;
 
     @ManyToOne
     User_JpaEntity user_jpaEntity;

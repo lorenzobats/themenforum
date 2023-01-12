@@ -9,11 +9,11 @@ import java.util.UUID;
 @Table(name = "user_table")
 public class User_JpaEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "user_seq")
-    private UUID id;
+    @GeneratedValue()
+    UUID id;
 
     @Column(name = "user_name")
-    private String name;
+    String name;
 
     public User_JpaEntity() {
     }

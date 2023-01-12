@@ -9,4 +9,10 @@ import java.util.UUID;
 public interface PostRepository {
     Collection<Post> getAllPosts();
     Optional<Post> getPostById(UUID id);
+
+    Optional<Post> addPost(Post post);
+
+    Optional<Post> updatePost(Post post);
+    boolean deletePost(UUID id);
+
 }

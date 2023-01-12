@@ -13,6 +13,12 @@ public class Post {
     private List<Comment> comments;
     private int upvotes;
 
+
+    public Post(UUID id, String title) {
+        this.id = id;
+        this.title = title;
+    }
+
     public Post(String title) {
         this.id = UUID.randomUUID();
         this.title = title;
