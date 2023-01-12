@@ -1,4 +1,4 @@
-package de.hsos.swa;
+package de.hsos.swa.boundary;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
