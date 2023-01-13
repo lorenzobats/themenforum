@@ -15,7 +15,6 @@ public class PostManagement {
     @Inject
     PostRepository postRepository;
 
-
     public Collection<Post> getAllPosts() {
         return postRepository.getAllPosts();
     }
@@ -33,11 +32,8 @@ public class PostManagement {
         return postRepository.updatePost(post);
     }
 
-
-
     public boolean deletePost(UUID id) {
         return postRepository.deletePost(id);
     }
-
 
 }

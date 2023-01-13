@@ -1,21 +1,21 @@
 package de.hsos.swa.boundary;
 
 
-import de.hsos.swa.boundary.dto.PostDTO;
-import de.hsos.swa.boundary.validation.PostValidator;
-import de.hsos.swa.control.PostManagement;
-import de.hsos.swa.entity.Post;
+import de.hsos.swa.boundary.dto.UserCreationDto;
+import de.hsos.swa.control.UserManagement;
+import de.hsos.swa.entity.User;
+import de.hsos.swa.infrastructure.dto.AuthenticationUserDto;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collection;
+import java.util.Optional;
 
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
@@ -25,22 +25,16 @@ import java.util.Collection;
 // @RolesAllowed("registeredUser")
 public class UserResource {
     @Inject
-    PostManagement management;
+    UserManagement userManagement;
 
-    @Inject
-    PostValidator validator;
-
-    @GET
-    public Response getAllPosts() {
-        Collection<Post> posts = management.getAllPosts();
-        if (posts.isEmpty()) {
-            return Response.status(Response.Status.NO_CONTENT).build();
+    @POST
+    public Response createUser(UserCreationDto userDto) {
+        if(!userManagement.usernameExists(userDto.username)) {
+            Optional<User> user = userManagement.createUser(UserCreationDto.Converter.toRegistrationDto(userDto));
+            if(user.isPresent()) {
+                return Response.status(Response.Status.CREATED).entity(user.get()).build();
+            }
         }
-        Collection<PostDTO> postDTOS = posts.stream()
-                .map(PostDTO.Converter::toDto)
-                .toList();
-        return Response.status(Response.Status.OK).entity(postDTOS).build();
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
-
-
 }
