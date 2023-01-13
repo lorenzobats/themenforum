@@ -2,6 +2,7 @@ package de.hsos.swa.infrastructure.dto;
 
 import javax.persistence.*;
 
+import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.security.jpa.Password;
 import io.quarkus.security.jpa.Roles;
 import io.quarkus.security.jpa.UserDefinition;
@@ -31,7 +32,7 @@ public class Keycloak_User {
 
     public Keycloak_User(String username, String password, String role, String userId) {
         this.username = username;
-        this.password = password;
+        this.password = BcryptUtil.bcryptHash(password);
         this.role = role;
         this.userId = userId;
     }

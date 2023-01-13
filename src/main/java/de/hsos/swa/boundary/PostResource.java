@@ -8,13 +8,16 @@ import de.hsos.swa.boundary.validation.Result;
 import de.hsos.swa.control.PostManagement;
 import de.hsos.swa.entity.Post;
 
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,7 +27,6 @@ import java.util.UUID;
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/posts")
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
-// @RolesAllowed("registeredUser")
 public class PostResource {
     @Inject
     PostManagement management;
@@ -46,7 +48,6 @@ public class PostResource {
 
     @GET
     @Path("/{id}")
-    // @RolesAllowed("admin")
     public Response getPostById(@PathParam("id") String id) {
         Optional<Post> post = management.getPostById(UUID.fromString(id));
         if (post.isPresent()) {
@@ -57,11 +58,11 @@ public class PostResource {
     }
 
     @POST
-    // @PermitAll
-    public Response postPost(PostCreationDto postCreationDTO) {
+    @RolesAllowed("member")
+    public Response createPost(PostCreationDto postCreationDTO, @Context SecurityContext securityContext) {
         try {
             validator.validatePostCreationDTO(postCreationDTO);
-            Optional<Post> post = management.createPost(PostCreationDto.Converter.toEntity(postCreationDTO));
+            Optional<Post> post = management.createPost(PostCreationDto.Converter.toEntity(postCreationDTO), securityContext.getUserPrincipal().getName());
             if (post.isPresent()) {
                 return Response.status(Response.Status.CREATED).entity(PostDto.Converter.toDto(post.get())).build();
             }
@@ -72,8 +73,9 @@ public class PostResource {
     }
 
     @PUT
-    //@RolesAllowed({"post", "admin"})
-    public Response putPost(PostDto postDTO) {
+    @RolesAllowed("member")
+    public Response updatePost(PostDto postDTO) {
+        // TODO: Nur eigenen Post updaten
         try {
             validator.validatePostDTO(postDTO);
             Optional<Post> post = management.updatePost(PostDto.Converter.toEntity(postDTO));
@@ -88,8 +90,9 @@ public class PostResource {
 
     @DELETE
     @Path("/{id}")
-    //@RolesAllowed("admin")
+    @RolesAllowed("member")
     public Response deletePost(@PathParam("id") String id) {
+        // TODO: Nur eigenen Post deleten
         if (management.deletePost(UUID.fromString(id))) {
             return Response.status(Response.Status.OK).build();
         }
