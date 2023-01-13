@@ -23,14 +23,12 @@ public class Keycloak_UserRepository implements UserAuthRepository {
     Logger log;
 
     @Override
-    public boolean registerUser(String name, String password, String role, String userId) {
+    public void registerUser(String name, String password, String role, String userId) throws Exception {
         Keycloak_User user = new Keycloak_User(name, password, role, userId);
         try {
             entityManager.persist(user);
-            return true;
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            log.warn("Keycloack User could not be inserted", e);
+            throw new Exception("Keycloack User could not be registered");
         }
-        return false;
     }
 }
