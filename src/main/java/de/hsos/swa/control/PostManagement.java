@@ -1,6 +1,9 @@
 package de.hsos.swa.control;
 
+import de.hsos.swa.boundary.dto.PostCreationDto;
+import de.hsos.swa.boundary.dto.PostDto;
 import de.hsos.swa.entity.Post;
+import de.hsos.swa.entity.User;
 import de.hsos.swa.entity.repository.PostRepository;
 import de.hsos.swa.entity.repository.UserRepository;
 
@@ -28,13 +31,23 @@ public class PostManagement {
         return postRepository.getPostById(id);
     }
 
-    public Optional<Post> createPost(Post post, String userName) {
-        // TODO: user holen und Post erstellen mit User
-        return postRepository.addPost(post);
+    public Optional<Post> createPost(PostCreationDto postCreationDto, String userName) {
+        Optional<User> optionalUser = this.userManagement.getUserByName(userName);
+        if(optionalUser.isPresent()){
+            Post post = new Post(postCreationDto.title, optionalUser.get());
+            return postRepository.addPost(post);
+        }
+        return Optional.empty();
     }
 
-    public Optional<Post> updatePost(Post post) {
-        return postRepository.updatePost(post);
+    // TODO: Update
+    public Optional<Post> updatePost(PostDto postDto, String userName) {
+        Optional<User> optionalUser = this.userManagement.getUserByName(userName);
+        if(optionalUser.isPresent()){
+            Post post = new Post(postDto.title, optionalUser.get());
+            return postRepository.updatePost(post);
+        }
+        return Optional.empty();
     }
 
     public boolean deletePost(UUID id) {

@@ -30,11 +30,5 @@ public class PostDto {
                 entity.getTitle()
             );
         }
-        public static Post toEntity(PostDto dto) {
-            return new Post(
-                    UUID.fromString(dto.id),
-                    dto.title
-            );
-        }
     }
 }

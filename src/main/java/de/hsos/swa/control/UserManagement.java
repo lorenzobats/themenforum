@@ -8,6 +8,7 @@ import de.hsos.swa.entity.repository.UserRepository;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.Optional;
+import java.util.UUID;
 
 @ApplicationScoped
 public class UserManagement {
@@ -34,4 +35,13 @@ public class UserManagement {
         }
         return Optional.empty();
     }
+
+    public Optional<User> getUserByName(String username){
+        return this.userRepository.getUserByName(username);
+    }
+
+    public Optional<User> getUserById(UUID id){
+        return this.userRepository.getUserById(id);
+    }
+
 }

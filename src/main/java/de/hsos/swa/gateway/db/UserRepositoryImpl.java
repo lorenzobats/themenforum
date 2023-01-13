@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.TransactionRequiredException;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +42,31 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> getUserById(UUID userId) {
-        return Optional.empty();
+        TypedQuery<User_JpaEntity> query = entityManager.createNamedQuery("User_JpaEntity.findById", User_JpaEntity.class);
+        query.setParameter("id", userId);
+        User_JpaEntity customer;
+        try {
+            customer = query.getSingleResult();
+        } catch (Exception e) {
+            log.warn("GetUserById Error", e);
+            return Optional.empty();
+        }
+
+        return Optional.of(User_JpaEntity.Converter.toEntity(customer));
+    }
+
+    @Override
+    public Optional<User> getUserByName(String username) {
+        TypedQuery<User_JpaEntity> query = entityManager.createNamedQuery("User_JpaEntity.findByUsername", User_JpaEntity.class);
+        query.setParameter("username", username);
+        User_JpaEntity user;
+        try {
+            user = query.getSingleResult();
+        } catch (Exception e) {
+            log.warn("GetUserByName Error", e);
+            return Optional.empty();
+        }
+        return Optional.of(User_JpaEntity.Converter.toEntity(user));
     }
 
     @Override

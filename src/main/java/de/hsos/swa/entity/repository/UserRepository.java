@@ -8,8 +8,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository {
-    public Optional<User> addUser(User user);
-    public Optional<User> getUserById(UUID userId);
+    Optional<User> addUser(User user);
+    Optional<User> getUserById(UUID userId);
 
-    public boolean usernameExists(String username);
+    Optional<User> getUserByName(String username);
+
+    boolean usernameExists(String username);
 }

@@ -2,6 +2,7 @@
 package de.hsos.swa.gateway.db.dto;
 
 import de.hsos.swa.entity.Post;
+import de.hsos.swa.entity.User;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -30,7 +31,8 @@ public class Post_JpaEntity {
 
     public static class Converter {
         public static Post toEntity(Post_JpaEntity post_jpaEntity) {
-            return new Post(post_jpaEntity.title);
+            User user = User_JpaEntity.Converter.toEntity(post_jpaEntity.user_jpaEntity);
+            return new Post(post_jpaEntity.title, user);
         }
 
         public static Post_JpaEntity toJpaEntity(Post post) {

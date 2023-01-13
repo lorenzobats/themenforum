@@ -14,14 +14,16 @@ public class Post {
     private int upvotes;
 
 
-    public Post(UUID id, String title) {
+    public Post(UUID id, String title, User user) {
         this.id = id;
         this.title = title;
+        this.user = user;
     }
 
-    public Post(String title) {
+    public Post(String title, User user) {
         this.id = UUID.randomUUID();
         this.title = title;
+        this.user = user;
     }
 
     public void addComment(Comment comment) {

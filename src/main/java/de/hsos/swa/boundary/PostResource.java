@@ -62,7 +62,7 @@ public class PostResource {
     public Response createPost(PostCreationDto postCreationDTO, @Context SecurityContext securityContext) {
         try {
             validator.validatePostCreationDTO(postCreationDTO);
-            Optional<Post> post = management.createPost(PostCreationDto.Converter.toEntity(postCreationDTO), securityContext.getUserPrincipal().getName());
+            Optional<Post> post = management.createPost(postCreationDTO, securityContext.getUserPrincipal().getName());
             if (post.isPresent()) {
                 return Response.status(Response.Status.CREATED).entity(PostDto.Converter.toDto(post.get())).build();
             }
@@ -74,11 +74,11 @@ public class PostResource {
 
     @PUT
     @RolesAllowed("member")
-    public Response updatePost(PostDto postDTO) {
+    public Response updatePost(PostDto postDTO, @Context SecurityContext securityContext) {
         // TODO: Nur eigenen Post updaten
         try {
             validator.validatePostDTO(postDTO);
-            Optional<Post> post = management.updatePost(PostDto.Converter.toEntity(postDTO));
+            Optional<Post> post = management.updatePost(postDTO, securityContext.getUserPrincipal().getName());
             if (post.isPresent()) {
                 return Response.status(Response.Status.CREATED).entity(PostDto.Converter.toDto(post.get())).build();
             }

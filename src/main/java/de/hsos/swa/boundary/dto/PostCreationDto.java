@@ -14,13 +14,4 @@ public class PostCreationDto {
     public PostCreationDto(String id, String title) {
         this.title = title;
     }
-
-    public static class Converter {
-
-        public static Post toEntity(PostCreationDto dto) {
-            return new Post(
-                dto.title
-            );
-        }
-    }
 }
