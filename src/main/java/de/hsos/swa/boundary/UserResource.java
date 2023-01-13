@@ -4,7 +4,6 @@ package de.hsos.swa.boundary;
 import de.hsos.swa.boundary.dto.UserCreationDto;
 import de.hsos.swa.control.UserManagement;
 import de.hsos.swa.entity.User;
-import de.hsos.swa.infrastructure.dto.AuthenticationUserDto;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -29,6 +28,7 @@ public class UserResource {
 
     @POST
     public Response createUser(UserCreationDto userDto) {
+        // TODO: Validierung (Nutzername existiert bereits)
         if(!userManagement.usernameExists(userDto.username)) {
             Optional<User> user = userManagement.createUser(UserCreationDto.Converter.toRegistrationDto(userDto));
             if(user.isPresent()) {

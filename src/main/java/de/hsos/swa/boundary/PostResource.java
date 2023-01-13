@@ -1,8 +1,8 @@
 package de.hsos.swa.boundary;
 
 
-import de.hsos.swa.boundary.dto.PostCreationDTO;
-import de.hsos.swa.boundary.dto.PostDTO;
+import de.hsos.swa.boundary.dto.PostCreationDto;
+import de.hsos.swa.boundary.dto.PostDto;
 import de.hsos.swa.boundary.validation.PostValidator;
 import de.hsos.swa.boundary.validation.Result;
 import de.hsos.swa.control.PostManagement;
@@ -38,10 +38,10 @@ public class PostResource {
         if (posts.isEmpty()) {
             return Response.status(Response.Status.NO_CONTENT).build();
         }
-        Collection<PostDTO> postDTOS = posts.stream()
-                .map(PostDTO.Converter::toDto)
+        Collection<PostDto> postDtos = posts.stream()
+                .map(PostDto.Converter::toDto)
                 .toList();
-        return Response.status(Response.Status.OK).entity(postDTOS).build();
+        return Response.status(Response.Status.OK).entity(postDtos).build();
     }
 
     @GET
@@ -50,7 +50,7 @@ public class PostResource {
     public Response getPostById(@PathParam("id") String id) {
         Optional<Post> post = management.getPostById(UUID.fromString(id));
         if (post.isPresent()) {
-            PostDTO postDTO = PostDTO.Converter.toDto(post.get());
+            PostDto postDTO = PostDto.Converter.toDto(post.get());
             return Response.status(Response.Status.OK).entity(postDTO).build();
         }
         return Response.status(Response.Status.NO_CONTENT).build();
@@ -58,12 +58,12 @@ public class PostResource {
 
     @POST
     // @PermitAll
-    public Response postPost(PostCreationDTO postCreationDTO) {
+    public Response postPost(PostCreationDto postCreationDTO) {
         try {
             validator.validatePostCreationDTO(postCreationDTO);
-            Optional<Post> post = management.createPost(PostCreationDTO.Converter.toEntity(postCreationDTO));
+            Optional<Post> post = management.createPost(PostCreationDto.Converter.toEntity(postCreationDTO));
             if (post.isPresent()) {
-                return Response.status(Response.Status.CREATED).entity(PostDTO.Converter.toDto(post.get())).build();
+                return Response.status(Response.Status.CREATED).entity(PostDto.Converter.toDto(post.get())).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (ConstraintViolationException e) {
@@ -73,12 +73,12 @@ public class PostResource {
 
     @PUT
     //@RolesAllowed({"post", "admin"})
-    public Response putPost(PostDTO postDTO) {
+    public Response putPost(PostDto postDTO) {
         try {
             validator.validatePostDTO(postDTO);
-            Optional<Post> post = management.updatePost(PostDTO.Converter.toEntity(postDTO));
+            Optional<Post> post = management.updatePost(PostDto.Converter.toEntity(postDTO));
             if (post.isPresent()) {
-                return Response.status(Response.Status.CREATED).entity(PostDTO.Converter.toDto(post.get())).build();
+                return Response.status(Response.Status.CREATED).entity(PostDto.Converter.toDto(post.get())).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (ConstraintViolationException e) {

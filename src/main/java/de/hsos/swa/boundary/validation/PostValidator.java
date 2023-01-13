@@ -1,7 +1,7 @@
 package de.hsos.swa.boundary.validation;
 
-import de.hsos.swa.boundary.dto.PostCreationDTO;
-import de.hsos.swa.boundary.dto.PostDTO;
+import de.hsos.swa.boundary.dto.PostCreationDto;
+import de.hsos.swa.boundary.dto.PostDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.validation.Valid;
@@ -9,10 +9,10 @@ import javax.validation.Valid;
 @ApplicationScoped
 public class PostValidator {
 
-    public void validatePostDTO(@Valid PostDTO postDTO) {
+    public void validatePostDTO(@Valid PostDto postDTO) {
     }
 
-    public void validatePostCreationDTO(@Valid PostCreationDTO postCreationDTO) {
+    public void validatePostCreationDTO(@Valid PostCreationDto postCreationDTO) {
     }
 
 }

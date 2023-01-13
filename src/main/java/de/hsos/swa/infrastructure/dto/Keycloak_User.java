@@ -1,4 +1,4 @@
-package de.hsos.swa.infrastructure;
+package de.hsos.swa.infrastructure.dto;
 
 import javax.persistence.*;
 
@@ -12,9 +12,8 @@ import io.quarkus.security.jpa.Username;
 @UserDefinition
 public class Keycloak_User {
     @Id
-    @GeneratedValue(generator = "user_id_seq")
-    @SequenceGenerator(name = "user_id_seq", sequenceName = "user_id_seq", allocationSize = 1, initialValue = 100)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
     @Username
     public String username;
@@ -27,19 +26,13 @@ public class Keycloak_User {
 
     public String userId;
 
+    public Keycloak_User() {
+    }
+
     public Keycloak_User(String username, String password, String role, String userId) {
         this.username = username;
         this.password = password;
         this.role = role;
         this.userId = userId;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Id
-    public Long getId() {
-        return id;
     }
 }

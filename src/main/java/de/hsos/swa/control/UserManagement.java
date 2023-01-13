@@ -23,9 +23,11 @@ public class UserManagement {
     }
 
     public Optional<User> createUser(UserRegistrationDto userRegistrationDto) {
-        Optional<User> user = userRepository.addUser(UserRegistrationDto.Converter.toEntity(userRegistrationDto));
-        if(user.isPresent()) {
-            authRepository.registerUser(userRegistrationDto);
+        Optional<User> optionalUser = userRepository.addUser(UserRegistrationDto.Converter.toEntity(userRegistrationDto));
+        if(optionalUser.isPresent()) {
+            authRepository.registerUser(userRegistrationDto.username, userRegistrationDto.password, "member", optionalUser.get().getId().toString());
+            return optionalUser;
         }
+        return Optional.empty();
     }
 }

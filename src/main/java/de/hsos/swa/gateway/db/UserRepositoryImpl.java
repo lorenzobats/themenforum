@@ -11,6 +11,7 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.TransactionRequiredException;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -45,8 +46,13 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean usernameExists(String username) {
-        return entityManager.createNamedQuery("UserJpaEntity.usernameExists", Boolean.class)
-                .setParameter("username", username)
-                .getSingleResult();
+        try {
+            List<User_JpaEntity> userList = entityManager.createNamedQuery("User_JpaEntity.findByUsername", User_JpaEntity.class)
+                    .setParameter("username", username).getResultList();
+            return !userList.isEmpty();
+        } catch (Exception e) {
+            log.warn("GetCustomerById Error", e);
+            return false;
+        }
     }
 }

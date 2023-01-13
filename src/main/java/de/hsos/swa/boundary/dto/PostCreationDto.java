@@ -4,20 +4,20 @@ import de.hsos.swa.entity.Post;
 
 import javax.validation.constraints.NotBlank;
 
-public class PostCreationDTO {
+public class PostCreationDto {
 
     @NotBlank(message="Field: 'title' is missing")
     public String title;
 
-    public PostCreationDTO() {}
+    public PostCreationDto() {}
 
-    public PostCreationDTO(String id, String title) {
+    public PostCreationDto(String id, String title) {
         this.title = title;
     }
 
     public static class Converter {
 
-        public static Post toEntity(PostCreationDTO dto) {
+        public static Post toEntity(PostCreationDto dto) {
             return new Post(
                 dto.title
             );

@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 //TODO immutable machen
-public class PostDTO {
+public class PostDto {
     @NotBlank(message = "Post ID is missing")
     public String id;
 
@@ -16,21 +16,21 @@ public class PostDTO {
 //    @NotBlank(message = "Posts Content is missing")
 //    public String postContent;
 
-    public PostDTO() {}
+    public PostDto() {}
 
-    public PostDTO(String id, String title) {
+    public PostDto(String id, String title) {
         this.id = id;
         this.title = title;
     }
 
     public static class Converter {
-        public static PostDTO toDto(Post entity) {
-            return new PostDTO(
+        public static PostDto toDto(Post entity) {
+            return new PostDto(
                 entity.getId().toString(),
                 entity.getTitle()
             );
         }
-        public static Post toEntity(PostDTO dto) {
+        public static Post toEntity(PostDto dto) {
             return new Post(
                     UUID.fromString(dto.id),
                     dto.title

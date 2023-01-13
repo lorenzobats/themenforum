@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Entity(name = "User")
 @Table(name = "user_table")
-@NamedQuery(name = "UserJpaEntity.usernameExists", query = "SELECT u FROM User u WHERE EXISTS (SELECT 1 FROM User u WHERE u.name = :username)")
+@NamedQuery(name = "User_JpaEntity.findByUsername", query = "SELECT u FROM User u WHERE u.name = :username")
 public class User_JpaEntity {
     @Id
     @GeneratedValue()
