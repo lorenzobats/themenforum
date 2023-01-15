@@ -47,17 +47,17 @@ public class UserPersistenceAdapter implements
     }
 
     @Override
-    public GetUserByNameOutputPortResponse getUserByName(GetUserByNameOutputPortRequest outputPortRequest) {
+    public Result<GetUserByNameOutputPortResponse> getUserByName(GetUserByNameOutputPortRequest outputPortRequest) {
         TypedQuery<UserPersistanceEntity> query = entityManager.createNamedQuery("UserPersistanceEntity.findByUsername", UserPersistanceEntity.class);
         query.setParameter("username", outputPortRequest.getUsername());
         UserPersistanceEntity userPersistanceEntity;
         try {
             userPersistanceEntity = query.getSingleResult();
+            return Result.success(new GetUserByNameOutputPortResponse(userPersistanceEntity.id, userPersistanceEntity.name));
         } catch (Exception e) {
-            log.warn("GetUserByName Error", e);
-            return null;
+            log.error("GetUserByName Error", e);
+            return Result.exception(e);
         }
-        return new GetUserByNameOutputPortResponse(userPersistanceEntity.id, userPersistanceEntity.name);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class UserPersistenceAdapter implements
                     .getResultList();
             return Result.success(new CheckUsernameAvailabilityOutputPortResponse(userList.isEmpty()));
         } catch (Exception e) {
-            log.warn("GetCustomerById Error", e);
+            log.error("GetCustomerById Error", e);
             return Result.exception(e);
         }
 

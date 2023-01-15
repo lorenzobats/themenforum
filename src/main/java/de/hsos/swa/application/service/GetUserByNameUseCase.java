@@ -21,8 +21,11 @@ public class GetUserByNameUseCase implements GetUserByNameInputPort {
     public Result<GetUserByNameInputPortResponse> getUserByName(GetUserByNameInputPortRequest inputPortRequest) {
         // TODO: Alternative zu Mapping bei reinen CRUD Anfragen?
         GetUserByNameOutputPortRequest getUserByNameOutputPortRequest = new GetUserByNameOutputPortRequest(inputPortRequest.getUsername());
-        GetUserByNameOutputPortResponse getUserByNameOutputPortResponse = this.getUserByNameOutputPort.getUserByName(getUserByNameOutputPortRequest);
+        Result<GetUserByNameOutputPortResponse> getUserByNameOutputPortResponse = this.getUserByNameOutputPort.getUserByName(getUserByNameOutputPortRequest);
 
-        return Result.success(new GetUserByNameInputPortResponse(getUserByNameOutputPortResponse.getId(), getUserByNameOutputPortResponse.getUsername()));
+        if(!getUserByNameOutputPortResponse.isSuccessful()) {
+           return Result.error("Username not found");
+        }
+        return Result.success(new GetUserByNameInputPortResponse(getUserByNameOutputPortResponse.getData().getId(), getUserByNameOutputPortResponse.getData().getUsername()));
     }
 }
