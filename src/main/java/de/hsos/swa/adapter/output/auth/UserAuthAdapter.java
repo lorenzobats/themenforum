@@ -1,5 +1,6 @@
 package de.hsos.swa.adapter.output.auth;
 
+import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.output.createUserAuth.CreateUserAuthOutputPortRequest;
 import de.hsos.swa.application.port.output.createUserAuth.CreateUserAuthOutputPort;
 import de.hsos.swa.application.port.output.createUserAuth.CreateUserAuthOutputPortResponse;
@@ -23,19 +24,19 @@ public class UserAuthAdapter implements CreateUserAuthOutputPort {
     Logger log;
 
     @Override
-    public CreateUserAuthOutputPortResponse createUserAuth(CreateUserAuthOutputPortRequest outputPortRequest) {
+    public Result<CreateUserAuthOutputPortResponse> createUserAuth(CreateUserAuthOutputPortRequest outputPortRequest) {
         UserAuthEntity userAuthEntity = new UserAuthEntity(
                 outputPortRequest.getUsername(),
                 outputPortRequest.getPassword(),
                 outputPortRequest.getRole(),
-                outputPortRequest.getUserId()
-        );
+                outputPortRequest.getUserId());
+
         try {
             entityManager.persist(userAuthEntity);
-            return new CreateUserAuthOutputPortResponse(userAuthEntity.id, userAuthEntity.username);
+            return Result.success(new CreateUserAuthOutputPortResponse(userAuthEntity.id, userAuthEntity.username));
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("Customer Auth Entity could not be created", e);
+            return Result.exception(e);
         }
-        return null;
     }
 }

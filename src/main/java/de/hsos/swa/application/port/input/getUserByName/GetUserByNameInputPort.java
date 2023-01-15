@@ -1,5 +1,7 @@
 package de.hsos.swa.application.port.input.getUserByName;
 
+import de.hsos.swa.application.port.input._shared.Result;
+
 public interface GetUserByNameInputPort {
-   GetUserByNameInputPortResponse getUserByName(GetUserByNameInputPortRequest inputPortRequest);
+   Result<GetUserByNameInputPortResponse> getUserByName(GetUserByNameInputPortRequest inputPortRequest);
 }

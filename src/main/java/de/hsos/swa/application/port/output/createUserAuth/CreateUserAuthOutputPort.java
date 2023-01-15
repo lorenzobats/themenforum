@@ -1,5 +1,7 @@
 package de.hsos.swa.application.port.output.createUserAuth;
 
+import de.hsos.swa.application.port.input._shared.Result;
+
 public interface CreateUserAuthOutputPort {
-    CreateUserAuthOutputPortResponse createUserAuth(CreateUserAuthOutputPortRequest outputPortRequest);
+    Result<CreateUserAuthOutputPortResponse> createUserAuth(CreateUserAuthOutputPortRequest outputPortRequest);
 }

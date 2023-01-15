@@ -1,10 +1,11 @@
 package de.hsos.swa.adapter.output.persistence;
 
+import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.output.checkUsernameAvailability.CheckUsernameAvailabilityOutputPort;
 import de.hsos.swa.application.port.output.checkUsernameAvailability.CheckUsernameAvailabilityOutputPortRequest;
 import de.hsos.swa.application.port.output.checkUsernameAvailability.CheckUsernameAvailabilityOutputPortResponse;
-import de.hsos.swa.application.port.output.createUser.CreateUserOutputPortRequest;
 import de.hsos.swa.application.port.output.createUser.CreateUserOutputPort;
+import de.hsos.swa.application.port.output.createUser.CreateUserOutputPortRequest;
 import de.hsos.swa.application.port.output.createUser.CreateUserOutputPortResponse;
 import de.hsos.swa.application.port.output.getUserByName.GetUserByNameOutputPort;
 import de.hsos.swa.application.port.output.getUserByName.GetUserByNameOutputPortRequest;
@@ -22,7 +23,7 @@ import java.util.List;
 
 @RequestScoped
 @Transactional(value = Transactional.TxType.MANDATORY)
-public class UserPersistanceAdapter implements
+public class UserPersistenceAdapter implements
         CreateUserOutputPort,
         GetUserByNameOutputPort,
         CheckUsernameAvailabilityOutputPort {
@@ -33,19 +34,16 @@ public class UserPersistanceAdapter implements
     @Inject
     Logger log;
 
-
     @Override
-    public CreateUserOutputPortResponse createUser(CreateUserOutputPortRequest outputPortRequest) {
-        UserPersistanceEntity userPersistanceEntity = new UserPersistanceEntity(
-                outputPortRequest.getUsername()
-        );
+    public Result<CreateUserOutputPortResponse> createUser(CreateUserOutputPortRequest outputPortRequest) {
+        UserPersistanceEntity userPersistanceEntity = new UserPersistanceEntity(outputPortRequest.getUsername());
         try {
             entityManager.persist(userPersistanceEntity);
-            return new CreateUserOutputPortResponse(userPersistanceEntity.id, userPersistanceEntity.name);
+            return Result.success(new CreateUserOutputPortResponse(userPersistanceEntity.id, userPersistanceEntity.name));
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("Customer Entity could not be created", e);
+            return Result.exception(e);
         }
-        return null;
     }
 
     @Override
@@ -63,15 +61,15 @@ public class UserPersistanceAdapter implements
     }
 
     @Override
-    public CheckUsernameAvailabilityOutputPortResponse isUserNameAvailable(CheckUsernameAvailabilityOutputPortRequest outputPortRequest) {
+    public Result<CheckUsernameAvailabilityOutputPortResponse> isUserNameAvailable(CheckUsernameAvailabilityOutputPortRequest outputPortRequest) {
         try {
             List<UserPersistanceEntity> userList = entityManager.createNamedQuery("UserPersistanceEntity.findByUsername", UserPersistanceEntity.class)
                     .setParameter("username", outputPortRequest.getUsername())
                     .getResultList();
-            return new CheckUsernameAvailabilityOutputPortResponse(userList.isEmpty());
+            return Result.success(new CheckUsernameAvailabilityOutputPortResponse(userList.isEmpty()));
         } catch (Exception e) {
             log.warn("GetCustomerById Error", e);
-            return null;
+            return Result.exception(e);
         }
 
     }

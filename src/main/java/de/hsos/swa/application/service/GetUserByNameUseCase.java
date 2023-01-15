@@ -1,5 +1,6 @@
 package de.hsos.swa.application.service;
 
+import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPortRequest;
 import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPortResponse;
 import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPort;
@@ -17,11 +18,11 @@ public class GetUserByNameUseCase implements GetUserByNameInputPort {
     GetUserByNameOutputPort getUserByNameOutputPort;
 
     @Override
-    public GetUserByNameInputPortResponse getUserByName(GetUserByNameInputPortRequest inputPortRequest) {
+    public Result<GetUserByNameInputPortResponse> getUserByName(GetUserByNameInputPortRequest inputPortRequest) {
         // TODO: Alternative zu Mapping bei reinen CRUD Anfragen?
         GetUserByNameOutputPortRequest getUserByNameOutputPortRequest = new GetUserByNameOutputPortRequest(inputPortRequest.getUsername());
         GetUserByNameOutputPortResponse getUserByNameOutputPortResponse = this.getUserByNameOutputPort.getUserByName(getUserByNameOutputPortRequest);
-        GetUserByNameInputPortResponse getUserByNameInputPortResponse = new GetUserByNameInputPortResponse(getUserByNameOutputPortResponse.getId(), getUserByNameOutputPortResponse.getUsername());
-        return getUserByNameInputPortResponse;
+
+        return Result.success(new GetUserByNameInputPortResponse(getUserByNameOutputPortResponse.getId(), getUserByNameOutputPortResponse.getUsername()));
     }
 }
