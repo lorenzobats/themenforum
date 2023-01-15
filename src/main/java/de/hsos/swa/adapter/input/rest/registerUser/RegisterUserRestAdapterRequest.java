@@ -1,6 +1,6 @@
 package de.hsos.swa.adapter.input.rest.registerUser;
 
-import de.hsos.swa.application.port.input.registerUser.RegisterUserCommand;
+import de.hsos.swa.application.port.input.registerUser.RegisterUserInputPortRequest;
 
 public class RegisterUserRestAdapterRequest {
 
@@ -16,8 +16,8 @@ public class RegisterUserRestAdapterRequest {
     }
 
     public static class Converter {
-        public static RegisterUserCommand toUseCaseCommand(RegisterUserRestAdapterRequest request) {
-            return new RegisterUserCommand(request.username, request.password);
+        public static RegisterUserInputPortRequest toUseCaseCommand(RegisterUserRestAdapterRequest request) {
+            return new RegisterUserInputPortRequest(request.username, request.password);
         }
     }
 }

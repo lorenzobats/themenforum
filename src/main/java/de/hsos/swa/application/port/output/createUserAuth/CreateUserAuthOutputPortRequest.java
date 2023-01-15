@@ -2,7 +2,7 @@ package de.hsos.swa.application.port.output.createUserAuth;
 
 import java.util.UUID;
 
-public class CreateUserAuthCommand {
+public class CreateUserAuthOutputPortRequest {
     private final String username;
     private final String password;
 
@@ -11,7 +11,7 @@ public class CreateUserAuthCommand {
     private final UUID userId;
 
 
-    public CreateUserAuthCommand(String username, String password, String role, UUID userId) {
+    public CreateUserAuthOutputPortRequest(String username, String password, String role, UUID userId) {
         this.username = username;
         this.password = password;
         this.role = role;

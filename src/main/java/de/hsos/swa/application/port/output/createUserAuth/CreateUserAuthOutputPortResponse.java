@@ -1,14 +1,14 @@
-package de.hsos.swa.application.port.output.createUser;
+package de.hsos.swa.application.port.output.createUserAuth;
 
 import java.util.UUID;
 
-public class CreateUserResult {
+public class CreateUserAuthOutputPortResponse {
 
     private final UUID id;
 
     private final String username;
 
-    public CreateUserResult(UUID id, String username) {
+    public CreateUserAuthOutputPortResponse(UUID id, String username) {
         this.id = id;
         this.username = username;
     }

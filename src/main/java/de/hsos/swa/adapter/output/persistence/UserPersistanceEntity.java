@@ -5,6 +5,7 @@ import java.util.UUID;
 
 @Entity(name = "User")
 @Table(name = "user_table")
+@NamedQuery(name = "UserPersistanceEntity.findByUsername", query = "SELECT u FROM User u WHERE u.name = :username")
 public class UserPersistanceEntity {
     @Id
     @GeneratedValue()

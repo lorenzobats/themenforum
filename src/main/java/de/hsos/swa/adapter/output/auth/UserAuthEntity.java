@@ -34,7 +34,7 @@ public class UserAuthEntity {
 
     public UserAuthEntity(String username, String password, String role, UUID userId) {
         this.username = username;
-        this.password = password;
+        this.password = BcryptUtil.bcryptHash(password);
         this.role = role;
         this.userId = userId;
     }

@@ -1,8 +1,8 @@
 package de.hsos.swa.adapter.output.auth;
 
-import de.hsos.swa.application.port.output.createUserAuth.CreateUserAuthCommand;
+import de.hsos.swa.application.port.output.createUserAuth.CreateUserAuthOutputPortRequest;
 import de.hsos.swa.application.port.output.createUserAuth.CreateUserAuthOutputPort;
-import de.hsos.swa.application.port.output.createUserAuth.CreateUserAuthResult;
+import de.hsos.swa.application.port.output.createUserAuth.CreateUserAuthOutputPortResponse;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
@@ -23,16 +23,16 @@ public class UserAuthAdapter implements CreateUserAuthOutputPort {
     Logger log;
 
     @Override
-    public CreateUserAuthResult createUserAuth(CreateUserAuthCommand command) {
+    public CreateUserAuthOutputPortResponse createUserAuth(CreateUserAuthOutputPortRequest outputPortRequest) {
         UserAuthEntity userAuthEntity = new UserAuthEntity(
-                command.getUsername(),
-                command.getPassword(),
-                command.getRole(),
-                command.getUserId()
+                outputPortRequest.getUsername(),
+                outputPortRequest.getPassword(),
+                outputPortRequest.getRole(),
+                outputPortRequest.getUserId()
         );
         try {
             entityManager.persist(userAuthEntity);
-            return new CreateUserAuthResult(userAuthEntity.id, userAuthEntity.username);
+            return new CreateUserAuthOutputPortResponse(userAuthEntity.id, userAuthEntity.username);
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("Customer Auth Entity could not be created", e);
         }
