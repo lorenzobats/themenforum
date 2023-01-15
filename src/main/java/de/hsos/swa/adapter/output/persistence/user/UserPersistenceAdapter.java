@@ -1,4 +1,4 @@
-package de.hsos.swa.adapter.output.persistence;
+package de.hsos.swa.adapter.output.persistence.user;
 
 import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.output.checkUsernameAvailability.CheckUsernameAvailabilityOutputPort;
@@ -36,10 +36,10 @@ public class UserPersistenceAdapter implements
 
     @Override
     public Result<CreateUserOutputPortResponse> createUser(CreateUserOutputPortRequest outputPortRequest) {
-        UserPersistanceEntity userPersistanceEntity = new UserPersistanceEntity(outputPortRequest.getUsername());
+        UserPersistenceEntity userPersistenceEntity = new UserPersistenceEntity(outputPortRequest.getUsername());
         try {
-            entityManager.persist(userPersistanceEntity);
-            return Result.success(new CreateUserOutputPortResponse(userPersistanceEntity.id, userPersistanceEntity.name));
+            entityManager.persist(userPersistenceEntity);
+            return Result.success(new CreateUserOutputPortResponse(userPersistenceEntity.id, userPersistenceEntity.name));
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("Customer Entity could not be created", e);
             return Result.exception(e);
@@ -48,12 +48,12 @@ public class UserPersistenceAdapter implements
 
     @Override
     public Result<GetUserByNameOutputPortResponse> getUserByName(GetUserByNameOutputPortRequest outputPortRequest) {
-        TypedQuery<UserPersistanceEntity> query = entityManager.createNamedQuery("UserPersistanceEntity.findByUsername", UserPersistanceEntity.class);
+        TypedQuery<UserPersistenceEntity> query = entityManager.createNamedQuery("UserPersistenceEntity.findByUsername", UserPersistenceEntity.class);
         query.setParameter("username", outputPortRequest.getUsername());
-        UserPersistanceEntity userPersistanceEntity;
+        UserPersistenceEntity userPersistenceEntity;
         try {
-            userPersistanceEntity = query.getSingleResult();
-            return Result.success(new GetUserByNameOutputPortResponse(userPersistanceEntity.id, userPersistanceEntity.name));
+            userPersistenceEntity = query.getSingleResult();
+            return Result.success(new GetUserByNameOutputPortResponse(userPersistenceEntity.id, userPersistenceEntity.name));
         } catch (Exception e) {
             log.error("GetUserByName Error", e);
             return Result.exception(e);
@@ -63,7 +63,7 @@ public class UserPersistenceAdapter implements
     @Override
     public Result<CheckUsernameAvailabilityOutputPortResponse> isUserNameAvailable(CheckUsernameAvailabilityOutputPortRequest outputPortRequest) {
         try {
-            List<UserPersistanceEntity> userList = entityManager.createNamedQuery("UserPersistanceEntity.findByUsername", UserPersistanceEntity.class)
+            List<UserPersistenceEntity> userList = entityManager.createNamedQuery("UserPersistenceEntity.findByUsername", UserPersistenceEntity.class)
                     .setParameter("username", outputPortRequest.getUsername())
                     .getResultList();
             return Result.success(new CheckUsernameAvailabilityOutputPortResponse(userList.isEmpty()));
