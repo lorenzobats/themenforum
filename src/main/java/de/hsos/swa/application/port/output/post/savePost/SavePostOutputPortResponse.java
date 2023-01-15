@@ -1,4 +1,4 @@
-package de.hsos.swa.application.port.output.savePost;
+package de.hsos.swa.application.port.output.post.savePost;
 import java.util.UUID;
 public class SavePostOutputPortResponse {
     private final UUID postId;

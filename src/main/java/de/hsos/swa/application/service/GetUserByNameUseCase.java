@@ -4,9 +4,9 @@ import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPortRequest;
 import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPortResponse;
 import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPort;
-import de.hsos.swa.application.port.output.getUserByName.GetUserByNameOutputPort;
-import de.hsos.swa.application.port.output.getUserByName.GetUserByNameOutputPortRequest;
-import de.hsos.swa.application.port.output.getUserByName.GetUserByNameOutputPortResponse;
+import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPort;
+import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPortRequest;
+import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPortResponse;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

@@ -1,14 +1,14 @@
-package de.hsos.swa.application.port.output.checkUsernameAvailability;
+package de.hsos.swa.application.port.output.user.getUserByName;
 
 import de.hsos.swa.application.port.input._shared.SelfValidating;
 
 import javax.validation.constraints.NotEmpty;
 
-public class CheckUsernameAvailabilityOutputPortRequest extends SelfValidating<CheckUsernameAvailabilityOutputPortRequest> {
+public class GetUserByNameOutputPortRequest extends SelfValidating<GetUserByNameOutputPortRequest> {
     @NotEmpty(message = "username empty")
     private final String username;
 
-    public CheckUsernameAvailabilityOutputPortRequest(String username) {
+    public GetUserByNameOutputPortRequest(String username) {
         this.username = username;
         this.validateSelf();
     }

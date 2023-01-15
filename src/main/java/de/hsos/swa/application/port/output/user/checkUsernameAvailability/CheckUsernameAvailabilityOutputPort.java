@@ -1,4 +1,4 @@
-package de.hsos.swa.application.port.output.checkUsernameAvailability;
+package de.hsos.swa.application.port.output.user.checkUsernameAvailability;
 
 
 import de.hsos.swa.application.port.input._shared.Result;

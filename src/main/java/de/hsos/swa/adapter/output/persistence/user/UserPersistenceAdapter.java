@@ -1,15 +1,14 @@
 package de.hsos.swa.adapter.output.persistence.user;
 
 import de.hsos.swa.application.port.input._shared.Result;
-import de.hsos.swa.application.port.output.checkUsernameAvailability.CheckUsernameAvailabilityOutputPort;
-import de.hsos.swa.application.port.output.checkUsernameAvailability.CheckUsernameAvailabilityOutputPortRequest;
-import de.hsos.swa.application.port.output.checkUsernameAvailability.CheckUsernameAvailabilityOutputPortResponse;
-import de.hsos.swa.application.port.output.createUser.CreateUserOutputPort;
-import de.hsos.swa.application.port.output.createUser.CreateUserOutputPortRequest;
-import de.hsos.swa.application.port.output.createUser.CreateUserOutputPortResponse;
-import de.hsos.swa.application.port.output.getUserByName.GetUserByNameOutputPort;
-import de.hsos.swa.application.port.output.getUserByName.GetUserByNameOutputPortRequest;
-import de.hsos.swa.application.port.output.getUserByName.GetUserByNameOutputPortResponse;
+import de.hsos.swa.application.port.output.user.checkUsernameAvailability.CheckUsernameAvailabilityOutputPort;
+import de.hsos.swa.application.port.output.user.checkUsernameAvailability.CheckUsernameAvailabilityOutputPortRequest;
+import de.hsos.swa.application.port.output.user.checkUsernameAvailability.CheckUsernameAvailabilityOutputPortResponse;
+import de.hsos.swa.application.port.output.user.saveUser.SaveUserOutputPort;
+import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPort;
+import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPortRequest;
+import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPortResponse;
+import de.hsos.swa.domain.entity.User;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
@@ -20,11 +19,12 @@ import javax.persistence.TransactionRequiredException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 
 @RequestScoped
 @Transactional(value = Transactional.TxType.MANDATORY)
 public class UserPersistenceAdapter implements
-        CreateUserOutputPort,
+        SaveUserOutputPort,
         GetUserByNameOutputPort,
         CheckUsernameAvailabilityOutputPort {
 
@@ -34,12 +34,13 @@ public class UserPersistenceAdapter implements
     @Inject
     Logger log;
 
+
     @Override
-    public Result<CreateUserOutputPortResponse> createUser(CreateUserOutputPortRequest outputPortRequest) {
-        UserPersistenceEntity userPersistenceEntity = new UserPersistenceEntity(outputPortRequest.getUsername());
+    public Result<UUID> saveUser(User user) {
+        UserPersistenceEntity userPersistenceEntity = UserPersistenceEntity.Converter.toPersistenceEntity(user);
         try {
             entityManager.persist(userPersistenceEntity);
-            return Result.success(new CreateUserOutputPortResponse(userPersistenceEntity.id, userPersistenceEntity.name));
+            return Result.success(userPersistenceEntity.id);
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("Customer Entity could not be created", e);
             return Result.exception(e);
@@ -73,4 +74,6 @@ public class UserPersistenceAdapter implements
         }
 
     }
+
+
 }

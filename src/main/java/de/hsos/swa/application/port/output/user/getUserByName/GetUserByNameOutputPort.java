@@ -1,4 +1,4 @@
-package de.hsos.swa.application.port.output.getUserByName;
+package de.hsos.swa.application.port.output.user.getUserByName;
 
 
 import de.hsos.swa.application.port.input._shared.Result;

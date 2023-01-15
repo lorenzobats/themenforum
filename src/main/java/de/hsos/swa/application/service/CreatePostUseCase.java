@@ -4,12 +4,12 @@ import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.createPost.CreatePostInputPort;
 import de.hsos.swa.application.port.input.createPost.CreatePostInputPortRequest;
 import de.hsos.swa.application.port.input.createPost.CreatePostInputPortResponse;
-import de.hsos.swa.application.port.output.getUserByName.GetUserByNameOutputPort;
-import de.hsos.swa.application.port.output.getUserByName.GetUserByNameOutputPortRequest;
-import de.hsos.swa.application.port.output.getUserByName.GetUserByNameOutputPortResponse;
-import de.hsos.swa.application.port.output.savePost.SavePostOutputPort;
-import de.hsos.swa.application.port.output.savePost.SavePostOutputPortRequest;
-import de.hsos.swa.application.port.output.savePost.SavePostOutputPortResponse;
+import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPort;
+import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPortRequest;
+import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPortResponse;
+import de.hsos.swa.application.port.output.post.savePost.SavePostOutputPort;
+import de.hsos.swa.application.port.output.post.savePost.SavePostOutputPortRequest;
+import de.hsos.swa.application.port.output.post.savePost.SavePostOutputPortResponse;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
 
@@ -33,11 +33,14 @@ public class CreatePostUseCase implements CreatePostInputPort {
         Result<GetUserByNameOutputPortResponse> getUserByNameResponse = this.getUserByNameOutputPort.getUserByName(getUserByNameRequest);
 
         if(!getUserByNameResponse.isSuccessful()) {
-            return Result.error("User does not exist"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
+            return Result.error("Post could not be created"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
         }
 
         // 2. Post auf Domain-Ebene bauen   // TODO: Factory
-        User user = new User(getUserByNameResponse.getData().getId(), getUserByNameResponse.getData().getUsername());
+        User user = new User(
+                getUserByNameResponse.getData().getId(),
+                getUserByNameResponse.getData().getUsername());
+
         Post post = new Post(inputPortRequest.getTitle(), user);
 
         // 3. Post persistieren

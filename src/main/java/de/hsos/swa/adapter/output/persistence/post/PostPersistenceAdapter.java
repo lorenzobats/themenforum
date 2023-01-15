@@ -1,9 +1,9 @@
 package de.hsos.swa.adapter.output.persistence.post;
 
 import de.hsos.swa.application.port.input._shared.Result;
-import de.hsos.swa.application.port.output.savePost.SavePostOutputPort;
-import de.hsos.swa.application.port.output.savePost.SavePostOutputPortRequest;
-import de.hsos.swa.application.port.output.savePost.SavePostOutputPortResponse;
+import de.hsos.swa.application.port.output.post.savePost.SavePostOutputPort;
+import de.hsos.swa.application.port.output.post.savePost.SavePostOutputPortRequest;
+import de.hsos.swa.application.port.output.post.savePost.SavePostOutputPortResponse;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;

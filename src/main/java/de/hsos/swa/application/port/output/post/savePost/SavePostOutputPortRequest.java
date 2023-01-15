@@ -1,4 +1,4 @@
-package de.hsos.swa.application.port.output.savePost;
+package de.hsos.swa.application.port.output.post.savePost;
 
 import de.hsos.swa.domain.entity.Post;
 

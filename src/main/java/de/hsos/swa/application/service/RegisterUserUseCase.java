@@ -4,19 +4,17 @@ import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.registerUser.RegisterUserInputPortRequest;
 import de.hsos.swa.application.port.input.registerUser.RegisterUserInputPortResponse;
 import de.hsos.swa.application.port.input.registerUser.RegisterUserInputPort;
-import de.hsos.swa.application.port.output.checkUsernameAvailability.CheckUsernameAvailabilityOutputPort;
-import de.hsos.swa.application.port.output.checkUsernameAvailability.CheckUsernameAvailabilityOutputPortRequest;
-import de.hsos.swa.application.port.output.checkUsernameAvailability.CheckUsernameAvailabilityOutputPortResponse;
-import de.hsos.swa.application.port.output.createUser.CreateUserOutputPortRequest;
-import de.hsos.swa.application.port.output.createUser.CreateUserOutputPort;
-import de.hsos.swa.application.port.output.createUser.CreateUserOutputPortResponse;
-import de.hsos.swa.application.port.output.createUserAuth.CreateUserAuthOutputPortRequest;
-import de.hsos.swa.application.port.output.createUserAuth.CreateUserAuthOutputPort;
-import de.hsos.swa.application.port.output.createUserAuth.CreateUserAuthOutputPortResponse;
+import de.hsos.swa.application.port.output.user.checkUsernameAvailability.CheckUsernameAvailabilityOutputPort;
+import de.hsos.swa.application.port.output.user.checkUsernameAvailability.CheckUsernameAvailabilityOutputPortRequest;
+import de.hsos.swa.application.port.output.user.checkUsernameAvailability.CheckUsernameAvailabilityOutputPortResponse;
+import de.hsos.swa.application.port.output.user.saveUser.SaveUserOutputPort;
+import de.hsos.swa.application.port.output.user.createUserAuth.CreateUserAuthOutputPortRequest;
+import de.hsos.swa.application.port.output.user.createUserAuth.CreateUserAuthOutputPort;
+import de.hsos.swa.application.port.output.user.createUserAuth.CreateUserAuthOutputPortResponse;
+import de.hsos.swa.domain.entity.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 import java.util.UUID;
 
 // TODO: Domain Service: Nutzernamen müssen bestimmten Schema entsprechen (als Idee um mehr "Business Logik") zu implementieren.
@@ -25,7 +23,7 @@ import java.util.UUID;
 public class RegisterUserUseCase implements RegisterUserInputPort {
 
     @Inject
-    CreateUserOutputPort createUserOutputPort;
+    SaveUserOutputPort saveUserOutputPort;
     @Inject
     CreateUserAuthOutputPort createUserAuthOutputPort;
     @Inject
@@ -45,22 +43,26 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
             return Result.error("Username already taken");
         }
 
-        // 2. User Entity erzeugen
-        CreateUserOutputPortRequest createUserRequest = new CreateUserOutputPortRequest(inputPortRequest.getUsername());
-        Result<CreateUserOutputPortResponse> createUserResponse = this.createUserOutputPort.createUser(createUserRequest);
+        // 2.A > DOMAIN  > User Entity erzeugen --> TODO: In domain Service auslagern, oder Factory?
+        User user = new User(inputPortRequest.getUsername());
 
-        if(!createUserResponse.isSuccessful()) {
-            return Result.error("Registration failed");
-        }
 
         // 3. User Auth erzeugen
         CreateUserAuthOutputPortRequest createUserAuthRequest = new CreateUserAuthOutputPortRequest(
                 inputPortRequest.getUsername(),
                 inputPortRequest.getPassword(),
                 "member",
-                createUserResponse.getData().getId());
-
+                user.getId());
         Result<CreateUserAuthOutputPortResponse> createUserAuthResponse = this.createUserAuthOutputPort.createUserAuth(createUserAuthRequest);
+
+
+        // 2.B > PERSISTENCE > User Persistieren
+        Result<UUID> createUserResponse = this.saveUserOutputPort.saveUser(user);
+
+        if(!createUserResponse.isSuccessful()) {
+            // TODO: UserAuth wieder löschen falls was schief gegangen ist bei Persistierung.
+            return Result.error("Registration failed");
+        }
 
         if(!createUserAuthResponse.isSuccessful()) {
             return Result.error("Registration failed");

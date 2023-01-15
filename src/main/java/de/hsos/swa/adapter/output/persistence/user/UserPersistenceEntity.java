@@ -12,7 +12,6 @@ import java.util.UUID;
 @NamedQuery(name = "UserPersistenceEntity.findByUsername", query = "SELECT u FROM User u WHERE u.name = :username")
 public class UserPersistenceEntity {
     @Id
-    @GeneratedValue()
     UUID id;
 
     @Column(name = "user_name")

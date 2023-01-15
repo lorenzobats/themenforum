@@ -1,14 +1,18 @@
-package de.hsos.swa.application.port.output.getUserByName;
+package de.hsos.swa.application.port.output.user.createUserAuth;
 
 import java.util.UUID;
 
-public class GetUserByNameOutputPortResponse {
+public class CreateUserAuthOutputPortResponse {
+
     private final UUID id;
+
     private final String username;
-    public GetUserByNameOutputPortResponse(UUID id, String username) {
+
+    public CreateUserAuthOutputPortResponse(UUID id, String username) {
         this.id = id;
         this.username = username;
     }
+
     public UUID getId() {
         return id;
     }

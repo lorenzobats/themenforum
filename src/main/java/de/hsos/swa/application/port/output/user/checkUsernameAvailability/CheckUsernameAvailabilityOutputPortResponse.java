@@ -1,4 +1,4 @@
-package de.hsos.swa.application.port.output.checkUsernameAvailability;
+package de.hsos.swa.application.port.output.user.checkUsernameAvailability;
 
 public class CheckUsernameAvailabilityOutputPortResponse {
     private final boolean userNameAvailable;

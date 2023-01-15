@@ -7,12 +7,7 @@ public class CreatePostRestAdapterRequest {
 
     public String title;
 
-    public CreatePostRestAdapterRequest() {
-    }
-
-    public CreatePostRestAdapterRequest(String title) {
-        this.title = title;
-    }
+    public CreatePostRestAdapterRequest() {}
 
     public static class Converter {
         public static CreatePostInputPortRequest toInputPortRequest(CreatePostRestAdapterRequest request, String username) {

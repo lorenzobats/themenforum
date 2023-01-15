@@ -1,9 +1,9 @@
 package de.hsos.swa.adapter.output.auth;
 
 import de.hsos.swa.application.port.input._shared.Result;
-import de.hsos.swa.application.port.output.createUserAuth.CreateUserAuthOutputPortRequest;
-import de.hsos.swa.application.port.output.createUserAuth.CreateUserAuthOutputPort;
-import de.hsos.swa.application.port.output.createUserAuth.CreateUserAuthOutputPortResponse;
+import de.hsos.swa.application.port.output.user.createUserAuth.CreateUserAuthOutputPortRequest;
+import de.hsos.swa.application.port.output.user.createUserAuth.CreateUserAuthOutputPort;
+import de.hsos.swa.application.port.output.user.createUserAuth.CreateUserAuthOutputPortResponse;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;

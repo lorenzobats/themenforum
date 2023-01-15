@@ -9,6 +9,7 @@ public class User {
     private String name;
 
     public User(String name) {
+        this.id = UUID.randomUUID();
         this.name = name;
     }
 
