@@ -48,6 +48,7 @@ public class UserRestAdapter {
         try {
             RegisterUserInputPortRequest command = RegisterUserRestAdapterRequest.Converter.toUseCaseCommand(request);
             RegisterUserInputPortResponse result = this.registerUserInputPort.registerUser(command);
+            // TODO: Check SUCCESS / ERROR / EXCEPTION
             RegisterUserRestAdapterResponse response = RegisterUserRestAdapterResponse.Converter.fromUseCaseResult(result);
             return Response.status(Response.Status.CREATED).entity(response).build();
         } catch (ConstraintViolationException e){

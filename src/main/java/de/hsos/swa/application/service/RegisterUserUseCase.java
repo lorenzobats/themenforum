@@ -15,6 +15,7 @@ import de.hsos.swa.application.port.output.createUserAuth.CreateUserAuthOutputPo
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.util.UUID;
 
 // TODO: Domain Service: Nutzernamen müssen bestimmten Schema entsprechen (als Idee um mehr "Business Logik") zu implementieren.
@@ -31,6 +32,7 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
 
 
     @Override
+    @Transactional // Frage was bringt das?
     public RegisterUserInputPortResponse registerUser(RegisterUserInputPortRequest inputPortRequest) {
         // 1. Überprüfen, ob der Nutzername bereits existiert
         CheckUsernameAvailabilityOutputPortRequest checkUsernameAvailabilityOutputPortRequest = new CheckUsernameAvailabilityOutputPortRequest(inputPortRequest.getUsername());
@@ -38,8 +40,10 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
         if (!checkUsernameAvailabilityOutputPortResponse.isUserNameAvailable()) {
             // TODO: Mit Optionals arbeiten, oder Exception zurückgeben, damit dem Nutzer entsprechende Fehlermessage zurückgegeben werden kann.
             // TODO: EVTL. Generell ne generische Response erschaffen in denen Errors weitergegeben werden?
-            return new RegisterUserInputPortResponse(UUID.randomUUID(), "ALREADY AVAILABLE");
+            return new RegisterUserInputPortResponse(UUID.randomUUID(), "ALREADY TAKEN");
         }
+
+
         // 2. User Entity erzeugen
         CreateUserOutputPortRequest createUserOutputPortRequest = new CreateUserOutputPortRequest(inputPortRequest.getUsername());
         CreateUserOutputPortResponse createUserOutputPortResponse = this.createUserOutputPort.createUser(createUserOutputPortRequest);
@@ -47,6 +51,8 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
             // TODO: Mit Optionals arbeiten, oder Exception zurückgeben, dass bei Registration was schiefgelaufen ist? (Hier vllt. eher Optional)
             return null;
         }
+
+
         // 3. User Auth erzeugen
         CreateUserAuthOutputPortRequest createUserAuthOutputPortRequest = new CreateUserAuthOutputPortRequest(inputPortRequest.getUsername(), inputPortRequest.getPassword(), "member", createUserOutputPortResponse.getId());
         CreateUserAuthOutputPortResponse createUserAuthOutputPortResponse = this.createUserAuthOutputPort.createUserAuth(createUserAuthOutputPortRequest);
