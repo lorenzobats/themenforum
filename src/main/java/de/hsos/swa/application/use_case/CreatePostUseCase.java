@@ -4,19 +4,15 @@ import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.createPost.CreatePostInputPort;
 import de.hsos.swa.application.port.input.createPost.CreatePostInputPortRequest;
 import de.hsos.swa.application.port.input.createPost.CreatePostInputPortResponse;
-import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPort;
-import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPortRequest;
-import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPortResponse;
-import de.hsos.swa.application.port.output.post.savePost.SavePostOutputPort;
-import de.hsos.swa.application.port.output.post.savePost.SavePostOutputPortRequest;
-import de.hsos.swa.application.port.output.post.savePost.SavePostOutputPortResponse;
+import de.hsos.swa.application.port.output.user.GetUserByNameOutputPort;
+import de.hsos.swa.application.port.output.post.SavePostOutputPort;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.domain.factory.PostFactory;
-import de.hsos.swa.domain.factory.UserFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.UUID;
 
 @ApplicationScoped
 public class CreatePostUseCase implements CreatePostInputPort {
@@ -31,22 +27,18 @@ public class CreatePostUseCase implements CreatePostInputPort {
     @Override
     public Result<CreatePostInputPortResponse> createPost(CreatePostInputPortRequest inputPortRequest) {
         // 1. Nutzer holen
-        GetUserByNameOutputPortRequest getUserByNameRequest = new GetUserByNameOutputPortRequest(inputPortRequest.getUsername());
-        Result<GetUserByNameOutputPortResponse> getUserByNameResponse = this.getUserByNameOutputPort.getUserByName(getUserByNameRequest);
-
+        Result<User> getUserByNameResponse = this.getUserByNameOutputPort.getUserByName(inputPortRequest.getUsername());
         if(!getUserByNameResponse.isSuccessful()) {
             return Result.error("Post could not be created"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
         }
+        User user = getUserByNameResponse.getData();
 
         // 2. Post auf Domain-Ebene bauen   // TODO: Factory
-        User user = UserFactory.createUser(getUserByNameResponse.getData().getId(), getUserByNameResponse.getData().getUsername());
-
         Post post = PostFactory.createPost(inputPortRequest.getTitle(), user);
 
         // 3. Post persistieren
-        SavePostOutputPortRequest savePostRequest = new SavePostOutputPortRequest(post); // TODO: evtl.
-        Result<SavePostOutputPortResponse> savePostResponse = this.savePostOutputPort.savePost(savePostRequest);
+        Result<UUID> savePostResponse = this.savePostOutputPort.savePost(post);
 
-        return Result.success(new CreatePostInputPortResponse(savePostResponse.getData().getPostId()));
+        return Result.success(new CreatePostInputPortResponse(savePostResponse.getData()));
     }
 }

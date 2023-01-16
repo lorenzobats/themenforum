@@ -4,12 +4,12 @@ import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.getPostById.GetPostByIdInputPort;
 import de.hsos.swa.application.port.input.getPostById.GetPostByIdInputPortRequest;
 import de.hsos.swa.application.port.input.getPostById.GetPostByIdInputPortResponse;
-import de.hsos.swa.application.port.output.post.getPostById.GetPostByIdOutputPort;
-import de.hsos.swa.application.port.output.post.getPostById.GetPostByIdOutputPortRequest;
-import de.hsos.swa.application.port.output.post.getPostById.GetPostByIdOutputPortResponse;
+import de.hsos.swa.application.port.output.post.GetPostByIdOutputPort;
+import de.hsos.swa.domain.entity.Post;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import java.util.UUID;
 
 @RequestScoped
 public class GetPostByIdUseCase implements GetPostByIdInputPort {
@@ -19,9 +19,10 @@ public class GetPostByIdUseCase implements GetPostByIdInputPort {
 
     @Override
     public Result<GetPostByIdInputPortResponse> getPostById(GetPostByIdInputPortRequest request) {
-        Result<GetPostByIdOutputPortResponse> response = getPostById.getPostById(new GetPostByIdOutputPortRequest(request.getId()));
+        Result<Post> response = getPostById.getPostById(UUID.fromString(request.getId()));
         if(response.isSuccessful()) {
-            return Result.success(new GetPostByIdInputPortResponse(response.getData().getPost().getTitle(), response.getData().getPost().getUser().getName()));
+            // TODO: PostDTO zurückgeben
+            return Result.success(new GetPostByIdInputPortResponse(response.getData().getTitle(), response.getData().getUser().getName()));
         }
         return Result.error("Cannot find Post");
     }

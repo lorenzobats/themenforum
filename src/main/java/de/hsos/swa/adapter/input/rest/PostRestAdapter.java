@@ -1,9 +1,9 @@
 package de.hsos.swa.adapter.input.rest;
 
-import de.hsos.swa.adapter.input.rest.createPost.CreatePostRestAdapterRequest;
-import de.hsos.swa.adapter.input.rest.createPost.CreatePostRestAdapterResponse;
-import de.hsos.swa.adapter.input.rest.getPostById.GetPostByIdRestAdapterResponse;
-import de.hsos.swa.adapter.input.rest.getUserByName.GetUserByNameRestAdapterResponse;
+import de.hsos.swa.adapter.input.rest.dto.CreatePostRestAdapterRequest;
+import de.hsos.swa.adapter.input.rest.dto.CreatePostRestAdapterResponse;
+import de.hsos.swa.adapter.input.rest.dto.GetPostByIdRestAdapterResponse;
+import de.hsos.swa.adapter.input.rest.validation.ValidationResult;
 import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.createPost.CreatePostInputPort;
 import de.hsos.swa.application.port.input.createPost.CreatePostInputPortRequest;

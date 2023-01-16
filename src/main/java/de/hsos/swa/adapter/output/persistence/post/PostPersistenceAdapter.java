@@ -1,14 +1,10 @@
 package de.hsos.swa.adapter.output.persistence.post;
 
-import de.hsos.swa.adapter.output.persistence.user.UserPersistenceEntity;
 import de.hsos.swa.application.port.input._shared.Result;
-import de.hsos.swa.application.port.output.post.getPostById.GetPostByIdOutputPort;
-import de.hsos.swa.application.port.output.post.getPostById.GetPostByIdOutputPortRequest;
-import de.hsos.swa.application.port.output.post.getPostById.GetPostByIdOutputPortResponse;
-import de.hsos.swa.application.port.output.post.savePost.SavePostOutputPort;
-import de.hsos.swa.application.port.output.post.savePost.SavePostOutputPortRequest;
-import de.hsos.swa.application.port.output.post.savePost.SavePostOutputPortResponse;
-import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPortResponse;
+import de.hsos.swa.application.port.output.post.GetPostByIdOutputPort;
+import de.hsos.swa.application.port.output.post.SavePostOutputPort;
+import de.hsos.swa.application.port.output.post.UpdatePostOutputPort;
+import de.hsos.swa.domain.entity.Post;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
@@ -24,6 +20,7 @@ import java.util.UUID;
 @Transactional(value = Transactional.TxType.MANDATORY)
 public class PostPersistenceAdapter implements
         SavePostOutputPort,
+        //UpdatePostOutputPort,     // TODO: UpdatePostOutputPort implementieren
         GetPostByIdOutputPort {
 
     @Inject
@@ -33,28 +30,41 @@ public class PostPersistenceAdapter implements
     Logger log;
 
     @Override
-    public Result<SavePostOutputPortResponse> savePost(SavePostOutputPortRequest request) {
-        PostPersistenceEntity post = PostPersistenceEntity.Converter.toPersistenceEntity(request.getPost());
+    public Result<Post> getPostById(UUID postId) {
+        TypedQuery<PostPersistenceEntity> query = entityManager.createNamedQuery("PostPersistenceEntity.findById", PostPersistenceEntity.class);
+        query.setParameter("id", postId);
+        PostPersistenceEntity post;
         try {
-            entityManager.persist(post);
-            return Result.success(new SavePostOutputPortResponse(post.id));
-        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            log.error("User Entity could not be created", e);
+            post = query.getSingleResult();
+            return Result.success(PostPersistenceEntity.Converter.toDomainEntity(post));
+        } catch (Exception e) {
+            log.error("GetPostById Error", e);
             return Result.exception(e);
         }
     }
 
     @Override
-    public Result<GetPostByIdOutputPortResponse> getPostById(GetPostByIdOutputPortRequest request) {
-        TypedQuery<PostPersistenceEntity> query = entityManager.createNamedQuery("PostPersistenceEntity.findById", PostPersistenceEntity.class);
-        query.setParameter("id", UUID.fromString(request.getId()));
-        PostPersistenceEntity post;
+    public Result<UUID> savePost(Post post) {
+        PostPersistenceEntity postPersistenceEntity = PostPersistenceEntity.Converter.toPersistenceEntity(post);
         try {
-            post = query.getSingleResult();
-            return Result.success(new GetPostByIdOutputPortResponse(PostPersistenceEntity.Converter.toDomainEntity(post)));
-        } catch (Exception e) {
-            log.error("GetPostByName Error", e);
+            entityManager.persist(postPersistenceEntity);
+            return Result.success(postPersistenceEntity.id);
+        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
+            log.error("savePost Error", e);
             return Result.exception(e);
         }
     }
+
+//    @Override
+//    public Result<Void> updatePost(Post post) {
+//        PostPersistenceEntity postPersistenceEntity = PostPersistenceEntity.Converter.toPersistenceEntity(post);
+//        try {
+//            entityManager.merge(postPersistenceEntity);
+//            // TODO: Return generic Result
+//            return Result.success();
+//        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
+//            log.error("savePost Error", e);
+//            return Result.exception(e);
+//        }
+//    }
 }

@@ -1,16 +1,10 @@
 package de.hsos.swa.adapter.output.persistence.user;
 
 import de.hsos.swa.application.port.input._shared.Result;
-import de.hsos.swa.application.port.output.user.checkUsernameAvailability.CheckUsernameAvailabilityOutputPort;
-import de.hsos.swa.application.port.output.user.checkUsernameAvailability.CheckUsernameAvailabilityOutputPortRequest;
-import de.hsos.swa.application.port.output.user.checkUsernameAvailability.CheckUsernameAvailabilityOutputPortResponse;
-import de.hsos.swa.application.port.output.user.getUserById.GetUserByIdOutputPort;
-import de.hsos.swa.application.port.output.user.getUserById.GetUserByIdOutputPortRequest;
-import de.hsos.swa.application.port.output.user.getUserById.GetUserByIdOutputPortResponse;
-import de.hsos.swa.application.port.output.user.saveUser.SaveUserOutputPort;
-import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPort;
-import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPortRequest;
-import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPortResponse;
+import de.hsos.swa.application.port.output.user.CheckUsernameAvailabilityOutputPort;
+import de.hsos.swa.application.port.output.user.GetUserByIdOutputPort;
+import de.hsos.swa.application.port.output.user.SaveUserOutputPort;
+import de.hsos.swa.application.port.output.user.GetUserByNameOutputPort;
 import de.hsos.swa.domain.entity.User;
 import org.jboss.logging.Logger;
 
@@ -51,14 +45,15 @@ public class UserPersistenceAdapter implements
         }
     }
 
+
     @Override
-    public Result<GetUserByNameOutputPortResponse> getUserByName(GetUserByNameOutputPortRequest outputPortRequest) {
+    public Result<User> getUserByName(String username) {
         TypedQuery<UserPersistenceEntity> query = entityManager.createNamedQuery("UserPersistenceEntity.findByUsername", UserPersistenceEntity.class);
-        query.setParameter("username", outputPortRequest.getUsername());
+        query.setParameter("username", username);
         UserPersistenceEntity userPersistenceEntity;
         try {
             userPersistenceEntity = query.getSingleResult();
-            return Result.success(new GetUserByNameOutputPortResponse(userPersistenceEntity.id, userPersistenceEntity.name));
+            return Result.success(UserPersistenceEntity.Converter.toDomainEntity(userPersistenceEntity));
         } catch (Exception e) {
             log.error("GetUserByName Error", e);
             return Result.exception(e);
@@ -66,13 +61,13 @@ public class UserPersistenceAdapter implements
     }
 
     @Override
-    public Result<GetUserByIdOutputPortResponse> getUserById(GetUserByIdOutputPortRequest outputPortRequest) {
+    public Result<User> getUserById(String userId) {
         TypedQuery<UserPersistenceEntity> query = entityManager.createNamedQuery("UserPersistenceEntity.findById", UserPersistenceEntity.class);
-        query.setParameter("id", outputPortRequest.getUserId());
-        UserPersistenceEntity userPersistenceEntity;
+        query.setParameter("id", userId);
+        UserPersistenceEntity user;
         try {
-            userPersistenceEntity = query.getSingleResult();
-            return Result.success(new GetUserByIdOutputPortResponse(userPersistenceEntity.id, userPersistenceEntity.name));
+            user = query.getSingleResult();
+            return Result.success(UserPersistenceEntity.Converter.toDomainEntity(user));
         } catch (Exception e) {
             log.error("GetUserById Error", e);
             return Result.exception(e);
@@ -80,18 +75,18 @@ public class UserPersistenceAdapter implements
     }
 
     @Override
-    public Result<CheckUsernameAvailabilityOutputPortResponse> isUserNameAvailable(CheckUsernameAvailabilityOutputPortRequest outputPortRequest) {
+    public Result<Boolean> isUserNameAvailable(String username) {
         try {
             List<UserPersistenceEntity> userList = entityManager.createNamedQuery("UserPersistenceEntity.findByUsername", UserPersistenceEntity.class)
-                    .setParameter("username", outputPortRequest.getUsername())
+                    .setParameter("username", username)
                     .getResultList();
-            return Result.success(new CheckUsernameAvailabilityOutputPortResponse(userList.isEmpty()));
+            return Result.success(userList.isEmpty());
         } catch (Exception e) {
             log.error("GetCustomerById Error", e);
             return Result.exception(e);
         }
-
     }
+
 
 
 

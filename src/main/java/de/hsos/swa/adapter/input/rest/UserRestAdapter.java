@@ -1,9 +1,10 @@
 package de.hsos.swa.adapter.input.rest;
 
 
-import de.hsos.swa.adapter.input.rest.getUserByName.GetUserByNameRestAdapterResponse;
-import de.hsos.swa.adapter.input.rest.registerUser.RegisterUserRestAdapterRequest;
-import de.hsos.swa.adapter.input.rest.registerUser.RegisterUserRestAdapterResponse;
+import de.hsos.swa.adapter.input.rest.dto.GetUserByNameRestAdapterResponse;
+import de.hsos.swa.adapter.input.rest.dto.RegisterUserRestAdapterRequest;
+import de.hsos.swa.adapter.input.rest.dto.RegisterUserRestAdapterResponse;
+import de.hsos.swa.adapter.input.rest.validation.ValidationResult;
 import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPortRequest;
 import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPortResponse;

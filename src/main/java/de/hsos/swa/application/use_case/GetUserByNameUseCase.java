@@ -4,9 +4,8 @@ import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPortRequest;
 import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPortResponse;
 import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPort;
-import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPort;
-import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPortRequest;
-import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPortResponse;
+import de.hsos.swa.application.port.output.user.GetUserByNameOutputPort;
+import de.hsos.swa.domain.entity.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -19,13 +18,11 @@ public class GetUserByNameUseCase implements GetUserByNameInputPort {
 
     @Override
     public Result<GetUserByNameInputPortResponse> getUserByName(GetUserByNameInputPortRequest inputPortRequest) {
-        // TODO: Alternative zu Mapping bei reinen CRUD Anfragen?
-        GetUserByNameOutputPortRequest getUserByNameOutputPortRequest = new GetUserByNameOutputPortRequest(inputPortRequest.getUsername());
-        Result<GetUserByNameOutputPortResponse> getUserByNameOutputPortResponse = this.getUserByNameOutputPort.getUserByName(getUserByNameOutputPortRequest);
-
+        Result<User> getUserByNameOutputPortResponse = this.getUserByNameOutputPort.getUserByName(inputPortRequest.getUsername());
         if(!getUserByNameOutputPortResponse.isSuccessful()) {
            return Result.error("Username not found");
         }
-        return Result.success(new GetUserByNameInputPortResponse(getUserByNameOutputPortResponse.getData().getId(), getUserByNameOutputPortResponse.getData().getUsername()));
+        // TODO: DTO zurückgeben
+        return Result.success(new GetUserByNameInputPortResponse(getUserByNameOutputPortResponse.getData().getId(), getUserByNameOutputPortResponse.getData().getName()));
     }
 }

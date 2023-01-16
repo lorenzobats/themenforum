@@ -4,13 +4,11 @@ import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.registerUser.RegisterUserInputPortRequest;
 import de.hsos.swa.application.port.input.registerUser.RegisterUserInputPortResponse;
 import de.hsos.swa.application.port.input.registerUser.RegisterUserInputPort;
-import de.hsos.swa.application.port.output.user.checkUsernameAvailability.CheckUsernameAvailabilityOutputPort;
-import de.hsos.swa.application.port.output.user.checkUsernameAvailability.CheckUsernameAvailabilityOutputPortRequest;
-import de.hsos.swa.application.port.output.user.checkUsernameAvailability.CheckUsernameAvailabilityOutputPortResponse;
-import de.hsos.swa.application.port.output.user.saveUser.SaveUserOutputPort;
-import de.hsos.swa.application.port.output.user.createUserAuth.CreateUserAuthOutputPortRequest;
-import de.hsos.swa.application.port.output.user.createUserAuth.CreateUserAuthOutputPort;
-import de.hsos.swa.application.port.output.user.createUserAuth.CreateUserAuthOutputPortResponse;
+import de.hsos.swa.application.port.output.user.CheckUsernameAvailabilityOutputPort;
+import de.hsos.swa.application.port.output.user.SaveUserOutputPort;
+import de.hsos.swa.application.port.output.auth.createUserAuth.CreateUserAuthOutputPortRequest;
+import de.hsos.swa.application.port.output.auth.createUserAuth.CreateUserAuthOutputPort;
+import de.hsos.swa.application.port.output.auth.createUserAuth.CreateUserAuthOutputPortResponse;
 import de.hsos.swa.domain.entity.User;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -32,14 +30,13 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
     @Override
     public Result<RegisterUserInputPortResponse> registerUser(RegisterUserInputPortRequest inputPortRequest) {
         // 1. Überprüfen, ob der Nutzername bereits existiert
-        CheckUsernameAvailabilityOutputPortRequest checkUsernameAvailabilityRequest = new CheckUsernameAvailabilityOutputPortRequest(inputPortRequest.getUsername());
-        Result<CheckUsernameAvailabilityOutputPortResponse> checkUsernameAvailabilityResponse = this.checkUsernameAvailabilityOutputPort.isUserNameAvailable(checkUsernameAvailabilityRequest);
+        Result<Boolean> checkUsernameAvailabilityResponse = this.checkUsernameAvailabilityOutputPort.isUserNameAvailable(inputPortRequest.getUsername());
 
         if(!checkUsernameAvailabilityResponse.isSuccessful()) {
             return Result.error("Registration failed");
         }
 
-        if (!checkUsernameAvailabilityResponse.getData().isUserNameAvailable()) {
+        if (!checkUsernameAvailabilityResponse.getData()) {
             return Result.error("Username already taken");
         }
 

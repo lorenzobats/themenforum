@@ -1,10 +1,13 @@
 package de.hsos.swa.adapter.output.persistence.post;
 
+import de.hsos.swa.adapter.output.persistence.comment.CommentPersistenceEntity;
 import de.hsos.swa.adapter.output.persistence.user.UserPersistenceEntity;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "Post")
@@ -21,6 +24,11 @@ public class PostPersistenceEntity {
     UserPersistenceEntity userPersistenceEntity;
 
     // TODO: Comments Relation
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    List<CommentPersistenceEntity> comments = new ArrayList<>();
 
 
     public PostPersistenceEntity() {
@@ -37,7 +45,8 @@ public class PostPersistenceEntity {
     public static class Converter {
         public static Post toDomainEntity(PostPersistenceEntity postPersistenceEntity) {
             User user = UserPersistenceEntity.Converter.toDomainEntity(postPersistenceEntity.userPersistenceEntity);
-            return new Post(postPersistenceEntity.title, user);
+            // TODO: Konstruktor ohne Id verstecken
+            return new Post(postPersistenceEntity.id, postPersistenceEntity.title, user);
         }
 
         public static PostPersistenceEntity toPersistenceEntity(Post post) {

@@ -4,6 +4,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,7 +24,7 @@ public class Post {
     @PastOrPresent
     private LocalDate publishedDate;
 
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     private int upvotes;
 
