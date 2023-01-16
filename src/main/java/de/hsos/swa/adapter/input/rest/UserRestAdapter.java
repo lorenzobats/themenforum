@@ -57,7 +57,7 @@ public class UserRestAdapter {
                 RegisterUserRestAdapterResponse response = RegisterUserRestAdapterResponse.Converter.fromUseCaseResult(result.getData());
                 return Response.status(Response.Status.CREATED).entity(response).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(result.getErrorMessage()).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(result.getErrorMessage())).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }

@@ -1,4 +1,4 @@
-package de.hsos.swa.application.service;
+package de.hsos.swa.application.use_case;
 
 import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.registerUser.RegisterUserInputPortRequest;

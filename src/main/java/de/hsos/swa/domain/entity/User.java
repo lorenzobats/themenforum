@@ -7,7 +7,6 @@ import javax.validation.constraints.Size;
 import java.util.UUID;
 
 public class User {
-    @NotBlank
     private UUID id;
 
     @NotBlank

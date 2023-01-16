@@ -9,7 +9,6 @@ import java.util.UUID;
 
 
 public class Post {
-    @NotBlank
     private UUID id;
 
     @NotBlank
