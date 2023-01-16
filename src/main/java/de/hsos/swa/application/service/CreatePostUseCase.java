@@ -12,6 +12,8 @@ import de.hsos.swa.application.port.output.post.savePost.SavePostOutputPortReque
 import de.hsos.swa.application.port.output.post.savePost.SavePostOutputPortResponse;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
+import de.hsos.swa.domain.factory.PostFactory;
+import de.hsos.swa.domain.factory.UserFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -37,11 +39,9 @@ public class CreatePostUseCase implements CreatePostInputPort {
         }
 
         // 2. Post auf Domain-Ebene bauen   // TODO: Factory
-        User user = new User(
-                getUserByNameResponse.getData().getId(),
-                getUserByNameResponse.getData().getUsername());
+        User user = UserFactory.createUser(getUserByNameResponse.getData().getId(), getUserByNameResponse.getData().getUsername());
 
-        Post post = new Post(inputPortRequest.getTitle(), user);
+        Post post = PostFactory.createPost(inputPortRequest.getTitle(), user);
 
         // 3. Post persistieren
         SavePostOutputPortRequest savePostRequest = new SavePostOutputPortRequest(post); // TODO: evtl.

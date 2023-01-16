@@ -7,6 +7,7 @@ import java.util.UUID;
 public class RegisterUserInputPortResponse extends Result<RegisterUserInputPortResponse> {
     private final UUID id;
     private final String username;
+
     public RegisterUserInputPortResponse(UUID id, String username) {
         this.id = id;
         this.username = username;

@@ -1,16 +1,31 @@
 package de.hsos.swa.domain.entity;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PastOrPresent;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 
 public class Post {
+    @NotBlank
     private UUID id;
+
+    @NotBlank
     private String title;
+
+    @Valid
     private User user;
 
+    @Valid
     private Topic topic;
+
+    @PastOrPresent
+    private LocalDate publishedDate;
+
     private List<Comment> comments;
+
     private int upvotes;
 
 

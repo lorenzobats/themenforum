@@ -1,4 +1,4 @@
-package de.hsos.swa.domain.services;
+package de.hsos.swa.domain.service;
 
 public class UserNameValidationService {
 }

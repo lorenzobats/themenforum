@@ -1,11 +1,17 @@
 package de.hsos.swa.domain.entity;
 
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.UUID;
 
 public class User {
+    @NotBlank
     private UUID id;
 
+    @NotBlank
+    @Size(min = 4, max = 20, message = "Username must be between 4 and 20 characters")
     private String name;
 
     public User(String name) {
