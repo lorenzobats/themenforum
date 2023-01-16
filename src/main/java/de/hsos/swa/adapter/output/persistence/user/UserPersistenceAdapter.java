@@ -4,6 +4,9 @@ import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.output.user.checkUsernameAvailability.CheckUsernameAvailabilityOutputPort;
 import de.hsos.swa.application.port.output.user.checkUsernameAvailability.CheckUsernameAvailabilityOutputPortRequest;
 import de.hsos.swa.application.port.output.user.checkUsernameAvailability.CheckUsernameAvailabilityOutputPortResponse;
+import de.hsos.swa.application.port.output.user.getUserById.GetUserByIdOutputPort;
+import de.hsos.swa.application.port.output.user.getUserById.GetUserByIdOutputPortRequest;
+import de.hsos.swa.application.port.output.user.getUserById.GetUserByIdOutputPortResponse;
 import de.hsos.swa.application.port.output.user.saveUser.SaveUserOutputPort;
 import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPort;
 import de.hsos.swa.application.port.output.user.getUserByName.GetUserByNameOutputPortRequest;
@@ -26,6 +29,7 @@ import java.util.UUID;
 public class UserPersistenceAdapter implements
         SaveUserOutputPort,
         GetUserByNameOutputPort,
+        GetUserByIdOutputPort,
         CheckUsernameAvailabilityOutputPort {
 
     @Inject
@@ -62,6 +66,20 @@ public class UserPersistenceAdapter implements
     }
 
     @Override
+    public Result<GetUserByIdOutputPortResponse> getUserById(GetUserByIdOutputPortRequest outputPortRequest) {
+        TypedQuery<UserPersistenceEntity> query = entityManager.createNamedQuery("UserPersistenceEntity.findById", UserPersistenceEntity.class);
+        query.setParameter("id", outputPortRequest.getUserId());
+        UserPersistenceEntity userPersistenceEntity;
+        try {
+            userPersistenceEntity = query.getSingleResult();
+            return Result.success(new GetUserByIdOutputPortResponse(userPersistenceEntity.id, userPersistenceEntity.name));
+        } catch (Exception e) {
+            log.error("GetUserById Error", e);
+            return Result.exception(e);
+        }
+    }
+
+    @Override
     public Result<CheckUsernameAvailabilityOutputPortResponse> isUserNameAvailable(CheckUsernameAvailabilityOutputPortRequest outputPortRequest) {
         try {
             List<UserPersistenceEntity> userList = entityManager.createNamedQuery("UserPersistenceEntity.findByUsername", UserPersistenceEntity.class)
@@ -74,6 +92,7 @@ public class UserPersistenceAdapter implements
         }
 
     }
+
 
 
 }

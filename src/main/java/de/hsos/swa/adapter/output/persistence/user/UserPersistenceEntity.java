@@ -10,6 +10,7 @@ import java.util.UUID;
 @Entity(name = "User")
 @Table(name = "user_table")
 @NamedQuery(name = "UserPersistenceEntity.findByUsername", query = "SELECT u FROM User u WHERE u.name = :username")
+@NamedQuery(name = "UserPersistenceEntity.findById", query = "SELECT u FROM User u WHERE u.id = :id")
 public class UserPersistenceEntity {
     @Id
     UUID id;
