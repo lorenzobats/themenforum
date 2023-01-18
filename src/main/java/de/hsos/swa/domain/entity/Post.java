@@ -4,10 +4,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 public class Post {
@@ -48,8 +45,26 @@ public class Post {
     }
 
     public void addReplyToComment(String parentCommentId, Comment reply) {
-        Optional<Comment> parentComment = this.comments.stream().filter(comment -> comment.getId().toString().equals(parentCommentId)).findFirst();
+//        Optional<Comment> parentComment = this.comments.stream().filter(comment -> comment.getId().toString().equals(parentCommentId)).findFirst();
+//        parentComment.ifPresent(comment -> comment.addReply(reply));
+
+        Optional<Comment> parentComment = findCommentById(parentCommentId);
         parentComment.ifPresent(comment -> comment.addReply(reply));
+
+    }
+
+    private Optional<Comment> findCommentById(String parentCommentId) {
+        Deque<Comment> stack = new ArrayDeque<Comment>(this.comments);
+
+        while (!stack.isEmpty()) {
+            Comment comment = stack.pop();
+            if (comment.getId().toString().equals(parentCommentId)) {
+                return Optional.of(comment);
+            }
+            stack.addAll(comment.getReplies());
+        }
+
+        return Optional.empty();
     }
 
     public UUID getId() {
@@ -68,16 +83,4 @@ public class Post {
         return comments;
     }
 
-    @Override
-    public String toString() {
-        return "Post{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", user=" + user +
-                ", topic=" + topic +
-                ", publishedDate=" + publishedDate +
-                ", comments=" + comments +
-                ", upvotes=" + upvotes +
-                '}';
-    }
 }
