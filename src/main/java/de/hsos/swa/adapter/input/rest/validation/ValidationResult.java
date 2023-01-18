@@ -8,7 +8,7 @@ public class ValidationResult {
 
     // TODO: nicht public, nicht nutzen
     public ValidationResult(String message) {
-        this.success = true;
+        this.success = false;
         this.message = message;
     }
 

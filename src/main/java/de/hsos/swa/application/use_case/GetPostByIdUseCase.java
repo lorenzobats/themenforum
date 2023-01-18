@@ -20,9 +20,13 @@ public class GetPostByIdUseCase implements GetPostByIdInputPort {
     @Override
     public Result<GetPostByIdInputPortResponse> getPostById(GetPostByIdInputPortRequest request) {
         Result<Post> response = getPostById.getPostById(UUID.fromString(request.getId()));
-        if(response.isSuccessful()) {
+        if (response.isSuccessful()) {
             // TODO: PostDTO zurückgeben
-            return Result.success(new GetPostByIdInputPortResponse(response.getData().getTitle(), response.getData().getUser().getName()));
+            return Result.success(
+                    new GetPostByIdInputPortResponse(
+                            response.getData().getTitle(),
+                            response.getData().getUser().getName(),
+                            response.getData().getComments()));
         }
         return Result.error("Cannot find Post");
     }

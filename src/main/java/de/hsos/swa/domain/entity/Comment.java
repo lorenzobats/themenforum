@@ -9,13 +9,13 @@ public class Comment {
     private UUID id;
     private User user;
     private String text;
-
     private LocalDate publishedDate;
 
     private int upvotes;
 
-    //private List<Comment> replies = new ArrayList<>();
+    private List<Comment> replies = new ArrayList<>();
 
+    private Comment parentComment;
 
     public Comment(UUID id, User user, String text) {
         this.id = id;
@@ -48,4 +48,31 @@ public class Comment {
     public int getUpvotes() {
         return upvotes;
     }
+
+    public List<Comment> getReplies() {
+        return replies;
+    }
+
+    public void addReply(Comment reply) {
+        reply.parentComment = this;
+        this.replies.add(reply);
+    }
+    public Comment getParentComment() {
+        return this.parentComment;
+    }
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + id +
+                ", user=" + user +
+                ", text='" + text + '\'' +
+                ", publishedDate=" + publishedDate +
+                ", upvotes=" + upvotes +
+                ", replies=" + replies +
+                ", parentComment=" + parentComment +
+                '}';
+    }
+
+
 }

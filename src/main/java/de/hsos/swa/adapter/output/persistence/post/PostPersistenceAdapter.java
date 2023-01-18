@@ -20,7 +20,7 @@ import java.util.UUID;
 @Transactional(value = Transactional.TxType.MANDATORY)
 public class PostPersistenceAdapter implements
         SavePostOutputPort,
-        //UpdatePostOutputPort,     // TODO: UpdatePostOutputPort implementieren
+        UpdatePostOutputPort,     // TODO: UpdatePostOutputPort implementieren
         GetPostByIdOutputPort {
 
     @Inject
@@ -55,16 +55,17 @@ public class PostPersistenceAdapter implements
         }
     }
 
-//    @Override
-//    public Result<Void> updatePost(Post post) {
-//        PostPersistenceEntity postPersistenceEntity = PostPersistenceEntity.Converter.toPersistenceEntity(post);
-//        try {
-//            entityManager.merge(postPersistenceEntity);
-//            // TODO: Return generic Result
-//            return Result.success();
-//        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-//            log.error("savePost Error", e);
-//            return Result.exception(e);
-//        }
-//    }
+
+    @Override
+    @Transactional(value = Transactional.TxType.MANDATORY)
+    public Result<UUID> updatePost(Post post) {
+        PostPersistenceEntity postPersistenceEntity = PostPersistenceEntity.Converter.toPersistenceEntity(post);
+        try {
+            entityManager.merge(postPersistenceEntity);
+            return Result.success(postPersistenceEntity.id);
+        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
+            log.error("updatePost Error", e);
+            return Result.exception(e);
+        }
+    }
 }

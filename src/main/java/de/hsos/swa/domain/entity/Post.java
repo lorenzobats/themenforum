@@ -6,6 +6,7 @@ import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -42,8 +43,13 @@ public class Post {
     }
 
     public void addComment(Comment comment) {
-        //some domainlogic...
+        //comment id nur unique in scope eines Posts?
         this.comments.add(comment);
+    }
+
+    public void addReplyToComment(String parentCommentId, Comment reply) {
+        Optional<Comment> parentComment = this.comments.stream().filter(comment -> comment.getId().toString().equals(parentCommentId)).findFirst();
+        parentComment.ifPresent(comment -> comment.addReply(reply));
     }
 
     public UUID getId() {
@@ -56,5 +62,22 @@ public class Post {
 
     public User getUser() {
         return user;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", user=" + user +
+                ", topic=" + topic +
+                ", publishedDate=" + publishedDate +
+                ", comments=" + comments +
+                ", upvotes=" + upvotes +
+                '}';
     }
 }
