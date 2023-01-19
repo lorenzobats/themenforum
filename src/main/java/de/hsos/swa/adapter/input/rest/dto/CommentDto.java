@@ -13,7 +13,10 @@ public class CommentDto {
     public String username;
     public String text;
 
+
+    public String parentId;
     public List<CommentDto> replies = new ArrayList<>();
+
 
     public CommentDto(String id, String username, String text) {
         this.id = id;
@@ -31,7 +34,11 @@ public class CommentDto {
             CommentDto commentDto = new CommentDto(String.valueOf(comment.getId()), comment.getUser().getName(), comment.getText());
             commentDto.replies = repliesDto;
 
+            if(comment.getParentComment() != null) {
+                commentDto.parentId = comment.getParentComment().getId().toString();
+            }
             return commentDto;
         }
+
     }
 }
