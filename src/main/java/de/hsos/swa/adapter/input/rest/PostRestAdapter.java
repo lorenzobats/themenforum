@@ -82,7 +82,7 @@ public class PostRestAdapter {
 
     @POST
     @Path("{id}/comments")
-    //TODO RolesAllowed nur registrierte Nutzer
+    @RolesAllowed("member")
     public Response commentPost(@PathParam("id") String postId, @Context SecurityContext securityContext) {
         try {
             String username = securityContext.getUserPrincipal().getName();

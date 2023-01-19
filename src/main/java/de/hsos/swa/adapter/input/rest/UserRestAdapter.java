@@ -32,6 +32,9 @@ public class UserRestAdapter {
     @Inject
     GetUserByNameInputPort getUserByNameInputPort;
 
+
+    // TODO: GetUsers – Roles Admin
+
     @GET
     @Path("{name}")
     public Response getUserByName(@PathParam("name") String username) {
@@ -63,4 +66,7 @@ public class UserRestAdapter {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
     }
+
+    // TODO: UpdateUser
+    // TODO: DeleteUser
 }
