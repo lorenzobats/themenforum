@@ -14,8 +14,11 @@ import java.util.stream.Collectors;
 
 @Entity(name = "Post")
 @Table(name = "post_table")
+@NamedQuery(name = "PostPersistenceEntity.findAll", query = "SELECT p FROM Post p")
+@NamedQuery(name = "PostPersistenceEntity.findAllExcludeComments", query = "SELECT NEW Post(p.id, p.title, p.userPersistenceEntity) FROM Post p")
 @NamedQuery(name = "PostPersistenceEntity.findById", query = "SELECT p FROM Post p WHERE p.id = :id")
-@NamedQuery(name = "PostPersistenceEntity.findByIdExcludeComments", query = "SELECT p FROM Post p JOIN FETCH p.userPersistenceEntity WHERE p.id = :id")
+@NamedQuery(name = "PostPersistenceEntity.findByIdExcludeComments", query = "SELECT NEW Post(p.id, p.title, p.userPersistenceEntity) FROM Post p WHERE p.id = :id")
+
 public class PostPersistenceEntity {
     @Id
     UUID id;

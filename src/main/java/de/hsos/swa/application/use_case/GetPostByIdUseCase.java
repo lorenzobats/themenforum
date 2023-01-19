@@ -27,9 +27,7 @@ public class GetPostByIdUseCase implements GetPostByIdInputPort {
                     postResult.getData().getTitle(),
                     postResult.getData().getUser().getName());
 
-            if(request.includeComments()){
-                getPostByIdInputPortResponse.setComments(postResult.getData().getComments());
-            }
+            getPostByIdInputPortResponse.setComments(postResult.getData().getComments());
 
             return Result.success(getPostByIdInputPortResponse);
         }

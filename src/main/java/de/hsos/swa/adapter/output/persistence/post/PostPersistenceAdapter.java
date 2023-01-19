@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TransactionRequiredException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.UUID;
 
 @RequestScoped
@@ -23,9 +24,26 @@ public class PostPersistenceAdapter implements PostRepository {
     @Inject
     Logger log;
 
+
+    @Override
+    public Result<List<Post>> getAllPosts(boolean includeComments) {
+        TypedQuery<PostPersistenceEntity> query = includeComments
+                ? entityManager.createNamedQuery("PostPersistenceEntity.findAll", PostPersistenceEntity.class)
+                : entityManager.createNamedQuery("PostPersistenceEntity.findAllExcludeComments", PostPersistenceEntity.class);
+
+        List<PostPersistenceEntity> postList;
+        try {
+            postList = query.getResultList();
+            return Result.success(postList.stream().map(PostPersistenceEntity.Converter::toDomainEntity).toList());
+        } catch (Exception e) {
+            log.error("GetPostById Error", e);
+            return Result.exception(e);
+        }
+    }
+
+
     @Override
     public Result<Post> getPostById(UUID postId, boolean includeComments) {
-
         TypedQuery<PostPersistenceEntity> query = includeComments
                 ? entityManager.createNamedQuery("PostPersistenceEntity.findById", PostPersistenceEntity.class)
                 : entityManager.createNamedQuery("PostPersistenceEntity.findByIdExcludeComments", PostPersistenceEntity.class);
@@ -51,6 +69,7 @@ public class PostPersistenceAdapter implements PostRepository {
     public Result<Void> deletePost(String postId) {
         return null;
     }
+
 
 
     @Override

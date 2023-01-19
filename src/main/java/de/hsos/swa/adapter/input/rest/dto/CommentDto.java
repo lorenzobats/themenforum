@@ -31,7 +31,12 @@ public class CommentDto {
     public static class Converter {
         public static CommentDto toDto(Comment comment) {
             List<CommentDto> repliesDto = comment.getReplies().stream().map(CommentDto.Converter::toDto).collect(Collectors.toList());
-            CommentDto commentDto = new CommentDto(String.valueOf(comment.getId()), comment.getUser().getName(), comment.getText());
+
+            CommentDto commentDto = new CommentDto(
+                    String.valueOf(comment.getId()),
+                    comment.getUser().getName(),
+                    comment.getText());
+
             commentDto.replies = repliesDto;
 
             if(comment.getParentComment() != null) {

@@ -1,6 +1,9 @@
 package de.hsos.swa.adapter.input.rest;
 
-import de.hsos.swa.adapter.input.rest.dto.*;
+import de.hsos.swa.adapter.input.rest.request.CreatePostRestAdapterRequest;
+import de.hsos.swa.adapter.input.rest.response.CreatePostRestAdapterResponse;
+import de.hsos.swa.adapter.input.rest.response.GetAllPostsRestAdapterResponse;
+import de.hsos.swa.adapter.input.rest.response.GetPostByIdRestAdapterResponse;
 import de.hsos.swa.adapter.input.rest.validation.ValidationResult;
 import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.commentPost.CommentPostInputPort;
@@ -9,13 +12,15 @@ import de.hsos.swa.application.port.input.commentPost.CommentPostInputPortRespon
 import de.hsos.swa.application.port.input.createPost.CreatePostInputPort;
 import de.hsos.swa.application.port.input.createPost.CreatePostInputPortRequest;
 import de.hsos.swa.application.port.input.createPost.CreatePostInputPortResponse;
+import de.hsos.swa.application.port.input.getAllPosts.GetAllPostsInputPort;
+import de.hsos.swa.application.port.input.getAllPosts.GetAllPostsInputPortRequest;
+import de.hsos.swa.application.port.input.getAllPosts.GetAllPostsInputPortResponse;
 import de.hsos.swa.application.port.input.getPostById.GetPostByIdInputPort;
 import de.hsos.swa.application.port.input.getPostById.GetPostByIdInputPortRequest;
 import de.hsos.swa.application.port.input.getPostById.GetPostByIdInputPortResponse;
 import de.hsos.swa.application.port.input.replyToComment.ReplyToCommentInputPort;
 import de.hsos.swa.application.port.input.replyToComment.ReplyToCommentInputPortRequest;
 import de.hsos.swa.application.port.input.replyToComment.ReplyToCommentInputPortResponse;
-import io.quarkus.logging.Log;
 import org.jboss.logging.Logger;
 
 import javax.annotation.security.RolesAllowed;
@@ -37,13 +42,13 @@ import javax.ws.rs.core.SecurityContext;
 public class PostRestAdapter {
     @Inject
     CreatePostInputPort createPostInputPort;
-
     @Inject
     GetPostByIdInputPort getPostByIdInputPort;
 
     @Inject
+    GetAllPostsInputPort getAllPostsInputPort;
+    @Inject
     CommentPostInputPort commentPostInputPort;
-
     @Inject
     ReplyToCommentInputPort replyToCommentInputPort;
 
@@ -64,6 +69,21 @@ public class PostRestAdapter {
                 return Response.status(Response.Status.CREATED).entity(response).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).entity(inputPortResult.getErrorMessage()).build();
+        } catch (ConstraintViolationException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+        }
+    }
+
+    @GET
+    public Response getAllPosts(@DefaultValue("false") @QueryParam("comments") boolean includeComments) {
+        try {
+            Result<GetAllPostsInputPortResponse> inputPortResult = this.getAllPostsInputPort.getAllPosts(new GetAllPostsInputPortRequest(includeComments));
+            if (inputPortResult.isSuccessful()) {
+                // TODO: GetAllPostsRestAdapterResponse implementieren mit Hilfe von PostDTO
+                GetAllPostsRestAdapterResponse response = GetAllPostsRestAdapterResponse.Converter.fromUseCaseResult(inputPortResult.getData());
+                return Response.status(Response.Status.OK).entity(response).build();
+            }
+            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(inputPortResult.getErrorMessage())).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }

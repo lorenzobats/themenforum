@@ -1,4 +1,4 @@
-package de.hsos.swa.adapter.input.rest.dto;
+package de.hsos.swa.adapter.input.rest.request;
 
 import de.hsos.swa.application.port.input.registerUser.RegisterUserInputPortRequest;
 
