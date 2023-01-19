@@ -40,21 +40,17 @@ public class Post {
     }
 
     public void addComment(Comment comment) {
-        //comment id nur unique in scope eines Posts?
         this.comments.add(comment);
     }
 
     public void addReplyToComment(String parentCommentId, Comment reply) {
-//        Optional<Comment> parentComment = this.comments.stream().filter(comment -> comment.getId().toString().equals(parentCommentId)).findFirst();
-//        parentComment.ifPresent(comment -> comment.addReply(reply));
-
         Optional<Comment> parentComment = findCommentById(parentCommentId);
         parentComment.ifPresent(comment -> comment.addReply(reply));
 
     }
 
     private Optional<Comment> findCommentById(String parentCommentId) {
-        Deque<Comment> stack = new ArrayDeque<Comment>(this.comments);
+        Deque<Comment> stack = new ArrayDeque<>(this.comments);
 
         while (!stack.isEmpty()) {
             Comment comment = stack.pop();

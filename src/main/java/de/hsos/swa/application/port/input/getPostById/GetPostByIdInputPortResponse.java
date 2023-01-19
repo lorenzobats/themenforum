@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GetPostByIdInputPortResponse {
+    //Art Post DTO
     private final String title;
     private final String username;
 
-    //TODO DTO???
     private List<Comment> comments = new ArrayList<>();
 
     //Datum

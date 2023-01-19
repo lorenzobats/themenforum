@@ -6,9 +6,7 @@ import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.User;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 // TODO: Comments Relation Bidirektional ?
@@ -58,6 +56,17 @@ public class CommentPersistenceEntity {
         this.userPersistenceEntity = userPersistenceEntity;
     }
 
+    public CommentPersistenceEntity(
+            UUID id,
+            String text,
+            UserPersistenceEntity userPersistenceEntity,
+            CommentPersistenceEntity parent) {
+        this.id = id;
+        this.text = text;
+        this.userPersistenceEntity = userPersistenceEntity;
+        this.parentComment = parent;
+    }
+
 
     public static class Converter {
         public static Comment toDomainEntity(CommentPersistenceEntity commentPersistenceEntity) {
@@ -82,6 +91,7 @@ public class CommentPersistenceEntity {
 
             return new CommentPersistenceEntity(comment.getId(), comment.getText(), userPersistenceEntity, parent, repliesPersistenceEntity);
         }
+
 
         public static CommentPersistenceEntity parentToPersistenceEntity(Comment parentComment) {
             UserPersistenceEntity userPersistenceEntity = UserPersistenceEntity.Converter.toPersistenceEntity(parentComment.getUser());
