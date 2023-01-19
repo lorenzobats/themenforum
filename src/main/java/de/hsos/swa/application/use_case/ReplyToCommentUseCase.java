@@ -4,8 +4,7 @@ import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.replyToComment.ReplyToCommentInputPort;
 import de.hsos.swa.application.port.input.replyToComment.ReplyToCommentInputPortRequest;
 import de.hsos.swa.application.port.input.replyToComment.ReplyToCommentInputPortResponse;
-import de.hsos.swa.application.port.output.post.GetPostByIdOutputPort;
-import de.hsos.swa.application.port.output.post.UpdatePostOutputPort;
+import de.hsos.swa.application.port.output.PostRepository;
 import de.hsos.swa.application.port.output.user.GetUserByNameOutputPort;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
@@ -22,13 +21,11 @@ public class ReplyToCommentUseCase implements ReplyToCommentInputPort {
     Logger log;
 
     @Inject
-    GetPostByIdOutputPort getPostByIdOutputPort;
+    PostRepository postRepository;
 
     @Inject
     GetUserByNameOutputPort getUserByNameOutputPort;
 
-    @Inject
-    UpdatePostOutputPort updatePostOutputPort;
 
 
     @Override
@@ -40,7 +37,7 @@ public class ReplyToCommentUseCase implements ReplyToCommentInputPort {
         User user = getUserResponse.getData();
 
         // 3. Post holen
-        Result<Post> getPostResponse = this.getPostByIdOutputPort.getPostById(UUID.fromString(request.getPostId()));
+        Result<Post> getPostResponse = this.postRepository.getPostById(UUID.fromString(request.getPostId()), true);
         if (!getPostResponse.isSuccessful()) {
             return Result.error("Post does not exist"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
         }
@@ -49,7 +46,7 @@ public class ReplyToCommentUseCase implements ReplyToCommentInputPort {
         post.addReplyToComment(request.getCommentId(), new Comment(user, request.getCommentText()));
 
 
-        Result<UUID> updatePostResponse = this.updatePostOutputPort.updatePost(post);
+        Result<UUID> updatePostResponse = this.postRepository.updatePost(post);
 
         if (updatePostResponse.isSuccessful()) {
             return Result.success(new ReplyToCommentInputPortResponse(updatePostResponse.getData()));

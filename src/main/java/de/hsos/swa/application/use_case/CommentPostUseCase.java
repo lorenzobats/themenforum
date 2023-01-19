@@ -4,8 +4,7 @@ import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.commentPost.CommentPostInputPort;
 import de.hsos.swa.application.port.input.commentPost.CommentPostInputPortRequest;
 import de.hsos.swa.application.port.input.commentPost.CommentPostInputPortResponse;
-import de.hsos.swa.application.port.output.post.GetPostByIdOutputPort;
-import de.hsos.swa.application.port.output.post.UpdatePostOutputPort;
+import de.hsos.swa.application.port.output.PostRepository;
 import de.hsos.swa.application.port.output.user.GetUserByNameOutputPort;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
@@ -19,13 +18,11 @@ import java.util.UUID;
 public class CommentPostUseCase implements CommentPostInputPort {
 
     @Inject
-    GetPostByIdOutputPort getPostByIdOutputPort;
+    PostRepository postRepository;
 
     @Inject
     GetUserByNameOutputPort getUserByNameOutputPort;
 
-    @Inject
-    UpdatePostOutputPort updatePostOutputPort;
 
     @Override
     public Result<CommentPostInputPortResponse> commentPost(CommentPostInputPortRequest command) {
@@ -41,7 +38,7 @@ public class CommentPostUseCase implements CommentPostInputPort {
         Comment comment = new Comment(user, command.getCommentText());
 
         // 3. Post holen
-        Result<Post> getPostResponse = this.getPostByIdOutputPort.getPostById(UUID.fromString(command.getPostId()));
+        Result<Post> getPostResponse = this.postRepository.getPostById(UUID.fromString(command.getPostId()), true);
         if (!getPostResponse.isSuccessful()) {
             return Result.error("Post does not exist"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
         }
@@ -50,7 +47,7 @@ public class CommentPostUseCase implements CommentPostInputPort {
         post.addComment(comment);
 
         // 4. Post persistieren
-        Result<UUID> updatePostResponse = this.updatePostOutputPort.updatePost(post);
+        Result<UUID> updatePostResponse = this.postRepository.updatePost(post);
 
         if (updatePostResponse.isSuccessful()) {
             return Result.success(new CommentPostInputPortResponse(updatePostResponse.getData()));

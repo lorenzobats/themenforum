@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @Entity(name = "Post")
 @Table(name = "post_table")
 @NamedQuery(name = "PostPersistenceEntity.findById", query = "SELECT p FROM Post p WHERE p.id = :id")
+@NamedQuery(name = "PostPersistenceEntity.findByIdExcludeComments", query = "SELECT p FROM Post p JOIN FETCH p.userPersistenceEntity WHERE p.id = :id")
 public class PostPersistenceEntity {
     @Id
     UUID id;
@@ -25,11 +26,7 @@ public class PostPersistenceEntity {
     @ManyToOne
     UserPersistenceEntity userPersistenceEntity;
 
-    // TODO: Comments Relation
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     List<CommentPersistenceEntity> comments = new ArrayList<>();
 
 
@@ -49,8 +46,6 @@ public class PostPersistenceEntity {
         this.comments = comments;
     }
 
-
-    // TODO: Mapping auf Domain Entities hier ist scheiße
     public static class Converter {
         public static Post toDomainEntity(PostPersistenceEntity postPersistenceEntity) {
             User user = UserPersistenceEntity.Converter.toDomainEntity(postPersistenceEntity.userPersistenceEntity);

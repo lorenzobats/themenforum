@@ -1,9 +1,7 @@
 package de.hsos.swa.adapter.output.persistence.post;
 
 import de.hsos.swa.application.port.input._shared.Result;
-import de.hsos.swa.application.port.output.post.GetPostByIdOutputPort;
-import de.hsos.swa.application.port.output.post.SavePostOutputPort;
-import de.hsos.swa.application.port.output.post.UpdatePostOutputPort;
+import de.hsos.swa.application.port.output.PostRepository;
 import de.hsos.swa.domain.entity.Post;
 import org.jboss.logging.Logger;
 
@@ -18,11 +16,7 @@ import java.util.UUID;
 
 @RequestScoped
 @Transactional(value = Transactional.TxType.MANDATORY)
-public class PostPersistenceAdapter implements
-        SavePostOutputPort,
-        UpdatePostOutputPort,     // TODO: UpdatePostOutputPort implementieren
-        GetPostByIdOutputPort {
-
+public class PostPersistenceAdapter implements PostRepository {
     @Inject
     EntityManager entityManager;
 
@@ -30,8 +24,12 @@ public class PostPersistenceAdapter implements
     Logger log;
 
     @Override
-    public Result<Post> getPostById(UUID postId) {
-        TypedQuery<PostPersistenceEntity> query = entityManager.createNamedQuery("PostPersistenceEntity.findById", PostPersistenceEntity.class);
+    public Result<Post> getPostById(UUID postId, boolean includeComments) {
+
+        TypedQuery<PostPersistenceEntity> query = includeComments
+                ? entityManager.createNamedQuery("PostPersistenceEntity.findById", PostPersistenceEntity.class)
+                : entityManager.createNamedQuery("PostPersistenceEntity.findByIdExcludeComments", PostPersistenceEntity.class);
+
         query.setParameter("id", postId);
         PostPersistenceEntity post;
         try {
@@ -42,6 +40,18 @@ public class PostPersistenceAdapter implements
             return Result.exception(e);
         }
     }
+
+    @Override
+    public Result<Post> getPostById(UUID postId) {
+        return getPostById(postId, true);
+    }
+
+
+    @Override
+    public Result<Void> deletePost(String postId) {
+        return null;
+    }
+
 
     @Override
     public Result<UUID> savePost(Post post) {

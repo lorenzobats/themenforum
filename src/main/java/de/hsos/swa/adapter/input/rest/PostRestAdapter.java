@@ -15,6 +15,8 @@ import de.hsos.swa.application.port.input.getPostById.GetPostByIdInputPortRespon
 import de.hsos.swa.application.port.input.replyToComment.ReplyToCommentInputPort;
 import de.hsos.swa.application.port.input.replyToComment.ReplyToCommentInputPortRequest;
 import de.hsos.swa.application.port.input.replyToComment.ReplyToCommentInputPortResponse;
+import io.quarkus.logging.Log;
+import org.jboss.logging.Logger;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -46,6 +48,9 @@ public class PostRestAdapter {
     ReplyToCommentInputPort replyToCommentInputPort;
 
 
+    @Inject
+    Logger log;
+
     @POST
     @RolesAllowed("member")
     public Response createPost(CreatePostRestAdapterRequest request, @Context SecurityContext securityContext) {
@@ -66,9 +71,12 @@ public class PostRestAdapter {
 
     @GET
     @Path("{id}")
-    public Response getPostById(@PathParam("id") String id, @QueryParam("comments") boolean includeComments) {
+    public Response getPostById(
+            @PathParam("id") String id,
+            @DefaultValue("true") @QueryParam("comments") boolean includeComments
+    ) {
         try {
-            Result<GetPostByIdInputPortResponse> inputPortResult = this.getPostByIdInputPort.getPostById(new GetPostByIdInputPortRequest(id));
+            Result<GetPostByIdInputPortResponse> inputPortResult = this.getPostByIdInputPort.getPostById(new GetPostByIdInputPortRequest(id, includeComments));
             if (inputPortResult.isSuccessful()) {
                 GetPostByIdRestAdapterResponse response = GetPostByIdRestAdapterResponse.Converter.fromUseCaseResult(inputPortResult.getData());
                 return Response.status(Response.Status.OK).entity(response).build();

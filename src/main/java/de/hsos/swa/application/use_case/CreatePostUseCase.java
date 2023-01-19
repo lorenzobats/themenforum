@@ -4,8 +4,8 @@ import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.createPost.CreatePostInputPort;
 import de.hsos.swa.application.port.input.createPost.CreatePostInputPortRequest;
 import de.hsos.swa.application.port.input.createPost.CreatePostInputPortResponse;
+import de.hsos.swa.application.port.output.PostRepository;
 import de.hsos.swa.application.port.output.user.GetUserByNameOutputPort;
-import de.hsos.swa.application.port.output.post.SavePostOutputPort;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.domain.factory.PostFactory;
@@ -21,7 +21,7 @@ public class CreatePostUseCase implements CreatePostInputPort {
     GetUserByNameOutputPort getUserByNameOutputPort;
 
     @Inject
-    SavePostOutputPort savePostOutputPort;
+    PostRepository postRepository;
 
 
     @Override
@@ -37,7 +37,7 @@ public class CreatePostUseCase implements CreatePostInputPort {
         Post post = PostFactory.createPost(inputPortRequest.getTitle(), user);
 
         // 3. Post persistieren
-        Result<UUID> savePostResponse = this.savePostOutputPort.savePost(post);
+        Result<UUID> savePostResponse = this.postRepository.savePost(post);
 
         return Result.success(new CreatePostInputPortResponse(savePostResponse.getData()));
     }

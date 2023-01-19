@@ -7,7 +7,6 @@ public class ReplyToCommentInputPortResponse {
 
     public ReplyToCommentInputPortResponse(UUID postId) {
         this.postId = postId;
-
     }
 
     public UUID getPostId() {
