@@ -5,7 +5,7 @@ import de.hsos.swa.application.port.input.commentPost.CommentPostInputPort;
 import de.hsos.swa.application.port.input.commentPost.CommentPostInputPortRequest;
 import de.hsos.swa.application.port.input.commentPost.CommentPostInputPortResponse;
 import de.hsos.swa.application.port.output.PostRepository;
-import de.hsos.swa.application.port.output.user.GetUserByNameOutputPort;
+import de.hsos.swa.application.port.output.UserRepository;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
@@ -21,13 +21,13 @@ public class CommentPostUseCase implements CommentPostInputPort {
     PostRepository postRepository;
 
     @Inject
-    GetUserByNameOutputPort getUserByNameOutputPort;
+    UserRepository userRepository;
 
 
     @Override
     public Result<CommentPostInputPortResponse> commentPost(CommentPostInputPortRequest command) {
         // 1. Nutzer holen
-        Result<User> getUserResponse = this.getUserByNameOutputPort.getUserByName(command.getUsername());
+        Result<User> getUserResponse = this.userRepository.getUserByName(command.getUsername());
         if (!getUserResponse.isSuccessful()) {
             return Result.error("User does not exist"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
         }

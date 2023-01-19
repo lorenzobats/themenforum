@@ -5,7 +5,7 @@ import de.hsos.swa.application.port.input.replyToComment.ReplyToCommentInputPort
 import de.hsos.swa.application.port.input.replyToComment.ReplyToCommentInputPortRequest;
 import de.hsos.swa.application.port.input.replyToComment.ReplyToCommentInputPortResponse;
 import de.hsos.swa.application.port.output.PostRepository;
-import de.hsos.swa.application.port.output.user.GetUserByNameOutputPort;
+import de.hsos.swa.application.port.output.UserRepository;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
@@ -24,13 +24,13 @@ public class ReplyToCommentUseCase implements ReplyToCommentInputPort {
     PostRepository postRepository;
 
     @Inject
-    GetUserByNameOutputPort getUserByNameOutputPort;
+    UserRepository userRepository;
 
 
 
     @Override
     public Result<ReplyToCommentInputPortResponse> replyToComment(ReplyToCommentInputPortRequest request) {
-        Result<User> getUserResponse = this.getUserByNameOutputPort.getUserByName(request.getUsername());
+        Result<User> getUserResponse = this.userRepository.getUserByName(request.getUsername());
         if (!getUserResponse.isSuccessful()) {
             return Result.error("User does not exist"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
         }

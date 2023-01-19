@@ -1,10 +1,7 @@
 package de.hsos.swa.adapter.output.persistence.user;
 
 import de.hsos.swa.application.port.input._shared.Result;
-import de.hsos.swa.application.port.output.user.CheckUsernameAvailabilityOutputPort;
-import de.hsos.swa.application.port.output.user.GetUserByIdOutputPort;
-import de.hsos.swa.application.port.output.user.SaveUserOutputPort;
-import de.hsos.swa.application.port.output.user.GetUserByNameOutputPort;
+import de.hsos.swa.application.port.output.UserRepository;
 import de.hsos.swa.domain.entity.User;
 import org.jboss.logging.Logger;
 
@@ -20,11 +17,7 @@ import java.util.UUID;
 
 @RequestScoped
 @Transactional(value = Transactional.TxType.MANDATORY)
-public class UserPersistenceAdapter implements
-        SaveUserOutputPort,
-        GetUserByNameOutputPort,
-        GetUserByIdOutputPort,
-        CheckUsernameAvailabilityOutputPort {
+public class UserPersistenceAdapter implements UserRepository {
 
     @Inject
     EntityManager entityManager;
@@ -86,8 +79,4 @@ public class UserPersistenceAdapter implements
             return Result.exception(e);
         }
     }
-
-
-
-
 }

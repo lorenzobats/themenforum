@@ -1,6 +1,5 @@
 package de.hsos.swa.adapter.output.persistence.comment;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import de.hsos.swa.adapter.output.persistence.user.UserPersistenceEntity;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.User;

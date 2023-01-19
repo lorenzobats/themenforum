@@ -1,7 +1,7 @@
 package de.hsos.swa.adapter.output.persistence.comment;
 
 import de.hsos.swa.application.port.input._shared.Result;
-import de.hsos.swa.application.port.output.comment.SaveCommentOutputPort;
+import de.hsos.swa.application.port.output.CommentRepository;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import org.jboss.logging.Logger;
@@ -16,8 +16,7 @@ import java.util.UUID;
 
 @RequestScoped
 @Transactional(value = Transactional.TxType.MANDATORY)
-public class CommentPersistenceAdapter implements
-        SaveCommentOutputPort {
+public class CommentPersistenceAdapter implements CommentRepository {
     @Inject
     EntityManager entityManager;
 

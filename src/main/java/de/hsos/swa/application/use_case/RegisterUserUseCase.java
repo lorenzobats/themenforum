@@ -4,8 +4,7 @@ import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.registerUser.RegisterUserInputPortRequest;
 import de.hsos.swa.application.port.input.registerUser.RegisterUserInputPortResponse;
 import de.hsos.swa.application.port.input.registerUser.RegisterUserInputPort;
-import de.hsos.swa.application.port.output.user.CheckUsernameAvailabilityOutputPort;
-import de.hsos.swa.application.port.output.user.SaveUserOutputPort;
+import de.hsos.swa.application.port.output.UserRepository;
 import de.hsos.swa.application.port.output.auth.createUserAuth.CreateUserAuthOutputPortRequest;
 import de.hsos.swa.application.port.output.auth.createUserAuth.CreateUserAuthOutputPort;
 import de.hsos.swa.application.port.output.auth.createUserAuth.CreateUserAuthOutputPortResponse;
@@ -21,16 +20,14 @@ import java.util.UUID;
 public class RegisterUserUseCase implements RegisterUserInputPort {
 
     @Inject
-    SaveUserOutputPort saveUserOutputPort;
+    UserRepository userRepository;
     @Inject
     CreateUserAuthOutputPort createUserAuthOutputPort;
-    @Inject
-    CheckUsernameAvailabilityOutputPort checkUsernameAvailabilityOutputPort;
 
     @Override
     public Result<RegisterUserInputPortResponse> registerUser(RegisterUserInputPortRequest inputPortRequest) {
         // 1. Überprüfen, ob der Nutzername bereits existiert
-        Result<Boolean> checkUsernameAvailabilityResponse = this.checkUsernameAvailabilityOutputPort.isUserNameAvailable(inputPortRequest.getUsername());
+        Result<Boolean> checkUsernameAvailabilityResponse = this.userRepository.isUserNameAvailable(inputPortRequest.getUsername());
 
         if(!checkUsernameAvailabilityResponse.isSuccessful()) {
             return Result.error("Registration failed");
@@ -54,7 +51,7 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
 
 
         // 2.B > PERSISTENCE > User Persistieren
-        Result<UUID> createUserResponse = this.saveUserOutputPort.saveUser(user);
+        Result<UUID> createUserResponse = this.userRepository.saveUser(user);
 
         if(!createUserResponse.isSuccessful()) {
             // TODO: UserAuth wieder löschen falls was schief gegangen ist bei Persistierung.
