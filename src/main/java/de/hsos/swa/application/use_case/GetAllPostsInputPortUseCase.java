@@ -1,5 +1,6 @@
 package de.hsos.swa.application.use_case;
 
+import de.hsos.swa.application.PostFilterParams;
 import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.getAllPosts.GetAllPostsInputPort;
 import de.hsos.swa.application.port.input.getAllPosts.GetAllPostsInputPortRequest;
@@ -19,7 +20,9 @@ public class GetAllPostsInputPortUseCase implements GetAllPostsInputPort {
 
     @Override
     public Result<GetAllPostsInputPortResponse> getAllPosts(GetAllPostsInputPortRequest request) {
-        Result<List<Post>> postResult = postRepository.getAllPosts(request.includeComments());
+        // TODO: Validierung der FilterParameter in Application Service?
+        Result<List<Post>> postResult = postRepository.getAllPosts((boolean) request.getFilterParams().get(PostFilterParams.INCLUDE_COMMENTS));
+        // TODO Frage Filtern der weiteren Parameter in Domain Service oder durch Datenbank?
         if (postResult.isSuccessful()) {
             GetAllPostsInputPortResponse getAllPostsInputPortResponse = new GetAllPostsInputPortResponse(postResult.getData());
             return Result.success(getAllPostsInputPortResponse);
