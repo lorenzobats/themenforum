@@ -1,7 +1,7 @@
 package de.hsos.swa.infrastructure.persistence.comment;
 
 import de.hsos.swa.application.Result;
-import de.hsos.swa.application.output.CommentRepository;
+import de.hsos.swa.application.output.persistence.CommentRepository;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import org.jboss.logging.Logger;

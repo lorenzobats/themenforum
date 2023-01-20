@@ -3,7 +3,7 @@ package de.hsos.swa.application.use_case;
 import de.hsos.swa.application.Result;
 import de.hsos.swa.application.input.GetCommentByIdInputPort;
 import de.hsos.swa.application.input.request.GetCommentByIdInputPortRequest;
-import de.hsos.swa.application.output.CommentRepository;
+import de.hsos.swa.application.output.persistence.CommentRepository;
 import de.hsos.swa.domain.entity.Comment;
 
 import javax.enterprise.context.RequestScoped;

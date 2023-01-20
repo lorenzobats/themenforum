@@ -1,6 +1,6 @@
 package de.hsos.swa.application.input.request;
 
-import de.hsos.swa.domain.PostFilterParams;
+import de.hsos.swa.application.PostFilterParams;
 
 import java.util.Map;
 

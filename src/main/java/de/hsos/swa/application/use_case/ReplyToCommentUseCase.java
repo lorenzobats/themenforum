@@ -3,7 +3,7 @@ package de.hsos.swa.application.use_case;
 import de.hsos.swa.application.Result;
 import de.hsos.swa.application.input.ReplyToCommentInputPort;
 import de.hsos.swa.application.input.request.ReplyToCommentInputPortRequest;
-import de.hsos.swa.application.output.UserRepository;
+import de.hsos.swa.application.output.persistence.UserRepository;
 import de.hsos.swa.application.output.persistence.PostRepository;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;

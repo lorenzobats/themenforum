@@ -1,7 +1,6 @@
-package de.hsos.swa.domain;
+package de.hsos.swa.application;
 
 import javax.swing.*;
-import java.time.LocalDate;
 
 // TODO: Wo ist diese Klasse angesiedelt (Domain, Application)?
 public enum PostFilterParams {

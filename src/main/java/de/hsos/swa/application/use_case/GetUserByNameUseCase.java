@@ -3,7 +3,7 @@ package de.hsos.swa.application.use_case;
 import de.hsos.swa.application.Result;
 import de.hsos.swa.application.input.request.GetUserByNameInputPortRequest;
 import de.hsos.swa.application.input.GetUserByNameInputPort;
-import de.hsos.swa.application.output.UserRepository;
+import de.hsos.swa.application.output.persistence.UserRepository;
 import de.hsos.swa.domain.entity.User;
 
 import javax.enterprise.context.ApplicationScoped;

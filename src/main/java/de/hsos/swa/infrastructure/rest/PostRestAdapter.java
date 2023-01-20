@@ -3,7 +3,7 @@ package de.hsos.swa.infrastructure.rest;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import de.hsos.swa.infrastructure.rest.dto.PostDto;
 import de.hsos.swa.infrastructure.rest.request.CreatePostRestAdapterRequest;
-import de.hsos.swa.domain.PostFilterParams;
+import de.hsos.swa.application.PostFilterParams;
 import de.hsos.swa.application.Result;
 import de.hsos.swa.application.input.CreatePostInputPort;
 import de.hsos.swa.application.input.request.CreatePostInputPortRequest;

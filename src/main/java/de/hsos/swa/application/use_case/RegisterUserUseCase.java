@@ -3,7 +3,7 @@ package de.hsos.swa.application.use_case;
 import de.hsos.swa.application.Result;
 import de.hsos.swa.application.input.request.RegisterUserInputPortRequest;
 import de.hsos.swa.application.input.RegisterUserInputPort;
-import de.hsos.swa.application.output.UserRepository;
+import de.hsos.swa.application.output.persistence.UserRepository;
 import de.hsos.swa.application.output.auth.createUserAuth.CreateUserAuthOutputPortRequest;
 import de.hsos.swa.application.output.auth.createUserAuth.CreateUserAuthOutputPort;
 import de.hsos.swa.application.output.auth.createUserAuth.CreateUserAuthOutputPortResponse;

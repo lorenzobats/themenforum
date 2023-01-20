@@ -1,6 +1,6 @@
 package de.hsos.swa.application.use_case;
 
-import de.hsos.swa.domain.PostFilterParams;
+import de.hsos.swa.application.PostFilterParams;
 import de.hsos.swa.application.Result;
 import de.hsos.swa.application.input.GetAllPostsInputPort;
 import de.hsos.swa.application.input.request.GetAllPostsInputPortRequest;

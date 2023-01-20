@@ -1,4 +1,4 @@
-package de.hsos.swa.application.output;
+package de.hsos.swa.application.output.persistence;
 
 import de.hsos.swa.application.Result;
 import de.hsos.swa.domain.entity.Comment;
