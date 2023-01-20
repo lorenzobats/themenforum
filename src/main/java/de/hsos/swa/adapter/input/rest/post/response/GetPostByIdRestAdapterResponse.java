@@ -1,6 +1,6 @@
-package de.hsos.swa.adapter.input.rest.response;
+package de.hsos.swa.adapter.input.rest.post.response;
 
-import de.hsos.swa.adapter.input.rest.dto.CommentDto;
+import de.hsos.swa.adapter.input.rest._dto.CommentDto;
 import de.hsos.swa.application.port.input.getPostById.GetPostByIdInputPortResponse;
 
 import java.util.*;

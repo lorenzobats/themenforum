@@ -1,11 +1,9 @@
-package de.hsos.swa.adapter.input.rest.dto;
+package de.hsos.swa.adapter.input.rest._dto;
 
 import de.hsos.swa.domain.entity.Comment;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CommentDto {
@@ -13,10 +11,8 @@ public class CommentDto {
     public String username;
     public String text;
 
-
     public String parentId;
     public List<CommentDto> replies = new ArrayList<>();
-
 
     public CommentDto(String id, String username, String text) {
         this.id = id;

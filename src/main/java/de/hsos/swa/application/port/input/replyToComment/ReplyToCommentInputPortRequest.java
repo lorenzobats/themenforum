@@ -1,21 +1,29 @@
 package de.hsos.swa.application.port.input.replyToComment;
 
-import javax.validation.constraints.NotEmpty;
+import de.hsos.swa.application.port.input._shared.SelfValidating;
+import de.hsos.swa.application.port.input.registerUser.RegisterUserInputPortRequest;
 
-public class ReplyToCommentInputPortRequest {
-    @NotEmpty(message="Field: 'postId' is missing")
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+public class ReplyToCommentInputPortRequest extends SelfValidating<RegisterUserInputPortRequest> {
+    @NotEmpty(message="postId is missing")
+    @Pattern(regexp = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}", message = "postId is not valid")
     private final String postId;
 
-    @NotEmpty(message="Field: 'postId' is missing")
+    @NotEmpty(message="commentId is missing")
+    @Pattern(regexp = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}", message = "commentId is not valid")
     private final String commentId;
 
-    @NotEmpty(message="Field: 'userId' is missing")
+    @NotEmpty(message="username is missing")
+    @Size(min = 4, max = 20, message = "username must be between 4 and 20 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9_.-]*$", message = "username format is not valid")
     private final String username;
 
-    @NotEmpty(message = "Field: 'commentText' is missing")
+    @NotEmpty(message = "commentText is missing")
     private final String commentText;
-
-
+    
     public ReplyToCommentInputPortRequest(
             String postId,
             String commentId,
@@ -25,6 +33,7 @@ public class ReplyToCommentInputPortRequest {
         this.commentId = commentId;
         this.username = username;
         this.commentText = commentText;
+        this.validateSelf();
     }
 
     public String getPostId() {

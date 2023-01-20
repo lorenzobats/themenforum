@@ -1,4 +1,4 @@
-package de.hsos.swa.adapter.input.rest.request;
+package de.hsos.swa.adapter.input.rest.user.request;
 
 import de.hsos.swa.application.port.input.registerUser.RegisterUserInputPortRequest;
 
@@ -16,8 +16,8 @@ public class RegisterUserRestAdapterRequest {
     }
 
     public static class Converter {
-        public static RegisterUserInputPortRequest toUseCaseCommand(RegisterUserRestAdapterRequest request) {
-            return new RegisterUserInputPortRequest(request.username, request.password);
+        public static RegisterUserInputPortRequest toInputPortCommand(RegisterUserRestAdapterRequest adapterRequest) {
+            return new RegisterUserInputPortRequest(adapterRequest.username, adapterRequest.password);
         }
     }
 }

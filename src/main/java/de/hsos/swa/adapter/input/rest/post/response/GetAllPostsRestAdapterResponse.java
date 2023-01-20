@@ -1,6 +1,6 @@
-package de.hsos.swa.adapter.input.rest.response;
+package de.hsos.swa.adapter.input.rest.post.response;
 
-import de.hsos.swa.adapter.input.rest.dto.PostDto;
+import de.hsos.swa.adapter.input.rest._dto.PostDto;
 import de.hsos.swa.application.port.input.getAllPosts.GetAllPostsInputPortResponse;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class GetAllPostsRestAdapterResponse {
     }
 
     public static class Converter {
-        public static GetAllPostsRestAdapterResponse fromUseCaseResult(GetAllPostsInputPortResponse result) {
+        public static GetAllPostsRestAdapterResponse fromInputPortResult(GetAllPostsInputPortResponse result) {
             return new GetAllPostsRestAdapterResponse(result.getPosts().stream().map(PostDto.Converter::toDto).toList());
         }
     }

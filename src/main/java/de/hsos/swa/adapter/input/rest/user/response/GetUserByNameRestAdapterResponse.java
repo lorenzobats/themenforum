@@ -1,4 +1,4 @@
-package de.hsos.swa.adapter.input.rest.response;
+package de.hsos.swa.adapter.input.rest.user.response;
 
 import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPortResponse;
 

@@ -1,4 +1,4 @@
-package de.hsos.swa.adapter.input.rest.validation;
+package de.hsos.swa.adapter.input.rest._validation;
 
 import javax.validation.ConstraintViolation;
 import java.util.Set;

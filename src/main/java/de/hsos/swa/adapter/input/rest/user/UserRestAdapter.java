@@ -1,10 +1,10 @@
-package de.hsos.swa.adapter.input.rest;
+package de.hsos.swa.adapter.input.rest.user;
 
 
-import de.hsos.swa.adapter.input.rest.response.GetUserByNameRestAdapterResponse;
-import de.hsos.swa.adapter.input.rest.request.RegisterUserRestAdapterRequest;
-import de.hsos.swa.adapter.input.rest.response.RegisterUserRestAdapterResponse;
-import de.hsos.swa.adapter.input.rest.validation.ValidationResult;
+import de.hsos.swa.adapter.input.rest.user.response.GetUserByNameRestAdapterResponse;
+import de.hsos.swa.adapter.input.rest.user.request.RegisterUserRestAdapterRequest;
+import de.hsos.swa.adapter.input.rest.user.response.RegisterUserRestAdapterResponse;
+import de.hsos.swa.adapter.input.rest._validation.ValidationResult;
 import de.hsos.swa.application.port.input._shared.Result;
 import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPortRequest;
 import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPortResponse;
@@ -36,16 +36,18 @@ public class UserRestAdapter {
     // TODO: GetUsers – Roles Admin
 
     @GET
-    @Path("{name}")
-    public Response getUserByName(@PathParam("name") String username) {
+    @Path("{username}")
+    // --> String name
+    // <-- GetUserByNameRestAdapterResponse
+    public Response getUserByName(@PathParam("username") String username) {
         try {
-            GetUserByNameInputPortRequest command = new GetUserByNameInputPortRequest(username);
-            Result<GetUserByNameInputPortResponse> result = this.getUserByNameInputPort.getUserByName(command);
+            GetUserByNameInputPortRequest query = new GetUserByNameInputPortRequest(username);
+            Result<GetUserByNameInputPortResponse> result = this.getUserByNameInputPort.getUserByName(query);
             if (result.isSuccessful()) {
                 GetUserByNameRestAdapterResponse response = GetUserByNameRestAdapterResponse.Converter.fromUseCaseResult(result.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
-            //Error in Datenstruktur wrappen
+            // TODO: Error in Datenstruktur wrappen (gilt für alle)
             return Response.status(Response.Status.BAD_REQUEST).entity(result.getErrorMessage()).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
@@ -53,9 +55,13 @@ public class UserRestAdapter {
     }
 
     @POST
+    // --> RegisterUserRestAdapterRequest
+    // <-- RegisterUserRestAdapterResponse
     public Response registerUser(RegisterUserRestAdapterRequest request) {
+        if(request == null)
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult("Empy Request Body")).build();
         try {
-            RegisterUserInputPortRequest command = RegisterUserRestAdapterRequest.Converter.toUseCaseCommand(request);
+            RegisterUserInputPortRequest command = RegisterUserRestAdapterRequest.Converter.toInputPortCommand(request);
             Result<RegisterUserInputPortResponse> result = this.registerUserInputPort.registerUser(command);
             if (result.isSuccessful()) {
                 RegisterUserRestAdapterResponse response = RegisterUserRestAdapterResponse.Converter.fromUseCaseResult(result.getData());
@@ -68,5 +74,6 @@ public class UserRestAdapter {
     }
 
     // TODO: UpdateUser
+
     // TODO: DeleteUser
 }

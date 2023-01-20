@@ -1,4 +1,4 @@
-package de.hsos.swa.adapter.input.rest.dto;
+package de.hsos.swa.adapter.input.rest._dto;
 import de.hsos.swa.domain.entity.Post;
 
 import java.util.ArrayList;

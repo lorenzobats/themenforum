@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 // https://vladmihalcea.com/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/
 @Entity(name = "Comment")
 @Table(name = "comment_table")
-@NamedQuery(name = "CommentPersistenceEntity.findById", query = "SELECT p FROM Comment p WHERE p.id = :id")
+@NamedQuery(name = "CommentPersistenceEntity.findById", query = "SELECT c FROM Comment c WHERE c.id = :id")
 public class CommentPersistenceEntity {
     @Id
     UUID id;

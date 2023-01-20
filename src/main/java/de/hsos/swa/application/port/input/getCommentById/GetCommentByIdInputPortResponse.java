@@ -1,22 +1,15 @@
 package de.hsos.swa.application.port.input.getCommentById;
 
+import de.hsos.swa.domain.entity.Comment;
+
 public class GetCommentByIdInputPortResponse {
-    private final String title;
-    private final String username;
+    private Comment comment;
 
-    //Datum
-    //Up/Downvotes
-
-    public GetCommentByIdInputPortResponse(String title, String username) {
-        this.title = title;
-        this.username = username;
+    public GetCommentByIdInputPortResponse(Comment comment) {
+        this.comment = comment;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getUsername() {
-        return username;
+    public Comment getComment() {
+        return comment;
     }
 }

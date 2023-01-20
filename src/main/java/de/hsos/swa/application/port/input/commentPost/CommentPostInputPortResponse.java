@@ -2,13 +2,13 @@ package de.hsos.swa.application.port.input.commentPost;
 import java.util.UUID;
 
 public class CommentPostInputPortResponse {
-    private final UUID postId;
+    private final UUID commentId;
 
-    public CommentPostInputPortResponse(UUID postId) {
-        this.postId = postId;
+    public CommentPostInputPortResponse(UUID commentId) {
+        this.commentId = commentId;
     }
 
-    public UUID getPostId() {
-        return postId;
+    public UUID getCommentId() {
+        return commentId;
     }
 }

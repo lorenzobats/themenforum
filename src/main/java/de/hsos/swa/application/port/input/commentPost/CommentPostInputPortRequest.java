@@ -6,19 +6,20 @@ import javax.validation.constraints.NotEmpty;
 
 public class CommentPostInputPortRequest extends SelfValidating<CommentPostInputPortRequest> {
 
-    @NotEmpty(message="Field: 'postId' is missing")
+    @NotEmpty(message="postId is missing")
     private final String postId;
 
-    @NotEmpty(message="Field: 'userId' is missing")
+    @NotEmpty(message="userId is missing")
     private final String username;
 
-    @NotEmpty(message = "Field: 'commentText' is missing")
+    @NotEmpty(message = "commentText is missing")
     private final String commentText;
 
     public CommentPostInputPortRequest(String postId, String username, String commentText) {
         this.postId = postId;
         this.username = username;
         this.commentText = commentText;
+        this.validateSelf();
     }
 
     public String getPostId() {

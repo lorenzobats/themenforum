@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface CommentRepository {
     Result<UUID> saveComment(Comment comment, Post post);
+    Result<Comment> getCommentById(UUID commentId);
 }
