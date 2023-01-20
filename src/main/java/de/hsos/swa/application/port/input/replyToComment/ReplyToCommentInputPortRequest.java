@@ -1,13 +1,10 @@
 package de.hsos.swa.application.port.input.replyToComment;
 
-import de.hsos.swa.application.port.input._shared.SelfValidating;
-import de.hsos.swa.application.port.input.registerUser.RegisterUserInputPortRequest;
-
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class ReplyToCommentInputPortRequest extends SelfValidating<RegisterUserInputPortRequest> {
+public class ReplyToCommentInputPortRequest {
     @NotEmpty(message="postId is missing")
     @Pattern(regexp = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}", message = "postId is not valid")
     private final String postId;
@@ -33,7 +30,6 @@ public class ReplyToCommentInputPortRequest extends SelfValidating<RegisterUserI
         this.commentId = commentId;
         this.username = username;
         this.commentText = commentText;
-        this.validateSelf();
     }
 
     public String getPostId() {

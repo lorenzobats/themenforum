@@ -1,10 +1,8 @@
 package de.hsos.swa.application.port.input.createPost;
 
-import de.hsos.swa.application.port.input._shared.SelfValidating;
-
 import javax.validation.constraints.NotEmpty;
 
-public class CreatePostInputPortRequest extends SelfValidating<CreatePostInputPortRequest> {
+public class CreatePostInputPortRequest {
 
     @NotEmpty(message="Field: 'title' is missing")
     private final String title;

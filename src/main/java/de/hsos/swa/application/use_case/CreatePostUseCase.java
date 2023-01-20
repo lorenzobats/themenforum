@@ -33,7 +33,7 @@ public class CreatePostUseCase implements CreatePostInputPort {
         }
         User user = getUserByNameResponse.getData();
 
-        // 2. Post auf Domain-Ebene bauen   // TODO: Factory
+        // 2. Post auf Domain-Ebene bauen
         Post post = PostFactory.createPost(inputPortRequest.getTitle(), user);
 
         // 3. Post persistieren

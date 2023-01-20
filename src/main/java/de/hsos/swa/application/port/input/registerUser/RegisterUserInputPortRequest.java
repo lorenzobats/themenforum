@@ -1,10 +1,10 @@
 package de.hsos.swa.application.port.input.registerUser;
-import de.hsos.swa.application.port.input._shared.SelfValidating;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class RegisterUserInputPortRequest extends SelfValidating<RegisterUserInputPortRequest> {
+public class RegisterUserInputPortRequest {
 
     @NotEmpty(message = "Username empty")
     @Pattern(regexp = "^[a-zA-Z0-9_.-]*$", message = "Username has wrong format")
@@ -17,7 +17,6 @@ public class RegisterUserInputPortRequest extends SelfValidating<RegisterUserInp
     public RegisterUserInputPortRequest(String username, String password) {
         this.username = username;
         this.password = password;
-        this.validateSelf();
     }
 
     public String getUsername() {

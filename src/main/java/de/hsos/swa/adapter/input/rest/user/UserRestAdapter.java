@@ -33,8 +33,6 @@ public class UserRestAdapter {
     GetUserByNameInputPort getUserByNameInputPort;
 
 
-    // TODO: GetUsers – Roles Admin
-
     @GET
     @Path("{username}")
     // --> String name

@@ -8,7 +8,6 @@ import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-// TODO: Comments Relation Bidirektional ?
 // https://vladmihalcea.com/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/
 @Entity(name = "Comment")
 @Table(name = "comment_table")

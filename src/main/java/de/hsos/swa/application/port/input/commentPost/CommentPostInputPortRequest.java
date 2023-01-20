@@ -1,10 +1,8 @@
 package de.hsos.swa.application.port.input.commentPost;
 
-import de.hsos.swa.application.port.input._shared.SelfValidating;
-
 import javax.validation.constraints.NotEmpty;
 
-public class CommentPostInputPortRequest extends SelfValidating<CommentPostInputPortRequest> {
+public class CommentPostInputPortRequest  {
 
     @NotEmpty(message="postId is missing")
     private final String postId;
@@ -12,14 +10,13 @@ public class CommentPostInputPortRequest extends SelfValidating<CommentPostInput
     @NotEmpty(message="userId is missing")
     private final String username;
 
-    @NotEmpty(message = "commentText is missing")
+    @NotEmpty(message = "Text is missing")
     private final String commentText;
 
     public CommentPostInputPortRequest(String postId, String username, String commentText) {
         this.postId = postId;
         this.username = username;
         this.commentText = commentText;
-        this.validateSelf();
     }
 
     public String getPostId() {

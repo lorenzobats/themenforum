@@ -37,6 +37,10 @@ import java.util.Map;
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/posts")
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
+
+
+//TODO AdapterRequests validieren
+
 public class PostRestAdapter {
     @Inject
     CreatePostInputPort createPostInputPort;
@@ -111,7 +115,6 @@ public class PostRestAdapter {
     // --> CreatePostRestAdapterRequest
     // <-- CreatePostRestAdapterResponse
     public Response createPost(CreatePostRestAdapterRequest request, @Context SecurityContext securityContext) {
-        // TODO: Diese Message sinnvoll abfangen
         if(request == null)
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult("Empy Request Body")).build();
 

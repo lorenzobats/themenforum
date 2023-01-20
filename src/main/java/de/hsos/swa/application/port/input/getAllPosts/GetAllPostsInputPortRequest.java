@@ -1,12 +1,11 @@
 package de.hsos.swa.application.port.input.getAllPosts;
 
 import de.hsos.swa.application.PostFilterParams;
-import de.hsos.swa.application.port.input._shared.SelfValidating;
 
 import java.util.Map;
 
 
-public class GetAllPostsInputPortRequest extends SelfValidating<GetAllPostsInputPortRequest> {
+public class GetAllPostsInputPortRequest {
 
     private final Map<PostFilterParams, Object> filterParams;
 
@@ -16,7 +15,6 @@ public class GetAllPostsInputPortRequest extends SelfValidating<GetAllPostsInput
             // TODO: Custom Validator schreiben
             throw new RuntimeException("InValidFilterParams");
         }
-        this.validateSelf();
     }
 
     public Map<PostFilterParams, Object> getFilterParams() {
