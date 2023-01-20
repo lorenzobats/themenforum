@@ -1,10 +1,12 @@
 package de.hsos.swa.adapter.input.rest.user.request;
 
-import de.hsos.swa.application.port.input.registerUser.RegisterUserInputPortRequest;
+import de.hsos.swa.application.port.input.request.RegisterUserInputPortRequest;
 
 public class RegisterUserRestAdapterRequest {
 
+
     public String username;
+
     public String password;
 
     public RegisterUserRestAdapterRequest() {

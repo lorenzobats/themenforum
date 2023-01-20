@@ -1,6 +1,7 @@
 package de.hsos.swa.adapter.input.rest.comment.response;
 
-import de.hsos.swa.application.port.input.commentPost.CommentPostInputPortResponse;
+
+import java.util.UUID;
 
 public class CommentPostRestAdapterResponse {
     public String commentId;
@@ -14,8 +15,8 @@ public class CommentPostRestAdapterResponse {
     }
 
     public static class Converter {
-        public static CommentPostRestAdapterResponse fromInputPortResult(CommentPostInputPortResponse inputPortResult) {
-            return new CommentPostRestAdapterResponse(inputPortResult.getCommentId().toString());
+        public static CommentPostRestAdapterResponse fromInputPortResult(UUID result) {
+            return new CommentPostRestAdapterResponse(result.toString());
         }
     }
 }

@@ -1,9 +1,8 @@
 package de.hsos.swa.application.use_case;
 
-import de.hsos.swa.application.port.input._shared.Result;
-import de.hsos.swa.application.port.input.commentPost.CommentPostInputPort;
-import de.hsos.swa.application.port.input.commentPost.CommentPostInputPortRequest;
-import de.hsos.swa.application.port.input.commentPost.CommentPostInputPortResponse;
+import de.hsos.swa.application.port.input.Result;
+import de.hsos.swa.application.port.input.CommentPostInputPort;
+import de.hsos.swa.application.port.input.request.CommentPostInputPortRequest;
 import de.hsos.swa.application.port.output.PostRepository;
 import de.hsos.swa.application.port.output.UserRepository;
 import de.hsos.swa.domain.entity.Comment;
@@ -25,34 +24,32 @@ public class CommentPostUseCase implements CommentPostInputPort {
 
 
     @Override
-    public Result<CommentPostInputPortResponse> commentPost(CommentPostInputPortRequest command) {
-        // 1. Nutzer holen
-        Result<User> getUserResponse = this.userRepository.getUserByName(command.getUsername());
-        if (!getUserResponse.isSuccessful()) {
+    public Result<UUID> commentPost(CommentPostInputPortRequest command) {
+        Result<User> userResult = this.userRepository.getUserByName(command.getUsername());
+
+        if (!userResult.isSuccessful()) {
             return Result.error("User does not exist"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
         }
-        User user = getUserResponse.getData();
 
-        // 2. Kommentar fuer Nutzer erstellen
-        // TODO: UUID klasse hinzufügen
+        User user = userResult.getData();
+
         Comment comment = new Comment(user, command.getCommentText());
 
-        // 3. Post holen
-        Result<Post> getPostResponse = this.postRepository.getPostById(UUID.fromString(command.getPostId()), true);
-        if (!getPostResponse.isSuccessful()) {
+        Result<Post> postResult = this.postRepository.getPostById(UUID.fromString(command.getPostId()), true);
+        if (!postResult.isSuccessful()) {
             return Result.error("Post does not exist"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
         }
-        Post post = getPostResponse.getData();
+
+        Post post = postResult.getData();
 
         post.addComment(comment);
 
-        // 4. Post persistieren
-        Result<UUID> updatePostResponse = this.postRepository.updatePost(post);
+        Result<UUID> commentResult = this.postRepository.updatePost(post);
 
-        if (updatePostResponse.isSuccessful()) {
-            return Result.success(new CommentPostInputPortResponse(updatePostResponse.getData()));
+        if (commentResult.isSuccessful()) {
+            return Result.success(commentResult.getData());
         }
 
-        return Result.error("Something went wrong " + updatePostResponse.getErrorMessage());
+        return Result.error("Something went wrong " + commentResult.getErrorMessage());
     }
 }

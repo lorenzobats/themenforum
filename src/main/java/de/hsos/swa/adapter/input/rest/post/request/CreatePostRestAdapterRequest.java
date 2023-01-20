@@ -1,10 +1,13 @@
 package de.hsos.swa.adapter.input.rest.post.request;
 
-import de.hsos.swa.application.port.input.createPost.CreatePostInputPortRequest;
+import de.hsos.swa.application.port.input.request.CreatePostInputPortRequest;
+
+import javax.validation.constraints.NotBlank;
 
 
 public class CreatePostRestAdapterRequest {
 
+    @NotBlank(message = "Post Titel darf nicht leer sein")
     public String title;
 
     public CreatePostRestAdapterRequest() {}

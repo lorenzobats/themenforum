@@ -1,7 +1,7 @@
 package de.hsos.swa.adapter.input.rest.post.response;
 
-import de.hsos.swa.adapter.input.rest._dto.CommentDto;
-import de.hsos.swa.application.port.input.getPostById.GetPostByIdInputPortResponse;
+import de.hsos.swa.adapter.input.rest.dto.CommentDto;
+import de.hsos.swa.domain.entity.Post;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,9 +19,9 @@ public class GetPostByIdRestAdapterResponse {
     }
 
     public static class Converter {
-        public static GetPostByIdRestAdapterResponse fromUseCaseResult(GetPostByIdInputPortResponse result) {
+        public static GetPostByIdRestAdapterResponse fromUseCaseResult(Post result) {
             List<CommentDto> comments = result.getComments().stream().map(CommentDto.Converter::toDto).collect(Collectors.toList());
-            return new GetPostByIdRestAdapterResponse(result.getTitle(), result.getUsername(), comments);
+            return new GetPostByIdRestAdapterResponse(result.getTitle(), result.getUser().getName(), comments);
         }
     }
 }

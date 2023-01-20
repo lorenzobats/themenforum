@@ -1,9 +1,8 @@
 package de.hsos.swa.application.use_case;
 
-import de.hsos.swa.application.port.input._shared.Result;
-import de.hsos.swa.application.port.input.replyToComment.ReplyToCommentInputPort;
-import de.hsos.swa.application.port.input.replyToComment.ReplyToCommentInputPortRequest;
-import de.hsos.swa.application.port.input.replyToComment.ReplyToCommentInputPortResponse;
+import de.hsos.swa.application.port.input.Result;
+import de.hsos.swa.application.port.input.ReplyToCommentInputPort;
+import de.hsos.swa.application.port.input.request.ReplyToCommentInputPortRequest;
 import de.hsos.swa.application.port.output.PostRepository;
 import de.hsos.swa.application.port.output.UserRepository;
 import de.hsos.swa.domain.entity.Comment;
@@ -29,7 +28,7 @@ public class ReplyToCommentUseCase implements ReplyToCommentInputPort {
 
 
     @Override
-    public Result<ReplyToCommentInputPortResponse> replyToComment(ReplyToCommentInputPortRequest request) {
+    public Result<UUID> replyToComment(ReplyToCommentInputPortRequest request) {
         Result<User> getUserResponse = this.userRepository.getUserByName(request.getUsername());
         if (!getUserResponse.isSuccessful()) {
             return Result.error("User does not exist"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
@@ -50,7 +49,7 @@ public class ReplyToCommentUseCase implements ReplyToCommentInputPort {
         Result<UUID> updatePostResponse = this.postRepository.updatePost(post);
 
         if (updatePostResponse.isSuccessful()) {
-            return Result.success(new ReplyToCommentInputPortResponse(updatePostResponse.getData()));
+            return Result.success(updatePostResponse.getData());
         }
 
         return Result.error("Something went wrong " + updatePostResponse.getErrorMessage());

@@ -1,9 +1,8 @@
 package de.hsos.swa.application.use_case;
 
-import de.hsos.swa.application.port.input._shared.Result;
-import de.hsos.swa.application.port.input.getCommentById.GetCommentByIdInputPort;
-import de.hsos.swa.application.port.input.getCommentById.GetCommentByIdInputPortRequest;
-import de.hsos.swa.application.port.input.getCommentById.GetCommentByIdInputPortResponse;
+import de.hsos.swa.application.port.input.Result;
+import de.hsos.swa.application.port.input.GetCommentByIdInputPort;
+import de.hsos.swa.application.port.input.request.GetCommentByIdInputPortRequest;
 import de.hsos.swa.application.port.output.CommentRepository;
 import de.hsos.swa.domain.entity.Comment;
 
@@ -18,12 +17,10 @@ public class GetCommentByIdUseCase implements GetCommentByIdInputPort {
     CommentRepository commentRepository;
 
     @Override
-    public Result<GetCommentByIdInputPortResponse> getCommentById(GetCommentByIdInputPortRequest request) {
+    public Result<Comment> getCommentById(GetCommentByIdInputPortRequest request) {
         Result<Comment> commentResult = commentRepository.getCommentById(UUID.fromString(request.getId()));
         if (commentResult.isSuccessful()) {
-            GetCommentByIdInputPortResponse getCommentByIdInputPortResponse
-                    = new GetCommentByIdInputPortResponse(commentResult.getData());
-            return Result.success(getCommentByIdInputPortResponse);
+            return Result.success(commentResult.getData());
         }
         return Result.error("Cannot find Comment");
     }

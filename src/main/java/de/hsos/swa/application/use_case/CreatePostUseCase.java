@@ -1,9 +1,8 @@
 package de.hsos.swa.application.use_case;
 
-import de.hsos.swa.application.port.input._shared.Result;
-import de.hsos.swa.application.port.input.createPost.CreatePostInputPort;
-import de.hsos.swa.application.port.input.createPost.CreatePostInputPortRequest;
-import de.hsos.swa.application.port.input.createPost.CreatePostInputPortResponse;
+import de.hsos.swa.application.port.input.Result;
+import de.hsos.swa.application.port.input.CreatePostInputPort;
+import de.hsos.swa.application.port.input.request.CreatePostInputPortRequest;
 import de.hsos.swa.application.port.output.PostRepository;
 import de.hsos.swa.application.port.output.UserRepository;
 import de.hsos.swa.domain.entity.Post;
@@ -25,7 +24,7 @@ public class CreatePostUseCase implements CreatePostInputPort {
 
 
     @Override
-    public Result<CreatePostInputPortResponse> createPost(CreatePostInputPortRequest inputPortRequest) {
+    public Result<UUID> createPost(CreatePostInputPortRequest inputPortRequest) {
         // 1. Nutzer holen
         Result<User> getUserByNameResponse = this.userRepository.getUserByName(inputPortRequest.getUsername());
         if(!getUserByNameResponse.isSuccessful()) {
@@ -39,6 +38,6 @@ public class CreatePostUseCase implements CreatePostInputPort {
         // 3. Post persistieren
         Result<UUID> savePostResponse = this.postRepository.savePost(post);
 
-        return Result.success(new CreatePostInputPortResponse(savePostResponse.getData()));
+        return Result.success(savePostResponse.getData());
     }
 }

@@ -1,7 +1,6 @@
 package de.hsos.swa.adapter.output.persistence.comment;
 
-import de.hsos.swa.adapter.output.persistence.post.PostPersistenceEntity;
-import de.hsos.swa.application.port.input._shared.Result;
+import de.hsos.swa.application.port.input.Result;
 import de.hsos.swa.application.port.output.CommentRepository;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;

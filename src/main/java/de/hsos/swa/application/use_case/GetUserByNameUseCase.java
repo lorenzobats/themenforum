@@ -1,9 +1,8 @@
 package de.hsos.swa.application.use_case;
 
-import de.hsos.swa.application.port.input._shared.Result;
-import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPortRequest;
-import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPortResponse;
-import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPort;
+import de.hsos.swa.application.port.input.Result;
+import de.hsos.swa.application.port.input.request.GetUserByNameInputPortRequest;
+import de.hsos.swa.application.port.input.GetUserByNameInputPort;
 import de.hsos.swa.application.port.output.UserRepository;
 import de.hsos.swa.domain.entity.User;
 
@@ -17,12 +16,12 @@ public class GetUserByNameUseCase implements GetUserByNameInputPort {
     UserRepository userRepository;
 
     @Override
-    public Result<GetUserByNameInputPortResponse> getUserByName(GetUserByNameInputPortRequest inputPortRequest) {
-        Result<User> getUserByNameOutputPortResponse = this.userRepository.getUserByName(inputPortRequest.getUsername());
-        if(!getUserByNameOutputPortResponse.isSuccessful()) {
+    public Result<User> getUserByName(GetUserByNameInputPortRequest inputPortRequest) {
+        Result<User> userResult = this.userRepository.getUserByName(inputPortRequest.getUsername());
+
+        if(!userResult.isSuccessful()) {
            return Result.error("Username not found");
         }
-        // TODO: DTO zurückgeben
-        return Result.success(new GetUserByNameInputPortResponse(getUserByNameOutputPortResponse.getData().getId(), getUserByNameOutputPortResponse.getData().getName()));
+        return Result.success(userResult.getData());
     }
 }

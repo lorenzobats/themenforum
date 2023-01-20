@@ -1,6 +1,6 @@
 package de.hsos.swa.adapter.input.rest.user.response;
 
-import de.hsos.swa.application.port.input.getUserByName.GetUserByNameInputPortResponse;
+import de.hsos.swa.domain.entity.User;
 
 public class GetUserByNameRestAdapterResponse {
     public String id;
@@ -17,8 +17,8 @@ public class GetUserByNameRestAdapterResponse {
     }
 
     public static class Converter {
-        public static GetUserByNameRestAdapterResponse fromUseCaseResult(GetUserByNameInputPortResponse registerUserResult) {
-            return new GetUserByNameRestAdapterResponse(registerUserResult.getId().toString(), registerUserResult.getUsername());
+        public static GetUserByNameRestAdapterResponse fromUseCaseResult(User user) {
+            return new GetUserByNameRestAdapterResponse(user.getId().toString(), user.getName());
         }
     }
 }

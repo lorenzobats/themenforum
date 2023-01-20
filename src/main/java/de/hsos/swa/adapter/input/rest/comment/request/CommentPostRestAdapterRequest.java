@@ -1,6 +1,6 @@
 package de.hsos.swa.adapter.input.rest.comment.request;
 
-import de.hsos.swa.application.port.input.commentPost.CommentPostInputPortRequest;
+import de.hsos.swa.application.port.input.request.CommentPostInputPortRequest;
 
 
 public class CommentPostRestAdapterRequest {

@@ -1,6 +1,7 @@
 package de.hsos.swa.adapter.input.rest.post.response;
 
-import de.hsos.swa.application.port.input.createPost.CreatePostInputPortResponse;
+
+import java.util.UUID;
 
 public class CreatePostRestAdapterResponse {
 
@@ -15,8 +16,8 @@ public class CreatePostRestAdapterResponse {
 
     // TODO: Als link zurückgeben - dann brauchen wir die Response nicht mehr
     public static class Converter {
-        public static CreatePostRestAdapterResponse fromInputPortResult(CreatePostInputPortResponse response) {
-            return new CreatePostRestAdapterResponse(response.getPostId().toString());
+        public static CreatePostRestAdapterResponse fromInputPortResult(UUID response) {
+            return new CreatePostRestAdapterResponse(response.toString());
         }
     }
 }

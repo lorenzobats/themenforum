@@ -1,9 +1,7 @@
 package de.hsos.swa.application.port.output;
 
-import de.hsos.swa.application.port.input._shared.Result;
+import de.hsos.swa.application.port.input.Result;
 import de.hsos.swa.domain.entity.User;
-
-import java.util.UUID;
 
 public interface UserRepository {
     Result<Boolean> isUserNameAvailable(String username);
@@ -12,5 +10,5 @@ public interface UserRepository {
 
     Result<User> getUserByName(String username);
 
-    Result<UUID> saveUser(User user);
+    Result<User> saveUser(User user);
 }

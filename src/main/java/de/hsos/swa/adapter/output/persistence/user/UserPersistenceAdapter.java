@@ -1,6 +1,6 @@
 package de.hsos.swa.adapter.output.persistence.user;
 
-import de.hsos.swa.application.port.input._shared.Result;
+import de.hsos.swa.application.port.input.Result;
 import de.hsos.swa.application.port.output.UserRepository;
 import de.hsos.swa.domain.entity.User;
 import org.jboss.logging.Logger;
@@ -13,7 +13,6 @@ import javax.persistence.TransactionRequiredException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.UUID;
 
 @RequestScoped
 @Transactional(value = Transactional.TxType.MANDATORY)
@@ -27,11 +26,11 @@ public class UserPersistenceAdapter implements UserRepository {
 
 
     @Override
-    public Result<UUID> saveUser(User user) {
+    public Result<User> saveUser(User user) {
         UserPersistenceEntity userPersistenceEntity = UserPersistenceEntity.Converter.toPersistenceEntity(user);
         try {
             entityManager.persist(userPersistenceEntity);
-            return Result.success(userPersistenceEntity.id);
+            return Result.success(UserPersistenceEntity.Converter.toDomainEntity(userPersistenceEntity));
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("Customer Entity could not be created", e);
             return Result.exception(e);

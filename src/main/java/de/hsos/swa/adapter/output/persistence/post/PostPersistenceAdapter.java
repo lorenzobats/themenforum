@@ -1,6 +1,6 @@
 package de.hsos.swa.adapter.output.persistence.post;
 
-import de.hsos.swa.application.port.input._shared.Result;
+import de.hsos.swa.application.port.input.Result;
 import de.hsos.swa.application.port.output.PostRepository;
 import de.hsos.swa.domain.entity.Post;
 import org.jboss.logging.Logger;
