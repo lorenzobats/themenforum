@@ -1,10 +1,10 @@
 package de.hsos.swa.application.use_case;
 
-import de.hsos.swa.application.port.input.Result;
-import de.hsos.swa.application.port.input.CommentPostInputPort;
-import de.hsos.swa.application.port.input.request.CommentPostInputPortRequest;
-import de.hsos.swa.application.port.output.PostRepository;
-import de.hsos.swa.application.port.output.UserRepository;
+import de.hsos.swa.application.input.Result;
+import de.hsos.swa.application.input.CommentPostInputPort;
+import de.hsos.swa.application.input.request.CommentPostInputPortRequest;
+import de.hsos.swa.application.output.UserRepository;
+import de.hsos.swa.application.output.persistence.PostRepository;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
@@ -24,7 +24,7 @@ public class CommentPostUseCase implements CommentPostInputPort {
 
 
     @Override
-    public Result<UUID> commentPost(CommentPostInputPortRequest request) {
+    public Result<Comment> commentPost(CommentPostInputPortRequest request) {
         Result<User> userResult = this.userRepository.getUserByName(request.getUsername());
 
         if (!userResult.isSuccessful()) {
@@ -44,12 +44,12 @@ public class CommentPostUseCase implements CommentPostInputPort {
 
         post.addComment(comment);
 
-        Result<UUID> commentResult = this.postRepository.updatePost(post);
+        Result<Post> updatePostResult = this.postRepository.updatePost(post);
 
-        if (commentResult.isSuccessful()) {
-            return Result.success(commentResult.getData());
+        if (updatePostResult.isSuccessful()) {
+            return Result.success(comment);
         }
 
-        return Result.error("Something went wrong " + commentResult.getErrorMessage());
+        return Result.error("Something went wrong " + updatePostResult.getErrorMessage());
     }
 }

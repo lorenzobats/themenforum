@@ -1,9 +1,9 @@
 package de.hsos.swa.application.use_case;
 
-import de.hsos.swa.application.port.input.Result;
-import de.hsos.swa.application.port.input.GetPostByIdInputPort;
-import de.hsos.swa.application.port.input.request.GetPostByIdInputPortRequest;
-import de.hsos.swa.application.port.output.PostRepository;
+import de.hsos.swa.application.input.Result;
+import de.hsos.swa.application.input.GetPostByIdInputPort;
+import de.hsos.swa.application.input.request.GetPostByIdInputPortRequest;
+import de.hsos.swa.application.output.persistence.PostRepository;
 import de.hsos.swa.domain.entity.Post;
 
 import javax.enterprise.context.RequestScoped;

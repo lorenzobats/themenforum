@@ -1,9 +1,9 @@
 package de.hsos.swa.application.use_case;
 
-import de.hsos.swa.application.port.input.Result;
-import de.hsos.swa.application.port.input.GetCommentByIdInputPort;
-import de.hsos.swa.application.port.input.request.GetCommentByIdInputPortRequest;
-import de.hsos.swa.application.port.output.CommentRepository;
+import de.hsos.swa.application.input.Result;
+import de.hsos.swa.application.input.GetCommentByIdInputPort;
+import de.hsos.swa.application.input.request.GetCommentByIdInputPortRequest;
+import de.hsos.swa.application.output.CommentRepository;
 import de.hsos.swa.domain.entity.Comment;
 
 import javax.enterprise.context.RequestScoped;

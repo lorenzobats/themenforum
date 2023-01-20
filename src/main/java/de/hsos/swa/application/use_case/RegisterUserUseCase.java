@@ -1,12 +1,12 @@
 package de.hsos.swa.application.use_case;
 
-import de.hsos.swa.application.port.input.Result;
-import de.hsos.swa.application.port.input.request.RegisterUserInputPortRequest;
-import de.hsos.swa.application.port.input.RegisterUserInputPort;
-import de.hsos.swa.application.port.output.UserRepository;
-import de.hsos.swa.application.port.output.auth.createUserAuth.CreateUserAuthOutputPortRequest;
-import de.hsos.swa.application.port.output.auth.createUserAuth.CreateUserAuthOutputPort;
-import de.hsos.swa.application.port.output.auth.createUserAuth.CreateUserAuthOutputPortResponse;
+import de.hsos.swa.application.input.Result;
+import de.hsos.swa.application.input.request.RegisterUserInputPortRequest;
+import de.hsos.swa.application.input.RegisterUserInputPort;
+import de.hsos.swa.application.output.UserRepository;
+import de.hsos.swa.application.output.auth.createUserAuth.CreateUserAuthOutputPortRequest;
+import de.hsos.swa.application.output.auth.createUserAuth.CreateUserAuthOutputPort;
+import de.hsos.swa.application.output.auth.createUserAuth.CreateUserAuthOutputPortResponse;
 import de.hsos.swa.domain.entity.User;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

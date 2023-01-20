@@ -46,15 +46,14 @@ public class Post {
     public void addReplyToComment(String parentCommentId, Comment reply) {
         Optional<Comment> parentComment = findCommentById(parentCommentId);
         parentComment.ifPresent(comment -> comment.addReply(reply));
-
     }
 
-    private Optional<Comment> findCommentById(String parentCommentId) {
+    public Optional<Comment> findCommentById(String commentId) {
         Deque<Comment> stack = new ArrayDeque<>(this.comments);
 
         while (!stack.isEmpty()) {
             Comment comment = stack.pop();
-            if (comment.getId().toString().equals(parentCommentId)) {
+            if (comment.getId().toString().equals(commentId)) {
                 return Optional.of(comment);
             }
             stack.addAll(comment.getReplies());
