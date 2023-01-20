@@ -21,9 +21,8 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
     CreateUserAuthOutputPort createUserAuthOutputPort;
 
     @Override
-    public Result<User> registerUser(RegisterUserInputPortRequest inputPortRequest) {
-        // 1. Überprüfen, ob der Nutzername bereits existiert
-        Result<Boolean> checkUsernameAvailabilityResponse = this.userRepository.isUserNameAvailable(inputPortRequest.getUsername());
+    public Result<User> registerUser(RegisterUserInputPortRequest request) {
+        Result<Boolean> checkUsernameAvailabilityResponse = this.userRepository.isUserNameAvailable(request.getUsername());
 
         if (!checkUsernameAvailabilityResponse.isSuccessful()) {
             return Result.error("Registration failed");
@@ -33,14 +32,13 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
             return Result.error("Username already taken");
         }
 
-        // 2.A > DOMAIN  > User Entity erzeugen --> TODO: In domain Service auslagern, oder Factory?
-        User user = new User(inputPortRequest.getUsername());
+        //TODO: User Factory
+        User user = new User(request.getUsername());
 
 
-        // 3. User Auth erzeugen
         CreateUserAuthOutputPortRequest createUserAuthRequest = new CreateUserAuthOutputPortRequest(
-                inputPortRequest.getUsername(),
-                inputPortRequest.getPassword(),
+                request.getUsername(),
+                request.getPassword(),
                 "member",
                 user.getId());
         Result<CreateUserAuthOutputPortResponse> createUserAuthResponse = this.createUserAuthOutputPort.createUserAuth(createUserAuthRequest);

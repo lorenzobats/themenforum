@@ -24,18 +24,15 @@ public class CreatePostUseCase implements CreatePostInputPort {
 
 
     @Override
-    public Result<UUID> createPost(CreatePostInputPortRequest inputPortRequest) {
-        // 1. Nutzer holen
-        Result<User> getUserByNameResponse = this.userRepository.getUserByName(inputPortRequest.getUsername());
+    public Result<UUID> createPost(CreatePostInputPortRequest request) {
+        Result<User> getUserByNameResponse = this.userRepository.getUserByName(request.getUsername());
         if(!getUserByNameResponse.isSuccessful()) {
             return Result.error("Post could not be created"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
         }
         User user = getUserByNameResponse.getData();
 
-        // 2. Post auf Domain-Ebene bauen
-        Post post = PostFactory.createPost(inputPortRequest.getTitle(), user);
+        Post post = PostFactory.createPost(request.getTitle(), user);
 
-        // 3. Post persistieren
         Result<UUID> savePostResponse = this.postRepository.savePost(post);
 
         return Result.success(savePostResponse.getData());
