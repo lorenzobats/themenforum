@@ -1,4 +1,4 @@
-package de.hsos.swa.application.input;
+package de.hsos.swa.application;
 
 public class Result<T> {
 

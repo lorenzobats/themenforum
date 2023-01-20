@@ -1,6 +1,6 @@
 package de.hsos.swa.infrastructure.persistence.user;
 
-import de.hsos.swa.application.input.Result;
+import de.hsos.swa.application.Result;
 import de.hsos.swa.application.output.UserRepository;
 import de.hsos.swa.domain.entity.User;
 import org.jboss.logging.Logger;

@@ -1,6 +1,6 @@
 package de.hsos.swa.application.use_case;
 
-import de.hsos.swa.application.input.Result;
+import de.hsos.swa.application.Result;
 import de.hsos.swa.application.input.GetCommentByIdInputPort;
 import de.hsos.swa.application.input.request.GetCommentByIdInputPortRequest;
 import de.hsos.swa.application.output.CommentRepository;

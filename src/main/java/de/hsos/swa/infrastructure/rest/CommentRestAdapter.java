@@ -6,7 +6,7 @@ import de.hsos.swa.infrastructure.rest.request.ReplyToCommentRestAdapterRequest;
 import de.hsos.swa.application.input.CommentPostInputPort;
 import de.hsos.swa.application.input.GetCommentByIdInputPort;
 import de.hsos.swa.application.input.ReplyToCommentInputPort;
-import de.hsos.swa.application.input.Result;
+import de.hsos.swa.application.Result;
 import de.hsos.swa.application.input.request.CommentPostInputPortRequest;
 import de.hsos.swa.application.input.request.GetCommentByIdInputPortRequest;
 import de.hsos.swa.application.input.request.ReplyToCommentInputPortRequest;

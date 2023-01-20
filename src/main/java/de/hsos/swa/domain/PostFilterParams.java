@@ -1,4 +1,4 @@
-package de.hsos.swa.application;
+package de.hsos.swa.domain;
 
 import javax.swing.*;
 import java.time.LocalDate;

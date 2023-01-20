@@ -1,6 +1,6 @@
 package de.hsos.swa.application.use_case;
 
-import de.hsos.swa.application.input.Result;
+import de.hsos.swa.application.Result;
 import de.hsos.swa.application.input.CreatePostInputPort;
 import de.hsos.swa.application.input.request.CreatePostInputPortRequest;
 import de.hsos.swa.application.output.UserRepository;
