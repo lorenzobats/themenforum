@@ -37,6 +37,7 @@ public class ReplyToCommentUseCase implements ReplyToCommentInputPort {
         User user = getUserResponse.getData();
 
         // 3. Post holen
+        // TODO: Frage ? -> Nicht Post Id übergeben und output port definieren, der zugehörigen Post statt über "getPostById" "getPostOfComment"
         Result<Post> getPostResponse = this.postRepository.getPostById(UUID.fromString(request.getPostId()), true);
         if (!getPostResponse.isSuccessful()) {
             return Result.error("Post does not exist"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
