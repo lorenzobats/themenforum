@@ -1,6 +1,7 @@
 package de.hsos.swa.infrastructure.persistence.post;
 
 import de.hsos.swa.infrastructure.persistence.comment.CommentPersistenceEntity;
+import de.hsos.swa.infrastructure.persistence.topic.TopicPersistenceEntity;
 import de.hsos.swa.infrastructure.persistence.user.UserPersistenceEntity;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
@@ -29,7 +30,13 @@ public class PostPersistenceEntity {
     @ManyToOne
     UserPersistenceEntity userPersistenceEntity;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    TopicPersistenceEntity topicPersistenceEntity;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     List<CommentPersistenceEntity> comments = new ArrayList<>();
 
 

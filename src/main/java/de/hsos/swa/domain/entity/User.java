@@ -1,7 +1,6 @@
 package de.hsos.swa.domain.entity;
 
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.UUID;

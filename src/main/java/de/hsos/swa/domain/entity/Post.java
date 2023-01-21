@@ -48,6 +48,12 @@ public class Post {
         parentComment.ifPresent(comment -> comment.addReply(reply));
     }
 
+    public Topic getTopic() {
+        return topic;
+    }
+
+
+
     public Optional<Comment> findCommentById(String commentId) {
         Deque<Comment> stack = new ArrayDeque<>(this.comments);
 
