@@ -90,7 +90,7 @@ public class TopicRestAdapter {
         try {
             validationService.validateTopic(request);
             String username = securityContext.getUserPrincipal().getName();
-            CreateTopicInputPortRequest command = CreateTopicRestAdapterRequest.Converter.toInputPortCommand(request, username);
+            CreateTopicInputPortRequest command = CreateTopicRestAdapterRequest.Converter.toInputPort(request, username);
             Result<Topic> topicResult = this.createTopicInputPort.createTopic(command);
 
             if (topicResult.isSuccessful()) {

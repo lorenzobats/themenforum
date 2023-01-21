@@ -120,7 +120,7 @@ public class PostRestAdapter {
         try {
             validationService.validatePost(request);
             String username = securityContext.getUserPrincipal().getName();
-            CreatePostInputPortRequest command = CreatePostRestAdapterRequest.Converter.toInputPortCommand(request, username);
+            CreatePostInputPortRequest command = CreatePostRestAdapterRequest.Converter.toInputPort(request, username);
             Result<Post> postResult = this.createPostInputPort.createPost(command);
 
             if (postResult.isSuccessful()) {

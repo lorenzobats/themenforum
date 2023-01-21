@@ -47,8 +47,6 @@ public class CommentRestAdapter {
 
     @GET
     @Path("{id}")
-    // --> String id
-    // <-- GetCommentByIdRestAdapterResponse
     public Response getCommentById(@PathParam("id") String id) {
         try {
             GetCommentByIdInputPortRequest query = new GetCommentByIdInputPortRequest(id);
@@ -65,13 +63,11 @@ public class CommentRestAdapter {
 
     @POST
     @RolesAllowed("member")
-    // --> CommentPostRestAdapterRequest
-    // <-- CommentPostRestAdapterResponse
     public Response commentPost(CommentPostRestAdapterRequest request, @Context SecurityContext securityContext) {
         try {
             validationService.validateComment(request);
             String username = securityContext.getUserPrincipal().getName();
-            CommentPostInputPortRequest command = new CommentPostInputPortRequest(request.postId, username, request.text);
+            CommentPostInputPortRequest command = CommentPostRestAdapterRequest.Converter.toInputPort(request, username);
             Result<Comment> result = this.commentPostInputPort.commentPost(command);
             if (result.isSuccessful()) {
                 CommentDto response = CommentDto.Converter.toDto(result.getData());
@@ -85,15 +81,11 @@ public class CommentRestAdapter {
 
     @POST
     @Path("/{id}")
-    // --> String id + ReplyToCommentRestAdapterRequest
-    // <-- ReplyToCommentRestAdapterResponse
     public Response replyToComment(@PathParam("id") String id, ReplyToCommentRestAdapterRequest request, @Context SecurityContext securityContext) {
         try {
             validationService.validateReply(request);
             String username = securityContext.getUserPrincipal().getName();
-            // TODO: Hier vllt nicht vom Nutzer die PostId fordern, da diese nicht zur Identifizierung benötigt wird.
-            // TODO: Stattdessen für Use Case OutputPort definieren, der einem den zugehörigen Post zu einer CommentId holt!
-            ReplyToCommentInputPortRequest command = new ReplyToCommentInputPortRequest(request.postId, request.commentId, username, request.text);
+            ReplyToCommentInputPortRequest command = ReplyToCommentRestAdapterRequest.Converter.toInputPort(request, id, username);
             Result<Comment> result = this.replyToCommentInputPort.replyToComment(command);
             if (result.isSuccessful()) {
                 CommentDto response = CommentDto.Converter.toDto(result.getData());

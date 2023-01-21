@@ -20,7 +20,7 @@ public class CreatePostRestAdapterRequest {
     public CreatePostRestAdapterRequest() {}
 
     public static class Converter {
-        public static CreatePostInputPortRequest toInputPortCommand(CreatePostRestAdapterRequest adapterRequest, String username) {
+        public static CreatePostInputPortRequest toInputPort(CreatePostRestAdapterRequest adapterRequest, String username) {
             return new CreatePostInputPortRequest(adapterRequest.title, adapterRequest.content, UUID.fromString(adapterRequest.topicId), username);
         }
     }
