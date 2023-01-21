@@ -1,25 +1,35 @@
 package de.hsos.swa.infrastructure.rest.dto;
 import de.hsos.swa.domain.entity.Post;
 
+import javax.json.bind.annotation.JsonbProperty;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PostDto {
+    public String id;
+
     public String title;
-    public String username;
+    public String content;
+    public String creator;
 
-    public List<CommentDto> comments = new ArrayList<>();
+    public TopicDto topic;
+    @JsonbProperty(nillable = true)
+    public List<CommentDto> comments;
 
-    public PostDto(String title, String username, List<CommentDto> comments) {
+    public PostDto(String id, String title, String content, String creator, TopicDto topic, List<CommentDto> comments) {
+        this.id = id;
         this.title = title;
-        this.username = username;
+        this.content = content;
+        this.creator = creator;
+        this.topic = topic;
         this.comments = comments;
     }
 
     public static class Converter {
         public static PostDto toDto(Post post) {
-            List<CommentDto> commentDtos = post.getComments().stream().map(CommentDto.Converter::toDto).toList();
-            return new PostDto(post.getTitle(), post.getUser().getName(), commentDtos);
+            List<CommentDto> comments = post.getComments().stream().map(CommentDto.Converter::toDto).toList();
+            TopicDto topic = TopicDto.Converter.toDto(post.getTopic());
+            return new PostDto(post.getId().toString(), post.getTitle(),  post.getContent(), post.getCreator().getName(), topic , comments);
         }
     }
 }

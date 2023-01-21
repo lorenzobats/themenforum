@@ -2,42 +2,90 @@ package de.hsos.swa.domain.entity;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PastOrPresent;
-import java.time.LocalDate;
 import java.util.*;
 
-
+// TODO: UUID Validation
 public class Post {
     private UUID id;
 
     @NotBlank
     private String title;
 
-    @Valid
-    private User user;
+    @NotBlank
+    private String content;
+
+    //@PastOrPresent
+    //private LocalDate publishedDate;      // TODO: Date
 
     @Valid
     private Topic topic;
+    @Valid
+    private final User creator;
 
-    @PastOrPresent
-    private LocalDate publishedDate;
+    private final List<Comment> comments = new ArrayList<>();
 
-    private List<Comment> comments = new ArrayList<>();
+    // private int upvotes; // TODO: Upvotes
 
-    private int upvotes;
-
-
-    public Post(UUID id, String title, User user) {
+    public Post(UUID id, String title, String content, Topic topic, User creator) {
         this.id = id;
         this.title = title;
-        this.user = user;
+        this.content = content;
+        this.topic = topic;
+        this.creator = creator;
     }
 
-    public Post(String title, User user) {
+    public Post(String title, String content, Topic topic, User creator) {
         this.id = UUID.randomUUID();
         this.title = title;
-        this.user = user;
+        this.content = content;
+        this.topic = topic;
+        this.creator = creator;
     }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+
+    public Topic getTopic() {
+        return topic;
+    }
+
+    public User getCreator() {
+        return creator;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+
+    public void setTopic(Topic topic) {
+        this.topic = topic;
+    }
+
 
     public void addComment(Comment comment) {
         this.comments.add(comment);
@@ -47,12 +95,6 @@ public class Post {
         Optional<Comment> parentComment = findCommentById(parentCommentId);
         parentComment.ifPresent(comment -> comment.addReply(reply));
     }
-
-    public Topic getTopic() {
-        return topic;
-    }
-
-
 
     public Optional<Comment> findCommentById(String commentId) {
         Deque<Comment> stack = new ArrayDeque<>(this.comments);
@@ -67,21 +109,4 @@ public class Post {
 
         return Optional.empty();
     }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
 }

@@ -1,5 +1,6 @@
 package de.hsos.swa.infrastructure.persistence.post;
 
+import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.infrastructure.persistence.comment.CommentPersistenceEntity;
 import de.hsos.swa.infrastructure.persistence.topic.TopicPersistenceEntity;
 import de.hsos.swa.infrastructure.persistence.user.UserPersistenceEntity;
@@ -16,9 +17,9 @@ import java.util.stream.Collectors;
 @Entity(name = "Post")
 @Table(name = "post_table")
 @NamedQuery(name = "PostPersistenceEntity.findAll", query = "SELECT p FROM Post p")
-@NamedQuery(name = "PostPersistenceEntity.findAllExcludeComments", query = "SELECT NEW Post(p.id, p.title, p.userPersistenceEntity) FROM Post p")
+@NamedQuery(name = "PostPersistenceEntity.findAllExcludeComments", query = "SELECT NEW Post(p.id, p.title, p.content, p.topicPersistenceEntity, p.userPersistenceEntity) FROM Post p")
 @NamedQuery(name = "PostPersistenceEntity.findById", query = "SELECT p FROM Post p WHERE p.id = :id")
-@NamedQuery(name = "PostPersistenceEntity.findByIdExcludeComments", query = "SELECT NEW Post(p.id, p.title, p.userPersistenceEntity) FROM Post p WHERE p.id = :id")
+@NamedQuery(name = "PostPersistenceEntity.findByIdExcludeComments", query = "SELECT NEW Post(p.id, p.title, p.content, p.topicPersistenceEntity, p.userPersistenceEntity) FROM Post p WHERE p.id = :id")
 
 public class PostPersistenceEntity {
     @Id
@@ -27,11 +28,14 @@ public class PostPersistenceEntity {
     @Basic
     String title;
 
+    @Basic
+    String content;
+
+    @ManyToOne
+    TopicPersistenceEntity topicPersistenceEntity;
+
     @ManyToOne
     UserPersistenceEntity userPersistenceEntity;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    TopicPersistenceEntity topicPersistenceEntity;
 
     @OneToMany(
             fetch = FetchType.LAZY,
@@ -43,39 +47,42 @@ public class PostPersistenceEntity {
     public PostPersistenceEntity() {
     }
 
-    public PostPersistenceEntity(UUID id, String title, UserPersistenceEntity userPersistenceEntity) {
+    public PostPersistenceEntity(UUID id, String title, String content, TopicPersistenceEntity topicPersistenceEntity, UserPersistenceEntity userPersistenceEntity, List<CommentPersistenceEntity> comments) {
         this.id = id;
         this.title = title;
-        this.userPersistenceEntity = userPersistenceEntity;
-    }
-
-    public PostPersistenceEntity(UUID id, String title, UserPersistenceEntity userPersistenceEntity, List<CommentPersistenceEntity> comments) {
-        this.id = id;
-        this.title = title;
+        this.content = content;
+        this.topicPersistenceEntity = topicPersistenceEntity;
         this.userPersistenceEntity = userPersistenceEntity;
         this.comments = comments;
+    }
+
+    // Wird in Named Queries "...ExcludeComments" verwendet
+    public PostPersistenceEntity(UUID id, String title, String content, TopicPersistenceEntity topicPersistenceEntity, UserPersistenceEntity userPersistenceEntity) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.topicPersistenceEntity = topicPersistenceEntity;
+        this.userPersistenceEntity = userPersistenceEntity;
     }
 
     public static class Converter {
         public static Post toDomainEntity(PostPersistenceEntity postPersistenceEntity) {
             User user = UserPersistenceEntity.Converter.toDomainEntity(postPersistenceEntity.userPersistenceEntity);
+            Topic topic = TopicPersistenceEntity.Converter.toDomainEntity(postPersistenceEntity.topicPersistenceEntity);
+            List<Comment> comments = postPersistenceEntity.comments.stream().map(CommentPersistenceEntity.Converter::toDomainEntity).toList();
 
-            List<Comment> comments = postPersistenceEntity.comments.stream().map(CommentPersistenceEntity.Converter::toDomainEntity).collect(Collectors.toList());
-            Post post = new Post(postPersistenceEntity.id, postPersistenceEntity.title, user);
+            Post post = new Post(postPersistenceEntity.id, postPersistenceEntity.title, postPersistenceEntity.content, topic, user);
             comments.forEach(post::addComment);
+
             return post;
         }
 
         public static PostPersistenceEntity toPersistenceEntity(Post post) {
-            //convert user
-            UserPersistenceEntity userPersistenceEntity = UserPersistenceEntity.Converter.toPersistenceEntity(post.getUser());
-
-            //convert comments
+            UserPersistenceEntity userPersistenceEntity = UserPersistenceEntity.Converter.toPersistenceEntity(post.getCreator());
+            TopicPersistenceEntity topicPersistenceEntity = TopicPersistenceEntity.Converter.toPersistenceEntity(post.getTopic());
             List<CommentPersistenceEntity> comments = post.getComments().stream().map(CommentPersistenceEntity.Converter::toPersistenceEntity).collect(Collectors.toList());
 
-            //create new post entity
-            return new PostPersistenceEntity(post.getId(), post.getTitle(), userPersistenceEntity, comments);
+            return new PostPersistenceEntity(post.getId(), post.getTitle(), post.getContent(), topicPersistenceEntity, userPersistenceEntity, comments);
         }
     }
-
 }
