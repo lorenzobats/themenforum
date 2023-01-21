@@ -8,12 +8,15 @@ import java.util.UUID;
 
 public interface PostRepository {
 
-    Result<List<Post>> getAllPosts(boolean includeComments);
+    // CRUD
     Result<Post> savePost(Post post);
+    Result<List<Post>> getAllPosts(boolean includeComments);
 
-    Result<Void> deletePost(String postId);
-    Result<Post> getPostById(UUID postId);
     Result<Post> getPostById(UUID postId, boolean includeComments);
 
     Result<Post> updatePost(Post post);
+
+    Result<Void> deletePost(String postId);
+
+    // AGGREGATE
 }

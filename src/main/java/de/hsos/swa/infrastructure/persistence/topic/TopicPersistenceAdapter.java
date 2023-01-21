@@ -8,12 +8,11 @@ import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.TransactionRequiredException;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RequestScoped
@@ -37,6 +36,17 @@ public class TopicPersistenceAdapter implements TopicRepository {
             log.error("GetAllTopics Error", e);
             return Result.exception(e);
         }
+    }
+
+    public Result<Map<UUID, Long>> getPostCountForAllTopics() {
+        String queryString = "SELECT t.id AS topic_id, COUNT(p) as post_count FROM Topic t LEFT JOIN Post p ON t = p.topicPersistenceEntity GROUP BY t.id";
+        TypedQuery<Tuple> query = entityManager.createQuery(queryString, Tuple.class);
+        List<Tuple> resultList = query.getResultList();
+        Map<UUID, Long> resultMap = new HashMap<>();
+        for (Tuple tuple : resultList) {
+            resultMap.put((UUID) tuple.get("topic_id"), (Long) tuple.get("post_count"));
+        }
+        return Result.success(resultMap);
     }
 
     @Override

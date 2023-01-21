@@ -2,12 +2,12 @@ package de.hsos.swa.infrastructure.rest;
 
 import de.hsos.swa.application.Result;
 import de.hsos.swa.application.input.*;
+import de.hsos.swa.application.input.dto.TopicWithPostCountDto;
 import de.hsos.swa.application.input.request.CreateTopicInputPortRequest;
 import de.hsos.swa.application.input.request.GetTopicByIdInputPortRequest;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.infrastructure.rest.dto.TopicDto;
 import de.hsos.swa.infrastructure.rest.request.CreateTopicRestAdapterRequest;
-import de.hsos.swa.infrastructure.rest.validation.PostValidationService;
 import de.hsos.swa.infrastructure.rest.validation.TopicValidationService;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import org.jboss.logging.Logger;
@@ -39,6 +39,9 @@ public class TopicRestAdapter {
     GetAllTopicsInputPort getAllTopicsInputPort;
 
     @Inject
+    GetAllTopicsWithPostCountInputPort getAllTopicsWithPostCountInputPort;
+
+    @Inject
     GetTopicByIdInputPort getTopicByIdInputPort;
 
     @Inject
@@ -54,12 +57,12 @@ public class TopicRestAdapter {
     @GET
     public Response getAllTopics() {
         try {
-            Result<List<Topic>> topicsResult = this.getAllTopicsInputPort.getAllTopics();
-            if (topicsResult.isSuccessful()) {
-                List<TopicDto> topicsResponse = topicsResult.getData().stream().map(TopicDto.Converter::toDto).toList();
-                return Response.status(Response.Status.OK).entity(topicsResponse).build();
-            }
-            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(topicsResult.getErrorMessage())).build();
+                Result<List<TopicWithPostCountDto>> topicsResult = this.getAllTopicsWithPostCountInputPort.getAllTopics();
+                if (topicsResult.isSuccessful()) {
+                    List<TopicDto> topicsResponse = topicsResult.getData().stream().map(TopicDto.Converter::toDto).toList();
+                    return Response.status(Response.Status.OK).entity(topicsResponse).build();
+                }
+                return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(topicsResult.getErrorMessage())).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }

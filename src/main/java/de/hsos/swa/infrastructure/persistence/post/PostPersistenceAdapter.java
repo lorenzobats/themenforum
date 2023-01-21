@@ -60,12 +60,6 @@ public class PostPersistenceAdapter implements PostRepository {
     }
 
     @Override
-    public Result<Post> getPostById(UUID postId) {
-        return getPostById(postId, true);
-    }
-
-
-    @Override
     public Result<Void> deletePost(String postId) {
         return null;
     }

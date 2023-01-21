@@ -27,10 +27,3 @@ INSERT INTO comment_table (id, text, parentcomment_id, userpersistenceentity_id)
 
 INSERT INTO post_table_comment_table (post_id, comments_id) VALUES ('55a7409f-c0eb-453e-b7ef-89f905963ce9', '9ac4c6fd-68e1-4b41-97fd-817284290411');
 INSERT INTO post_table_comment_table (post_id, comments_id) VALUES ('959b81a0-35b3-4f9d-a08b-4879173a1e2c', 'ee774407-a71f-4d4e-b829-f26d38e2ee81');
-
-
-INSERT INTO post_table (id, content, title, topicpersistenceentity_id, userpersistenceentity_id) VALUES ('55a7409f-c0eb-453e-b7ef-89f905963ce9', null, 'Olivers Post 1', null, '78188b10-4733-4fca-8dfd-e07aee389383');
-INSERT INTO post_table (id, content, title, topicpersistenceentity_id, userpersistenceentity_id) VALUES ('4cfe8a99-f71a-476c-a2cb-dae7cb86872e', null, 'Olivers Post 2', null, '78188b10-4733-4fca-8dfd-e07aee389383');
-INSERT INTO post_table (id, content, title, topicpersistenceentity_id, userpersistenceentity_id) VALUES ('c75d5bba-a840-4ce2-998c-07a2f00cc49b', null, 'Lorenzos Post 2', null, '78188b10-4733-4fca-8dfd-e07aee389383');
-INSERT INTO post_table (id, content, title, topicpersistenceentity_id, userpersistenceentity_id) VALUES ('959b81a0-35b3-4f9d-a08b-4879173a1e2c', null, 'Lorenzos Post 1', null, '78188b10-4733-4fca-8dfd-e07aee389383');
-INSERT INTO post_table (id, content, title, topicpersistenceentity_id, userpersistenceentity_id) VALUES ('06f21fbb-1730-446d-b3c2-44dd8a839c12', 'Das hier ist mein Post', 'Lorenzos Post 3', 'a70d18cf-7b53-43fe-86de-1277fa476864', '78188b10-4733-4fca-8dfd-e07aee389383');

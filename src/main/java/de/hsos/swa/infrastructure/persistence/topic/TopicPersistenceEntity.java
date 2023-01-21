@@ -24,12 +24,13 @@ public class TopicPersistenceEntity {
     @Basic
     String description;
 
+    @ManyToOne
+    UserPersistenceEntity userPersistenceEntity;
+
+
     // TODO: Date
     //@Basic
     //LocalDate createdAt;
-
-    @ManyToOne
-    UserPersistenceEntity userPersistenceEntity;
 
     public TopicPersistenceEntity() {
     }
