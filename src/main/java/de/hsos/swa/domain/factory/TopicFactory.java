@@ -5,9 +5,7 @@ import de.hsos.swa.domain.entity.User;
 
 import javax.validation.*;
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.Set;
 
 public class TopicFactory {

@@ -5,10 +5,14 @@ import de.hsos.swa.domain.vo.VoteType;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
+import java.time.LocalDateTime;
 import java.util.*;
 
-// TODO: UUID Validation
+// TODO: Validierung spezifischer (zB. Titellänge, Descriptionlänge, etc.)
 public class Post {
+    @Valid
     private UUID id;
 
     @NotBlank
@@ -17,34 +21,39 @@ public class Post {
     @NotBlank
     private String content;
 
-    //@PastOrPresent
-    //private LocalDate publishedDate;      // TODO: Date
+    @PastOrPresent
+    private LocalDateTime createdAt;
 
     @Valid
     private Topic topic;
     @Valid
     private final User creator;
 
+    @NotNull
     private final List<Comment> comments = new ArrayList<>();
 
+    @NotNull
     private final Map<UUID, Vote> votes = new HashMap<>();
 
-    public Post(UUID id, String title, String content, Topic topic, User creator) {
+    public Post(UUID id, String title, String content, LocalDateTime createdAt, Topic topic, User creator) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.createdAt = createdAt;
         this.topic = topic;
         this.creator = creator;
     }
 
-    public Post(String title, String content, Topic topic, User creator) {
+    public Post(String title, String content, LocalDateTime createdAt, Topic topic, User creator) {
         this.id = UUID.randomUUID();
         this.title = title;
         this.content = content;
+        this.createdAt = createdAt;
         this.topic = topic;
         this.creator = creator;
     }
 
+    // GETTER
     public UUID getId() {
         return id;
     }
@@ -57,6 +66,9 @@ public class Post {
         return content;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
     public Topic getTopic() {
         return topic;
@@ -70,29 +82,21 @@ public class Post {
         return comments;
     }
 
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
+    public Map<UUID, Vote> getVotes() {
+        return votes;
     }
 
 
-    public void setTopic(Topic topic) {
-        this.topic = topic;
-    }
+    // SETTER
 
 
+    // COMMENTS
+    // TODO: in Comment Service auslagern?
     public void addComment(Comment comment) {
         this.comments.add(comment);
     }
 
+    // TODO: in Comment Service auslagern?
     public void addReplyToComment(String parentCommentId, Comment reply) {
         Optional<Comment> parentComment = findCommentById(parentCommentId);
         parentComment.ifPresent(comment -> comment.addReply(reply));
@@ -112,19 +116,13 @@ public class Post {
         return Optional.empty();
     }
 
-    public Map<UUID, Vote> getVotes() {
-        return votes;
-    }
 
-    public Set<UUID> getUsersOfVotes() {
-        return votes.keySet();
+    // VOTES
+    public void setVote(Vote vote) {
+        this.votes.put(vote.getUser().getId(), vote);
     }
     public void removeVote(UUID userId) {
         this.votes.remove(userId);
-    }
-
-    public void setVote(Vote vote) {
-        this.votes.put(vote.getUser().getId(), vote);
     }
 
     public Integer getDownVotes() {
@@ -134,7 +132,6 @@ public class Post {
         }
         return voting;
     }
-
     public Integer getUpVotes() {
         int voting = 0;
         for (Vote v : this.votes.values()){

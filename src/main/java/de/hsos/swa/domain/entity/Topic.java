@@ -2,8 +2,11 @@ package de.hsos.swa.domain.entity;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 import java.util.*;
+
+// TODO: Validierung spezifischer (zB. Titellänge, Descriptionlänge, etc.)
 
 public class Topic {
     @Valid
@@ -12,6 +15,7 @@ public class Topic {
     private String title;
     @NotBlank
     private String description;
+    @PastOrPresent
     private LocalDateTime createdAt;
     @Valid
     private User owner;

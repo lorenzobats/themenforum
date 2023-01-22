@@ -7,6 +7,7 @@ import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,9 @@ public class PostPersistenceModel {
 
     @Basic
     String content;
+
+    @Basic
+    LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "topic_id")
@@ -49,20 +53,22 @@ public class PostPersistenceModel {
     public PostPersistenceModel() {
     }
 
-    public PostPersistenceModel(UUID id, String title, String content, TopicPersistenceModel topicPersistenceModel, UserPersistenceModel userPersistenceModel, List<CommentPersistenceModel> comments, List<PostVotePersistenceModel> votes) {
+    public PostPersistenceModel(UUID id, String title, String content, LocalDateTime createdAt, TopicPersistenceModel topicPersistenceModel, UserPersistenceModel userPersistenceModel, List<CommentPersistenceModel> comments, List<PostVotePersistenceModel> votes) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.createdAt = createdAt;
         this.topicPersistenceModel = topicPersistenceModel;
         this.userPersistenceModel = userPersistenceModel;
         this.comments = comments;
         this.votes = votes;
     }
 
-    public PostPersistenceModel(UUID id, String title, String content, TopicPersistenceModel topicPersistenceModel, UserPersistenceModel userPersistenceModel, List<PostVotePersistenceModel> votes) {
+    public PostPersistenceModel(UUID id, String title, String content, LocalDateTime createdAt, TopicPersistenceModel topicPersistenceModel, UserPersistenceModel userPersistenceModel, List<PostVotePersistenceModel> votes) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.createdAt = createdAt;
         this.topicPersistenceModel = topicPersistenceModel;
         this.userPersistenceModel = userPersistenceModel;
         this.votes = votes;
@@ -75,7 +81,7 @@ public class PostPersistenceModel {
             List<Comment> comments = postPersistenceModel.comments.stream().map(CommentPersistenceModel.Converter::toDomainEntity).toList();
             List<Vote> votes = postPersistenceModel.votes.stream().map(PostVotePersistenceModel.Converter::toDomainEntity).toList();
 
-            Post post = new Post(postPersistenceModel.id, postPersistenceModel.title, postPersistenceModel.content, topic, user);
+            Post post = new Post(postPersistenceModel.id, postPersistenceModel.title, postPersistenceModel.content, postPersistenceModel.createdAt, topic, user);
 
             votes.forEach(post::setVote);
             comments.forEach(post::addComment);
@@ -88,7 +94,7 @@ public class PostPersistenceModel {
             TopicPersistenceModel topicPersistenceModel = TopicPersistenceModel.Converter.toPersistenceModel(post.getTopic());
             List<CommentPersistenceModel> comments = post.getComments().stream().map(CommentPersistenceModel.Converter::toPersistenceModel).toList();
             Set<PostVotePersistenceModel> votes = post.getVotes().values().stream().map(PostVotePersistenceModel.Converter::toPersistenceModel).collect(Collectors.toSet());
-            return new PostPersistenceModel(post.getId(), post.getTitle(), post.getContent(), topicPersistenceModel, userPersistenceModel, comments, votes.stream().toList());
+            return new PostPersistenceModel(post.getId(), post.getTitle(), post.getContent(), post.getCreatedAt(), topicPersistenceModel, userPersistenceModel, comments, votes.stream().toList());
         }
     }
 }
