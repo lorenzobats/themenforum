@@ -7,10 +7,7 @@ import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.TransactionRequiredException;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
@@ -29,7 +26,7 @@ public class PostPersistenceAdapter implements PostRepository {
     public Result<List<Post>> getAllPosts(boolean includeComments) {
         TypedQuery<PostPersistenceEntity> query = includeComments
                 ? entityManager.createNamedQuery("PostPersistenceEntity.findAll", PostPersistenceEntity.class)
-                : entityManager.createNamedQuery("PostPersistenceEntity.findAllExcludeComments", PostPersistenceEntity.class);
+                : entityManager.createQuery("SELECT p FROM Post p WHERE p.comments is empty", PostPersistenceEntity.class);
 
         List<PostPersistenceEntity> postList;
         try {
@@ -46,8 +43,8 @@ public class PostPersistenceAdapter implements PostRepository {
     public Result<Post> getPostById(UUID postId, boolean includeComments) {
         TypedQuery<PostPersistenceEntity> query = includeComments
                 ? entityManager.createNamedQuery("PostPersistenceEntity.findById", PostPersistenceEntity.class)
-                : entityManager.createNamedQuery("PostPersistenceEntity.findByIdExcludeComments", PostPersistenceEntity.class);
-
+                : entityManager.createQuery("SELECT NEW Post(p.id, p.title, p.content, p.topicPersistenceEntity, p.userPersistenceEntity, p.votes) FROM Post p WHERE p.id = :id", PostPersistenceEntity.class);
+        // TODO: das funktioniert nicht
         query.setParameter("id", postId);
         PostPersistenceEntity post;
         try {

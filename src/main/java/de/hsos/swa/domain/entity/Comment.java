@@ -1,9 +1,10 @@
 package de.hsos.swa.domain.entity;
 
+import de.hsos.swa.domain.vo.Vote;
+import de.hsos.swa.domain.vo.VoteType;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Comment {
     private UUID id;
@@ -14,6 +15,8 @@ public class Comment {
     private int upvotes;
 
     private List<Comment> replies = new ArrayList<>();
+
+    private final Map<UUID, Vote> votes = new HashMap<>();
 
     private Comment parentComment;
 
@@ -74,5 +77,28 @@ public class Comment {
                 '}';
     }
 
+
+    public Map<UUID, Vote> getVotes() {
+        return votes;
+    }
+
+    public Set<UUID> getUsersOfVotes() {
+        return votes.keySet();
+    }
+    public void removeVote(UUID userId) {
+        this.votes.remove(userId);
+    }
+
+    public Integer getVoteSum() {
+        int voting = 0;
+        for (Vote v : this.votes.values()){
+            voting += (v.getVoteType().equals(VoteType.UP) ? 1 : -1);
+        }
+        return voting;
+    }
+
+    public void setVote(Vote vote) {
+        this.votes.put(vote.getUser().getId(), vote);
+    }
 
 }

@@ -1,5 +1,8 @@
 package de.hsos.swa.infrastructure.rest;
 
+import de.hsos.swa.application.input.VotePostInputPort;
+import de.hsos.swa.application.input.request.VotePostInputPortRequest;
+import de.hsos.swa.infrastructure.rest.request.VotePostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import de.hsos.swa.infrastructure.rest.dto.PostDto;
 import de.hsos.swa.infrastructure.rest.request.CreatePostRestAdapterRequest;
@@ -21,6 +24,8 @@ import javax.inject.Inject;
 import javax.swing.*;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -49,6 +54,8 @@ public class PostRestAdapter {
     @Inject
     GetAllPostsInputPort getAllPostsInputPort;
 
+    @Inject
+    VotePostInputPort votePostInputPort;
 
     @Inject
     PostValidationService validationService;
@@ -116,7 +123,7 @@ public class PostRestAdapter {
     @RolesAllowed("member")
     // --> CreatePostRestAdapterRequest
     // <-- CreatePostRestAdapterResponse
-    public Response createPost(CreatePostRestAdapterRequest request, @Context SecurityContext securityContext) {
+    public Response createPost(@NotNull CreatePostRestAdapterRequest request, @Context SecurityContext securityContext) {
         try {
             validationService.validatePost(request);
             String username = securityContext.getUserPrincipal().getName();
@@ -126,6 +133,28 @@ public class PostRestAdapter {
             if (postResult.isSuccessful()) {
                 PostDto postResponse = PostDto.Converter.toDto(postResult.getData());
                 // TODO: Neben Body auch Uri Builder nutzen um RessourceLink im Header zurückzugeben (Gilt für alle POST/UPDATE)
+                return Response.status(Response.Status.CREATED).entity(postResponse).build();
+            }
+            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getErrorMessage()).build();
+        } catch (ConstraintViolationException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+        }
+    }
+
+
+    @PUT
+    @Path("/{id}/vote")
+    @RolesAllowed("member")
+    // https://developer.salesforce.com/docs/atlas.en-us.chatterapi.meta/chatterapi/connect_resources_comments_capability_up_down_vote.htm?q=downVote
+    public Response votePost(@NotNull VotePostRestAdapterRequest request, @PathParam("id") String id, @Context SecurityContext securityContext) {
+        try {
+            validationService.validateVote(request);
+            String username = securityContext.getUserPrincipal().getName();
+            VotePostInputPortRequest command = VotePostRestAdapterRequest.Converter.toInputPort(request, id, username);
+            Result<Post> postResult = this.votePostInputPort.votePost(command);
+
+            if (postResult.isSuccessful()) {
+                PostDto postResponse = PostDto.Converter.toDto(postResult.getData());
                 return Response.status(Response.Status.CREATED).entity(postResponse).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getErrorMessage()).build();
