@@ -14,10 +14,13 @@ public class CommentDto {
     public String parentId;
     public List<CommentDto> replies = new ArrayList<>();
 
-    public CommentDto(String id, String username, String text) {
+    public Integer voting;
+
+    public CommentDto(String id, String username, String text, Integer voting) {
         this.id = id;
         this.username = username;
         this.text = text;
+        this.voting = voting;
     }
 
     public String getId() {
@@ -31,7 +34,8 @@ public class CommentDto {
             CommentDto commentDto = new CommentDto(
                     String.valueOf(comment.getId()),
                     comment.getUser().getName(),
-                    comment.getText());
+                    comment.getText(),
+                    comment.getVoteSum());
 
             commentDto.replies = repliesDto;
 

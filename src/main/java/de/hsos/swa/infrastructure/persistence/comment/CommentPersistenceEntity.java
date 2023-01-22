@@ -24,13 +24,13 @@ public class CommentPersistenceEntity {
     @ManyToOne
     UserPersistenceEntity userPersistenceEntity;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     CommentPersistenceEntity parentComment;
 
     @OneToMany(
             mappedBy = "parentComment",
             cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     List<CommentPersistenceEntity> replies = new ArrayList<>();
 
     @OneToMany(

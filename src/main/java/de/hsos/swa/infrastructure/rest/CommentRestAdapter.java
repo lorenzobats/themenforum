@@ -1,5 +1,9 @@
 package de.hsos.swa.infrastructure.rest;
 
+import de.hsos.swa.application.input.VoteCommentInputPort;
+import de.hsos.swa.application.input.request.VoteCommentInputPortRequest;
+import de.hsos.swa.domain.entity.Comment;
+import de.hsos.swa.infrastructure.rest.request.VoteCommentRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import de.hsos.swa.infrastructure.rest.request.CommentPostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.request.ReplyToCommentRestAdapterRequest;
@@ -10,7 +14,6 @@ import de.hsos.swa.application.Result;
 import de.hsos.swa.application.input.request.CommentPostInputPortRequest;
 import de.hsos.swa.application.input.request.GetCommentByIdInputPortRequest;
 import de.hsos.swa.application.input.request.ReplyToCommentInputPortRequest;
-import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.infrastructure.rest.dto.CommentDto;
 import de.hsos.swa.infrastructure.rest.validation.CommentValidationService;
 
@@ -19,6 +22,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -40,6 +44,9 @@ public class CommentRestAdapter {
 
     @Inject
     ReplyToCommentInputPort replyToCommentInputPort;
+
+    @Inject
+    VoteCommentInputPort voteCommentInputPort;
 
     @Inject
     CommentValidationService validationService;
@@ -92,6 +99,26 @@ public class CommentRestAdapter {
                 return Response.status(Response.Status.OK).entity(response).build();
             }
             return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(result.getErrorMessage())).build();
+        } catch (ConstraintViolationException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+        }
+    }
+
+    @PUT
+    @Path("/{id}/vote")
+    @RolesAllowed("member")
+    public Response voteComment(@NotNull VoteCommentRestAdapterRequest request, @PathParam("id") String id, @Context SecurityContext securityContext) {
+        try {
+            validationService.validateVote(request);
+            String username = securityContext.getUserPrincipal().getName();
+            VoteCommentInputPortRequest command = VoteCommentRestAdapterRequest.Converter.toInputPort(request, id, username);
+            Result<Comment> postResult = this.voteCommentInputPort.voteComment(command);
+
+            if (postResult.isSuccessful()) {
+                CommentDto postResponse = CommentDto.Converter.toDto(postResult.getData());
+                return Response.status(Response.Status.CREATED).entity(postResponse).build();
+            }
+            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getErrorMessage()).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }

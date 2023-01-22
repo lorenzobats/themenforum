@@ -26,6 +26,10 @@ public class Comment {
         this.text = text;
     }
 
+    public void setParentComment(Comment parentComment) {
+        this.parentComment = parentComment;
+    }
+
     public Comment(User user, String text) {
         this.id = UUID.randomUUID();
         this.user = user;

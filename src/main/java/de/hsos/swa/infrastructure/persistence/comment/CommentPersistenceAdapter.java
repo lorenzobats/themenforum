@@ -3,7 +3,7 @@ package de.hsos.swa.infrastructure.persistence.comment;
 import de.hsos.swa.application.Result;
 import de.hsos.swa.application.output.persistence.CommentRepository;
 import de.hsos.swa.domain.entity.Comment;
-import de.hsos.swa.domain.entity.Post;
+import de.hsos.swa.infrastructure.persistence.post.PostPersistenceEntity;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
@@ -25,13 +25,13 @@ public class CommentPersistenceAdapter implements CommentRepository {
     Logger log;
 
     @Override
-    public Result<UUID> saveComment(Comment comment, Post post) {
+    public Result<Comment> updateComment(Comment comment) {
         CommentPersistenceEntity commentPersistenceEntity = CommentPersistenceEntity.Converter.toPersistenceEntity(comment);
         try {
-            entityManager.persist(commentPersistenceEntity);
-            return Result.success(commentPersistenceEntity.id);
+            entityManager.merge(commentPersistenceEntity);
+            return Result.success(CommentPersistenceEntity.Converter.toDomainEntity(commentPersistenceEntity));
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            log.error("savePost Error", e);
+            log.error("updateComment Error", e);
             return Result.exception(e);
         }
     }

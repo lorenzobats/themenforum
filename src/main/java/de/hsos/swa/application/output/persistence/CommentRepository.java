@@ -7,6 +7,6 @@ import de.hsos.swa.domain.entity.Post;
 import java.util.UUID;
 
 public interface CommentRepository {
-    Result<UUID> saveComment(Comment comment, Post post);
+    Result<Comment> updateComment(Comment comment);
     Result<Comment> getCommentById(UUID commentId);
 }
