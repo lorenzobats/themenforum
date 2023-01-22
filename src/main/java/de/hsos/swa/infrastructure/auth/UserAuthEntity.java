@@ -11,7 +11,7 @@ import io.quarkus.security.jpa.Username;
 import java.util.UUID;
 
 @Entity
-@Table(name = "keycloack_user_table")
+@Table(name = "auth_user_table")
 @UserDefinition
 public class UserAuthEntity {
     @Id
@@ -27,6 +27,7 @@ public class UserAuthEntity {
     @Roles
     String role;
 
+    @Column(name = "user_id")
     UUID userId;
 
     public UserAuthEntity() {

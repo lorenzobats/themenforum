@@ -1,6 +1,6 @@
 package de.hsos.swa.infrastructure.rest.validation;
 
-import de.hsos.swa.infrastructure.rest.request.RegisterUserRestAdapterRequest;
+import de.hsos.swa.infrastructure.rest.dto.in.RegisterUserRestAdapterRequest;
 
 import javax.enterprise.context.RequestScoped;
 import javax.validation.Valid;

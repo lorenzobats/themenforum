@@ -11,13 +11,8 @@ public class Comment {
     private User user;
     private String text;
     private LocalDate publishedDate;
-
-    private int upvotes;
-
     private List<Comment> replies = new ArrayList<>();
-
     private final Map<UUID, Vote> votes = new HashMap<>();
-
     private Comment parentComment;
 
     public Comment(UUID id, User user, String text) {
@@ -52,10 +47,6 @@ public class Comment {
         return publishedDate;
     }
 
-    public int getUpvotes() {
-        return upvotes;
-    }
-
     public List<Comment> getReplies() {
         return replies;
     }
@@ -67,7 +58,6 @@ public class Comment {
     public Comment getParentComment() {
         return this.parentComment;
     }
-
     @Override
     public String toString() {
         return "Comment{" +
@@ -75,12 +65,10 @@ public class Comment {
                 ", user=" + user +
                 ", text='" + text + '\'' +
                 ", publishedDate=" + publishedDate +
-                ", upvotes=" + upvotes +
                 ", replies=" + replies +
                 ", parentComment=" + parentComment +
                 '}';
     }
-
 
     public Map<UUID, Vote> getVotes() {
         return votes;
@@ -104,5 +92,4 @@ public class Comment {
     public void setVote(Vote vote) {
         this.votes.put(vote.getUser().getId(), vote);
     }
-
 }

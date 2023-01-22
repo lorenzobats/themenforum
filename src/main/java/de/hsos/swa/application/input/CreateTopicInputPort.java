@@ -1,7 +1,7 @@
 package de.hsos.swa.application.input;
 
-import de.hsos.swa.application.Result;
-import de.hsos.swa.application.input.request.CreateTopicInputPortRequest;
+import de.hsos.swa.application.output.Result;
+import de.hsos.swa.application.input.dto.in.CreateTopicInputPortRequest;
 import de.hsos.swa.domain.entity.Topic;
 
 import javax.validation.Valid;

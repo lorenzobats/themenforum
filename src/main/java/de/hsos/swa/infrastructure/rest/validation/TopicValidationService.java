@@ -1,6 +1,6 @@
 package de.hsos.swa.infrastructure.rest.validation;
 
-import de.hsos.swa.infrastructure.rest.request.CreateTopicRestAdapterRequest;
+import de.hsos.swa.infrastructure.rest.dto.in.CreateTopicRestAdapterRequest;
 
 import javax.enterprise.context.RequestScoped;
 import javax.validation.Valid;

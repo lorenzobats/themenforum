@@ -1,8 +1,8 @@
 package de.hsos.swa.infrastructure.rest.validation;
 
-import de.hsos.swa.infrastructure.rest.request.CommentPostRestAdapterRequest;
-import de.hsos.swa.infrastructure.rest.request.ReplyToCommentRestAdapterRequest;
-import de.hsos.swa.infrastructure.rest.request.VoteCommentRestAdapterRequest;
+import de.hsos.swa.infrastructure.rest.dto.in.CommentPostRestAdapterRequest;
+import de.hsos.swa.infrastructure.rest.dto.in.ReplyToCommentRestAdapterRequest;
+import de.hsos.swa.infrastructure.rest.dto.in.VoteCommentRestAdapterRequest;
 
 import javax.enterprise.context.RequestScoped;
 import javax.validation.Valid;

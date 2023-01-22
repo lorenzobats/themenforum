@@ -1,20 +1,20 @@
 package de.hsos.swa.infrastructure.rest;
 
 import de.hsos.swa.application.input.VoteCommentInputPort;
-import de.hsos.swa.application.input.request.VoteCommentInputPortRequest;
+import de.hsos.swa.application.input.dto.in.VoteCommentInputPortRequest;
 import de.hsos.swa.domain.entity.Comment;
-import de.hsos.swa.infrastructure.rest.request.VoteCommentRestAdapterRequest;
+import de.hsos.swa.infrastructure.rest.dto.in.VoteCommentRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
-import de.hsos.swa.infrastructure.rest.request.CommentPostRestAdapterRequest;
-import de.hsos.swa.infrastructure.rest.request.ReplyToCommentRestAdapterRequest;
+import de.hsos.swa.infrastructure.rest.dto.in.CommentPostRestAdapterRequest;
+import de.hsos.swa.infrastructure.rest.dto.in.ReplyToCommentRestAdapterRequest;
 import de.hsos.swa.application.input.CommentPostInputPort;
 import de.hsos.swa.application.input.GetCommentByIdInputPort;
 import de.hsos.swa.application.input.ReplyToCommentInputPort;
-import de.hsos.swa.application.Result;
-import de.hsos.swa.application.input.request.CommentPostInputPortRequest;
-import de.hsos.swa.application.input.request.GetCommentByIdInputPortRequest;
-import de.hsos.swa.application.input.request.ReplyToCommentInputPortRequest;
-import de.hsos.swa.infrastructure.rest.dto.CommentDto;
+import de.hsos.swa.application.output.Result;
+import de.hsos.swa.application.input.dto.in.CommentPostInputPortRequest;
+import de.hsos.swa.application.input.dto.in.GetCommentByIdInputPortRequest;
+import de.hsos.swa.application.input.dto.in.ReplyToCommentInputPortRequest;
+import de.hsos.swa.infrastructure.rest.dto.out.CommentDto;
 import de.hsos.swa.infrastructure.rest.validation.CommentValidationService;
 
 import javax.annotation.security.RolesAllowed;

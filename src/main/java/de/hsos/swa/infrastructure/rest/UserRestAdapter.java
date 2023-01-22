@@ -1,13 +1,13 @@
 package de.hsos.swa.infrastructure.rest;
 
 
-import de.hsos.swa.infrastructure.rest.dto.UserDto;
-import de.hsos.swa.infrastructure.rest.request.RegisterUserRestAdapterRequest;
+import de.hsos.swa.infrastructure.rest.dto.out.UserDto;
+import de.hsos.swa.infrastructure.rest.dto.in.RegisterUserRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
-import de.hsos.swa.application.Result;
-import de.hsos.swa.application.input.request.GetUserByNameInputPortRequest;
+import de.hsos.swa.application.output.Result;
+import de.hsos.swa.application.input.dto.in.GetUserByNameInputPortRequest;
 import de.hsos.swa.application.input.GetUserByNameInputPort;
-import de.hsos.swa.application.input.request.RegisterUserInputPortRequest;
+import de.hsos.swa.application.input.dto.in.RegisterUserInputPortRequest;
 import de.hsos.swa.application.input.RegisterUserInputPort;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.infrastructure.rest.validation.UserValidationService;

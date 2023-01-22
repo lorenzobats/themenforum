@@ -1,8 +1,7 @@
 package de.hsos.swa.application.input;
 
-import de.hsos.swa.application.Result;
-import de.hsos.swa.application.input.dto.TopicWithPostCountDto;
-import de.hsos.swa.domain.entity.Topic;
+import de.hsos.swa.application.output.Result;
+import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 
 import java.util.List;
 

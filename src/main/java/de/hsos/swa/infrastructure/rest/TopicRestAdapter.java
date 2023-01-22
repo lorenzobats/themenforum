@@ -1,13 +1,13 @@
 package de.hsos.swa.infrastructure.rest;
 
-import de.hsos.swa.application.Result;
+import de.hsos.swa.application.output.Result;
 import de.hsos.swa.application.input.*;
-import de.hsos.swa.application.input.dto.TopicWithPostCountDto;
-import de.hsos.swa.application.input.request.CreateTopicInputPortRequest;
-import de.hsos.swa.application.input.request.GetTopicByIdInputPortRequest;
+import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
+import de.hsos.swa.application.input.dto.in.CreateTopicInputPortRequest;
+import de.hsos.swa.application.input.dto.in.GetTopicByIdInputPortRequest;
 import de.hsos.swa.domain.entity.Topic;
-import de.hsos.swa.infrastructure.rest.dto.TopicDto;
-import de.hsos.swa.infrastructure.rest.request.CreateTopicRestAdapterRequest;
+import de.hsos.swa.infrastructure.rest.dto.out.TopicDto;
+import de.hsos.swa.infrastructure.rest.dto.in.CreateTopicRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.TopicValidationService;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import org.jboss.logging.Logger;
