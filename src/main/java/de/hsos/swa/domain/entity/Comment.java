@@ -2,35 +2,49 @@ package de.hsos.swa.domain.entity;
 
 import de.hsos.swa.domain.vo.Vote;
 import de.hsos.swa.domain.vo.VoteType;
+import io.vertx.codegen.annotations.Nullable;
 
-import java.time.LocalDate;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
+import java.time.LocalDateTime;
 import java.util.*;
 
+// TODO: Validierung spezifischer (zB. Titellänge, Descriptionlänge, etc.)
 public class Comment {
+    @Valid
     private UUID id;
-    private User user;
+    @NotBlank
     private String text;
-    private LocalDate publishedDate;
+
+    @PastOrPresent
+    private LocalDateTime createdAt;
+    @Valid
+    private User user;
+    @Nullable
+    private Comment parentComment;      // TODO: Inwiefern wird der ParentKommentar in der Domain genutz?
+    @NotNull
     private List<Comment> replies = new ArrayList<>();
+    @NotNull
     private final Map<UUID, Vote> votes = new HashMap<>();
-    private Comment parentComment;
 
-    public Comment(UUID id, User user, String text) {
+    public Comment(UUID id, LocalDateTime createdAt, User user, String text) {
         this.id = id;
+        this.createdAt = createdAt;
         this.user = user;
         this.text = text;
     }
 
-    public void setParentComment(Comment parentComment) {
-        this.parentComment = parentComment;
-    }
-
-    public Comment(User user, String text) {
+    public Comment(LocalDateTime createdAt, User user, String text) {
         this.id = UUID.randomUUID();
+        this.createdAt = createdAt;
         this.user = user;
         this.text = text;
     }
+    // SETTER
 
+    // GETTER
     public UUID getId() {
         return id;
     }
@@ -43,54 +57,37 @@ public class Comment {
         return text;
     }
 
-    public LocalDate getPublishedDate() {
-        return publishedDate;
-    }
-
     public List<Comment> getReplies() {
         return replies;
     }
 
-    public void addReply(Comment reply) {
-        reply.parentComment = this;
-        this.replies.add(reply);
-    }
     public Comment getParentComment() {
         return this.parentComment;
-    }
-    @Override
-    public String toString() {
-        return "Comment{" +
-                "id=" + id +
-                ", user=" + user +
-                ", text='" + text + '\'' +
-                ", publishedDate=" + publishedDate +
-                ", replies=" + replies +
-                ", parentComment=" + parentComment +
-                '}';
     }
 
     public Map<UUID, Vote> getVotes() {
         return votes;
     }
 
-    public Set<UUID> getUsersOfVotes() {
-        return votes.keySet();
-    }
-    public void removeVote(UUID userId) {
-        this.votes.remove(userId);
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public Integer getVoteSum() {
-        int voting = 0;
-        for (Vote v : this.votes.values()){
-            voting += (v.getVoteType().equals(VoteType.UP) ? 1 : -1);
-        }
-        return voting;
+    // COMMENTS
+    // TODO: in Comment Service auslagern?
+    public void addReply(Comment reply) {
+        reply.parentComment = this;
+        this.replies.add(reply);
     }
 
+
+    // VOTES
     public void setVote(Vote vote) {
         this.votes.put(vote.getUser().getId(), vote);
+    }
+
+    public void removeVote(UUID userId) {
+        this.votes.remove(userId);
     }
 
     public Integer getDownVotes() {
@@ -107,9 +104,5 @@ public class Comment {
             voting += (v.getVoteType().equals(VoteType.UP) ? 1 : 0);
         }
         return voting;
-    }
-
-    public Vote getUserVote(UUID userId) {
-        return this.votes.get(userId);
     }
 }

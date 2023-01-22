@@ -2,6 +2,7 @@ package de.hsos.swa.infrastructure.rest.dto.out;
 
 import de.hsos.swa.domain.entity.Comment;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,16 +12,18 @@ public class CommentDto {
     public String username;
     public String text;
 
+    public LocalDateTime createdAt;
     public String parentId;
     public List<CommentDto> replies = new ArrayList<>();
 
     public Integer downVoteCount;
     public Integer upVoteCount;
 
-    public CommentDto(String id, String username, String text, Integer downVoteCount, Integer upVoteCount) {
+    public CommentDto(String id, String username, String text, LocalDateTime createdAt, Integer downVoteCount, Integer upVoteCount) {
         this.id = id;
         this.username = username;
         this.text = text;
+        this.createdAt = createdAt;
         this.downVoteCount = downVoteCount;
         this.upVoteCount = upVoteCount;
     }
@@ -37,6 +40,7 @@ public class CommentDto {
                     String.valueOf(comment.getId()),
                     comment.getUser().getName(),
                     comment.getText(),
+                    comment.getCreatedAt(),
                     comment.getDownVotes(),
                     comment.getUpVotes());
 
@@ -47,21 +51,5 @@ public class CommentDto {
             }
             return commentDto;
         }
-
-//        public static CommentDto fromInputPortDto(CommentWithVoteCountDto comment) {
-//            List<CommentDto> repliesDto = comment.replies.stream().map(CommentDto.Converter::fromInputPortDto).collect(Collectors.toList());
-//
-//            CommentDto commentDto = new CommentDto(
-//                    String.valueOf(comment.id),
-//                    comment.username,
-//                    comment.text,
-//                    comment.downVoteCount,
-//                    comment.upVoteCount);
-//
-//            commentDto.replies = repliesDto;
-//            commentDto.parentId = comment.parentId;
-//
-//            return commentDto;
-//        }
     }
 }

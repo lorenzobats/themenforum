@@ -1,6 +1,4 @@
-package de.hsos.swa.domain.factory;
-
-import de.hsos.swa.domain.entity.Post;
+package de.hsos.swa.domain.entity.factory;
 import de.hsos.swa.domain.entity.User;
 
 import javax.validation.*;

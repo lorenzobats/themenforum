@@ -15,11 +15,11 @@ INSERT INTO post_table (id, content, createdat, title, topic_id, user_id) VALUES
 INSERT INTO post_table (id, content, createdat, title, topic_id, user_id) VALUES ('06f21fbb-1730-446d-b3c2-44dd8a839c12', 'Das hier ist Lorenzos dritter Post', '2023-01-22 21:06:14.563721', 'Lorenzos Post 3', 'a70d18cf-7b53-43fe-86de-1277fa476864', 'efac4cf6-4188-4a18-8489-4fc98f3633d6');
 
 
-INSERT INTO comment_table (id, text, parent_comment_id, user_id) VALUES ('9ac4c6fd-68e1-4b41-97fd-817284290411', 'Olivers Direktkommentar zu Olivers Post 1', null, '78188b10-4733-4fca-8dfd-e07aee389383');
-INSERT INTO comment_table (id, text, parent_comment_id, user_id) VALUES ('ee774407-a71f-4d4e-b829-f26d38e2ee81', 'Olivers Direktkommentar zu Lorenzos Post 2', null, '78188b10-4733-4fca-8dfd-e07aee389383');
-INSERT INTO comment_table (id, text, parent_comment_id, user_id) VALUES ('5c39bb7f-0ff4-4bff-a89f-03adc03bb72c', 'Olivers Reply 1 zu Olivers Direktkommentar zu Olivers Post 1', '9ac4c6fd-68e1-4b41-97fd-817284290411', '78188b10-4733-4fca-8dfd-e07aee389383');
-INSERT INTO comment_table (id, text, parent_comment_id, user_id) VALUES ('2c210dd8-ff07-4adb-ad4c-67625ae7c295', 'Olivers Reply 2 zu Olivers Direktkommentar zu Olivers Post 1', '9ac4c6fd-68e1-4b41-97fd-817284290411', '78188b10-4733-4fca-8dfd-e07aee389383');
-INSERT INTO comment_table (id, text, parent_comment_id, user_id) VALUES ('11b17c89-1c3b-4951-9bd4-7c42119534e7', 'Olivers Reply 1 zu Olivers Reply 2 zu Olivers Direktkommentar zu Olivers Post 1', '2c210dd8-ff07-4adb-ad4c-67625ae7c295', '78188b10-4733-4fca-8dfd-e07aee389383');
+INSERT INTO comment_table (id, createdat, text, parent_comment_id, user_id) VALUES ('9ac4c6fd-68e1-4b41-97fd-817284290411', '2023-01-22 19:29:59.697731', 'Olivers Direktkommentar zu Olivers Post 1', null, '78188b10-4733-4fca-8dfd-e07aee389383');
+INSERT INTO comment_table (id, createdat, text, parent_comment_id, user_id) VALUES ('ee774407-a71f-4d4e-b829-f26d38e2ee81', '2023-01-22 20:29:59.697731', 'Olivers Direktkommentar zu Lorenzos Post 2', null, '78188b10-4733-4fca-8dfd-e07aee389383');
+INSERT INTO comment_table (id, createdat, text, parent_comment_id, user_id) VALUES ('5c39bb7f-0ff4-4bff-a89f-03adc03bb72c', '2023-01-22 20:30:59.697731', 'Olivers Reply 1 zu Olivers Direktkommentar zu Olivers Post 1', '9ac4c6fd-68e1-4b41-97fd-817284290411', '78188b10-4733-4fca-8dfd-e07aee389383');
+INSERT INTO comment_table (id, createdat, text, parent_comment_id, user_id) VALUES ('2c210dd8-ff07-4adb-ad4c-67625ae7c295', '2023-01-22 20:31:59.697731', 'Olivers Reply 2 zu Olivers Direktkommentar zu Olivers Post 1', '9ac4c6fd-68e1-4b41-97fd-817284290411', '78188b10-4733-4fca-8dfd-e07aee389383');
+INSERT INTO comment_table (id, createdat, text, parent_comment_id, user_id) VALUES ('11b17c89-1c3b-4951-9bd4-7c42119534e7', '2023-01-22 20:33:59.697731', 'Olivers Reply 1 zu Olivers Reply 2 zu Olivers Direktkommentar zu Olivers Post 1', '2c210dd8-ff07-4adb-ad4c-67625ae7c295', '78188b10-4733-4fca-8dfd-e07aee389383');
 
 INSERT INTO post_table_comment_table (post_id, comments_id) VALUES ('55a7409f-c0eb-453e-b7ef-89f905963ce9', '9ac4c6fd-68e1-4b41-97fd-817284290411');
 INSERT INTO post_table_comment_table (post_id, comments_id) VALUES ('959b81a0-35b3-4f9d-a08b-4879173a1e2c', 'ee774407-a71f-4d4e-b829-f26d38e2ee81');

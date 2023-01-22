@@ -8,6 +8,7 @@ import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
+import de.hsos.swa.domain.entity.factory.CommentFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -33,7 +34,7 @@ public class CommentPostUseCase implements CommentPostInputPort {
 
         User user = userResult.getData();
 
-        Comment comment = new Comment(user, request.getCommentText());
+        Comment comment = CommentFactory.createComment(request.getCommentText(), user);
 
         Result<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.getPostId()), true);
         if (!postResult.isSuccessful()) {

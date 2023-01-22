@@ -1,4 +1,4 @@
-package de.hsos.swa.domain.factory;
+package de.hsos.swa.domain.entity.factory;
 
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.Topic;

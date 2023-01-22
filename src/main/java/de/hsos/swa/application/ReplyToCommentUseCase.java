@@ -8,6 +8,7 @@ import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
+import de.hsos.swa.domain.entity.factory.CommentFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -40,7 +41,7 @@ public class ReplyToCommentUseCase implements ReplyToCommentInputPort {
 
         Post post = getPostResponse.getData();
 
-        Comment reply = new Comment(user, request.getCommentText());
+        Comment reply = CommentFactory.createComment(request.getCommentText(), user);
 
         post.addReplyToComment(request.getCommentId(), reply);
 

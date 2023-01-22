@@ -89,7 +89,6 @@ public class Post {
 
     // SETTER
 
-
     // COMMENTS
     // TODO: in Comment Service auslagern?
     public void addComment(Comment comment) {
