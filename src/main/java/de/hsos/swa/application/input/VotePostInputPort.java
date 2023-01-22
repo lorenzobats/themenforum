@@ -6,5 +6,5 @@ import de.hsos.swa.domain.entity.Post;
 import javax.validation.Valid;
 
 public interface VotePostInputPort {
-   Result<Boolean> votePost(@Valid VotePostInputPortRequest request);
+   Result<Post> votePost(@Valid VotePostInputPortRequest request);
 }

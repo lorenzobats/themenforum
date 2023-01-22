@@ -5,10 +5,9 @@ INSERT INTO auth_user_table (id, password, role, user_id, username) VALUES ('6b0
 INSERT INTO auth_user_table (id, password, role, user_id, username) VALUES ('c91b0e85-abcb-48d4-b344-3229099c84ba', '$2a$10$HTWkZDXvW.laYCCBzWo7Qu1xZL2fKWe.EgEeGly9TCLUa0xzqPuS2', 'member', 'efac4cf6-4188-4a18-8489-4fc98f3633d6', 'lbattist');
 
 
-INSERT INTO topic_table (id, description, title, user_id) VALUES ('a70d18cf-7b53-43fe-86de-1277fa476864', 'Deutschland das Autoland', 'Autos', '78188b10-4733-4fca-8dfd-e07aee389383');
-INSERT INTO topic_table (id, description, title, user_id) VALUES ('897efe45-a06f-4d3a-9579-5df3fc279beb', 'SWA bestes Fach!', 'SWA', '78188b10-4733-4fca-8dfd-e07aee389383');
-INSERT INTO topic_table (id, description, title, user_id) VALUES ('5b541bd3-2a87-4cbc-ad95-ed9343831972', 'Alles rund um das Thema Sport', 'Sport', 'efac4cf6-4188-4a18-8489-4fc98f3633d6');
-
+INSERT INTO public.topic_table (id, createdat, description, title, user_id) VALUES ('a70d18cf-7b53-43fe-86de-1277fa476864', '2023-01-21 20:49:37.855505', 'Deutschland das Autoland', 'Autos', '78188b10-4733-4fca-8dfd-e07aee389383');
+INSERT INTO public.topic_table (id, createdat, description, title, user_id) VALUES ('897efe45-a06f-4d3a-9579-5df3fc279beb', '2023-01-22 20:49:37.855505', 'SWA bestes Fach!', 'SWA', '78188b10-4733-4fca-8dfd-e07aee389383');
+INSERT INTO public.topic_table (id, createdat, description, title, user_id) VALUES ('5b541bd3-2a87-4cbc-ad95-ed9343831972','2023-01-22 21:45:37.855505', 'Alles rund um das Thema Sport', 'Sport', 'efac4cf6-4188-4a18-8489-4fc98f3633d6');
 
 INSERT INTO post_table (id, content, title, topic_id, user_id) VALUES ('55a7409f-c0eb-453e-b7ef-89f905963ce9', 'Das hier ist mein Post', 'Olivers Post 1', 'a70d18cf-7b53-43fe-86de-1277fa476864', '78188b10-4733-4fca-8dfd-e07aee389383');
 INSERT INTO post_table (id, content, title, topic_id, user_id) VALUES ('4cfe8a99-f71a-476c-a2cb-dae7cb86872e', 'Das hier ist mein Post', 'Olivers Post 2', 'a70d18cf-7b53-43fe-86de-1277fa476864', '78188b10-4733-4fca-8dfd-e07aee389383');

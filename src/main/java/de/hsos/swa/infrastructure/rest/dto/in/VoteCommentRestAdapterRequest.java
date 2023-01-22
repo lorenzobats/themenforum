@@ -10,12 +10,11 @@ import javax.validation.constraints.Pattern;
 
 public class VoteCommentRestAdapterRequest {
 
-    @NotBlank(message = "postId missing")
+    @NotBlank(message = "postId is empty")
     public String postId;
-    @NotEmpty (message = "voteType missing")
+    @NotEmpty (message = "voteType is empty")
     @Pattern(regexp = "up|down|none", message = "voteType must be one of: up, down, none")
     public String voteType;
-    // https://developer.salesforce.com/docs/atlas.en-us.chatterapi.meta/chatterapi/connect_resources_comments_capability_up_down_vote.htm?q=downVote
     public VoteCommentRestAdapterRequest() {}
 
     public static class Converter {

@@ -15,23 +15,25 @@ public class PostDto {
     @JsonbProperty(nillable = true)
     public List<CommentDto> comments;
 
-    public Integer voting;
+    public Integer downVoteCount;
+    public Integer upVoteCount;
 
-    public PostDto(String id, String title, String content, String creator, TopicDto topic, List<CommentDto> comments, Integer voting) {
+    public PostDto(String id, String title, String content, String creator, TopicDto topic, List<CommentDto> comments, Integer downVoteCount, Integer upVoteCount) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.creator = creator;
         this.topic = topic;
         this.comments = comments;
-        this.voting = voting;
+        this.downVoteCount = downVoteCount;
+        this.upVoteCount = upVoteCount;
     }
 
     public static class Converter {
         public static PostDto fromDomainEntity(Post post) {
             List<CommentDto> comments = post.getComments().stream().map(CommentDto.Converter::fromDomainEntity).toList();
             TopicDto topic = TopicDto.Converter.fromDomainEntity(post.getTopic());
-            return new PostDto(post.getId().toString(), post.getTitle(),  post.getContent(), post.getCreator().getName(), topic , comments, post.getVoteSum());
+            return new PostDto(post.getId().toString(), post.getTitle(),  post.getContent(), post.getCreator().getName(), topic , comments, post.getDownVotes(), post.getUpVotes());
         }
     }
 }

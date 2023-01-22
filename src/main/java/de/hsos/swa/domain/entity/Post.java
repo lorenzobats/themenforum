@@ -123,16 +123,23 @@ public class Post {
         this.votes.remove(userId);
     }
 
-    public Integer getVoteSum() {
+    public void setVote(Vote vote) {
+        this.votes.put(vote.getUser().getId(), vote);
+    }
+
+    public Integer getDownVotes() {
         int voting = 0;
         for (Vote v : this.votes.values()){
-            voting += (v.getVoteType().equals(VoteType.UP) ? 1 : -1);
+            voting += (v.getVoteType().equals(VoteType.DOWN) ? 1 : 0);
         }
         return voting;
     }
 
-
-    public void setVote(Vote vote) {
-        this.votes.put(vote.getUser().getId(), vote);
+    public Integer getUpVotes() {
+        int voting = 0;
+        for (Vote v : this.votes.values()){
+            voting += (v.getVoteType().equals(VoteType.UP) ? 1 : 0);
+        }
+        return voting;
     }
 }

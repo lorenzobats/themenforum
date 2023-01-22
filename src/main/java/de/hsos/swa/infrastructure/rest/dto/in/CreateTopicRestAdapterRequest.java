@@ -6,10 +6,10 @@ import javax.validation.constraints.NotBlank;
 
 public class CreateTopicRestAdapterRequest {
 
-    @NotBlank(message = "Topic Titel darf nicht leer sein")
+    @NotBlank(message = "title is empty")
     public String title;
 
-    @NotBlank(message = "Topic Description darf nicht leer sein")
+    @NotBlank(message = "description is empty")
     public String description;
 
     public CreateTopicRestAdapterRequest() {}

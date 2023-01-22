@@ -6,10 +6,10 @@ import javax.validation.constraints.NotBlank;
 
 public class RegisterUserRestAdapterRequest {
 
-    @NotBlank
+    @NotBlank(message = "username is empty")
     public String username;
 
-    @NotBlank
+    @NotBlank(message = "password is empty")
     public String password;
 
     public RegisterUserRestAdapterRequest() {

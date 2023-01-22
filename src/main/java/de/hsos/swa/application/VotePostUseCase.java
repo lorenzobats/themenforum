@@ -28,7 +28,7 @@ public class VotePostUseCase implements VotePostInputPort {
 
 
     @Override
-    public Result<Boolean> votePost(VotePostInputPortRequest request) {
+    public Result<Post> votePost(VotePostInputPortRequest request) {
         Result<User> userResult = this.userRepository.getUserByName(request.getUsername());
         if (!userResult.isSuccessful()) {
             return Result.error("User does not exist"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
@@ -51,7 +51,7 @@ public class VotePostUseCase implements VotePostInputPort {
         Result<Post> updatePostResult = this.postRepository.updatePost(post);
 
         if (updatePostResult.isSuccessful()) {
-            return Result.success(true);
+            return Result.success(updatePostResult.getData());
         }
 
         return Result.error("Something went wrong " + updatePostResult.getErrorMessage());

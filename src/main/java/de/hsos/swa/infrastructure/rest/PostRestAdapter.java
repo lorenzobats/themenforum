@@ -126,7 +126,7 @@ public class PostRestAdapter {
         try {
             validationService.validatePost(request);
             String username = securityContext.getUserPrincipal().getName();
-            CreatePostInputPortRequest command = CreatePostRestAdapterRequest.Converter.toInputPort(request, username);
+            CreatePostInputPortRequest command = CreatePostRestAdapterRequest.Converter.toInputPortCommand(request, username);
             Result<Post> postResult = this.createPostInputPort.createPost(command);
 
             if (postResult.isSuccessful()) {
@@ -150,10 +150,11 @@ public class PostRestAdapter {
             validationService.validateVote(request);
             String username = securityContext.getUserPrincipal().getName();
             VotePostInputPortRequest command = VotePostRestAdapterRequest.Converter.toInputPortCommand(request, id, username);
-            Result<Boolean> postResult = this.votePostInputPort.votePost(command);
+            Result<Post> postResult = this.votePostInputPort.votePost(command);
 
             if (postResult.isSuccessful()) {
-                return Response.status(Response.Status.OK).build();
+                PostDto postDto = PostDto.Converter.fromDomainEntity(postResult.getData());
+                return Response.status(Response.Status.OK).entity(postDto).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getErrorMessage()).build();
         } catch (ConstraintViolationException e) {

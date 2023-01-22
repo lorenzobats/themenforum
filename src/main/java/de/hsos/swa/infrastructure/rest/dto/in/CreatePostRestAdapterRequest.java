@@ -8,19 +8,19 @@ import java.util.UUID;
 
 public class CreatePostRestAdapterRequest {
 
-    @NotBlank(message = "Post Titel darf nicht leer sein")
+    @NotBlank(message = "title is empty")
     public String title;
 
-    @NotBlank(message = "Post Content darf nicht leer sein")
+    @NotBlank(message = "content is empty")
     public String content;
 
-    @NotBlank(message = "Post TopicId darf nicht leer sein")
+    @NotBlank(message = "topicId is empty")
     public String topicId;
 
     public CreatePostRestAdapterRequest() {}
 
     public static class Converter {
-        public static CreatePostInputPortRequest toInputPort(CreatePostRestAdapterRequest adapterRequest, String username) {
+        public static CreatePostInputPortRequest toInputPortCommand(CreatePostRestAdapterRequest adapterRequest, String username) {
             return new CreatePostInputPortRequest(adapterRequest.title, adapterRequest.content, UUID.fromString(adapterRequest.topicId), username);
         }
     }

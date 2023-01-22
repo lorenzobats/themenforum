@@ -1,26 +1,34 @@
 package de.hsos.swa.domain.entity;
 
-import java.time.LocalDate;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class Topic {
+    @Valid
     private UUID id;
+    @NotBlank
     private String title;
+    @NotBlank
     private String description;
-    //private LocalDate createdAt;  // TODO: Datum
+    private LocalDateTime createdAt;
+    @Valid
     private User owner;
 
-    public Topic(UUID id, String title, String description, User owner) {
+    public Topic(UUID id, String title, String description, LocalDateTime createdAt, User owner) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.createdAt = createdAt;
         this.owner = owner;
     }
 
-    public Topic(String title, String description, User owner) {
+    public Topic(String title, String description, LocalDateTime createdAt, User owner) {
         this.id = UUID.randomUUID();
         this.title = title;
         this.description = description;
+        this.createdAt = createdAt;
         this.owner = owner;
     }
 
@@ -34,6 +42,10 @@ public class Topic {
 
     public String getDescription() {
         return description;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public User getOwner() {
