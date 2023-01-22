@@ -16,7 +16,7 @@ public class RegisterUserRestAdapterRequest {
     }
 
     public static class Converter {
-        public static RegisterUserInputPortRequest toInputPort(RegisterUserRestAdapterRequest adapterRequest) {
+        public static RegisterUserInputPortRequest toInputPortCommand(RegisterUserRestAdapterRequest adapterRequest) {
             return new RegisterUserInputPortRequest(adapterRequest.username, adapterRequest.password);
         }
     }

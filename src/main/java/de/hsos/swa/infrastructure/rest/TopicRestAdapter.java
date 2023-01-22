@@ -59,7 +59,7 @@ public class TopicRestAdapter {
         try {
                 Result<List<TopicWithPostCountDto>> topicsResult = this.getAllTopicsWithPostCountInputPort.getAllTopics();
                 if (topicsResult.isSuccessful()) {
-                    List<TopicDto> topicsResponse = topicsResult.getData().stream().map(TopicDto.Converter::toDto).toList();
+                    List<TopicDto> topicsResponse = topicsResult.getData().stream().map(TopicDto.Converter::fromInputPortDto).toList();
                     return Response.status(Response.Status.OK).entity(topicsResponse).build();
                 }
                 return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(topicsResult.getErrorMessage())).build();
@@ -75,7 +75,7 @@ public class TopicRestAdapter {
             GetTopicByIdInputPortRequest query = new GetTopicByIdInputPortRequest(id);
             Result<Topic> topicResult = this.getTopicByIdInputPort.getTopicById(query);
             if (topicResult.isSuccessful()) {
-                TopicDto response = TopicDto.Converter.toDto(topicResult.getData());
+                TopicDto response = TopicDto.Converter.fromDomainEntity(topicResult.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
             return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(topicResult.getErrorMessage())).build();
@@ -90,11 +90,11 @@ public class TopicRestAdapter {
         try {
             validationService.validateTopic(request);
             String username = securityContext.getUserPrincipal().getName();
-            CreateTopicInputPortRequest command = CreateTopicRestAdapterRequest.Converter.toInputPort(request, username);
+            CreateTopicInputPortRequest command = CreateTopicRestAdapterRequest.Converter.toInputPortCommand(request, username);
             Result<Topic> topicResult = this.createTopicInputPort.createTopic(command);
 
             if (topicResult.isSuccessful()) {
-                TopicDto topicResponse = TopicDto.Converter.toDto(topicResult.getData());
+                TopicDto topicResponse = TopicDto.Converter.fromDomainEntity(topicResult.getData());
                 // TODO: Neben Body auch Uri Builder nutzen um RessourceLink im Header zurückzugeben (Gilt für alle POST/UPDATE)
                 return Response.status(Response.Status.CREATED).entity(topicResponse).build();
             }

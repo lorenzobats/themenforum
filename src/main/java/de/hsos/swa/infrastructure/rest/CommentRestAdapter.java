@@ -59,7 +59,7 @@ public class CommentRestAdapter {
             GetCommentByIdInputPortRequest query = new GetCommentByIdInputPortRequest(id);
             Result<Comment> commentResult = this.getCommentByIdInputPort.getCommentById(query);
             if (commentResult.isSuccessful()) {
-                CommentDto response = CommentDto.Converter.toDto(commentResult.getData());
+                CommentDto response = CommentDto.Converter.fromDomainEntity(commentResult.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
             return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(commentResult.getErrorMessage())).build();
@@ -74,10 +74,10 @@ public class CommentRestAdapter {
         try {
             validationService.validateComment(request);
             String username = securityContext.getUserPrincipal().getName();
-            CommentPostInputPortRequest command = CommentPostRestAdapterRequest.Converter.toInputPort(request, username);
+            CommentPostInputPortRequest command = CommentPostRestAdapterRequest.Converter.toInputPortCommand(request, username);
             Result<Comment> result = this.commentPostInputPort.commentPost(command);
             if (result.isSuccessful()) {
-                CommentDto response = CommentDto.Converter.toDto(result.getData());
+                CommentDto response = CommentDto.Converter.fromDomainEntity(result.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
             return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(result.getErrorMessage())).build();
@@ -92,10 +92,10 @@ public class CommentRestAdapter {
         try {
             validationService.validateReply(request);
             String username = securityContext.getUserPrincipal().getName();
-            ReplyToCommentInputPortRequest command = ReplyToCommentRestAdapterRequest.Converter.toInputPort(request, id, username);
+            ReplyToCommentInputPortRequest command = ReplyToCommentRestAdapterRequest.Converter.toInputPortCommand(request, id, username);
             Result<Comment> result = this.replyToCommentInputPort.replyToComment(command);
             if (result.isSuccessful()) {
-                CommentDto response = CommentDto.Converter.toDto(result.getData());
+                CommentDto response = CommentDto.Converter.fromDomainEntity(result.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
             return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(result.getErrorMessage())).build();
@@ -111,14 +111,15 @@ public class CommentRestAdapter {
         try {
             validationService.validateVote(request);
             String username = securityContext.getUserPrincipal().getName();
-            VoteCommentInputPortRequest command = VoteCommentRestAdapterRequest.Converter.toInputPort(request, id, username);
-            Result<Comment> postResult = this.voteCommentInputPort.voteComment(command);
+            VoteCommentInputPortRequest command = VoteCommentRestAdapterRequest.Converter.toInputPortCommand(request, id, username);
+            Result<Comment> commentResult = this.voteCommentInputPort.voteComment(command);
 
-            if (postResult.isSuccessful()) {
-                CommentDto postResponse = CommentDto.Converter.toDto(postResult.getData());
-                return Response.status(Response.Status.CREATED).entity(postResponse).build();
+            if (commentResult.isSuccessful()) {
+                CommentDto commentDto = CommentDto.Converter.fromDomainEntity(commentResult.getData());
+                return Response.status(Response.Status.OK).entity(commentDto).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getErrorMessage()).build();
+
+            return Response.status(Response.Status.BAD_REQUEST).entity(commentResult.getErrorMessage()).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }

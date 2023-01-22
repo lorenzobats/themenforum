@@ -89,7 +89,7 @@ public class PostRestAdapter {
             GetAllPostsInputPortRequest query = new GetAllPostsInputPortRequest(filterParams);
             Result<List<Post>> postsResult = this.getAllPostsInputPort.getAllPosts(query);
             if (postsResult.isSuccessful()) {
-                List<PostDto> postsResponse = postsResult.getData().stream().map(PostDto.Converter::toDto).toList();
+                List<PostDto> postsResponse = postsResult.getData().stream().map(PostDto.Converter::fromDomainEntity).toList();
                 return Response.status(Response.Status.OK).entity(postsResponse).build();
             }
             return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(postsResult.getErrorMessage())).build();
@@ -109,7 +109,7 @@ public class PostRestAdapter {
             GetPostByIdInputPortRequest query = new GetPostByIdInputPortRequest(id, includeComments);
             Result<Post> postResult = this.getPostByIdInputPort.getPostById(query);
             if (postResult.isSuccessful()) {
-                PostDto response = PostDto.Converter.toDto(postResult.getData());
+                PostDto response = PostDto.Converter.fromDomainEntity(postResult.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
             return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(postResult.getErrorMessage())).build();
@@ -130,7 +130,7 @@ public class PostRestAdapter {
             Result<Post> postResult = this.createPostInputPort.createPost(command);
 
             if (postResult.isSuccessful()) {
-                PostDto postResponse = PostDto.Converter.toDto(postResult.getData());
+                PostDto postResponse = PostDto.Converter.fromDomainEntity(postResult.getData());
                 // TODO: Neben Body auch Uri Builder nutzen um RessourceLink im Header zurückzugeben (Gilt für alle POST/UPDATE)
                 return Response.status(Response.Status.CREATED).entity(postResponse).build();
             }
@@ -149,12 +149,11 @@ public class PostRestAdapter {
         try {
             validationService.validateVote(request);
             String username = securityContext.getUserPrincipal().getName();
-            VotePostInputPortRequest command = VotePostRestAdapterRequest.Converter.toInputPort(request, id, username);
-            Result<Post> postResult = this.votePostInputPort.votePost(command);
+            VotePostInputPortRequest command = VotePostRestAdapterRequest.Converter.toInputPortCommand(request, id, username);
+            Result<Boolean> postResult = this.votePostInputPort.votePost(command);
 
             if (postResult.isSuccessful()) {
-                PostDto postResponse = PostDto.Converter.toDto(postResult.getData());
-                return Response.status(Response.Status.CREATED).entity(postResponse).build();
+                return Response.status(Response.Status.OK).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getErrorMessage()).build();
         } catch (ConstraintViolationException e) {

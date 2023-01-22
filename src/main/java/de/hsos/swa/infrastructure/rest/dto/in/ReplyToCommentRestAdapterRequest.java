@@ -12,7 +12,7 @@ public class ReplyToCommentRestAdapterRequest {
     public ReplyToCommentRestAdapterRequest() {}
 
     public static class Converter {
-        public static ReplyToCommentInputPortRequest toInputPort(ReplyToCommentRestAdapterRequest adapterRequest, String commentId, String username) {
+        public static ReplyToCommentInputPortRequest toInputPortCommand(ReplyToCommentRestAdapterRequest adapterRequest, String commentId, String username) {
             return new ReplyToCommentInputPortRequest(adapterRequest.postId, commentId, username, adapterRequest.text);
         }
     }

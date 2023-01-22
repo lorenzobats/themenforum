@@ -15,7 +15,7 @@ public class CreateTopicRestAdapterRequest {
     public CreateTopicRestAdapterRequest() {}
 
     public static class Converter {
-        public static CreateTopicInputPortRequest toInputPort(CreateTopicRestAdapterRequest adapterRequest, String username) {
+        public static CreateTopicInputPortRequest toInputPortCommand(CreateTopicRestAdapterRequest adapterRequest, String username) {
             return new CreateTopicInputPortRequest(adapterRequest.title, adapterRequest.description, username);
         }
     }

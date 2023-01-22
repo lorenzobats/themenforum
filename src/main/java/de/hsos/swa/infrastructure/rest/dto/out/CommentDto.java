@@ -14,13 +14,15 @@ public class CommentDto {
     public String parentId;
     public List<CommentDto> replies = new ArrayList<>();
 
-    public Integer voting;
+    public Integer downVoteCount;
+    public Integer upVoteCount;
 
-    public CommentDto(String id, String username, String text, Integer voting) {
+    public CommentDto(String id, String username, String text, Integer downVoteCount, Integer upVoteCount) {
         this.id = id;
         this.username = username;
         this.text = text;
-        this.voting = voting;
+        this.downVoteCount = downVoteCount;
+        this.upVoteCount = upVoteCount;
     }
 
     public String getId() {
@@ -28,14 +30,15 @@ public class CommentDto {
     }
 
     public static class Converter {
-        public static CommentDto toDto(Comment comment) {
-            List<CommentDto> repliesDto = comment.getReplies().stream().map(CommentDto.Converter::toDto).collect(Collectors.toList());
+        public static CommentDto fromDomainEntity(Comment comment) {
+            List<CommentDto> repliesDto = comment.getReplies().stream().map(CommentDto.Converter::fromDomainEntity).collect(Collectors.toList());
 
             CommentDto commentDto = new CommentDto(
                     String.valueOf(comment.getId()),
                     comment.getUser().getName(),
                     comment.getText(),
-                    comment.getVoteSum());
+                    comment.getDownVotes(),
+                    comment.getUpVotes());
 
             commentDto.replies = repliesDto;
 
@@ -45,5 +48,20 @@ public class CommentDto {
             return commentDto;
         }
 
+//        public static CommentDto fromInputPortDto(CommentWithVoteCountDto comment) {
+//            List<CommentDto> repliesDto = comment.replies.stream().map(CommentDto.Converter::fromInputPortDto).collect(Collectors.toList());
+//
+//            CommentDto commentDto = new CommentDto(
+//                    String.valueOf(comment.id),
+//                    comment.username,
+//                    comment.text,
+//                    comment.downVoteCount,
+//                    comment.upVoteCount);
+//
+//            commentDto.replies = repliesDto;
+//            commentDto.parentId = comment.parentId;
+//
+//            return commentDto;
+//        }
     }
 }

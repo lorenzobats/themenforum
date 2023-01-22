@@ -27,11 +27,11 @@ public class TopicDto {
     }
 
     public static class Converter {
-        public static TopicDto toDto(Topic topic) {
+        public static TopicDto fromDomainEntity(Topic topic) {
             return new TopicDto(topic.getId().toString(), topic.getTitle(), topic.getDescription(), topic.getOwner().getName());
         }
 
-        public static TopicDto toDto(TopicWithPostCountDto topic) {
+        public static TopicDto fromInputPortDto(TopicWithPostCountDto topic) {
             Long posts = topic.numberOfPosts;
             return new TopicDto(topic.id, topic.title, topic.description, topic.owner, topic.numberOfPosts);
         }

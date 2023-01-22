@@ -28,9 +28,9 @@ public class PostDto {
     }
 
     public static class Converter {
-        public static PostDto toDto(Post post) {
-            List<CommentDto> comments = post.getComments().stream().map(CommentDto.Converter::toDto).toList();
-            TopicDto topic = TopicDto.Converter.toDto(post.getTopic());
+        public static PostDto fromDomainEntity(Post post) {
+            List<CommentDto> comments = post.getComments().stream().map(CommentDto.Converter::fromDomainEntity).toList();
+            TopicDto topic = TopicDto.Converter.fromDomainEntity(post.getTopic());
             return new PostDto(post.getId().toString(), post.getTitle(),  post.getContent(), post.getCreator().getName(), topic , comments, post.getVoteSum());
         }
     }

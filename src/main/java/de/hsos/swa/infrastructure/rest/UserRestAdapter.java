@@ -59,7 +59,7 @@ public class UserRestAdapter {
     public Response registerUser(RegisterUserRestAdapterRequest request) {
         try {
             validationService.validateUser(request);
-            RegisterUserInputPortRequest command = RegisterUserRestAdapterRequest.Converter.toInputPort(request);
+            RegisterUserInputPortRequest command = RegisterUserRestAdapterRequest.Converter.toInputPortCommand(request);
             Result<User> userResult = this.registerUserInputPort.registerUser(command);
             if (userResult.isSuccessful()) {
                 UserDto responseDto = UserDto.Converter.fromDomainEntity(userResult.getData());

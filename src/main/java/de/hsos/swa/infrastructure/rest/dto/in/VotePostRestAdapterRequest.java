@@ -17,7 +17,7 @@ public class VotePostRestAdapterRequest {
     public VotePostRestAdapterRequest() {}
 
     public static class Converter {
-        public static VotePostInputPortRequest toInputPort(VotePostRestAdapterRequest adapterRequest, String postId, String username) {
+        public static VotePostInputPortRequest toInputPortCommand(VotePostRestAdapterRequest adapterRequest, String postId, String username) {
             return new VotePostInputPortRequest(postId, username, VoteType.fromValue(adapterRequest.voteType));
         }
     }

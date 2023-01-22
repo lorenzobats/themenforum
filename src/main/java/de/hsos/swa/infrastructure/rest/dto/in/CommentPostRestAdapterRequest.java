@@ -12,7 +12,7 @@ public class CommentPostRestAdapterRequest {
     public CommentPostRestAdapterRequest() {}
 
     public static class Converter {
-        public static CommentPostInputPortRequest toInputPort(CommentPostRestAdapterRequest adapterRequest, String username) {
+        public static CommentPostInputPortRequest toInputPortCommand(CommentPostRestAdapterRequest adapterRequest, String username) {
             return new CommentPostInputPortRequest(adapterRequest.postId, username, adapterRequest.text);
         }
     }

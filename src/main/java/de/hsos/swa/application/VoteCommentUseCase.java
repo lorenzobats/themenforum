@@ -3,14 +3,16 @@ package de.hsos.swa.application;
 import de.hsos.swa.application.output.Result;
 import de.hsos.swa.application.input.VoteCommentInputPort;
 import de.hsos.swa.application.input.dto.in.VoteCommentInputPortRequest;
-import de.hsos.swa.application.output.repository.CommentRepository;
+import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.domain.entity.Comment;
+import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.domain.service.VoteService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.Optional;
 import java.util.UUID;
 // TODO: Funktioniert nicht, Beziehung zum Parent Comment geht verloren
 // Loesung -> Über Post gehen.
@@ -18,7 +20,7 @@ import java.util.UUID;
 public class VoteCommentUseCase implements VoteCommentInputPort {
 
     @Inject
-    CommentRepository commentRepository;
+    PostRepository postRepository;
 
     @Inject
     UserRepository userRepository;
@@ -35,27 +37,29 @@ public class VoteCommentUseCase implements VoteCommentInputPort {
         }
         User user = userResult.getData();
 
-        Result<Comment> commentResult = this.commentRepository.getCommentById(UUID.fromString(request.getCommentId()));
-        if (!commentResult.isSuccessful()) {
-            return Result.error("Comment does not exist"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
+
+        Result<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.getPostId()), true);
+        if (!postResult.isSuccessful()) {
+            return Result.error("Post does not exist"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
         }
-        Comment comment = commentResult.getData();
+        Post post = postResult.getData();
 
         // TODO: Vernünftiges Error Handling / Messaging / Oder einfach PUT = Idempotent?
         try {
-            this.voteService.voteComment(comment, user, request.getVoteType());
+            this.voteService.voteComment(post, user, request.getCommentId(), request.getVoteType());
         } catch (Exception e) {
             return Result.error(e.getMessage());
         }
 
-        Result<Comment> updatePostResult = this.commentRepository.updateComment(comment);
-
-
-        if (updatePostResult.isSuccessful()) {
-            return Result.success(updatePostResult.getData());
+        Result<Post> updatePostResult = this.postRepository.updatePost(post);
+        if (!updatePostResult.isSuccessful()) {
+            return Result.error("Updating Comment went wrong " + updatePostResult.getErrorMessage());
         }
 
-        return Result.error("Something went wrong " + updatePostResult.getErrorMessage());
-
+        Optional<Comment> optionalComment = post.findCommentById(request.getCommentId());
+        if(optionalComment.isEmpty()){
+            return Result.error("Updating Comment went wrong " + updatePostResult.getErrorMessage());
+        }
+        return Result.success(optionalComment.get());
     }
 }
