@@ -1,5 +1,7 @@
 package de.hsos.swa.application.input.dto.in;
 
+import de.hsos.swa.application.queries.PostFilterParams;
+
 import java.util.Map;
 
 
@@ -7,8 +9,11 @@ public class GetAllPostsInputPortRequest {
 
     private final Map<PostFilterParams, Object> filterParams;
 
-    public GetAllPostsInputPortRequest(Map<PostFilterParams, Object> filterParams) {
+    private final Boolean includeComments;
+
+    public GetAllPostsInputPortRequest(Map<PostFilterParams, Object> filterParams, Boolean includeComments) {
         this.filterParams = filterParams;
+        this.includeComments = includeComments;
         if(!this.validateMapTest()) {
             // TODO: Custom Validator schreiben
             throw new RuntimeException("InValidFilterParams");
@@ -19,6 +24,9 @@ public class GetAllPostsInputPortRequest {
         return filterParams;
     }
 
+    public Boolean getIncludeComments() {
+        return includeComments;
+    }
 
     // TODO: Custom Validator schreiben
     public boolean validateMapTest(){

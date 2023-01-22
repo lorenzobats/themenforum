@@ -1,13 +1,15 @@
-package de.hsos.swa.application.input.dto.in;
+package de.hsos.swa.application.queries;
 
 import javax.swing.*;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 // TODO: Wo ist diese Klasse angesiedelt (Domain, Application)?
 public enum PostFilterParams {
-    INCLUDE_COMMENTS(Boolean.class),
     USERNAME(String.class),
-    DATE_FROM(String.class),
-    DATE_TO(String.class),
+    USERID(UUID.class),
+    DATE_FROM(LocalDateTime.class),
+    DATE_TO(LocalDateTime.class),
     SORT_BY(String.class),
     SORT_ORDER(SortOrder.class);
 

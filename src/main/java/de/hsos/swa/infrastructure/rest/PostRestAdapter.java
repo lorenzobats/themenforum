@@ -6,7 +6,7 @@ import de.hsos.swa.infrastructure.rest.dto.in.VotePostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
 import de.hsos.swa.infrastructure.rest.dto.in.CreatePostRestAdapterRequest;
-import de.hsos.swa.application.input.dto.in.PostFilterParams;
+import de.hsos.swa.application.queries.PostFilterParams;
 import de.hsos.swa.application.output.Result;
 import de.hsos.swa.application.input.CreatePostInputPort;
 import de.hsos.swa.application.input.dto.in.CreatePostInputPortRequest;
@@ -24,15 +24,19 @@ import javax.inject.Inject;
 import javax.swing.*;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
@@ -64,19 +68,20 @@ public class PostRestAdapter {
 
 
     @GET
-    // --> (Query Params)
-    // <-- GetAllPostsRestAdapterResponse
     public Response getAllPosts(@DefaultValue("true") @QueryParam("includeComments") Boolean includeComments,
                                 @QueryParam("username") String username,
-                                @QueryParam("dateFrom") String dateFrom,
-                                @QueryParam("dateTo") String dateTo,
+                                @QueryParam("userId") UUID userId,
+                                @QueryParam("dateFrom") LocalDateTime dateFrom,
+                                @QueryParam("dateTo") LocalDateTime dateTo,
                                 @QueryParam("sortBy") String sortBy,
                                 @QueryParam("sortOrder") SortOrder sortOrder) {
         try {
+            log.debug("DATETIMEOSC" + dateFrom);
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
-            filterParams.put(PostFilterParams.INCLUDE_COMMENTS, includeComments);
             if (username != null)
                 filterParams.put(PostFilterParams.USERNAME, username);
+            if (userId != null)
+                filterParams.put(PostFilterParams.USERID, userId);
             if (dateFrom != null)
                 filterParams.put(PostFilterParams.DATE_FROM, dateFrom);
             if (dateTo != null)
@@ -84,15 +89,17 @@ public class PostRestAdapter {
             if (sortBy != null)
                 filterParams.put(PostFilterParams.SORT_BY, sortBy);
             if (sortOrder != null)
-                filterParams.put(PostFilterParams.SORT_ORDER, sortOrder);   // TODO: Evtl. auch hier String nutzen? DESCENDING / ASCENDING
+                filterParams.put(PostFilterParams.SORT_ORDER, sortOrder);
 
-            GetAllPostsInputPortRequest query = new GetAllPostsInputPortRequest(filterParams);
+            GetAllPostsInputPortRequest query = new GetAllPostsInputPortRequest(filterParams, includeComments);
             Result<List<Post>> postsResult = this.getAllPostsInputPort.getAllPosts(query);
             if (postsResult.isSuccessful()) {
                 List<PostDto> postsResponse = postsResult.getData().stream().map(PostDto.Converter::fromDomainEntity).toList();
                 return Response.status(Response.Status.OK).entity(postsResponse).build();
             }
             return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(postsResult.getErrorMessage())).build();
+        } catch (DateTimeParseException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getMessage())).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
@@ -144,7 +151,6 @@ public class PostRestAdapter {
     @PUT
     @Path("/{id}/vote")
     @RolesAllowed("member")
-    // https://developer.salesforce.com/docs/atlas.en-us.chatterapi.meta/chatterapi/connect_resources_comments_capability_up_down_vote.htm?q=downVote
     public Response votePost(@NotNull VotePostRestAdapterRequest request, @PathParam("id") String id, @Context SecurityContext securityContext) {
         try {
             validationService.validateVote(request);

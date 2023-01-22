@@ -1,4 +1,4 @@
-package de.hsos.swa.application;
+package de.hsos.swa.application.commands;
 
 import de.hsos.swa.application.output.Result;
 import de.hsos.swa.application.input.CreateTopicInputPort;
