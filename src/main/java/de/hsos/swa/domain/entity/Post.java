@@ -36,7 +36,6 @@ public class Post {
     private final Map<UUID, Vote> votes = new HashMap<>();
 
 
-
     public Post(UUID id, String title, String content, LocalDateTime createdAt, Topic topic, User creator) {
         this.id = id;
         this.title = title;

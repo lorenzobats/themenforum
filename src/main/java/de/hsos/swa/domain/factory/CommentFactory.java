@@ -1,4 +1,4 @@
-package de.hsos.swa.domain.entity.factory;
+package de.hsos.swa.domain.factory;
 
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.User;

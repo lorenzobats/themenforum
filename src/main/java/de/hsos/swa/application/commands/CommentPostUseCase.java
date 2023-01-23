@@ -8,7 +8,7 @@ import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
-import de.hsos.swa.domain.entity.factory.CommentFactory;
+import de.hsos.swa.domain.factory.CommentFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

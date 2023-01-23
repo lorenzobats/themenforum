@@ -7,7 +7,7 @@ import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.domain.entity.User;
-import de.hsos.swa.domain.entity.factory.TopicFactory;
+import de.hsos.swa.domain.factory.TopicFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

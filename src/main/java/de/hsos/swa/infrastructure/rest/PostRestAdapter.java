@@ -129,10 +129,10 @@ public class PostRestAdapter {
         }
     }
 
+
+    // TODO: TEST
     @GET
     @Path("{id}/noComments")
-    // --> String id
-    // <-- GetPostByIdRestAdapterResponse
     public Response getPostByIdWithoutComments(@PathParam("id") String id) {
         try {
             Result<List<Post>> postResult = this.postRepository.getAllPostsWithoutComments();

@@ -9,7 +9,7 @@ import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.domain.entity.User;
-import de.hsos.swa.domain.entity.factory.PostFactory;
+import de.hsos.swa.domain.factory.PostFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
