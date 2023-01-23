@@ -73,6 +73,7 @@ public class PostRestAdapter {
                                 @QueryParam("userId") UUID userId,
                                 @QueryParam("dateFrom") LocalDateTime dateFrom,
                                 @QueryParam("dateTo") LocalDateTime dateTo,
+                                @QueryParam("topic") String topic,
                                 @QueryParam("sortBy") String sortBy,
                                 @QueryParam("sortOrder") SortOrder sortOrder) {
         try {
@@ -85,6 +86,8 @@ public class PostRestAdapter {
                 filterParams.put(PostFilterParams.DATE_FROM, dateFrom);
             if (dateTo != null)
                 filterParams.put(PostFilterParams.DATE_TO, dateTo);
+            if(topic != null)
+                filterParams.put(PostFilterParams.TOPIC, topic);
             if (sortBy != null)
                 filterParams.put(PostFilterParams.SORT_BY, sortBy); // TODO: Implementieren nach Datum / nach anzahlUpvotes
             if (sortOrder != null)

@@ -10,6 +10,9 @@ public enum PostFilterParams {
     USERID(UUID.class),
     DATE_FROM(LocalDateTime.class),
     DATE_TO(LocalDateTime.class),
+
+    TOPIC(String.class),
+
     SORT_BY(String.class),
     SORT_ORDER(SortOrder.class);
 

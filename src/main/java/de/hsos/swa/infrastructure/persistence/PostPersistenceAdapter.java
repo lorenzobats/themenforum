@@ -62,10 +62,16 @@ public class PostPersistenceAdapter implements PostRepository {
             CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
             if (filterParams.containsKey(PostFilterParams.USERNAME))
                 criteriaBuilder.where("userPersistenceModel.name").eq(filterParams.get(PostFilterParams.USERNAME));
+
             if (filterParams.containsKey(PostFilterParams.USERID))
                 criteriaBuilder.where("userPersistenceModel.id").eq(filterParams.get(PostFilterParams.USERID));
+
+            if (filterParams.containsKey(PostFilterParams.TOPIC))
+                criteriaBuilder.where("topicPersistenceModel.title").eq(filterParams.get(PostFilterParams.TOPIC));
+
             if (filterParams.containsKey(PostFilterParams.DATE_FROM))
                 criteriaBuilder.where("createdAt").ge(filterParams.get(PostFilterParams.DATE_FROM));
+
             if (filterParams.containsKey(PostFilterParams.DATE_TO))
                 criteriaBuilder.where("createdAt").le(filterParams.get(PostFilterParams.DATE_TO));
             // TODO: Sort By und Order By

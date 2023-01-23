@@ -11,6 +11,26 @@
 <div class="container">
     <h1 class="mt-4">Alle Topics</h1>
     <p><a href="/ui/public/posts">[Browse Posts]</a></p>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Titel</th>
+            <th scope="col">Autor</th>
+            <th scope="col">Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {#for entry in allTopics}
+            <tr>
+            <td>{entry.title}</td>
+            <td>{entry.owner.name}</td>
+            <td>{entry.createdAt}</td>
+            <td><a href="/ui/public/topics/{entry.id}">goto</a></td>
+            </tr>
+            {/}
+        </tbody>
+    </table>
 </div>
 </body>
 </html>

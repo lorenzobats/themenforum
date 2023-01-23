@@ -5,8 +5,6 @@ import de.hsos.swa.domain.entity.Topic;
 
 import java.util.List;
 
-// TODO: FilterParams
-// 1. Titel, 2 Nutzer
 public interface GetAllTopicsInputPort {
     Result<List<Topic>> getAllTopics();
 }

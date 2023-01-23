@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{topic.title}</title>
+</head>
+<body>
+<div class="container">
+  <h1 class="mt-4">{topic.title}</h1>
+  <p><a href="/ui/public/topics">[Browse Topics]</a></p>
+
+  <div style="display: flex">
+    <p><a href="#">Pupular</a></p>
+    <p style="margin-left: 4px; margin-right: 4px;"> | </p>
+    <p><a href="#">New</a></p>
+  </div>
+  <table class="table">
+    <thead>
+    <tr>
+      <th scope="col">Votes</th>
+      <th scope="col">Titel</th>
+      <th scope="col">Autor</th>
+      <th scope="col">Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    {#for entry in posts}
+      <tr>
+      <td>{entry.totalVotes}</td>
+      <td>{entry.title}</td>
+      <td>{entry.creator.name}</td>
+      <td>{entry.parsedCreatedAtDate}</td>
+      <td><a href="http://localhost:8080/posts/{entry.id}?includeComments=true">read</a></td>
+      </tr>
+      {/}
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

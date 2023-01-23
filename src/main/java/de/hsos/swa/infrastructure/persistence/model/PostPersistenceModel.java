@@ -1,6 +1,5 @@
 package de.hsos.swa.infrastructure.persistence.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.domain.value_object.Vote;
 import de.hsos.swa.domain.entity.Comment;
@@ -31,26 +30,22 @@ public class PostPersistenceModel {
 
     @ManyToOne
     @JoinColumn(name = "topic_id")
-    @JsonManagedReference
     private TopicPersistenceModel topicPersistenceModel;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonManagedReference
     private UserPersistenceModel userPersistenceModel;
 
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    @JsonManagedReference
     private List<CommentPersistenceModel> comments = new ArrayList<>();
 
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    @JsonManagedReference
     private List<PostVotePersistenceModel> votes = new ArrayList<>();
 
 

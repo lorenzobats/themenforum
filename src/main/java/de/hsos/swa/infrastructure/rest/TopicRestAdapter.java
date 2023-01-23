@@ -29,10 +29,6 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/topics")
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
-
-
-//TODO AdapterRequests validieren
-
 public class TopicRestAdapter {
 
     @Inject
@@ -57,12 +53,12 @@ public class TopicRestAdapter {
     @GET
     public Response getAllTopics() {
         try {
-                Result<List<TopicWithPostCountDto>> topicsResult = this.getAllTopicsWithPostCountInputPort.getAllTopics();
-                if (topicsResult.isSuccessful()) {
-                    List<TopicDto> topicsResponse = topicsResult.getData().stream().map(TopicDto.Converter::fromInputPortDto).toList();
-                    return Response.status(Response.Status.OK).entity(topicsResponse).build();
-                }
-                return Response.status(Response.Status.NOT_FOUND).entity(topicsResult.getErrorMessage()).build();
+            Result<List<TopicWithPostCountDto>> topicsResult = this.getAllTopicsWithPostCountInputPort.getAllTopics();
+            if (topicsResult.isSuccessful()) {
+                List<TopicDto> topicsResponse = topicsResult.getData().stream().map(TopicDto.Converter::fromInputPortDto).toList();
+                return Response.status(Response.Status.OK).entity(topicsResponse).build();
+            }
+            return Response.status(Response.Status.NOT_FOUND).entity(topicsResult.getErrorMessage()).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }

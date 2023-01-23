@@ -1,6 +1,7 @@
 package de.hsos.swa.infrastructure.ui;
 
 import de.hsos.swa.domain.entity.Post;
+import de.hsos.swa.domain.entity.Topic;
 import io.quarkus.qute.TemplateExtension;
 
 import java.time.LocalDateTime;
@@ -15,5 +16,10 @@ public class TemplateExtensions {
     public static String parsedCreatedAtDate(Post post) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
         return post.getCreatedAt().format(formatter);
+    }
+
+    public static String parsedCreatedAtDate(Topic topic) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
+        return topic.getCreatedAt().format(formatter);
     }
 }
