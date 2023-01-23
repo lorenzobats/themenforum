@@ -19,7 +19,7 @@ public interface PostRepository {
 
     Result<Post> updatePost(Post post);
 
-    Result<Void> deletePost(String postId);
+    Result<Boolean> deletePost(UUID postId);
 
     // AGGREGATE
 }

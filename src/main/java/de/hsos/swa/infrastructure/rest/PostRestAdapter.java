@@ -65,6 +65,9 @@ public class PostRestAdapter {
     PostValidationService validationService;
 
     @Inject
+    PostRepository postRepository;
+
+    @Inject
     Logger log;
 
 
@@ -167,5 +170,12 @@ public class PostRestAdapter {
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public Response deletePost(@PathParam("id") String id){
+        postRepository.deletePost(UUID.fromString(id));
+        return Response.accepted().build();
     }
 }
