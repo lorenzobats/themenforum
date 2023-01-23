@@ -3,6 +3,7 @@ package de.hsos.swa.infrastructure.persistence;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.domain.entity.Topic;
+import de.hsos.swa.infrastructure.persistence.model.PostPersistenceModel;
 import de.hsos.swa.infrastructure.persistence.model.TopicPersistenceModel;
 import org.jboss.logging.Logger;
 
@@ -47,6 +48,21 @@ public class TopicPersistenceAdapter implements TopicRepository {
             resultMap.put((UUID) tuple.get("topic_id"), (Long) tuple.get("post_count"));
         }
         return Result.success(resultMap);
+    }
+
+    @Override
+    public Result<Topic> deleteTopic(UUID topicId) {
+        try {
+            TopicPersistenceModel post = entityManager.find(TopicPersistenceModel.class, topicId);
+            if (post != null) {
+                entityManager.remove(post);
+                return Result.success(TopicPersistenceModel.Converter.toDomainEntity(post));
+            }
+            return Result.error("Topic could not be found");
+        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
+            log.error("Delete Error", e);
+            return Result.exception(e);
+        }
     }
 
     @Override

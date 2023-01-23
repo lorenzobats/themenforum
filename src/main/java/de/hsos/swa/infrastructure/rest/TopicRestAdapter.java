@@ -1,11 +1,15 @@
 package de.hsos.swa.infrastructure.rest;
 
+import de.hsos.swa.application.input.dto.in.DeletePostInputPortRequest;
+import de.hsos.swa.application.input.dto.in.DeleteTopicInputPortRequest;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.input.dto.in.CreateTopicInputPortRequest;
 import de.hsos.swa.application.input.dto.in.GetTopicByIdInputPortRequest;
+import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.Topic;
+import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
 import de.hsos.swa.infrastructure.rest.dto.out.TopicDto;
 import de.hsos.swa.infrastructure.rest.dto.in.CreateTopicRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.TopicValidationService;
@@ -42,6 +46,9 @@ public class TopicRestAdapter {
 
     @Inject
     CreateTopicInputPort createTopicInputPort;
+
+    @Inject
+    DeleteTopicInputPort deleteTopicInputPort;
 
     @Inject
     TopicValidationService validationService;
@@ -95,6 +102,25 @@ public class TopicRestAdapter {
                 return Response.status(Response.Status.CREATED).entity(topicResponse).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).entity(topicResult.getErrorMessage()).build();
+        } catch (ConstraintViolationException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+        }
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @RolesAllowed({"admin"})
+    public Response deleteTopic(@PathParam("id") String id, @Context SecurityContext securityContext) {
+        try {
+            String username = securityContext.getUserPrincipal().getName();
+            DeleteTopicInputPortRequest command = new DeleteTopicInputPortRequest(id, username);
+            Result<Topic> postResult = this.deleteTopicInputPort.deleteTopic(command);
+
+            if (postResult.isSuccessful()) {
+                TopicDto postDto = TopicDto.Converter.fromDomainEntity(postResult.getData());
+                return Response.status(Response.Status.OK).entity(postDto).build();
+            }
+            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getErrorMessage()).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }

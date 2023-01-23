@@ -16,4 +16,6 @@ public interface TopicRepository {
     Result<Topic> getTopicById(UUID topicId);
 
     Result<Map<UUID, Long>> getPostCountForAllTopics();
+
+    Result<Topic> deleteTopic(UUID topicId);
 }
