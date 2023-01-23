@@ -8,10 +8,10 @@ import javax.validation.constraints.Pattern;
 
 public class VotePostRestAdapterRequest {
 
-    // TODO: Converter schreiben
     @NotEmpty (message = "voteType is empty")
     @Pattern(regexp = "up|down", message = "voteType must be one of: up, down")
     public String voteType;
+
     public VotePostRestAdapterRequest() {}
 
     public static class Converter {

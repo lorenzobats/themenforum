@@ -8,6 +8,8 @@ import de.hsos.swa.application.output.auth.createUserAuth.CreateUserAuthOutputPo
 import de.hsos.swa.application.output.auth.createUserAuth.CreateUserAuthOutputPortResponse;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.User;
+import de.hsos.swa.domain.factory.UserFactory;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -32,9 +34,7 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
             return Result.error("Username already taken");
         }
 
-        //TODO: User Factory
-        User user = new User(request.getUsername());
-
+        User user = UserFactory.createUser(request.getUsername());
 
         CreateUserAuthOutputPortRequest createUserAuthRequest = new CreateUserAuthOutputPortRequest(
                 request.getUsername(),

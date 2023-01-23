@@ -8,7 +8,7 @@ import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 
 @Provider
-public class LocalDateTimeParamConverterProvider implements ParamConverterProvider {
+public class CustomConverterProvider implements ParamConverterProvider {
 
     @Override
     public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {

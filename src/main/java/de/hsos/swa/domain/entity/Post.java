@@ -26,6 +26,7 @@ public class Post {
 
     @Valid
     private Topic topic;
+
     @Valid
     private User creator;
 
@@ -144,6 +145,7 @@ public class Post {
         }
         return voting;
     }
+
     public Integer getUpVotes() {
         int voting = 0;
         for (Vote v : this.votes.values()){

@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public class ValidationResult {
 
-    // TODO: nicht public, nicht nutzen
+    // TODO: Refactor fuer Response
     public ValidationResult(String message) {
         this.success = false;
         this.message = message;

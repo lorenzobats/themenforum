@@ -8,11 +8,13 @@ import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 @RequestScoped
+@Transactional(value = Transactional.TxType.REQUIRES_NEW)
 public class GetAllTopicsUseCase implements GetAllTopicsInputPort {
 
     @Inject

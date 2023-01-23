@@ -48,10 +48,10 @@ public class TopicRestAdapter {
     CreateTopicInputPort createTopicInputPort;
 
     @Inject
-    Logger log;
+    TopicValidationService validationService;
 
     @Inject
-    TopicValidationService validationService;
+    Logger log;
 
 
     @GET
@@ -62,7 +62,7 @@ public class TopicRestAdapter {
                     List<TopicDto> topicsResponse = topicsResult.getData().stream().map(TopicDto.Converter::fromInputPortDto).toList();
                     return Response.status(Response.Status.OK).entity(topicsResponse).build();
                 }
-                return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(topicsResult.getErrorMessage())).build();
+                return Response.status(Response.Status.NOT_FOUND).entity(topicsResult.getErrorMessage()).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }

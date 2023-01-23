@@ -27,16 +27,15 @@ public class ReplyToCommentUseCase implements ReplyToCommentInputPort {
     @Override
     public Result<Comment> replyToComment(ReplyToCommentInputPortRequest request) {
         Result<User> getUserResponse = this.userRepository.getUserByName(request.getUsername());
-
         if (!getUserResponse.isSuccessful()) {
-            return Result.error("User does not exist"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
+            return Result.error("User does not exist");
         }
 
         User user = getUserResponse.getData();
 
         Result<Post> getPostResponse = this.postRepository.getPostById(UUID.fromString(request.getPostId()), true);
         if (!getPostResponse.isSuccessful()) {
-            return Result.error("Post does not exist"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
+            return Result.error("Post does not exist");
         }
 
         Post post = getPostResponse.getData();

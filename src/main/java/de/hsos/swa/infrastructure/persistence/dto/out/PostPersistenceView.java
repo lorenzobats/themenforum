@@ -4,9 +4,10 @@ import com.blazebit.persistence.view.EntityView;
 import com.blazebit.persistence.view.IdMapping;
 import com.blazebit.persistence.view.Mapping;
 import de.hsos.swa.domain.entity.Post;
-import de.hsos.swa.infrastructure.persistence.model.*;
+import de.hsos.swa.infrastructure.persistence.model.PostPersistenceModel;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @EntityView(PostPersistenceModel.class)
@@ -16,11 +17,14 @@ public record PostPersistenceView(
         String content,
         LocalDateTime createdAt,
         @Mapping("topicPersistenceModel") TopicPersistenceView topic,
-        @Mapping("userPersistenceModel") UserPersistenceView user
+        @Mapping("userPersistenceModel") UserPersistenceView user,
+        List<PostVotePersistenceView> votes
 
 ) {
     public static Post toDomainEntity(PostPersistenceView view) {
-        return new Post(view.id, view.title, view.content, view.createdAt, TopicPersistenceView.toDomainEntity(view.topic), UserPersistenceView.toDomainEntity(view.user));
+        Post post = new Post(view.id, view.title, view.content, view.createdAt, TopicPersistenceView.toDomainEntity(view.topic), UserPersistenceView.toDomainEntity(view.user));
+        view.votes.forEach(vote -> post.setVote(PostVotePersistenceView.toDomainEntity(vote)));
+        return post;
     }
-};
+}
 

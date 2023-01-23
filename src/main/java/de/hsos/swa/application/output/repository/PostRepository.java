@@ -15,6 +15,8 @@ public interface PostRepository {
 
     Result<List<Post>> getAllFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments);
 
+    Result<List<Post>> getAllPosts(boolean includeComments);
+
     Result<Post> getPostById(UUID postId, boolean includeComments);
 
     Result<Post> updatePost(Post post);

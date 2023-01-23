@@ -2,7 +2,6 @@ package de.hsos.swa.infrastructure.rest;
 
 import de.hsos.swa.application.input.VotePostInputPort;
 import de.hsos.swa.application.input.dto.in.VotePostInputPortRequest;
-import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.infrastructure.rest.dto.in.VotePostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
@@ -77,7 +76,6 @@ public class PostRestAdapter {
                                 @QueryParam("sortBy") String sortBy,
                                 @QueryParam("sortOrder") SortOrder sortOrder) {
         try {
-            log.debug("DATETIMEOSC" + dateFrom);
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             if (username != null)
                 filterParams.put(PostFilterParams.USERNAME, username);
@@ -93,7 +91,7 @@ public class PostRestAdapter {
                 filterParams.put(PostFilterParams.SORT_ORDER, sortOrder);   // TODO: Implementieren
 
             GetAllPostsInputPortRequest query = new GetAllPostsInputPortRequest(filterParams, includeComments);
-            Result<List<Post>> postsResult = this.getAllPostsInputPort.getAllPosts(query);
+            Result<List<Post>> postsResult = this.getAllPostsInputPort.getFilteredPosts(query);
             if (postsResult.isSuccessful()) {
                 List<PostDto> postsResponse = postsResult.getData().stream().map(PostDto.Converter::fromDomainEntity).toList();
                 return Response.status(Response.Status.OK).entity(postsResponse).build();

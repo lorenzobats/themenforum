@@ -20,12 +20,16 @@ public class Comment {
 
     @PastOrPresent
     private LocalDateTime createdAt;
+
     @Valid
     private User user;
+
     @Nullable
-    private Comment parentComment;      // TODO: Inwiefern wird der ParentKommentar in der Domain genutz?
+    private Comment parentComment;
+
     @NotNull
     private List<Comment> replies = new ArrayList<>();
+
     @NotNull
     private final Map<UUID, Vote> votes = new HashMap<>();
 
@@ -43,7 +47,6 @@ public class Comment {
         this.text = text;
         this.replies = replies;
     }
-
 
 
     public Comment(LocalDateTime createdAt, User user, String text) {
@@ -102,7 +105,7 @@ public class Comment {
 
     public Integer getDownVotes() {
         int voting = 0;
-        for (Vote v : this.votes.values()){
+        for (Vote v : this.votes.values()) {
             voting += (v.getVoteType().equals(VoteType.DOWN) ? 1 : 0);
         }
         return voting;
@@ -110,7 +113,7 @@ public class Comment {
 
     public Integer getUpVotes() {
         int voting = 0;
-        for (Vote v : this.votes.values()){
+        for (Vote v : this.votes.values()) {
             voting += (v.getVoteType().equals(VoteType.UP) ? 1 : 0);
         }
         return voting;

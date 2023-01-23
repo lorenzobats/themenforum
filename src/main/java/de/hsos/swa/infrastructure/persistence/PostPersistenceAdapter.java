@@ -36,33 +36,53 @@ public class PostPersistenceAdapter implements PostRepository {
     Logger log;
 
     @Override
+    public Result<List<Post>> getAllPosts(boolean includeComments) {
+        try {
+            CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
+
+            if (!includeComments) {
+                List<PostPersistenceView> postList;
+                CriteriaBuilder<PostPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(PostPersistenceView.class), criteriaBuilder);
+                postList = criteriaBuilderView.getResultList();
+                return Result.success(postList.stream().map(PostPersistenceView::toDomainEntity).toList());
+            }
+            List<PostPersistenceModel> postList;
+            postList = criteriaBuilder.getResultList();
+            return Result.success(postList.stream().map(PostPersistenceModel.Converter::toDomainEntity).toList());
+        } catch (Exception e) {
+            log.error("getAllFilteredPosts", e);
+            return Result.exception(e);
+        }
+    }
+
+    @Override
     public Result<List<Post>> getAllFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments) {
 
-            try {
-                CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
-                if (filterParams.containsKey(PostFilterParams.USERNAME))
-                    criteriaBuilder.where("userPersistenceModel.name").eq(filterParams.get(PostFilterParams.USERNAME));
-                if (filterParams.containsKey(PostFilterParams.USERID))
-                    criteriaBuilder.where("userPersistenceModel.id").eq(filterParams.get(PostFilterParams.USERID));
-                if (filterParams.containsKey(PostFilterParams.DATE_FROM))
-                    criteriaBuilder.where("createdAt").ge(filterParams.get(PostFilterParams.DATE_FROM));
-                if (filterParams.containsKey(PostFilterParams.DATE_TO))
-                    criteriaBuilder.where("createdAt").le(filterParams.get(PostFilterParams.DATE_TO));
-                // TODO: Sort By und Order By
+        try {
+            CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
+            if (filterParams.containsKey(PostFilterParams.USERNAME))
+                criteriaBuilder.where("userPersistenceModel.name").eq(filterParams.get(PostFilterParams.USERNAME));
+            if (filterParams.containsKey(PostFilterParams.USERID))
+                criteriaBuilder.where("userPersistenceModel.id").eq(filterParams.get(PostFilterParams.USERID));
+            if (filterParams.containsKey(PostFilterParams.DATE_FROM))
+                criteriaBuilder.where("createdAt").ge(filterParams.get(PostFilterParams.DATE_FROM));
+            if (filterParams.containsKey(PostFilterParams.DATE_TO))
+                criteriaBuilder.where("createdAt").le(filterParams.get(PostFilterParams.DATE_TO));
+            // TODO: Sort By und Order By
 
-                if(!includeComments){
-                    List<PostPersistenceView> postList;
-                    CriteriaBuilder<PostPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(PostPersistenceView.class), criteriaBuilder);
-                    postList = criteriaBuilderView.getResultList();
-                    return Result.success(postList.stream().map(PostPersistenceView::toDomainEntity).toList());
-                }
-                List<PostPersistenceModel> postList;
-                postList = criteriaBuilder.getResultList();
-                return Result.success(postList.stream().map(PostPersistenceModel.Converter::toDomainEntity).toList());
-            } catch (Exception e) {
-                log.error("getAllFilteredPosts", e);
-                return Result.exception(e);
+            if (!includeComments) {
+                List<PostPersistenceView> postList;
+                CriteriaBuilder<PostPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(PostPersistenceView.class), criteriaBuilder);
+                postList = criteriaBuilderView.getResultList();
+                return Result.success(postList.stream().map(PostPersistenceView::toDomainEntity).toList());
             }
+            List<PostPersistenceModel> postList;
+            postList = criteriaBuilder.getResultList();
+            return Result.success(postList.stream().map(PostPersistenceModel.Converter::toDomainEntity).toList());
+        } catch (Exception e) {
+            log.error("getAllFilteredPosts", e);
+            return Result.exception(e);
+        }
     }
 
     @Override
@@ -88,7 +108,6 @@ public class PostPersistenceAdapter implements PostRepository {
     public Result<Void> deletePost(String postId) {
         return null;
     }
-
 
 
     @Override

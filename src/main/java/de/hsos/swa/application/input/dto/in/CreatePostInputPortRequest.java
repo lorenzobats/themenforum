@@ -1,5 +1,6 @@
 package de.hsos.swa.application.input.dto.in;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ public class CreatePostInputPortRequest {
     @NotEmpty(message="Field: 'content' is missing")
     private final String content;
 
-    // TODO: UUID VALIDATOR
+    @Valid
     private final UUID topicId;
 
     @NotEmpty(message = "Field: 'username' is missing")

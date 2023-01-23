@@ -29,7 +29,7 @@ public class CommentPostUseCase implements CommentPostInputPort {
         Result<User> userResult = this.userRepository.getUserByName(request.getUsername());
 
         if (!userResult.isSuccessful()) {
-            return Result.error("User does not exist"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
+            return Result.error("User does not exist");
         }
 
         User user = userResult.getData();
@@ -38,7 +38,7 @@ public class CommentPostUseCase implements CommentPostInputPort {
 
         Result<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.getPostId()), true);
         if (!postResult.isSuccessful()) {
-            return Result.error("Post does not exist"); // TODO: Error sinnvoll von Applicaion weiterleiten und differenzieren
+            return Result.error("Post does not exist");
         }
 
         Post post = postResult.getData();

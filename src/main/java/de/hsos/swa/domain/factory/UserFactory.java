@@ -17,4 +17,15 @@ public class UserFactory {
         }
         return new User(id, username);
     }
+
+    public static User createUser(@Valid String username) {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<User>> violations = validator.validate(new User(username));
+
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+        return new User(username);
+    }
 }

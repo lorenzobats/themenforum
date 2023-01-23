@@ -19,11 +19,17 @@ public class GetAllPostsInputPortUseCase implements GetAllPostsInputPort {
     PostRepository postRepository;
 
     @Override
-    public Result<List<Post>> getAllPosts(GetAllPostsInputPortRequest request) {
-        // TODO: Validierung der FilterParameter in Application Service?
-        //Result<List<Post>> postsResult = postRepository.getAllPosts((boolean) request.getFilterParams().get(PostFilterParams.INCLUDE_COMMENTS));
+    public Result<List<Post>> getFilteredPosts(GetAllPostsInputPortRequest request) {
         Result<List<Post>> postsResult = postRepository.getAllFilteredPosts(request.getFilterParams(), request.getIncludeComments());
-        // TODO Frage Filtern der weiteren Parameter in Domain Service oder durch Datenbank?
+        if (postsResult.isSuccessful()) {
+            return Result.success(postsResult.getData());
+        }
+        return Result.error("Cannot find Posts");
+    }
+
+    @Override
+    public Result<List<Post>> getAllPosts(boolean includeComments) {
+        Result<List<Post>> postsResult = postRepository.getAllPosts(includeComments);
         if (postsResult.isSuccessful()) {
             return Result.success(postsResult.getData());
         }
