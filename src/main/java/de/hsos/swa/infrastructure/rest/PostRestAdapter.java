@@ -2,6 +2,7 @@ package de.hsos.swa.infrastructure.rest;
 
 import de.hsos.swa.application.input.VotePostInputPort;
 import de.hsos.swa.application.input.dto.in.VotePostInputPortRequest;
+import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.infrastructure.rest.dto.in.VotePostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
@@ -24,13 +25,13 @@ import javax.inject.Inject;
 import javax.swing.*;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
@@ -62,6 +63,9 @@ public class PostRestAdapter {
 
     @Inject
     PostValidationService validationService;
+
+    @Inject
+    PostRepository postRepository;
 
     @Inject
     Logger log;
@@ -125,10 +129,25 @@ public class PostRestAdapter {
         }
     }
 
+    @GET
+    @Path("{id}/noComments")
+    // --> String id
+    // <-- GetPostByIdRestAdapterResponse
+    public Response getPostByIdWithoutComments(@PathParam("id") String id) {
+        try {
+            Result<List<Post>> postResult = this.postRepository.getAllPostsWithoutComments();
+            if (postResult.isSuccessful()) {
+                List<PostDto> response = postResult.getData().stream().map(PostDto.Converter::fromDomainEntity).toList();
+                return Response.status(Response.Status.OK).entity(response).build();
+            }
+            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(postResult.getErrorMessage())).build();
+        } catch (ConstraintViolationException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+        }
+    }
+
     @POST
     @RolesAllowed("member")
-    // --> CreatePostRestAdapterRequest
-    // <-- CreatePostRestAdapterResponse
     public Response createPost(@NotNull CreatePostRestAdapterRequest request, @Context SecurityContext securityContext) {
         try {
             validationService.validatePost(request);
@@ -138,8 +157,8 @@ public class PostRestAdapter {
 
             if (postResult.isSuccessful()) {
                 PostDto postResponse = PostDto.Converter.fromDomainEntity(postResult.getData());
-                // TODO: Neben Body auch Uri Builder nutzen um RessourceLink im Header zurückzugeben (Gilt für alle POST/UPDATE)
-                return Response.status(Response.Status.CREATED).entity(postResponse).build();
+                // TODO: URI.Create auslagern und Hilfsklasse schreiben?
+                return Response.status(Response.Status.CREATED).location(URI.create("/posts/" + postResponse.id)).entity(postResponse).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getErrorMessage()).build();
         } catch (ConstraintViolationException e) {

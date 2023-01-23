@@ -27,13 +27,15 @@ public class Post {
     @Valid
     private Topic topic;
     @Valid
-    private final User creator;
+    private User creator;
 
     @NotNull
-    private final List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>();
 
     @NotNull
     private final Map<UUID, Vote> votes = new HashMap<>();
+
+
 
     public Post(UUID id, String title, String content, LocalDateTime createdAt, Topic topic, User creator) {
         this.id = id;
@@ -44,6 +46,16 @@ public class Post {
         this.creator = creator;
     }
 
+    public Post(UUID id, String title, String content, LocalDateTime createdAt, Topic topic, User creator, List<Comment> comments) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.topic = topic;
+        this.creator = creator;
+        this.comments = comments;
+    }
+
     public Post(String title, String content, LocalDateTime createdAt, Topic topic, User creator) {
         this.id = UUID.randomUUID();
         this.title = title;
@@ -52,6 +64,8 @@ public class Post {
         this.topic = topic;
         this.creator = creator;
     }
+
+
 
     // GETTER
     public UUID getId() {

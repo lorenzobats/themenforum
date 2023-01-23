@@ -18,40 +18,40 @@ import java.util.stream.Collectors;
 @NamedQuery(name = "PostPersistenceModel.findById", query = "SELECT p FROM Post p WHERE p.id = :id")
 public class PostPersistenceModel {
     @Id
-    UUID id;
+    private UUID id;
 
     @Basic
-    String title;
+    private String title;
 
     @Basic
-    String content;
+    private String content;
 
     @Basic
-    LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "topic_id")
     @JsonManagedReference
-    TopicPersistenceModel topicPersistenceModel;
+    private TopicPersistenceModel topicPersistenceModel;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonManagedReference
-    UserPersistenceModel userPersistenceModel;
+    private UserPersistenceModel userPersistenceModel;
 
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     @JsonManagedReference
-    List<CommentPersistenceModel> comments = new ArrayList<>();
+    private List<CommentPersistenceModel> comments = new ArrayList<>();
 
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     @JsonManagedReference
-    List<PostVotePersistenceModel> votes = new ArrayList<>();
+    private List<PostVotePersistenceModel> votes = new ArrayList<>();
 
 
 
@@ -77,6 +77,38 @@ public class PostPersistenceModel {
         this.topicPersistenceModel = topicPersistenceModel;
         this.userPersistenceModel = userPersistenceModel;
         this.votes = votes;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public TopicPersistenceModel getTopicPersistenceModel() {
+        return topicPersistenceModel;
+    }
+
+    public UserPersistenceModel getUserPersistenceModel() {
+        return userPersistenceModel;
+    }
+
+    public List<CommentPersistenceModel> getComments() {
+        return comments;
+    }
+
+    public List<PostVotePersistenceModel> getVotes() {
+        return votes;
     }
 
     public static class Converter {

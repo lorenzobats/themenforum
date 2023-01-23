@@ -36,13 +36,23 @@ public class Comment {
         this.text = text;
     }
 
+    public Comment(UUID id, LocalDateTime createdAt, User user, String text, List<Comment> replies) {
+        this.id = id;
+        this.createdAt = createdAt;
+        this.user = user;
+        this.text = text;
+        this.replies = replies;
+    }
+
+
+
     public Comment(LocalDateTime createdAt, User user, String text) {
         this.id = UUID.randomUUID();
         this.createdAt = createdAt;
         this.user = user;
         this.text = text;
     }
-    // SETTER
+
 
     // GETTER
     public UUID getId() {

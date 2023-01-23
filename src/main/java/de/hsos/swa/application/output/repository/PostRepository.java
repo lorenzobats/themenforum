@@ -14,6 +14,8 @@ public interface PostRepository {
     Result<Post> savePost(Post post);
     Result<List<Post>> getAllPosts(boolean includeComments);
 
+    Result<List<Post>> getAllPostsWithoutComments();
+
     Result<List<Post>> getAllFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments);
 
     Result<Post> getPostById(UUID postId, boolean includeComments);

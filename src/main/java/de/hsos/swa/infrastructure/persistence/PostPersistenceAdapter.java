@@ -1,10 +1,15 @@
 package de.hsos.swa.infrastructure.persistence;
 
+import com.blazebit.persistence.CriteriaBuilder;
+import com.blazebit.persistence.CriteriaBuilderFactory;
+import com.blazebit.persistence.view.EntityViewManager;
+import com.blazebit.persistence.view.EntityViewSetting;
 import de.hsos.swa.application.queries.PostFilterParams;
 import de.hsos.swa.application.output.Result;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.infrastructure.persistence.model.PostPersistenceModel;
+import de.hsos.swa.infrastructure.persistence.dto.out.PostPersistenceView;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
@@ -20,6 +25,13 @@ import java.util.UUID;
 public class PostPersistenceAdapter implements PostRepository {
     @Inject
     EntityManager entityManager;
+    @Inject
+    CriteriaBuilderFactory criteriaBuilderFactory;
+
+    @Inject
+    EntityViewManager entityViewManager;
+
+
 
     @Inject
     Logger log;
@@ -36,6 +48,20 @@ public class PostPersistenceAdapter implements PostRepository {
             return Result.success(postList.stream().map(PostPersistenceModel.Converter::toDomainEntity).toList());
         } catch (Exception e) {
             log.error("GetPostById Error", e);
+            return Result.exception(e);
+        }
+    }
+
+    @Override
+    public Result<List<Post>> getAllPostsWithoutComments() {
+        List<PostPersistenceView> postList;
+        try {
+            CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
+            CriteriaBuilder<PostPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(PostPersistenceView.class), criteriaBuilder);
+            postList = criteriaBuilderView.getResultList();
+            return Result.success(postList.stream().map(PostPersistenceView::toDomainEntity).toList());
+        } catch (Exception e) {
+            log.error("getAllPostsWithoutCommentsError", e);
             return Result.exception(e);
         }
     }
