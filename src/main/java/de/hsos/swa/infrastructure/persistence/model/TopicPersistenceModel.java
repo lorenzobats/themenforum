@@ -1,10 +1,15 @@
 package de.hsos.swa.infrastructure.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.domain.entity.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "Topic")
@@ -28,8 +33,17 @@ public class TopicPersistenceModel {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonManagedReference
     UserPersistenceModel userPersistenceModel;
 
+
+    @OneToMany(
+            mappedBy = "topicPersistenceModel",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JsonBackReference
+    List<PostPersistenceModel> posts = new ArrayList<>();
 
     public TopicPersistenceModel() {
     }

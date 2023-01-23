@@ -1,8 +1,12 @@
 package de.hsos.swa.infrastructure.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import de.hsos.swa.domain.entity.User;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "User")
@@ -15,6 +19,41 @@ public class UserPersistenceModel {
 
     @Column(name = "user_name")
     String name;
+
+    @OneToMany(
+            mappedBy = "userPersistenceModel",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    @JsonBackReference
+    List<TopicPersistenceModel> topics = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "userPersistenceModel",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    @JsonBackReference
+    List<PostPersistenceModel> posts = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "userPersistenceModel",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    @JsonBackReference
+    List<CommentPersistenceModel> comments = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "userPersistenceModel",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    @JsonBackReference
+    List<CommentVotePersistenceModel> commentVotes = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "userPersistenceModel",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    @JsonBackReference
+    List<PostVotePersistenceModel> postVotes = new ArrayList<>();
 
     public UserPersistenceModel() {
     }
