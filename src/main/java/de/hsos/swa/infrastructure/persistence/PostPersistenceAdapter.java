@@ -67,16 +67,18 @@ public class PostPersistenceAdapter implements PostRepository {
 
     @Override
     public Result<Post> getPostById(UUID postId, boolean includeComments) {
-        TypedQuery<PostPersistenceModel> query = includeComments
-                ? entityManager.createNamedQuery("PostPersistenceModel.findById", PostPersistenceModel.class)
-                : entityManager.createQuery("SELECT NEW Post(p.id, p.title, p.content, p.topicPersistenceModel, p.userPersistenceModel, p.votes) FROM Post p WHERE p.id = :id", PostPersistenceModel.class);
-        // TODO: das funktioniert nicht
-        query.setParameter("id", postId);
-        PostPersistenceModel post;
         try {
-            post = query.getSingleResult();
-            return Result.success(PostPersistenceModel.Converter.toDomainEntity(post));
-        } catch (Exception e) {
+            CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
+            criteriaBuilder.where("id").eq(postId);
+            if (!includeComments) {
+                CriteriaBuilder<PostPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(PostPersistenceView.class), criteriaBuilder);
+                PostPersistenceView post = criteriaBuilderView.getSingleResult();
+                return Result.success(PostPersistenceView.toDomainEntity(post));
+            } else {
+                PostPersistenceModel post = criteriaBuilder.getSingleResult();
+                return Result.success(PostPersistenceModel.Converter.toDomainEntity(post));
+            }
+        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("GetPostById Error", e);
             return Result.exception(e);
         }

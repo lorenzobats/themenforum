@@ -112,7 +112,7 @@ public class PostRestAdapter {
     // --> String id
     // <-- GetPostByIdRestAdapterResponse
     public Response getPostById(@PathParam("id") String id,
-                                @DefaultValue("true") @QueryParam("comments") boolean includeComments) {
+                                @DefaultValue("true") @QueryParam("includeComments") boolean includeComments) {
         try {
             GetPostByIdInputPortRequest query = new GetPostByIdInputPortRequest(id, includeComments);
             Result<Post> postResult = this.getPostByIdInputPort.getPostById(query);
