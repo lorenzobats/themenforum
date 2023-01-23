@@ -1,6 +1,6 @@
 package de.hsos.swa.infrastructure.rest;
 
-import de.hsos.swa.application.output.Result;
+import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.input.dto.in.CreateTopicInputPortRequest;

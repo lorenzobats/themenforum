@@ -10,7 +10,7 @@ import de.hsos.swa.infrastructure.rest.dto.in.ReplyToCommentRestAdapterRequest;
 import de.hsos.swa.application.input.CommentPostInputPort;
 import de.hsos.swa.application.input.GetCommentByIdInputPort;
 import de.hsos.swa.application.input.ReplyToCommentInputPort;
-import de.hsos.swa.application.output.Result;
+import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.input.dto.in.CommentPostInputPortRequest;
 import de.hsos.swa.application.input.dto.in.GetCommentByIdInputPortRequest;
 import de.hsos.swa.application.input.dto.in.ReplyToCommentInputPortRequest;
@@ -104,7 +104,8 @@ public class CommentRestAdapter {
         }
     }
 
-    @PUT
+    // TODO: None
+    @PATCH
     @Path("/{id}/vote")
     @RolesAllowed("member")
     public Response voteComment(@NotNull VoteCommentRestAdapterRequest request, @PathParam("id") String id, @Context SecurityContext securityContext) {

@@ -1,9 +1,9 @@
-package de.hsos.swa.application.queries;
+package de.hsos.swa.application;
 
-import de.hsos.swa.application.output.Result;
 import de.hsos.swa.application.input.GetAllPostsInputPort;
 import de.hsos.swa.application.input.dto.in.GetAllPostsInputPortRequest;
 import de.hsos.swa.application.output.repository.PostRepository;
+import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Post;
 
 import javax.enterprise.context.RequestScoped;

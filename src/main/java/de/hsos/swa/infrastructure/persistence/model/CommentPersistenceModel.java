@@ -1,9 +1,8 @@
 package de.hsos.swa.infrastructure.persistence.model;
 
-import com.blazebit.persistence.CTE;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import de.hsos.swa.domain.vo.Vote;
+import de.hsos.swa.domain.value_object.Vote;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.User;
 

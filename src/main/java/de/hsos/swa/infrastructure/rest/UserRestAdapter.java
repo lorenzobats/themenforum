@@ -4,7 +4,7 @@ package de.hsos.swa.infrastructure.rest;
 import de.hsos.swa.infrastructure.rest.dto.out.UserDto;
 import de.hsos.swa.infrastructure.rest.dto.in.RegisterUserRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
-import de.hsos.swa.application.output.Result;
+import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.input.dto.in.GetUserByNameInputPortRequest;
 import de.hsos.swa.application.input.GetUserByNameInputPort;
 import de.hsos.swa.application.input.dto.in.RegisterUserInputPortRequest;

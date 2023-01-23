@@ -1,15 +1,16 @@
 package de.hsos.swa.infrastructure.rest.dto.in;
 
 import de.hsos.swa.application.input.dto.in.VotePostInputPortRequest;
-import de.hsos.swa.domain.vo.VoteType;
+import de.hsos.swa.domain.value_object.VoteType;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
 public class VotePostRestAdapterRequest {
 
+    // TODO: Converter schreiben
     @NotEmpty (message = "voteType is empty")
-    @Pattern(regexp = "up|down|none", message = "voteType must be one of: up, down, none")
+    @Pattern(regexp = "up|down", message = "voteType must be one of: up, down")
     public String voteType;
     public VotePostRestAdapterRequest() {}
 

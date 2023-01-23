@@ -4,8 +4,8 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViewSetting;
-import de.hsos.swa.application.queries.PostFilterParams;
-import de.hsos.swa.application.output.Result;
+import de.hsos.swa.application.PostFilterParams;
+import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.infrastructure.persistence.model.PostPersistenceModel;
@@ -32,7 +32,6 @@ public class PostPersistenceAdapter implements PostRepository {
     EntityViewManager entityViewManager;
 
 
-
     @Inject
     Logger log;
 
@@ -53,23 +52,25 @@ public class PostPersistenceAdapter implements PostRepository {
     }
 
     @Override
-    public Result<List<Post>> getAllPostsWithoutComments() {
-        List<PostPersistenceView> postList;
-        try {
-            CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
-            CriteriaBuilder<PostPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(PostPersistenceView.class), criteriaBuilder);
-            postList = criteriaBuilderView.getResultList();
-            return Result.success(postList.stream().map(PostPersistenceView::toDomainEntity).toList());
-        } catch (Exception e) {
-            log.error("getAllPostsWithoutCommentsError", e);
-            return Result.exception(e);
-        }
-    }
-    @Override
     public Result<List<Post>> getAllFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments) {
 
-        String queryString = "SELECT p FROM Post p" +
-                (includeComments ? " WHERE 1=1" : " WHERE p.comments is empty") +   // TODO: Das hier ist noch falsch. Gibt nur die Posts zurück, die keine Kommentare haben.
+        // TODO: criteriaBuilder nutzen um filterParameter anzuwenden
+        if(includeComments) {
+            List<PostPersistenceView> postList;
+            try {
+                CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
+                // TODO: Include Comments hier abfragen
+                CriteriaBuilder<PostPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(PostPersistenceView.class), criteriaBuilder);
+                postList = criteriaBuilderView.getResultList();
+                return Result.success(postList.stream().map(PostPersistenceView::toDomainEntity).toList());
+            } catch (Exception e) {
+                log.error("getAllPostsWithoutCommentsError", e);
+                return Result.exception(e);
+            }
+        }
+
+
+        String queryString = "SELECT p FROM Post p WHERE 1=1" +
                 (filterParams.containsKey(PostFilterParams.USERNAME) ? " AND p.userPersistenceModel.name = :username" : "") +
                 (filterParams.containsKey(PostFilterParams.USERID) ? " AND p.userPersistenceModel.id = :userId" : "") +
                 (filterParams.containsKey(PostFilterParams.DATE_FROM) ? " AND p.createdAt >= :dateFrom" : "") +
@@ -99,7 +100,6 @@ public class PostPersistenceAdapter implements PostRepository {
             return Result.exception(e);
         }
     }
-
 
     @Override
     public Result<Post> getPostById(UUID postId, boolean includeComments) {

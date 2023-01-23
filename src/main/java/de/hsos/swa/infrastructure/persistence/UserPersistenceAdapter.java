@@ -1,6 +1,6 @@
 package de.hsos.swa.infrastructure.persistence;
 
-import de.hsos.swa.application.output.Result;
+import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.infrastructure.persistence.model.UserPersistenceModel;
@@ -42,11 +42,13 @@ public class UserPersistenceAdapter implements UserRepository {
     public Result<User> getUserByName(String username) {
         TypedQuery<UserPersistenceModel> query = entityManager.createNamedQuery("UserPersistenceModel.findByUsername", UserPersistenceModel.class);
         query.setParameter("username", username);
-        UserPersistenceModel userPersistenceModel;
         try {
-            userPersistenceModel = query.getSingleResult();
-            return Result.success(UserPersistenceModel.Converter.toDomainEntity(userPersistenceModel));
-        } catch (Exception e) {
+            List<UserPersistenceModel> userList = query.getResultList();
+            if(userList.isEmpty()){
+                return Result.error("Cannot find User");
+            }
+            return Result.success(UserPersistenceModel.Converter.toDomainEntity(userList.get(0)));
+        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("GetUserByName Error", e);
             return Result.exception(e);
         }

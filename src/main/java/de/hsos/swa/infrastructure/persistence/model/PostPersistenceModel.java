@@ -2,7 +2,7 @@ package de.hsos.swa.infrastructure.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import de.hsos.swa.domain.entity.Topic;
-import de.hsos.swa.domain.vo.Vote;
+import de.hsos.swa.domain.value_object.Vote;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;

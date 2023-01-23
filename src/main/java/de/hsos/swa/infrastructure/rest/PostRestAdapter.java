@@ -7,8 +7,8 @@ import de.hsos.swa.infrastructure.rest.dto.in.VotePostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
 import de.hsos.swa.infrastructure.rest.dto.in.CreatePostRestAdapterRequest;
-import de.hsos.swa.application.queries.PostFilterParams;
-import de.hsos.swa.application.output.Result;
+import de.hsos.swa.application.PostFilterParams;
+import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.input.CreatePostInputPort;
 import de.hsos.swa.application.input.dto.in.CreatePostInputPortRequest;
 import de.hsos.swa.application.input.GetAllPostsInputPort;
@@ -91,9 +91,9 @@ public class PostRestAdapter {
             if (dateTo != null)
                 filterParams.put(PostFilterParams.DATE_TO, dateTo);
             if (sortBy != null)
-                filterParams.put(PostFilterParams.SORT_BY, sortBy);
+                filterParams.put(PostFilterParams.SORT_BY, sortBy); // TODO: Implementieren nach Datum / nach anzahlUpvotes
             if (sortOrder != null)
-                filterParams.put(PostFilterParams.SORT_ORDER, sortOrder);
+                filterParams.put(PostFilterParams.SORT_ORDER, sortOrder);   // TODO: Implementieren
 
             GetAllPostsInputPortRequest query = new GetAllPostsInputPortRequest(filterParams, includeComments);
             Result<List<Post>> postsResult = this.getAllPostsInputPort.getAllPosts(query);
@@ -130,22 +130,6 @@ public class PostRestAdapter {
     }
 
 
-    // TODO: TEST
-    @GET
-    @Path("{id}/noComments")
-    public Response getPostByIdWithoutComments(@PathParam("id") String id) {
-        try {
-            Result<List<Post>> postResult = this.postRepository.getAllPostsWithoutComments();
-            if (postResult.isSuccessful()) {
-                List<PostDto> response = postResult.getData().stream().map(PostDto.Converter::fromDomainEntity).toList();
-                return Response.status(Response.Status.OK).entity(response).build();
-            }
-            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(postResult.getErrorMessage())).build();
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
-        }
-    }
-
     @POST
     @RolesAllowed("member")
     public Response createPost(@NotNull CreatePostRestAdapterRequest request, @Context SecurityContext securityContext) {
@@ -166,8 +150,9 @@ public class PostRestAdapter {
         }
     }
 
+    // TODO: Dont allow "none" -> Domain Service muss Vote löschen
 
-    @PUT
+    @PATCH
     @Path("/{id}/vote")
     @RolesAllowed("member")
     public Response votePost(@NotNull VotePostRestAdapterRequest request, @PathParam("id") String id, @Context SecurityContext securityContext) {

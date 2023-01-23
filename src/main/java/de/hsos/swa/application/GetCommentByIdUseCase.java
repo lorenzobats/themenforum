@@ -1,9 +1,9 @@
-package de.hsos.swa.application.queries;
+package de.hsos.swa.application;
 
-import de.hsos.swa.application.output.Result;
 import de.hsos.swa.application.input.GetCommentByIdInputPort;
 import de.hsos.swa.application.input.dto.in.GetCommentByIdInputPortRequest;
 import de.hsos.swa.application.output.repository.CommentRepository;
+import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Comment;
 
 import javax.enterprise.context.RequestScoped;

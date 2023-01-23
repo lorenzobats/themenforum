@@ -1,9 +1,9 @@
-package de.hsos.swa.application.queries;
+package de.hsos.swa.application;
 
-import de.hsos.swa.application.output.Result;
 import de.hsos.swa.application.input.dto.in.GetUserByNameInputPortRequest;
 import de.hsos.swa.application.input.GetUserByNameInputPort;
 import de.hsos.swa.application.output.repository.UserRepository;
+import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.User;
 
 import javax.enterprise.context.ApplicationScoped;

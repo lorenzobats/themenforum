@@ -1,10 +1,10 @@
-package de.hsos.swa.application.commands;
+package de.hsos.swa.application;
 
-import de.hsos.swa.application.output.Result;
 import de.hsos.swa.application.input.ReplyToCommentInputPort;
 import de.hsos.swa.application.input.dto.in.ReplyToCommentInputPortRequest;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.PostRepository;
+import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;

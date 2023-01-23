@@ -1,11 +1,11 @@
-package de.hsos.swa.application.commands;
+package de.hsos.swa.application;
 
-import de.hsos.swa.application.output.Result;
 import de.hsos.swa.application.input.CreatePostInputPort;
 import de.hsos.swa.application.input.dto.in.CreatePostInputPortRequest;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.PostRepository;
+import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.domain.entity.User;

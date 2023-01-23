@@ -15,12 +15,10 @@ public record CommentPersistenceView(
         @IdMapping UUID id,
         String text,
         LocalDateTime createdAt,
-        @Mapping("userPersistenceModel") UserPersistenceView user,
-        List<SimpleCommentPersistenceView> replies
+        @Mapping("userPersistenceModel") UserPersistenceView user
 ) {
     public static Comment toDomainEntity(CommentPersistenceView view) {
-        List<Comment> replies = view.replies.stream().map(SimpleCommentPersistenceView::toDomainEntity).toList();
-        return new Comment(view.id, view.createdAt, UserPersistenceView.toDomainEntity(view.user), view.text, replies);
+        return new Comment(view.id, view.createdAt, UserPersistenceView.toDomainEntity(view.user), view.text);
     }
 };
 

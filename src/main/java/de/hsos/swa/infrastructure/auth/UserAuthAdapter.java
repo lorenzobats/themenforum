@@ -1,6 +1,6 @@
 package de.hsos.swa.infrastructure.auth;
 
-import de.hsos.swa.application.output.Result;
+import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.output.auth.createUserAuth.CreateUserAuthOutputPortRequest;
 import de.hsos.swa.application.output.auth.createUserAuth.CreateUserAuthOutputPort;
 import de.hsos.swa.application.output.auth.createUserAuth.CreateUserAuthOutputPortResponse;

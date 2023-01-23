@@ -1,4 +1,4 @@
-package de.hsos.swa.domain.vo;
+package de.hsos.swa.domain.value_object;
 
 import de.hsos.swa.domain.entity.User;
 

@@ -3,8 +3,8 @@ package de.hsos.swa.domain.service;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
-import de.hsos.swa.domain.vo.Vote;
-import de.hsos.swa.domain.vo.VoteType;
+import de.hsos.swa.domain.value_object.Vote;
+import de.hsos.swa.domain.value_object.VoteType;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Optional;
@@ -16,6 +16,7 @@ public class VoteService {
         if(post.getCreator().getId().equals(user.getId())){
             throw new RuntimeException("Cannot Vote your Own Post");
         }
+        // TODO: if UP und neu = DOWN, dann loeschen und umgekehrt
         if (voteType.equals(VoteType.NONE)) {
             post.removeVote(user.getId());
         } else {

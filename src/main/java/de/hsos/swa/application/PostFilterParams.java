@@ -1,4 +1,4 @@
-package de.hsos.swa.application.queries;
+package de.hsos.swa.application;
 
 import javax.swing.*;
 import java.time.LocalDateTime;

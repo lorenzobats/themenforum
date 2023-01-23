@@ -1,9 +1,9 @@
-package de.hsos.swa.application.queries;
+package de.hsos.swa.application;
 
-import de.hsos.swa.application.output.Result;
 import de.hsos.swa.application.input.GetAllTopicsWithPostCountInputPort;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.output.repository.TopicRepository;
+import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Topic;
 import org.jboss.logging.Logger;
 

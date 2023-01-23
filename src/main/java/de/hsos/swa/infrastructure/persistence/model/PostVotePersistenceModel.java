@@ -1,9 +1,8 @@
 package de.hsos.swa.infrastructure.persistence.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import de.hsos.swa.domain.entity.User;
-import de.hsos.swa.domain.vo.Vote;
-import de.hsos.swa.domain.vo.VoteType;
+import de.hsos.swa.domain.value_object.Vote;
+import de.hsos.swa.domain.value_object.VoteType;
 
 import javax.persistence.*;
 
@@ -17,7 +16,6 @@ public class PostVotePersistenceModel {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonManagedReference
     UserPersistenceModel userPersistenceModel;
 
     @Enumerated(EnumType.STRING)

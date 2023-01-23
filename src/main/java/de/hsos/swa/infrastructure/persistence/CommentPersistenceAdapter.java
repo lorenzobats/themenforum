@@ -1,6 +1,6 @@
 package de.hsos.swa.infrastructure.persistence;
 
-import de.hsos.swa.application.output.Result;
+import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.output.repository.CommentRepository;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.infrastructure.persistence.model.CommentPersistenceModel;

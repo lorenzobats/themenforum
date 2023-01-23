@@ -1,6 +1,6 @@
 package de.hsos.swa.application.input;
 
-import de.hsos.swa.application.output.Result;
+import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.input.dto.in.GetTopicByIdInputPortRequest;
 import de.hsos.swa.domain.entity.Topic;
 
