@@ -21,7 +21,7 @@ public interface PostRepository {
 
     Result<Post> updatePost(Post post);
 
-    Result<Boolean> deletePost(UUID postId);
+    Result<Post> deletePost(UUID postId);
 
     // AGGREGATE
 }

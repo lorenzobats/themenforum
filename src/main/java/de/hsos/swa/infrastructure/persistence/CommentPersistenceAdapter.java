@@ -47,7 +47,6 @@ public class CommentPersistenceAdapter implements CommentRepository {
         } catch (Exception e) {
             log.error("GetCommentById Error", e);
             return Result.exception(e);
-
         }
     }
 }

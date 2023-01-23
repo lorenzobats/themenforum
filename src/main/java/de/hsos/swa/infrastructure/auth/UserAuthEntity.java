@@ -13,6 +13,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "auth_user_table")
 @UserDefinition
+@NamedQuery(name = "UserAuthEntity.findRoleByUserId", query = "SELECT role FROM UserAuthEntity WHERE userId = :userId")
 public class UserAuthEntity {
     @Id
     @GeneratedValue()

@@ -1,8 +1,10 @@
 INSERT INTO user_table (id, user_name) VALUES ('78188b10-4733-4fca-8dfd-e07aee389383', 'oschluet');
 INSERT INTO user_table (id, user_name) VALUES ('efac4cf6-4188-4a18-8489-4fc98f3633d6', 'lbattist');
+INSERT INTO user_table (id, user_name) VALUES ('fafaaa75-64eb-4b5b-96f3-79721048b85f', 'admin');
 
 INSERT INTO auth_user_table (id, password, role, user_id, username) VALUES ('6b05e5b1-1859-418f-97ba-dd5c8a4f02bf', '$2a$10$DwD7QAQ8xBxjG7B3A2I5s.bzU/1bt4YYvR91V1Ob33F4Olb.SnYwi', 'member', '78188b10-4733-4fca-8dfd-e07aee389383', 'oschluet');
 INSERT INTO auth_user_table (id, password, role, user_id, username) VALUES ('c91b0e85-abcb-48d4-b344-3229099c84ba', '$2a$10$HTWkZDXvW.laYCCBzWo7Qu1xZL2fKWe.EgEeGly9TCLUa0xzqPuS2', 'member', 'efac4cf6-4188-4a18-8489-4fc98f3633d6', 'lbattist');
+INSERT INTO auth_user_table (id, password, role, user_id, username) VALUES ('89445af1-beb3-43bf-a80a-ff17119ccbf7', '$2a$10$QLCuFmy3kh2stifgZnM9BOpADJ3KPx13xQ9I2O16iN3gxpQSzaoIe', 'admin', 'fafaaa75-64eb-4b5b-96f3-79721048b85f', 'admin');
 
 INSERT INTO topic_table (id, createdat, description, title, user_id) VALUES ('a70d18cf-7b53-43fe-86de-1277fa476864', '2023-01-21 20:49:37.855505', 'Deutschland das Autoland', 'Autos', '78188b10-4733-4fca-8dfd-e07aee389383');
 INSERT INTO topic_table (id, createdat, description, title, user_id) VALUES ('897efe45-a06f-4d3a-9579-5df3fc279beb', '2023-01-22 20:49:37.855505', 'SWA bestes Fach!', 'SWA', '78188b10-4733-4fca-8dfd-e07aee389383');

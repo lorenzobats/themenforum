@@ -1,19 +1,14 @@
 package de.hsos.swa.infrastructure.rest;
 
-import de.hsos.swa.application.input.VotePostInputPort;
-import de.hsos.swa.application.input.dto.in.VotePostInputPortRequest;
+import de.hsos.swa.application.input.*;
+import de.hsos.swa.application.input.dto.in.*;
+import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.infrastructure.rest.dto.in.VotePostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
 import de.hsos.swa.infrastructure.rest.dto.in.CreatePostRestAdapterRequest;
 import de.hsos.swa.application.PostFilterParams;
 import de.hsos.swa.application.util.Result;
-import de.hsos.swa.application.input.CreatePostInputPort;
-import de.hsos.swa.application.input.dto.in.CreatePostInputPortRequest;
-import de.hsos.swa.application.input.GetAllPostsInputPort;
-import de.hsos.swa.application.input.dto.in.GetAllPostsInputPortRequest;
-import de.hsos.swa.application.input.GetPostByIdInputPort;
-import de.hsos.swa.application.input.dto.in.GetPostByIdInputPortRequest;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.infrastructure.rest.validation.PostValidationService;
 import org.jboss.logging.Logger;
@@ -61,10 +56,11 @@ public class PostRestAdapter {
     VotePostInputPort votePostInputPort;
 
     @Inject
-    PostValidationService validationService;
+    DeletePostInputPort deletePostInputPort;
 
     @Inject
-    PostRepository postRepository;
+    PostValidationService validationService;
+
 
     @Inject
     Logger log;
@@ -175,8 +171,20 @@ public class PostRestAdapter {
 
     @DELETE
     @Path("/{id}")
-    public Response deletePost(@PathParam("id") String id){
-        postRepository.deletePost(UUID.fromString(id));
-        return Response.accepted().build();
+    @RolesAllowed({"member", "admin"})
+    public Response deletePost(@PathParam("id") String id, @Context SecurityContext securityContext) {
+        try {
+            String username = securityContext.getUserPrincipal().getName();
+            DeletePostInputPortRequest command = new DeletePostInputPortRequest(id, username);
+            Result<Post> postResult = this.deletePostInputPort.deletePost(command);
+
+            if (postResult.isSuccessful()) {
+                PostDto postDto = PostDto.Converter.fromDomainEntity(postResult.getData());
+                return Response.status(Response.Status.OK).entity(postDto).build();
+            }
+            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getErrorMessage()).build();
+        } catch (ConstraintViolationException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+        }
     }
 }
