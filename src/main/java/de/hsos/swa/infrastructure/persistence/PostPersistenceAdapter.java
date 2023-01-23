@@ -36,69 +36,33 @@ public class PostPersistenceAdapter implements PostRepository {
     Logger log;
 
     @Override
-    public Result<List<Post>> getAllPosts(boolean includeComments) {
-        TypedQuery<PostPersistenceModel> query = includeComments
-                ? entityManager.createNamedQuery("PostPersistenceModel.findAll", PostPersistenceModel.class)
-                : entityManager.createQuery("SELECT p FROM Post p WHERE p.comments is empty", PostPersistenceModel.class);
-
-        List<PostPersistenceModel> postList;
-        try {
-            postList = query.getResultList();
-            return Result.success(postList.stream().map(PostPersistenceModel.Converter::toDomainEntity).toList());
-        } catch (Exception e) {
-            log.error("GetPostById Error", e);
-            return Result.exception(e);
-        }
-    }
-
-    @Override
     public Result<List<Post>> getAllFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments) {
 
-        // TODO: criteriaBuilder nutzen um filterParameter anzuwenden
-        if(includeComments) {
-            List<PostPersistenceView> postList;
             try {
                 CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
-                // TODO: Include Comments hier abfragen
-                CriteriaBuilder<PostPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(PostPersistenceView.class), criteriaBuilder);
-                postList = criteriaBuilderView.getResultList();
-                return Result.success(postList.stream().map(PostPersistenceView::toDomainEntity).toList());
+                if (filterParams.containsKey(PostFilterParams.USERNAME))
+                    criteriaBuilder.where("userPersistenceModel.name").eq(filterParams.get(PostFilterParams.USERNAME));
+                if (filterParams.containsKey(PostFilterParams.USERID))
+                    criteriaBuilder.where("userPersistenceModel.id").eq(filterParams.get(PostFilterParams.USERID));
+                if (filterParams.containsKey(PostFilterParams.DATE_FROM))
+                    criteriaBuilder.where("createdAt").ge(filterParams.get(PostFilterParams.DATE_FROM));
+                if (filterParams.containsKey(PostFilterParams.DATE_TO))
+                    criteriaBuilder.where("createdAt").le(filterParams.get(PostFilterParams.DATE_TO));
+                // TODO: Sort By und Order By
+
+                if(!includeComments){
+                    List<PostPersistenceView> postList;
+                    CriteriaBuilder<PostPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(PostPersistenceView.class), criteriaBuilder);
+                    postList = criteriaBuilderView.getResultList();
+                    return Result.success(postList.stream().map(PostPersistenceView::toDomainEntity).toList());
+                }
+                List<PostPersistenceModel> postList;
+                postList = criteriaBuilder.getResultList();
+                return Result.success(postList.stream().map(PostPersistenceModel.Converter::toDomainEntity).toList());
             } catch (Exception e) {
-                log.error("getAllPostsWithoutCommentsError", e);
+                log.error("getAllFilteredPosts", e);
                 return Result.exception(e);
             }
-        }
-
-
-        String queryString = "SELECT p FROM Post p WHERE 1=1" +
-                (filterParams.containsKey(PostFilterParams.USERNAME) ? " AND p.userPersistenceModel.name = :username" : "") +
-                (filterParams.containsKey(PostFilterParams.USERID) ? " AND p.userPersistenceModel.id = :userId" : "") +
-                (filterParams.containsKey(PostFilterParams.DATE_FROM) ? " AND p.createdAt >= :dateFrom" : "") +
-                (filterParams.containsKey(PostFilterParams.DATE_TO) ? " AND p.createdAt <= :dateTo" : "") +
-                (filterParams.containsKey(PostFilterParams.SORT_BY) ? " ORDER BY p." + filterParams.get(PostFilterParams.SORT_BY) : "") +
-                (filterParams.containsKey(PostFilterParams.SORT_ORDER) ? " " + filterParams.get(PostFilterParams.SORT_ORDER) : "");
-
-        TypedQuery<PostPersistenceModel> query = entityManager.createQuery(queryString, PostPersistenceModel.class);
-
-
-        if(filterParams.containsKey(PostFilterParams.USERNAME))
-            query.setParameter("username", filterParams.get(PostFilterParams.USERNAME));
-        if(filterParams.containsKey(PostFilterParams.USERID))
-            query.setParameter("userId", filterParams.get(PostFilterParams.USERID));
-        if(filterParams.containsKey(PostFilterParams.DATE_FROM))
-            query.setParameter("dateFrom", filterParams.get(PostFilterParams.DATE_FROM));
-        if(filterParams.containsKey(PostFilterParams.DATE_TO))
-            query.setParameter("dateTo", filterParams.get(PostFilterParams.DATE_TO));
-
-
-        List<PostPersistenceModel> postList;
-        try {
-            postList = query.getResultList();
-            return Result.success(postList.stream().map(PostPersistenceModel.Converter::toDomainEntity).toList());
-        } catch (Exception e) {
-            log.error("getAllFilteredPosts Error", e);
-            return Result.exception(e);
-        }
     }
 
     @Override

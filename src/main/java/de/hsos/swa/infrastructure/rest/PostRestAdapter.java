@@ -65,9 +65,6 @@ public class PostRestAdapter {
     PostValidationService validationService;
 
     @Inject
-    PostRepository postRepository;
-
-    @Inject
     Logger log;
 
 
