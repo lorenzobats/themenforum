@@ -24,7 +24,7 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
 
     @Override
     public Result<User> registerUser(RegisterUserInputPortRequest request) {
-        Result<Boolean> checkUsernameAvailabilityResponse = this.userRepository.isUserNameAvailable(request.getUsername());
+        Result<Boolean> checkUsernameAvailabilityResponse = this.userRepository.isUserNameAvailable(request.username());
 
         if (!checkUsernameAvailabilityResponse.isSuccessful()) {
             return Result.error("Registration failed");
@@ -34,11 +34,11 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
             return Result.error("Username already taken");
         }
 
-        User user = UserFactory.createUser(request.getUsername());
+        User user = UserFactory.createUser(request.username());
 
         CreateUserAuthOutputPortRequest createUserAuthRequest = new CreateUserAuthOutputPortRequest(
-                request.getUsername(),
-                request.getPassword(),
+                request.username(),
+                request.password(),
                 "member",
                 user.getId());
         Result<CreateUserAuthOutputPortResponse> createUserAuthResponse = this.createUserAuthOutputPort.createUserAuth(createUserAuthRequest);

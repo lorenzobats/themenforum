@@ -3,8 +3,9 @@ package de.hsos.swa.infrastructure.ui;
 import de.hsos.swa.application.PostFilterParams;
 import de.hsos.swa.application.input.GetAllPostsInputPort;
 import de.hsos.swa.application.input.GetAllTopicsInputPort;
+import de.hsos.swa.application.input.GetFilteredPostsInputPort;
 import de.hsos.swa.application.input.GetTopicByIdInputPort;
-import de.hsos.swa.application.input.dto.in.GetAllPostsInputPortRequest;
+import de.hsos.swa.application.input.dto.in.GetFilteredPostInputPortRequest;
 import de.hsos.swa.application.input.dto.in.GetTopicByIdInputPortRequest;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Post;
@@ -35,6 +36,9 @@ public class PublicEndpoint {
     GetAllPostsInputPort getAllPostsInputPort;
 
     @Inject
+    GetFilteredPostsInputPort getFilteredPostsInputPort;
+
+    @Inject
     GetAllTopicsInputPort getAllTopicsInputPort;
 
     @Inject
@@ -54,7 +58,7 @@ public class PublicEndpoint {
         if(topic != null) {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             filterParams.put(PostFilterParams.TOPIC, topic);
-            Result<List<Post>> filteredPosts = getAllPostsInputPort.getFilteredPosts(new GetAllPostsInputPortRequest(filterParams, false));
+            Result<List<Post>> filteredPosts = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, false));
             return Templates.home(filteredPosts.getData());
         }
         Result<List<Post>> allPosts = getAllPostsInputPort.getAllPosts(false);
@@ -77,7 +81,7 @@ public class PublicEndpoint {
         if(topicResult.isSuccessful()) {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             filterParams.put(PostFilterParams.TOPIC, topicResult.getData().getTitle());
-            Result<List<Post>> postsResult = getAllPostsInputPort.getFilteredPosts(new GetAllPostsInputPortRequest(filterParams, false));
+            Result<List<Post>> postsResult = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, false));
 
             if(postsResult.isSuccessful()) {
                 return Templates.topic(topicResult.getData(), postsResult.getData());

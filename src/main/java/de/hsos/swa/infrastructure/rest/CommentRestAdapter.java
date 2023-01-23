@@ -68,6 +68,13 @@ public class CommentRestAdapter {
         }
     }
 
+    @GET
+    // TODO: implementieren => nutze "GetAllCommentsInputPort"
+    @RolesAllowed("admin")
+    public Response getAllComments() {
+        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    }
+
     @POST
     @RolesAllowed("member")
     public Response commentPost(CommentPostRestAdapterRequest request, @Context SecurityContext securityContext) {
@@ -104,7 +111,14 @@ public class CommentRestAdapter {
         }
     }
 
-    // TODO: None
+
+    @PUT
+    // TODO: implementieren => nutze "UpdateCommentInputPort"
+    @RolesAllowed({"member"})
+    public Response updateComment(@Context SecurityContext securityContext) {
+        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    }
+
     @PATCH
     @Path("/{id}/vote")
     @RolesAllowed("member")
@@ -114,15 +128,30 @@ public class CommentRestAdapter {
             String username = securityContext.getUserPrincipal().getName();
             VoteCommentInputPortRequest command = VoteCommentRestAdapterRequest.Converter.toInputPortCommand(request, id, username);
             Result<Comment> commentResult = this.voteCommentInputPort.voteComment(command);
-
             if (commentResult.isSuccessful()) {
                 CommentDto commentDto = CommentDto.Converter.fromDomainEntity(commentResult.getData());
                 return Response.status(Response.Status.OK).entity(commentDto).build();
             }
-
             return Response.status(Response.Status.BAD_REQUEST).entity(commentResult.getErrorMessage()).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
+    }
+
+
+    @DELETE
+    // TODO: implementieren => nutze "DeleteCommentInputPort"
+    @Path("/{id}/")
+    @RolesAllowed({"member", "admin"})
+    public Response deleteComment(@PathParam("id") String id, @Context SecurityContext securityContext) {
+        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    }
+
+    @DELETE
+    // TODO: implementieren => nutze "DeleteCommentVoteInputPort"
+    @Path("/{id}/vote")
+    @RolesAllowed("member")
+    public Response deleteCommentVote(@PathParam("id") String id, @Context SecurityContext securityContext) {
+        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 }

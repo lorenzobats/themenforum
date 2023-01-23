@@ -29,7 +29,7 @@ public class DeletePostUseCase implements DeletePostInputPort {
 
     @Override
     public Result<Post> deletePost(DeletePostInputPortRequest request) {
-        Result<User> userResult = this.userRepository.getUserByName(request.getUsername());
+        Result<User> userResult = this.userRepository.getUserByName(request.username());
         if (!userResult.isSuccessful()) {
             return Result.error("User does not exist");
         }
@@ -41,7 +41,7 @@ public class DeletePostUseCase implements DeletePostInputPort {
         }
         String role = roleResult.getData();
 
-        Result<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.getId()), false);
+        Result<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.id()), false);
         if (!postResult.isSuccessful()) {
             return Result.error("Post does not exist");
         }

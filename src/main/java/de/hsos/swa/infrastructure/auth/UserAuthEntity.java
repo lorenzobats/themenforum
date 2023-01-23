@@ -11,7 +11,7 @@ import io.quarkus.security.jpa.Username;
 import java.util.UUID;
 
 @Entity
-@Table(name = "auth_user_table")
+@Table(name = "auth_user_table")        // TODO Anders Schema
 @UserDefinition
 @NamedQuery(name = "UserAuthEntity.findRoleByUserId", query = "SELECT role FROM UserAuthEntity WHERE userId = :userId")
 public class UserAuthEntity {

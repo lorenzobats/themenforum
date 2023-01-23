@@ -17,7 +17,7 @@ public class GetUserByNameUseCase implements GetUserByNameInputPort {
 
     @Override
     public Result<User> getUserByName(GetUserByNameInputPortRequest request) {
-        Result<User> userResult = this.userRepository.getUserByName(request.getUsername());
+        Result<User> userResult = this.userRepository.getUserByName(request.username());
 
         if(!userResult.isSuccessful()) {
            return Result.error("Username not found");

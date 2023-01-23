@@ -18,7 +18,7 @@ public class GetPostByIdUseCase implements GetPostByIdInputPort {
 
     @Override
     public Result<Post> getPostById(GetPostByIdInputPortRequest request) {
-        Result<Post> postResult = postRepository.getPostById(UUID.fromString(request.getId()), request.includeComments());
+        Result<Post> postResult = postRepository.getPostById(UUID.fromString(request.id()), request.includeComments());
         if (postResult.isSuccessful()) {
             return Result.success(postResult.getData());
         }

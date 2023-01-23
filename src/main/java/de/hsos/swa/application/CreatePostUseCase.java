@@ -28,21 +28,21 @@ public class CreatePostUseCase implements CreatePostInputPort {
 
     @Override
     public Result<Post> createPost(CreatePostInputPortRequest request) {
-        Result<User> getUserByNameResponse = this.userRepository.getUserByName(request.getUsername());
+        Result<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
         if(!getUserByNameResponse.isSuccessful()) {
-            return Result.error("User " + request.getUsername() + " does not exist");
+            return Result.error("User " + request.username() + " does not exist");
         }
         User user = getUserByNameResponse.getData();
 
 
-        Result<Topic> getTopicByIdResponse = this.topicRepository.getTopicById(request.getTopicId());
+        Result<Topic> getTopicByIdResponse = this.topicRepository.getTopicById(request.topicId());
         if(!getTopicByIdResponse.isSuccessful()) {
-            return Result.error("Topic with ID" + request.getTopicId() +  "does not exist");
+            return Result.error("Topic with ID" + request.topicId() +  "does not exist");
         }
         Topic topic = getTopicByIdResponse.getData();
 
 
-        Post post = PostFactory.createPost(request.getTitle(), request.getContent(), topic, user);
+        Post post = PostFactory.createPost(request.title(), request.content(), topic, user);
 
         Result<Post> savePostResponse = this.postRepository.savePost(post);
 

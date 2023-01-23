@@ -12,13 +12,17 @@ import de.hsos.swa.application.input.RegisterUserInputPort;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.infrastructure.rest.validation.UserValidationService;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
@@ -36,10 +40,17 @@ public class UserRestAdapter {
     @Inject
     UserValidationService validationService;
 
+
+    @DELETE
+    // TODO: implementieren => nutze "GetAllUsersInputPort"
+    @RolesAllowed({"admin"})
+    public Response getAllUsers(@Context SecurityContext securityContext) {
+        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    }
+
     @GET
     @Path("{username}")
-    // --> String name
-    // <-- GetUserByNameRestAdapterResponse
+    @RolesAllowed({"admin"})
     public Response getUserByName(@PathParam("username") String username) {
         try {
             Result<User> userResult = this.getUserByNameInputPort.getUserByName(new GetUserByNameInputPortRequest(username));
@@ -54,8 +65,7 @@ public class UserRestAdapter {
     }
 
     @POST
-    // --> RegisterUserRestAdapterRequest
-    // <-- RegisterUserRestAdapterResponse
+    @PermitAll
     public Response registerUser(RegisterUserRestAdapterRequest request) {
         try {
             validationService.validateUser(request);
@@ -71,7 +81,13 @@ public class UserRestAdapter {
         }
     }
 
-    // TODO: UpdateUser
+    // TODO: UpdateUser ???
 
-    // TODO: DeleteUser
+    @DELETE
+    // TODO: implementieren => nutze "DeleteUserInputPort"
+    @Path("/{id}/")
+    @RolesAllowed({"admin"})
+    public Response deleteComment(@PathParam("id") String id, @Context SecurityContext securityContext) {
+        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    }
 }

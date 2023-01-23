@@ -26,7 +26,7 @@ public class CommentPostUseCase implements CommentPostInputPort {
 
     @Override
     public Result<Comment> commentPost(CommentPostInputPortRequest request) {
-        Result<User> userResult = this.userRepository.getUserByName(request.getUsername());
+        Result<User> userResult = this.userRepository.getUserByName(request.username());
 
         if (!userResult.isSuccessful()) {
             return Result.error("User does not exist");
@@ -34,9 +34,9 @@ public class CommentPostUseCase implements CommentPostInputPort {
 
         User user = userResult.getData();
 
-        Comment comment = CommentFactory.createComment(request.getCommentText(), user);
+        Comment comment = CommentFactory.createComment(request.commentText(), user);
 
-        Result<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.getPostId()), true);
+        Result<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.postId()), true);
         if (!postResult.isSuccessful()) {
             return Result.error("Post does not exist");
         }

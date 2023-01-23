@@ -30,21 +30,21 @@ public class VoteCommentUseCase implements VoteCommentInputPort {
 
     @Override
     public Result<Comment> voteComment(VoteCommentInputPortRequest request) {
-        Result<User> userResult = this.userRepository.getUserByName(request.getUsername());
+        Result<User> userResult = this.userRepository.getUserByName(request.username());
         if (!userResult.isSuccessful()) {
             return Result.error("Cannot retrieve User");
         }
         User user = userResult.getData();
 
 
-        Result<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.getPostId()), true);
+        Result<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.postId()), true);
         if (!postResult.isSuccessful()) {
             return Result.error("Cannot retrieve Post");
         }
         Post post = postResult.getData();
 
         try {
-            this.voteService.voteComment(post, user, request.getCommentId(), request.getVoteType());
+            this.voteService.voteComment(post, user, request.commentId(), request.voteType());
         } catch (Exception e) {
             return Result.error(e.getMessage());
         }
@@ -54,7 +54,7 @@ public class VoteCommentUseCase implements VoteCommentInputPort {
             return Result.error("Updating Comment went wrong " + updatePostResult.getErrorMessage());
         }
 
-        Optional<Comment> optionalComment = post.findCommentById(request.getCommentId());
+        Optional<Comment> optionalComment = post.findCommentById(request.commentId());
         if(optionalComment.isEmpty()){
             return Result.error("Updating Comment went wrong " + updatePostResult.getErrorMessage());
         }

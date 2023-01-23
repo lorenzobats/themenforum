@@ -2,7 +2,7 @@ package de.hsos.swa.infrastructure.rest;
 
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
-import de.hsos.swa.application.output.repository.PostRepository;
+import de.hsos.swa.infrastructure.rest.dto.in.DeletePostVoteRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.dto.in.VotePostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
@@ -39,9 +39,6 @@ import java.util.UUID;
 @Path("/posts")
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
 
-
-//TODO AdapterRequests validieren
-
 public class PostRestAdapter {
     @Inject
     CreatePostInputPort createPostInputPort;
@@ -51,6 +48,9 @@ public class PostRestAdapter {
 
     @Inject
     GetAllPostsInputPort getAllPostsInputPort;
+
+    @Inject
+    GetFilteredPostsInputPort getFilteredPostsInputPort;
 
     @Inject
     VotePostInputPort votePostInputPort;
@@ -92,8 +92,8 @@ public class PostRestAdapter {
             if (sortOrder != null)
                 filterParams.put(PostFilterParams.SORT_ORDER, sortOrder);   // TODO: Implementieren
 
-            GetAllPostsInputPortRequest query = new GetAllPostsInputPortRequest(filterParams, includeComments);
-            Result<List<Post>> postsResult = this.getAllPostsInputPort.getFilteredPosts(query);
+            GetFilteredPostInputPortRequest query = new GetFilteredPostInputPortRequest(filterParams, includeComments);
+            Result<List<Post>> postsResult = this.getFilteredPostsInputPort.getFilteredPosts(query);
             if (postsResult.isSuccessful()) {
                 List<PostDto> postsResponse = postsResult.getData().stream().map(PostDto.Converter::fromDomainEntity).toList();
                 return Response.status(Response.Status.OK).entity(postsResponse).build();
@@ -109,8 +109,6 @@ public class PostRestAdapter {
 
     @GET
     @Path("{id}")
-    // --> String id
-    // <-- GetPostByIdRestAdapterResponse
     public Response getPostById(@PathParam("id") String id,
                                 @DefaultValue("true") @QueryParam("includeComments") boolean includeComments) {
         try {
@@ -128,7 +126,7 @@ public class PostRestAdapter {
 
 
     @POST
-    @RolesAllowed("member")
+    @RolesAllowed({"member"})
     public Response createPost(@NotNull CreatePostRestAdapterRequest request, @Context SecurityContext securityContext) {
         try {
             validationService.validatePost(request);
@@ -147,8 +145,17 @@ public class PostRestAdapter {
         }
     }
 
-    // TODO: Dont allow "none" -> Domain Service muss Vote löschen
 
+    @PUT
+    // TODO: implementieren => nutze "UpdatePostInputPort"
+    @RolesAllowed({"member"})
+    public Response updatePost(@Context SecurityContext securityContext) {
+        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    }
+
+
+    // TODO: Dont allow "none" -> Domain Service muss Vote löschen
+    // TODO: Evtl. in Vote Adapter verschieben?
     @PATCH
     @Path("/{id}/vote")
     @RolesAllowed("member")
@@ -186,5 +193,13 @@ public class PostRestAdapter {
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
+    }
+
+    @DELETE
+    // TODO: implementieren => nutze "DeletePostVoteInputPort" // Oder in VoteAdapter verschieben?
+    @Path("/{id}/vote")
+    @RolesAllowed("member")
+    public Response deletePostVote(@PathParam("id") String id, @Context SecurityContext securityContext) {
+            return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 }

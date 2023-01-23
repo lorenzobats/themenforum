@@ -24,13 +24,13 @@ public class CreateTopicUseCase implements CreateTopicInputPort {
 
     @Override
     public Result<Topic> createTopic(CreateTopicInputPortRequest request) {
-        Result<User> getUserByNameResponse = this.userRepository.getUserByName(request.getUsername());
+        Result<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
         if(!getUserByNameResponse.isSuccessful()) {
             return Result.error("Topic could not be created");
         }
         User user = getUserByNameResponse.getData();
 
-        Topic topic = TopicFactory.createTopic(request.getTitle(), request.getDescription(), user);
+        Topic topic = TopicFactory.createTopic(request.title(), request.description(), user);
 
         Result<Topic> saveTopicResponse = this.topicRepository.saveTopic(topic);
 
