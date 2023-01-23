@@ -111,8 +111,19 @@ public class PostPersistenceAdapter implements PostRepository {
     }
 
     @Override
-    public Result<Void> deletePost(String postId) {
-        return null;
+    public Result<Boolean> deletePost(UUID postId) {
+        try {
+            PostPersistenceModel post = entityManager.find(PostPersistenceModel.class, postId);
+            if (post != null) {
+                entityManager.remove(post);
+                return Result.success(Boolean.TRUE);
+            } else {
+                return Result.success(Boolean.FALSE);
+            }
+        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
+            log.error("Delete Error", e);
+            return Result.exception(e);
+        }
     }
 
 
