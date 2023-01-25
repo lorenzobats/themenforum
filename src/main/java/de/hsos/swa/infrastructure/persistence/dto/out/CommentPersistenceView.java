@@ -15,9 +15,12 @@ public record CommentPersistenceView(
         @IdMapping UUID id,
         String text,
         LocalDateTime createdAt,
-        @Mapping("userPersistenceModel") UserPersistenceView user) {
+        @Mapping("userPersistenceModel") UserPersistenceView user,
+
+        boolean active
+){
     public static Comment toDomainEntity(CommentPersistenceView view) {
-        return new Comment(view.id, view.createdAt, UserPersistenceView.toDomainEntity(view.user), view.text);
+        return new Comment(view.id, view.createdAt, UserPersistenceView.toDomainEntity(view.user), view.text, view.active);
     }
-};
+}
 

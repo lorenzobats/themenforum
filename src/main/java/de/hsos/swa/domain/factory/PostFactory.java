@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 public class PostFactory {
-    public static Post createPost(@NotBlank String title, @NotBlank String content, @Valid Topic topic, @Valid User user) {
+    public static Post createPost(String title, String content, Topic topic, User user) {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
         LocalDateTime createdAt = LocalDateTime.now();

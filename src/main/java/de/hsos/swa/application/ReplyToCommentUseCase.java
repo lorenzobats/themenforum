@@ -42,7 +42,9 @@ public class ReplyToCommentUseCase implements ReplyToCommentInputPort {
 
         Comment reply = CommentFactory.createComment(request.commentText(), user);
 
-        post.addReplyToComment(request.commentId(), reply);
+        if(!post.addReplyToComment(request.commentId(), reply)){
+            return Result.error("Comment is inactive");
+        }
 
         Result<Post> updatePostResponse = this.postRepository.updatePost(post);
 
@@ -52,6 +54,5 @@ public class ReplyToCommentUseCase implements ReplyToCommentInputPort {
         }
 
         return Result.error("Something went wrong " + updatePostResponse.getMessage());
-
     }
 }

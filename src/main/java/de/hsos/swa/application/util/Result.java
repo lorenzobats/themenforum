@@ -3,15 +3,17 @@ package de.hsos.swa.application.util;
 public class Result<T> {
 
     private T data;
+
+    private ResultStatus status;
     private boolean isSuccessful;
-    private String errorMessage;
-    private Exception exception;
+    private String errorMessage = "";
 
     public Result() {}
 
     public static <T> Result<T> isSuccessful(T data) {
         Result<T> result = new Result<>();
         result.data = data;
+        result.status = ResultStatus.SUCCESS;
         result.isSuccessful = true;
         return result;
     }
@@ -25,12 +27,14 @@ public class Result<T> {
 
     public static <T> Result<T> notFound() {
         Result<T> result = new Result<>();
+        result.status = ResultStatus.NOT_FOUND;
         result.isSuccessful = false;
         return result;
     }
 
     public static <T> Result<T> exception() {
         Result<T> result = new Result<>();
+        result.status = ResultStatus.EXCEPTION;
         result.isSuccessful = false;
         return result;
     }
@@ -41,10 +45,6 @@ public class Result<T> {
         } else {
             throw new NullPointerException("Data isn't initialized");
         }
-    }
-
-    public Exception getException() {
-        return exception;
     }
 
     public boolean isSuccessful() {

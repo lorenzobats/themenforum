@@ -42,11 +42,14 @@ public class CommentPersistenceModel {
             orphanRemoval = true)
     List<PostVotePersistenceModel> votes = new ArrayList<>();
 
+    @Basic
+    boolean active;
+
 
     public CommentPersistenceModel() {
     }
 
-    public CommentPersistenceModel(UUID id, String text, LocalDateTime createdAt, UserPersistenceModel userPersistenceModel, CommentPersistenceModel parentComment, List<CommentPersistenceModel> replies, List<PostVotePersistenceModel> votes) {
+    public CommentPersistenceModel(UUID id, String text, LocalDateTime createdAt, UserPersistenceModel userPersistenceModel, CommentPersistenceModel parentComment, List<CommentPersistenceModel> replies, List<PostVotePersistenceModel> votes, boolean active) {
         this.id = id;
         this.text = text;
         this.createdAt = createdAt;
@@ -54,20 +57,22 @@ public class CommentPersistenceModel {
         this.parentComment = parentComment;
         this.replies = replies;
         this.votes = votes;
+        this.active = active;
     }
 
-    public CommentPersistenceModel(UUID id, String text, LocalDateTime createdAt, UserPersistenceModel userPersistenceModel, List<PostVotePersistenceModel> votes) {
+    public CommentPersistenceModel(UUID id, String text, LocalDateTime createdAt, UserPersistenceModel userPersistenceModel, List<PostVotePersistenceModel> votes, boolean active) {
         this.id = id;
         this.text = text;
         this.createdAt = createdAt;
         this.userPersistenceModel = userPersistenceModel;
         this.votes = votes;
+        this.active = active;
     }
 
     public static class Converter {
         public static Comment toDomainEntity(CommentPersistenceModel commentPersistenceModel) {
             User user = UserPersistenceModel.Converter.toDomainEntity(commentPersistenceModel.userPersistenceModel);
-            Comment comment = new Comment(commentPersistenceModel.id, commentPersistenceModel.createdAt, user, commentPersistenceModel.text);
+            Comment comment = new Comment(commentPersistenceModel.id, commentPersistenceModel.createdAt, user, commentPersistenceModel.text, commentPersistenceModel.active);
 
             List<Vote> votes = commentPersistenceModel.votes.stream().map(PostVotePersistenceModel.Converter::toDomainEntity).toList();
             votes.forEach(comment::setVote);
@@ -91,7 +96,7 @@ public class CommentPersistenceModel {
                  parent = CommentPersistenceModel.Converter.parentToPersistenceModel(comment.getParentComment());
             }
 
-            return new CommentPersistenceModel(comment.getId(), comment.getText(), comment.getCreatedAt(), user, parent, replies, votes.stream().toList());
+            return new CommentPersistenceModel(comment.getId(), comment.getText(), comment.getCreatedAt(), user, parent, replies, votes.stream().toList(), comment.isActive());
         }
 
 
@@ -99,7 +104,7 @@ public class CommentPersistenceModel {
             UserPersistenceModel userPersistenceModel = UserPersistenceModel.Converter.toPersistenceModel(parentComment.getUser());
             Set<PostVotePersistenceModel> votes = parentComment.getVotes().values().stream().map(PostVotePersistenceModel.Converter::toPersistenceModel).collect(Collectors.toSet());
 
-            return new CommentPersistenceModel(parentComment.getId(), parentComment.getText(), parentComment.getCreatedAt(), userPersistenceModel, votes.stream().toList());
+            return new CommentPersistenceModel(parentComment.getId(), parentComment.getText(), parentComment.getCreatedAt(), userPersistenceModel, votes.stream().toList(), parentComment.isActive());
         }
     }
 

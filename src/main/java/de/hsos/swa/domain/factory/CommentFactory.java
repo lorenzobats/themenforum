@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 public class CommentFactory {
-    public static Comment createComment(@NotBlank String text, @Valid User user) {
+    public static Comment createComment(String text, User user) {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
         LocalDateTime createdAt = LocalDateTime.now();

@@ -110,9 +110,13 @@ public class Post {
     }
 
     // TODO: in Comment Service auslagern?
-    public void addReplyToComment(String parentCommentId, Comment reply) {
+    public boolean addReplyToComment(String parentCommentId, Comment reply) {
         Optional<Comment> parentComment = findCommentById(parentCommentId);
-        parentComment.ifPresent(comment -> comment.addReply(reply));
+        if(parentComment.isPresent() && parentComment.get().isActive()){
+            parentComment.get().addReply(reply);
+            return true;
+        }
+        return false;
     }
 
     public Optional<Comment> findCommentById(String commentId) {

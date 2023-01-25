@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 public class TopicFactory {
-    public static Topic createTopic(@NotBlank String title, @NotBlank String description, @Valid User user) {
+    public static Topic createTopic(String title, String description, User user) {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
         LocalDateTime createdAt = LocalDateTime.now();

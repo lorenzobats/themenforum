@@ -5,5 +5,6 @@ public enum ResultStatus {
     NOT_CREATED,
     NOT_UPDATED,
     NOT_FOUND,
-    ERROR,
+    NOT_AUTHORIZED,
+    EXCEPTION,
 }

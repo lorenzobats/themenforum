@@ -12,7 +12,6 @@ import de.hsos.swa.domain.entity.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,6 +29,22 @@ public class DeleteCommentUseCase implements DeleteCommentInputPort {
 
     @Override
     public Result<Comment> deleteComment(DeleteCommentInputPortRequest request) {
+
+
+        Result<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(request.commentId()));
+        if (!postResult.isSuccessful()) {
+            return Result.error("Post does not exist");
+        }
+        Post post = postResult.getData();
+
+
+        Optional<Comment> optionalComment = post.findCommentById(request.commentId());
+        if(optionalComment.isEmpty()){
+            return Result.error("Comment does not exist");
+        }
+        Comment comment = optionalComment.get();
+        comment.disable();
+
         Result<User> userResult = this.userRepository.getUserByName(request.username());
         if (!userResult.isSuccessful()) {
             return Result.error("User does not exist");
@@ -42,24 +57,7 @@ public class DeleteCommentUseCase implements DeleteCommentInputPort {
         }
         String role = roleResult.getData();
 
-        Result<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(request.id()));
-        if (!postResult.isSuccessful()) {
-            return Result.error("Post does not exist");
-        }
-        Post post = postResult.getData();
-
-
-        Optional<Comment> optionalComment = post.findCommentById(request.id());
-        if(optionalComment.isEmpty()){
-            return Result.error("Comment does not exist");
-        }
-
-        Comment comment = optionalComment.get();
-
-        // TODO: Kommentar auf deleted setzen
-        comment.setText("deleted");
-
-        if(Objects.equals(role, "admin")){
+        if(role.equals("admin")){
             Result<Post> updatePostPostResult = this.postRepository.updatePost(post);
             if (updatePostPostResult.isSuccessful()) {
                 return Result.isSuccessful(comment); // TODO: Was zurückgeben?
@@ -77,7 +75,6 @@ public class DeleteCommentUseCase implements DeleteCommentInputPort {
                 return Result.isSuccessful(comment); // TODO: Was zurückgeben?
             }
         }
-
         return Result.error("Something went wrong " + deletePostResult.getMessage());
     }
 }

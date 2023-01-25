@@ -137,7 +137,6 @@ public class CommentRestAdapter {
 
 
     @DELETE
-    // TODO: testen => nutze "DeleteCommentInputPort"
     @Path("/{id}/")
     @RolesAllowed({"member", "admin"})
     public Response deleteComment(@PathParam("id") String id, @Context SecurityContext securityContext) {

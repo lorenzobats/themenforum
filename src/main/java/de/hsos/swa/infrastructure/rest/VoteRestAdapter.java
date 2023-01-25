@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response;
 public class VoteRestAdapter {
 
     @GET
-    // TODO: implementieren => nutze "GetAllVotesByUserInputPort"
+    // TODO: implementieren => nutze "GetVotedPostsByUserInputPort"
     @RolesAllowed({"admin", "member"})
     public Response getAllVotesByUser() {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();

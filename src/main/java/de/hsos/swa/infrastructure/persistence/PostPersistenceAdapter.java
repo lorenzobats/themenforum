@@ -40,18 +40,8 @@ public class PostPersistenceAdapter implements PostRepository {
     public Result<List<Post>> getAllPosts(boolean includeComments) {
         try {
             CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
-
-            if (!includeComments) {
-                List<PostPersistenceView> postList;
-                CriteriaBuilder<PostPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(PostPersistenceView.class), criteriaBuilder);
-                postList = criteriaBuilderView.getResultList();
-                return Result.isSuccessful(postList.stream().map(PostPersistenceView::toDomainEntity).toList());
-            }
-            List<PostPersistenceModel> postList;
-            postList = criteriaBuilder.getResultList();
-            return Result.isSuccessful(postList.stream().map(PostPersistenceModel.Converter::toDomainEntity).toList());
+            return getPostResultList(includeComments, criteriaBuilder);
         } catch (NoResultException e) {
-            log.error("getAllFilteredPosts: No Posts Found", e);
             return Result.notFound();
         } catch (PersistenceException e) {
             log.error("getAllFilteredPosts Persistence Failed", e);
@@ -64,14 +54,14 @@ public class PostPersistenceAdapter implements PostRepository {
 
     @Override
     public Result<List<Post>> getAllFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments) {
-
         try {
             CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
+
             if (filterParams.containsKey(PostFilterParams.USERNAME))
                 criteriaBuilder.where("userPersistenceModel.name").eq(filterParams.get(PostFilterParams.USERNAME));
 
             if (filterParams.containsKey(PostFilterParams.USERID))
-                criteriaBuilder.where("userPersistenceModel.id").eq(filterParams.get(PostFilterParams.USERID));
+                criteriaBuilder.where("userPersistenceModel.commentId").eq(filterParams.get(PostFilterParams.USERID));
 
             if (filterParams.containsKey(PostFilterParams.TOPIC))
                 criteriaBuilder.where("topicPersistenceModel.title").eq(filterParams.get(PostFilterParams.TOPIC));
@@ -82,17 +72,8 @@ public class PostPersistenceAdapter implements PostRepository {
             if (filterParams.containsKey(PostFilterParams.DATE_TO))
                 criteriaBuilder.where("createdAt").le(filterParams.get(PostFilterParams.DATE_TO));
 
-            if (!includeComments) {
-                List<PostPersistenceView> postList;
-                CriteriaBuilder<PostPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(PostPersistenceView.class), criteriaBuilder);
-                postList = criteriaBuilderView.getResultList();
-                return Result.isSuccessful(postList.stream().map(PostPersistenceView::toDomainEntity).toList());
-            }
-            List<PostPersistenceModel> postList;
-            postList = criteriaBuilder.getResultList();
-            return Result.isSuccessful(postList.stream().map(PostPersistenceModel.Converter::toDomainEntity).toList());
+            return getPostResultList(includeComments, criteriaBuilder);
         } catch (NoResultException e) {
-            log.error("getAllFilteredPosts: No Posts Found", e);
             return Result.notFound();
         } catch (PersistenceException e) {
             log.error("getAllFilteredPosts Persistence Failed", e);
@@ -134,7 +115,7 @@ public class PostPersistenceAdapter implements PostRepository {
             CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
 
             // Subquery um CommentPersistenceModel mit übergebener commentId, inklusive replies (rekursiv) zu finden
-            // String subqueryString = "SELECT c FROM Comment c WHERE c.id = :id OR c.parentComment IS NOT NULL OR c.replies IS NOT EMPTY";
+            // String subqueryString = "SELECT c FROM Comment c WHERE c.commentId = :commentId OR c.parentComment IS NOT NULL OR c.replies IS NOT EMPTY";
             // https://persistence.blazebit.com/documentation/1.5/core/manual/en_US/
             CriteriaBuilder<CommentPersistenceModel> subquery = criteriaBuilderFactory.create(entityManager, CommentPersistenceModel.class);
             subquery.whereOr()
@@ -202,5 +183,18 @@ public class PostPersistenceAdapter implements PostRepository {
             log.error("updatePost Error", e);
             return Result.exception();
         }
+    }
+
+    // HILFSMETHODEN
+    private Result<List<Post>> getPostResultList(boolean includeComments, CriteriaBuilder<PostPersistenceModel> criteriaBuilder) {
+        if (!includeComments) {
+            List<PostPersistenceView> postList;
+            CriteriaBuilder<PostPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(PostPersistenceView.class), criteriaBuilder);
+            postList = criteriaBuilderView.getResultList();
+            return Result.isSuccessful(postList.stream().map(PostPersistenceView::toDomainEntity).toList());
+        }
+        List<PostPersistenceModel> postList;
+        postList = criteriaBuilder.getResultList();
+        return Result.isSuccessful(postList.stream().map(PostPersistenceModel.Converter::toDomainEntity).toList());
     }
 }

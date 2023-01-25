@@ -33,29 +33,39 @@ public class Comment {
     @NotNull
     private final Map<UUID, Vote> votes = new HashMap<>();
 
-    public Comment(UUID id, LocalDateTime createdAt, User user, String text) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.user = user;
-        this.text = text;
-    }
-
-    public Comment(UUID id, LocalDateTime createdAt, User user, String text, List<Comment> replies) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.user = user;
-        this.text = text;
-        this.replies = replies;
-    }
-
+    private boolean active;
 
     public Comment(LocalDateTime createdAt, User user, String text) {
         this.id = UUID.randomUUID();
         this.createdAt = createdAt;
         this.user = user;
         this.text = text;
+        this.active = true;
     }
 
+    public Comment(UUID id, LocalDateTime createdAt, User user, String text) {
+        this.id = id;
+        this.createdAt = createdAt;
+        this.user = user;
+        this.text = text;
+        this.active = true;
+    }
+
+    public Comment(LocalDateTime createdAt, User user, String text, boolean active) {
+        this.id = UUID.randomUUID();
+        this.createdAt = createdAt;
+        this.user = user;
+        this.text = text;
+        this.active = active;
+    }
+
+    public Comment(UUID id, LocalDateTime createdAt, User user, String text, boolean active) {
+        this.id = id;
+        this.createdAt = createdAt;
+        this.user = user;
+        this.text = text;
+        this.active = active;
+    }
 
     // GETTER
     public UUID getId() {
@@ -67,7 +77,10 @@ public class Comment {
     }
 
     public String getText() {
-        return text;
+        if(isActive()) {
+            return text;
+        }
+        return "<DELETED>";
     }
 
     public List<Comment> getReplies() {
@@ -96,6 +109,15 @@ public class Comment {
     public void addReply(Comment reply) {
         reply.parentComment = this;
         this.replies.add(reply);
+    }
+
+    // DELETION
+    public boolean isActive() {
+        return active;
+    }
+
+    public void disable(){
+        this.active = false;
     }
 
 

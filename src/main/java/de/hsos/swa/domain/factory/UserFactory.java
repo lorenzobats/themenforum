@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class UserFactory {
-    public static User createUser(@NotBlank UUID id, @Valid String username) {
+    public static User createUser(UUID id, String username) {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
         Set<ConstraintViolation<User>> violations = validator.validate(new User(id, username));
@@ -18,7 +18,7 @@ public class UserFactory {
         return new User(id, username);
     }
 
-    public static User createUser(@Valid String username) {
+    public static User createUser(String username) {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
         Set<ConstraintViolation<User>> violations = validator.validate(new User(username));
