@@ -23,26 +23,26 @@ public class UserPersistenceModel {
 
 
     // TODO: Hier vllt besser die Strings (IDs) Speichern?
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    List<CommentPersistenceModel> upvotedComments = new ArrayList<>();
+//    @OneToMany(
+//            cascade = CascadeType.ALL,
+//            fetch = FetchType.LAZY)
+//    List<CommentPersistenceModel> upvotedComments = new ArrayList<>();
+//
+//    @OneToMany(
+//            cascade = CascadeType.ALL,
+//            fetch = FetchType.LAZY)
+//    List<CommentPersistenceModel> downvotedComments = new ArrayList<>();
 
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    List<CommentPersistenceModel> downvotedComments = new ArrayList<>();
 
-
-    @OneToMany(
+    @ManyToMany(
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     List<PostPersistenceModel> upvotedPosts = new ArrayList<>();
 
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    List<PostPersistenceModel> downvotedPosts = new ArrayList<>();
+//    @OneToMany(
+//            cascade = CascadeType.ALL,
+//            fetch = FetchType.LAZY)
+//    List<PostPersistenceModel> downvotedPosts = new ArrayList<>();
 
     public UserPersistenceModel() {
     }
@@ -59,10 +59,10 @@ public class UserPersistenceModel {
     public UserPersistenceModel(UUID id, String name, List<CommentPersistenceModel> upvotedComments, List<CommentPersistenceModel> downvotedComments, List<PostPersistenceModel> upvotedPosts, List<PostPersistenceModel> downvotedPosts) {
         this.id = id;
         this.name = name;
-        this.upvotedComments = upvotedComments;
-        this.downvotedComments = downvotedComments;
+        //this.upvotedComments = upvotedComments;
+        //this.downvotedComments = downvotedComments;
         this.upvotedPosts = upvotedPosts;
-        this.downvotedPosts = downvotedPosts;
+        //this.downvotedPosts = downvotedPosts;
     }
 
     public static class Converter {
