@@ -18,7 +18,7 @@ public class GetCommentByIdUseCase implements GetCommentByIdInputPort {
 
     @Override
     public Result<Comment> getCommentById(GetCommentByIdInputPortRequest request) {
-        Result<Comment> commentResult = commentRepository.getCommentById(UUID.fromString(request.id()));
+        Result<Comment> commentResult = commentRepository.getCommentById(UUID.fromString(request.id()), true);
         if (commentResult.isSuccessful()) {
             return Result.isSuccessful(commentResult.getData());
         }

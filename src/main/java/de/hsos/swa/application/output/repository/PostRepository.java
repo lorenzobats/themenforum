@@ -10,9 +10,10 @@ import java.util.UUID;
 
 public interface PostRepository {
 
-    // CRUD
+    // CREATE
     Result<Post> savePost(Post post);
 
+    // READ
     Result<List<Post>> getAllFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments);
 
     Result<List<Post>> getAllPosts(boolean includeComments);
@@ -21,9 +22,9 @@ public interface PostRepository {
 
     Result<Post> getPostByCommentId(UUID commentId);
 
+    // UPDATE
     Result<Post> updatePost(Post post);
 
+    // DELETE
     Result<Post> deletePost(UUID postId);
-
-    // AGGREGATE
 }

@@ -2,8 +2,11 @@ package de.hsos.swa.infrastructure.rest;
 
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
+import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
+import de.hsos.swa.application.use_case_query.GetAllCommentsUseCase;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.infrastructure.rest.dto.in.VoteCommentRestAdapterRequest;
+import de.hsos.swa.infrastructure.rest.dto.out.TopicDto;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import de.hsos.swa.infrastructure.rest.dto.in.CommentPostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.dto.in.ReplyToCommentRestAdapterRequest;
@@ -22,6 +25,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.List;
 
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
@@ -46,6 +50,9 @@ public class CommentRestAdapter {
     DeleteCommentInputPort deleteCommentInputPort;
 
     @Inject
+    GetAllCommentsInputPort getAllCommentsInputPort;
+
+    @Inject
     CommentValidationService validationService;
 
 
@@ -66,10 +73,19 @@ public class CommentRestAdapter {
     }
 
     @GET
-    // TODO: implementieren => nutze "GetAllCommentsInputPort"
-    @RolesAllowed("admin")
-    public Response getAllComments() {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    @RolesAllowed({"admin", "member"})
+    public Response getAllComments(@DefaultValue("true") @QueryParam("includeReplies") Boolean includeReplies) {
+        try {
+            // TODO: Query (includeComments)
+            Result<List<Comment>> commentsResult = this.getAllCommentsInputPort.getAllComments(includeReplies);
+            if (commentsResult.isSuccessful()) {
+                List<CommentDto> commentsResponse = commentsResult.getData().stream().map(CommentDto.Converter::fromDomainEntity).toList();
+                return Response.status(Response.Status.OK).entity(commentsResponse).build();
+            }
+            return Response.status(Response.Status.NOT_FOUND).entity(commentsResult.getMessage()).build();
+        } catch (ConstraintViolationException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+        }
     }
 
     @POST
