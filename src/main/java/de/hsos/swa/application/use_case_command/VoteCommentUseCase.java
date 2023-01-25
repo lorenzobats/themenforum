@@ -37,7 +37,7 @@ public class VoteCommentUseCase implements VoteCommentInputPort {
         User user = userResult.getData();
 
 
-        Result<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.postId()), true);
+        Result<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(request.commentId()));
         if (!postResult.isSuccessful()) {
             return Result.error("Cannot retrieve Post");
         }

@@ -13,31 +13,54 @@ import java.util.Optional;
 public class VoteService {
 
     public void votePost(Post post, User user, VoteType voteType) {
-        if(post.getCreator().getId().equals(user.getId())){
-            throw new RuntimeException("Cannot Vote your Own Post");
-        }
-        // TODO: if UP und neu = DOWN, dann loeschen und umgekehrt
-        if (voteType.equals(VoteType.NONE)) {
-            post.removeVote(user.getId());
-        } else {
-            post.setVote(new Vote(user, voteType));
+        //Wenn es sich nicht um ein Post des Users handelt
+        if (!post.getCreator().getId().equals(user.getId())) {
+            switch (voteType) {
+                case UP:
+                    if (user.addUpvotePost(post)) {
+                        post.addUpvote();
+                    }
+                    if (user.removeDownvotePost(post)) {
+                        post.removeDownvote();
+                    }
+                case DOWN:
+                    if (user.addDownvotePost(post)) {
+                        post.addDownvote();
+                    }
+                    if (user.removeUpvotePost(post)) {
+                        post.removeUpvote();
+                    }
+                case NONE:
+                    if (user.removeUpvotePost(post)) {
+                        post.removeUpvote();
+                    }
+                    if (user.removeDownvotePost(post)) {
+                        post.removeDownvote();
+                    }
+            }
         }
     }
 
     public void voteComment(Post post, User user, String commentId, VoteType voteType) {
         Optional<Comment> optionalComment = post.findCommentById(commentId);
-        if(optionalComment.isEmpty()){
-            throw new RuntimeException("Comment " + commentId + " cannot be found within Post + " + post.getId() );
+        if (optionalComment.isEmpty()) {
+            throw new RuntimeException("Comment " + commentId + " cannot be found within Post + " + post.getId());
         }
         Comment comment = optionalComment.get();
-        if(comment.getUser().getId().equals(user.getId())){
-            throw new RuntimeException("Cannot Vote your Own Comment");
-        }
 
-        if (voteType.equals(VoteType.NONE)) {
-            comment.removeVote(user.getId());
-        } else {
-            comment.setVote(new Vote(user, voteType));
+        //Wenn es sich nicht um ein Comment des Users handelt
+        if (!comment.getUser().getId().equals(user.getId())) {
+            switch (voteType) {
+                case UP:
+                    user.addUpvoteComment(comment);
+                    user.removeDownvoteComment(comment);
+                case DOWN:
+                    user.addDownvoteComment(comment);
+                    user.removeUpvoteComment(comment);
+                case NONE:
+                    user.removeUpvoteComment(comment);
+                    user.removeDownvoteComment(comment);
+            }
         }
     }
 }

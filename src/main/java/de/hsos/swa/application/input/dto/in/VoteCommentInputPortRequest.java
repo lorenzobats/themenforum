@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 public record VoteCommentInputPortRequest(
         @NotEmpty(message = "commentId is missing") String commentId,
-        @NotEmpty(message = "postId is missing") String postId,
         @NotEmpty(message = "username is missing") String username,
         @NotNull(message = "voteType is missing") VoteType voteType
-) {}
+) {
+}

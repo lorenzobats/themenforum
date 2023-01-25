@@ -11,4 +11,5 @@ public interface UserRepository {
     Result<User> getUserByName(String username);
 
     Result<User> saveUser(User user);
+    Result<User> updateUser(User user);
 }

@@ -33,8 +33,9 @@ public class Post {
     @NotNull
     private List<Comment> comments = new ArrayList<>();
 
-    @NotNull
-    private final Map<UUID, Vote> votes = new HashMap<>();
+    private int upvotes;
+
+    private int downvotes;
 
 
     public Post(UUID id, String title, String content, LocalDateTime createdAt, Topic topic, User creator) {
@@ -66,6 +67,13 @@ public class Post {
     }
 
 
+    public int getUpvotes() {
+        return upvotes;
+    }
+
+    public int getDownvotes() {
+        return downvotes;
+    }
 
     // GETTER
     public UUID getId() {
@@ -96,23 +104,38 @@ public class Post {
         return comments;
     }
 
-    public Map<UUID, Vote> getVotes() {
-        return votes;
+
+    public void addUpvote() {
+        this.upvotes++;
     }
 
+    public void addDownvote() {
+        this.downvotes++;
+    }
 
-    // SETTER
+    public void removeUpvote() {
+        this.upvotes--;
+    }
 
-    // COMMENTS
-    // TODO: in Comment Service auslagern?
+    public void removeDownvote() {
+        this.downvotes--;
+    }
+
+    public void setUpvotes(int upvotes) {
+        this.upvotes = upvotes;
+    }
+
+    public void setDownvotes(int downvotes) {
+        this.downvotes = downvotes;
+    }
+
     public void addComment(Comment comment) {
         this.comments.add(comment);
     }
 
-    // TODO: in Comment Service auslagern?
     public boolean addReplyToComment(String parentCommentId, Comment reply) {
         Optional<Comment> parentComment = findCommentById(parentCommentId);
-        if(parentComment.isPresent() && parentComment.get().isActive()){
+        if (parentComment.isPresent() && parentComment.get().isActive()) {
             parentComment.get().addReply(reply);
             return true;
         }
@@ -131,30 +154,5 @@ public class Post {
         }
 
         return Optional.empty();
-    }
-
-
-    // VOTES
-    public void setVote(Vote vote) {
-        this.votes.put(vote.getUser().getId(), vote);
-    }
-    public void removeVote(UUID userId) {
-        this.votes.remove(userId);
-    }
-
-    public Integer getDownVotes() {
-        int voting = 0;
-        for (Vote v : this.votes.values()){
-            voting += (v.getVoteType().equals(VoteType.DOWN) ? 1 : 0);
-        }
-        return voting;
-    }
-
-    public Integer getUpVotes() {
-        int voting = 0;
-        for (Vote v : this.votes.values()){
-            voting += (v.getVoteType().equals(VoteType.UP) ? 1 : 0);
-        }
-        return voting;
     }
 }

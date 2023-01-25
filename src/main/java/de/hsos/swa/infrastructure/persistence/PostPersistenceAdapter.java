@@ -119,9 +119,9 @@ public class PostPersistenceAdapter implements PostRepository {
             // https://persistence.blazebit.com/documentation/1.5/core/manual/en_US/
             CriteriaBuilder<CommentPersistenceModel> subquery = criteriaBuilderFactory.create(entityManager, CommentPersistenceModel.class);
             subquery.whereOr()
-                        .where("id").eq(commentId)
-                        .where("parentComment").isNotNull()
-                        .where("replies").isNotEmpty()
+                    .where("id").eq(commentId)
+                    .where("parentComment").isNotNull()
+                    .where("replies").isNotEmpty()
                     .endOr();
 
             // Subquery mi PostPersistenceModel joinen im Feld "comments"
@@ -154,7 +154,7 @@ public class PostPersistenceAdapter implements PostRepository {
             return Result.notFound();
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("Delete Error", e);
-            return Result.exception();
+            return Result.error("Could not persist Post");
         }
     }
 
@@ -167,7 +167,7 @@ public class PostPersistenceAdapter implements PostRepository {
             return Result.isSuccessful(PostPersistenceModel.Converter.toDomainEntity(postPersistenceModel));
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("savePost Error", e);
-            return Result.exception();
+            return Result.error("Could not persist Post");
         }
     }
 
@@ -180,8 +180,8 @@ public class PostPersistenceAdapter implements PostRepository {
             entityManager.merge(postPersistenceModel);
             return Result.isSuccessful(PostPersistenceModel.Converter.toDomainEntity(postPersistenceModel));
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            log.error("updatePost Error", e);
-            return Result.exception();
+            log.error("UpdatePost Error", e);
+            return Result.error("Could not persist Post");
         }
     }
 

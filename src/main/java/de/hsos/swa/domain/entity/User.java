@@ -1,10 +1,11 @@
 package de.hsos.swa.domain.entity;
 
 
+import de.hsos.swa.domain.value_object.Vote;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class User {
     private UUID id;
@@ -12,6 +13,15 @@ public class User {
     @NotBlank
     @Size(min = 4, max = 20, message = "Username must be between 4 and 20 characters")
     private String name;
+
+
+    private Set<Post> upvotedPosts = new HashSet<>();
+
+    private Set<Post> downvotedPosts = new HashSet<>();
+
+    private Set<Comment> upvotedComments = new HashSet<>();
+
+    private Set<Comment> downvotedComments = new HashSet<>();
 
     public User(String name) {
         this.id = UUID.randomUUID();
@@ -30,6 +40,42 @@ public class User {
     public String getName() {
         return name;
     }
+
+    //ADD VOTED
+    public boolean addUpvotePost(Post post) {
+        return this.upvotedPosts.add(post);
+    }
+
+    public boolean addDownvotePost(Post post) {
+        return this.downvotedPosts.add(post);
+    }
+
+    public boolean addUpvoteComment(Comment comment) {
+        return this.upvotedComments.add(comment);
+    }
+
+    public boolean addDownvoteComment(Comment comment) {
+        return this.downvotedComments.add(comment);
+    }
+
+
+    //REMOVE VOTED
+    public boolean removeUpvotePost(Post post) {
+        return this.upvotedPosts.remove(post);
+    }
+
+    public boolean removeDownvotePost(Post post) {
+        return this.downvotedPosts.remove(post);
+    }
+
+    public boolean removeUpvoteComment(Comment comment) {
+        return this.upvotedComments.remove(comment);
+    }
+
+    public boolean removeDownvoteComment(Comment comment) {
+        return this.downvotedComments.remove(comment);
+    }
+
 
     @Override
     public boolean equals(Object o) {

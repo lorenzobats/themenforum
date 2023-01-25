@@ -18,12 +18,13 @@ public record PostPersistenceView(
         LocalDateTime createdAt,
         @Mapping("topicPersistenceModel") TopicPersistenceView topic,
         @Mapping("userPersistenceModel") UserPersistenceView user,
-        List<PostVotePersistenceView> votes
-
+        int upvotes,
+        int downvotes
 ) {
     public static Post toDomainEntity(PostPersistenceView view) {
         Post post = new Post(view.id, view.title, view.content, view.createdAt, TopicPersistenceView.toDomainEntity(view.topic), UserPersistenceView.toDomainEntity(view.user));
-        view.votes.forEach(vote -> post.setVote(PostVotePersistenceView.toDomainEntity(vote)));
+        post.setUpvotes(view.upvotes);
+        post.setDownvotes(view.downvotes);
         return post;
     }
 }

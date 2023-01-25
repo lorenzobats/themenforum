@@ -32,8 +32,20 @@ public class UserPersistenceAdapter implements UserRepository {
             entityManager.persist(userPersistenceModel);
             return Result.isSuccessful(UserPersistenceModel.Converter.toDomainEntity(userPersistenceModel));
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            log.error("Customer Entity could not be created", e);
+            log.error("User could not be created", e);
             return Result.exception();
+        }
+    }
+
+    @Override
+    public Result<User> updateUser(User user) {
+        UserPersistenceModel userPersistenceModel = UserPersistenceModel.Converter.toPersistenceModel(user);
+        try {
+            entityManager.merge(userPersistenceModel);
+            return Result.isSuccessful(UserPersistenceModel.Converter.toDomainEntity(userPersistenceModel));
+        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
+            log.error("UpdatePost User", e);
+            return Result.error("Could not persist User");
         }
     }
 
@@ -76,7 +88,7 @@ public class UserPersistenceAdapter implements UserRepository {
                     .getResultList();
             return Result.isSuccessful(userList.isEmpty());
         } catch (Exception e) {
-            log.error("GetCustomerById Error", e);
+            log.error("GetUserById Error", e);
             return Result.exception();
         }
     }

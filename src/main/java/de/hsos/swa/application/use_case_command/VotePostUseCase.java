@@ -48,6 +48,11 @@ public class VotePostUseCase implements VotePostInputPort {
         }
 
         Result<Post> updatePostResult = this.postRepository.updatePost(post);
+        Result<User> updatedUserResult = this.userRepository.updateUser(user);
+
+        if(updatedUserResult.isSuccessful()) {
+            return Result.error("Could not updated User");
+        }
 
         if (updatePostResult.isSuccessful()) {
             return Result.isSuccessful(updatePostResult.getData());

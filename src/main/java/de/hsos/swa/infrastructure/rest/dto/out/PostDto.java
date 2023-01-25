@@ -40,7 +40,16 @@ public class PostDto {
         public static PostDto fromDomainEntity(Post post) {
             List<CommentDto> comments = post.getComments().stream().map(CommentDto.Converter::fromDomainEntity).toList();
             TopicDto topic = TopicDto.Converter.fromDomainEntity(post.getTopic());
-            return new PostDto(post.getId().toString(), post.getTitle(),  post.getContent(), post.getCreatedAt(), post.getCreator().getName(), topic , comments, post.getDownVotes(), post.getUpVotes());
+            return new PostDto(
+                    post.getId().toString(),
+                    post.getTitle(),
+                    post.getContent(),
+                    post.getCreatedAt(),
+                    post.getCreator().getName(),
+                    topic ,
+                    comments,
+                    post.getDownvotes(),
+                    post.getUpvotes());
         }
 
         // TODO: TEST
