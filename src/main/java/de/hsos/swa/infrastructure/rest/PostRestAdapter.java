@@ -6,7 +6,7 @@ import de.hsos.swa.infrastructure.rest.dto.in.VotePostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
 import de.hsos.swa.infrastructure.rest.dto.in.CreatePostRestAdapterRequest;
-import de.hsos.swa.application.PostFilterParams;
+import de.hsos.swa.application.use_case_query.PostFilterParams;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.infrastructure.rest.validation.PostValidationService;

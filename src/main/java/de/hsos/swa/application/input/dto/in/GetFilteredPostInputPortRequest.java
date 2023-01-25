@@ -1,6 +1,6 @@
 package de.hsos.swa.application.input.dto.in;
 
-import de.hsos.swa.application.PostFilterParams;
+import de.hsos.swa.application.use_case_query.PostFilterParams;
 
 import java.util.Map;
 

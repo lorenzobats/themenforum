@@ -1,6 +1,6 @@
 package de.hsos.swa.infrastructure.ui;
 
-import de.hsos.swa.application.PostFilterParams;
+import de.hsos.swa.application.use_case_query.PostFilterParams;
 import de.hsos.swa.application.input.GetAllPostsInputPort;
 import de.hsos.swa.application.input.GetAllTopicsInputPort;
 import de.hsos.swa.application.input.GetFilteredPostsInputPort;

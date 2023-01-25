@@ -1,6 +1,6 @@
 package de.hsos.swa.application.output.repository;
 
-import de.hsos.swa.application.PostFilterParams;
+import de.hsos.swa.application.use_case_query.PostFilterParams;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Post;
 
