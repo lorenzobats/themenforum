@@ -20,7 +20,7 @@ public class GetPostByIdUseCase implements GetPostByIdInputPort {
     public Result<Post> getPostById(GetPostByIdInputPortRequest request) {
         Result<Post> postResult = postRepository.getPostById(UUID.fromString(request.id()), request.includeComments());
         if (postResult.isSuccessful()) {
-            return Result.success(postResult.getData());
+            return Result.isSuccessful(postResult.getData());
         }
         return Result.error("Cannot find Post");
     }

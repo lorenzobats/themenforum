@@ -34,6 +34,6 @@ public class CreateTopicUseCase implements CreateTopicInputPort {
 
         Result<Topic> saveTopicResponse = this.topicRepository.saveTopic(topic);
 
-        return Result.success(saveTopicResponse.getData());
+        return Result.isSuccessful(saveTopicResponse.getData());
     }
 }

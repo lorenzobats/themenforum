@@ -2,7 +2,6 @@ package de.hsos.swa.infrastructure.rest;
 
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
-import de.hsos.swa.infrastructure.rest.dto.in.DeletePostVoteRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.dto.in.VotePostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
@@ -98,7 +97,7 @@ public class PostRestAdapter {
                 List<PostDto> postsResponse = postsResult.getData().stream().map(PostDto.Converter::fromDomainEntity).toList();
                 return Response.status(Response.Status.OK).entity(postsResponse).build();
             }
-            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(postsResult.getErrorMessage())).build();
+            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(postsResult.getMessage())).build();
         } catch (DateTimeParseException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getMessage())).build();
         } catch (ConstraintViolationException e) {
@@ -118,7 +117,7 @@ public class PostRestAdapter {
                 PostDto response = PostDto.Converter.fromDomainEntity(postResult.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
-            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(postResult.getErrorMessage())).build();
+            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(postResult.getMessage())).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
@@ -139,7 +138,7 @@ public class PostRestAdapter {
                 // TODO: URI.Create auslagern und Hilfsklasse schreiben?
                 return Response.status(Response.Status.CREATED).location(URI.create("/posts/" + postResponse.id)).entity(postResponse).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getErrorMessage()).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getMessage()).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
@@ -170,7 +169,7 @@ public class PostRestAdapter {
                 PostDto postDto = PostDto.Converter.fromDomainEntity(postResult.getData());
                 return Response.status(Response.Status.OK).entity(postDto).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getErrorMessage()).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getMessage()).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
@@ -189,7 +188,7 @@ public class PostRestAdapter {
                 PostDto postDto = PostDto.Converter.fromDomainEntity(postResult.getData());
                 return Response.status(Response.Status.OK).entity(postDto).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getErrorMessage()).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getMessage()).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }

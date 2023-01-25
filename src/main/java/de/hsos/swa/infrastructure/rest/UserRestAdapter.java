@@ -58,7 +58,7 @@ public class UserRestAdapter {
                 UserDto responseDto = UserDto.Converter.fromDomainEntity(userResult.getData());
                 return Response.status(Response.Status.OK).entity(responseDto).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(userResult.getErrorMessage()).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(userResult.getMessage()).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
@@ -75,7 +75,7 @@ public class UserRestAdapter {
                 UserDto responseDto = UserDto.Converter.fromDomainEntity(userResult.getData());
                 return Response.status(Response.Status.CREATED).entity(responseDto).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(userResult.getErrorMessage())).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(userResult.getMessage())).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }

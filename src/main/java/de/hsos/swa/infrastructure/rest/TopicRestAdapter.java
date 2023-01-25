@@ -1,15 +1,12 @@
 package de.hsos.swa.infrastructure.rest;
 
-import de.hsos.swa.application.input.dto.in.DeletePostInputPortRequest;
 import de.hsos.swa.application.input.dto.in.DeleteTopicInputPortRequest;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.input.dto.in.CreateTopicInputPortRequest;
 import de.hsos.swa.application.input.dto.in.GetTopicByIdInputPortRequest;
-import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.Topic;
-import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
 import de.hsos.swa.infrastructure.rest.dto.out.TopicDto;
 import de.hsos.swa.infrastructure.rest.dto.in.CreateTopicRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.TopicValidationService;
@@ -65,7 +62,7 @@ public class TopicRestAdapter {
                 List<TopicDto> topicsResponse = topicsResult.getData().stream().map(TopicDto.Converter::fromInputPortDto).toList();
                 return Response.status(Response.Status.OK).entity(topicsResponse).build();
             }
-            return Response.status(Response.Status.NOT_FOUND).entity(topicsResult.getErrorMessage()).build();
+            return Response.status(Response.Status.NOT_FOUND).entity(topicsResult.getMessage()).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
@@ -81,7 +78,7 @@ public class TopicRestAdapter {
                 TopicDto response = TopicDto.Converter.fromDomainEntity(topicResult.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
-            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(topicResult.getErrorMessage())).build();
+            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(topicResult.getMessage())).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
@@ -101,7 +98,7 @@ public class TopicRestAdapter {
                 // TODO: Neben Body auch Uri Builder nutzen um RessourceLink im Header zurückzugeben (Gilt für alle POST/UPDATE)
                 return Response.status(Response.Status.CREATED).entity(topicResponse).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(topicResult.getErrorMessage()).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(topicResult.getMessage()).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
@@ -120,7 +117,7 @@ public class TopicRestAdapter {
                 TopicDto postDto = TopicDto.Converter.fromDomainEntity(postResult.getData());
                 return Response.status(Response.Status.OK).entity(postDto).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getErrorMessage()).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getMessage()).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }

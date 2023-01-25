@@ -1,19 +1,13 @@
 package de.hsos.swa.infrastructure.rest;
 
-import de.hsos.swa.application.input.VoteCommentInputPort;
-import de.hsos.swa.application.input.dto.in.VoteCommentInputPortRequest;
+import de.hsos.swa.application.input.*;
+import de.hsos.swa.application.input.dto.in.*;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.infrastructure.rest.dto.in.VoteCommentRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import de.hsos.swa.infrastructure.rest.dto.in.CommentPostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.dto.in.ReplyToCommentRestAdapterRequest;
-import de.hsos.swa.application.input.CommentPostInputPort;
-import de.hsos.swa.application.input.GetCommentByIdInputPort;
-import de.hsos.swa.application.input.ReplyToCommentInputPort;
 import de.hsos.swa.application.util.Result;
-import de.hsos.swa.application.input.dto.in.CommentPostInputPortRequest;
-import de.hsos.swa.application.input.dto.in.GetCommentByIdInputPortRequest;
-import de.hsos.swa.application.input.dto.in.ReplyToCommentInputPortRequest;
 import de.hsos.swa.infrastructure.rest.dto.out.CommentDto;
 import de.hsos.swa.infrastructure.rest.validation.CommentValidationService;
 
@@ -49,6 +43,9 @@ public class CommentRestAdapter {
     VoteCommentInputPort voteCommentInputPort;
 
     @Inject
+    DeleteCommentInputPort deleteCommentInputPort;
+
+    @Inject
     CommentValidationService validationService;
 
 
@@ -62,7 +59,7 @@ public class CommentRestAdapter {
                 CommentDto response = CommentDto.Converter.fromDomainEntity(commentResult.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
-            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(commentResult.getErrorMessage())).build();
+            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(commentResult.getMessage())).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
@@ -87,7 +84,7 @@ public class CommentRestAdapter {
                 CommentDto response = CommentDto.Converter.fromDomainEntity(result.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
-            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(result.getErrorMessage())).build();
+            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(result.getMessage())).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
@@ -105,7 +102,7 @@ public class CommentRestAdapter {
                 CommentDto response = CommentDto.Converter.fromDomainEntity(result.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
-            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(result.getErrorMessage())).build();
+            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(result.getMessage())).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
@@ -132,7 +129,7 @@ public class CommentRestAdapter {
                 CommentDto commentDto = CommentDto.Converter.fromDomainEntity(commentResult.getData());
                 return Response.status(Response.Status.OK).entity(commentDto).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(commentResult.getErrorMessage()).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(commentResult.getMessage()).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
@@ -140,11 +137,23 @@ public class CommentRestAdapter {
 
 
     @DELETE
-    // TODO: implementieren => nutze "DeleteCommentInputPort"
+    // TODO: testen => nutze "DeleteCommentInputPort"
     @Path("/{id}/")
     @RolesAllowed({"member", "admin"})
     public Response deleteComment(@PathParam("id") String id, @Context SecurityContext securityContext) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        try {
+            String username = securityContext.getUserPrincipal().getName();
+            DeleteCommentInputPortRequest command = new DeleteCommentInputPortRequest(id, username);
+            Result<Comment> commentResult = this.deleteCommentInputPort.deleteComment(command);
+
+            if (commentResult.isSuccessful()) {
+                CommentDto commentDto = CommentDto.Converter.fromDomainEntity(commentResult.getData());
+                return Response.status(Response.Status.OK).entity(commentDto).build();
+            }
+            return Response.status(Response.Status.BAD_REQUEST).entity(commentResult.getMessage()).build();
+        } catch (ConstraintViolationException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+        }
     }
 
     @DELETE

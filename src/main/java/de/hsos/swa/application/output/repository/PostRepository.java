@@ -19,6 +19,8 @@ public interface PostRepository {
 
     Result<Post> getPostById(UUID postId, boolean includeComments);
 
+    Result<Post> getPostByCommentId(UUID commentId);
+
     Result<Post> updatePost(Post post);
 
     Result<Post> deletePost(UUID postId);

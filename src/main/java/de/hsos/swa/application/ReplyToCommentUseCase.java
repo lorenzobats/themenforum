@@ -48,10 +48,10 @@ public class ReplyToCommentUseCase implements ReplyToCommentInputPort {
 
         if (updatePostResponse.isSuccessful()) {
             Optional<Comment> savedComment = updatePostResponse.getData().findCommentById(reply.getId().toString());
-            return savedComment.map(Result::success).orElseGet(() -> Result.error("Reply not saved"));
+            return savedComment.map(Result::isSuccessful).orElseGet(() -> Result.error("Reply not saved"));
         }
 
-        return Result.error("Something went wrong " + updatePostResponse.getErrorMessage());
+        return Result.error("Something went wrong " + updatePostResponse.getMessage());
 
     }
 }

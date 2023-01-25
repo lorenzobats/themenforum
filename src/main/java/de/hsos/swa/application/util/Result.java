@@ -9,7 +9,7 @@ public class Result<T> {
 
     public Result() {}
 
-    public static <T> Result<T> success(T data) {
+    public static <T> Result<T> isSuccessful(T data) {
         Result<T> result = new Result<>();
         result.data = data;
         result.isSuccessful = true;
@@ -23,10 +23,15 @@ public class Result<T> {
         return result;
     }
 
-    public static <T> Result<T> exception(Exception exception) {
+    public static <T> Result<T> notFound() {
         Result<T> result = new Result<>();
         result.isSuccessful = false;
-        result.exception = exception;
+        return result;
+    }
+
+    public static <T> Result<T> exception() {
+        Result<T> result = new Result<>();
+        result.isSuccessful = false;
         return result;
     }
 
@@ -46,7 +51,7 @@ public class Result<T> {
         return isSuccessful;
     }
 
-    public String getErrorMessage() {
+    public String getMessage() {
         return errorMessage;
     }
 

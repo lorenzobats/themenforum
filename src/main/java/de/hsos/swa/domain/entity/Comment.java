@@ -86,6 +86,11 @@ public class Comment {
         return createdAt;
     }
 
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
     // COMMENTS
     // TODO: in Comment Service auslagern?
     public void addReply(Comment reply) {

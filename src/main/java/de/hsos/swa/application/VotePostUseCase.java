@@ -50,10 +50,10 @@ public class VotePostUseCase implements VotePostInputPort {
         Result<Post> updatePostResult = this.postRepository.updatePost(post);
 
         if (updatePostResult.isSuccessful()) {
-            return Result.success(updatePostResult.getData());
+            return Result.isSuccessful(updatePostResult.getData());
         }
 
-        return Result.error("Something went wrong " + updatePostResult.getErrorMessage());
+        return Result.error("Something went wrong " + updatePostResult.getMessage());
     }
 
 }

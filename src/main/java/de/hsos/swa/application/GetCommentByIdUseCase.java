@@ -20,7 +20,7 @@ public class GetCommentByIdUseCase implements GetCommentByIdInputPort {
     public Result<Comment> getCommentById(GetCommentByIdInputPortRequest request) {
         Result<Comment> commentResult = commentRepository.getCommentById(UUID.fromString(request.id()));
         if (commentResult.isSuccessful()) {
-            return Result.success(commentResult.getData());
+            return Result.isSuccessful(commentResult.getData());
         }
         return Result.error("Cannot find Comment");
     }

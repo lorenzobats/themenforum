@@ -51,13 +51,13 @@ public class VoteCommentUseCase implements VoteCommentInputPort {
 
         Result<Post> updatePostResult = this.postRepository.updatePost(post);
         if (!updatePostResult.isSuccessful()) {
-            return Result.error("Updating Comment went wrong " + updatePostResult.getErrorMessage());
+            return Result.error("Updating Comment went wrong " + updatePostResult.getMessage());
         }
 
         Optional<Comment> optionalComment = post.findCommentById(request.commentId());
         if(optionalComment.isEmpty()){
-            return Result.error("Updating Comment went wrong " + updatePostResult.getErrorMessage());
+            return Result.error("Updating Comment went wrong " + updatePostResult.getMessage());
         }
-        return Result.success(optionalComment.get());
+        return Result.isSuccessful(optionalComment.get());
     }
 }

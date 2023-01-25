@@ -47,9 +47,9 @@ public class DeleteTopicUseCase implements DeleteTopicInputPort {
         Result<Topic> deleteTopicResult = this.topicRepository.deleteTopic(UUID.fromString(request.id()));
 
         if (!deleteTopicResult.isSuccessful()) {
-            return Result.error("Could not Delete Topic " + deleteTopicResult.getErrorMessage());
+            return Result.error("Could not Delete Topic " + deleteTopicResult.getMessage());
         }
 
-        return Result.success(deleteTopicResult.getData());
+        return Result.isSuccessful(deleteTopicResult.getData());
     }
 }

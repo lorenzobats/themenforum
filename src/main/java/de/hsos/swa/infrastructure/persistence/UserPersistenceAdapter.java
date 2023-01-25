@@ -30,10 +30,10 @@ public class UserPersistenceAdapter implements UserRepository {
         UserPersistenceModel userPersistenceModel = UserPersistenceModel.Converter.toPersistenceModel(user);
         try {
             entityManager.persist(userPersistenceModel);
-            return Result.success(UserPersistenceModel.Converter.toDomainEntity(userPersistenceModel));
+            return Result.isSuccessful(UserPersistenceModel.Converter.toDomainEntity(userPersistenceModel));
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("Customer Entity could not be created", e);
-            return Result.exception(e);
+            return Result.exception();
         }
     }
 
@@ -45,12 +45,12 @@ public class UserPersistenceAdapter implements UserRepository {
         try {
             List<UserPersistenceModel> userList = query.getResultList();
             if(userList.isEmpty()){
-                return Result.error("Cannot find User");
+                return Result.error("");
             }
-            return Result.success(UserPersistenceModel.Converter.toDomainEntity(userList.get(0)));
+            return Result.isSuccessful(UserPersistenceModel.Converter.toDomainEntity(userList.get(0)));
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("GetUserByName Error", e);
-            return Result.exception(e);
+            return Result.exception();
         }
     }
 
@@ -61,10 +61,10 @@ public class UserPersistenceAdapter implements UserRepository {
         UserPersistenceModel user;
         try {
             user = query.getSingleResult();
-            return Result.success(UserPersistenceModel.Converter.toDomainEntity(user));
+            return Result.isSuccessful(UserPersistenceModel.Converter.toDomainEntity(user));
         } catch (Exception e) {
             log.error("GetUserById Error", e);
-            return Result.exception(e);
+            return Result.exception();
         }
     }
 
@@ -74,10 +74,10 @@ public class UserPersistenceAdapter implements UserRepository {
             List<UserPersistenceModel> userList = entityManager.createNamedQuery("UserPersistenceModel.findByUsername", UserPersistenceModel.class)
                     .setParameter("username", username)
                     .getResultList();
-            return Result.success(userList.isEmpty());
+            return Result.isSuccessful(userList.isEmpty());
         } catch (Exception e) {
             log.error("GetCustomerById Error", e);
-            return Result.exception(e);
+            return Result.exception();
         }
     }
 }

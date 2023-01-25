@@ -22,7 +22,7 @@ public class GetFilteredPostsInputPortUseCase implements GetFilteredPostsInputPo
     public Result<List<Post>> getFilteredPosts(GetFilteredPostInputPortRequest request) {
         Result<List<Post>> postsResult = postRepository.getAllFilteredPosts(request.filterParams(), request.includeComments());
         if (postsResult.isSuccessful()) {
-            return Result.success(postsResult.getData());
+            return Result.isSuccessful(postsResult.getData());
         }
         return Result.error("Cannot find Posts");
     }

@@ -29,10 +29,10 @@ public class CommentPersistenceAdapter implements CommentRepository {
         CommentPersistenceModel commentPersistenceModel = CommentPersistenceModel.Converter.toPersistenceModel(comment);
         try {
             entityManager.merge(commentPersistenceModel);
-            return Result.success(CommentPersistenceModel.Converter.toDomainEntity(commentPersistenceModel));
+            return Result.isSuccessful(CommentPersistenceModel.Converter.toDomainEntity(commentPersistenceModel));
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("updateComment Error", e);
-            return Result.exception(e);
+            return Result.exception();
         }
     }
 
@@ -43,10 +43,10 @@ public class CommentPersistenceAdapter implements CommentRepository {
         CommentPersistenceModel comment;
         try {
             comment = query.getSingleResult();
-            return Result.success(CommentPersistenceModel.Converter.toDomainEntity(comment));
+            return Result.isSuccessful(CommentPersistenceModel.Converter.toDomainEntity(comment));
         } catch (Exception e) {
             log.error("GetCommentById Error", e);
-            return Result.exception(e);
+            return Result.exception();
         }
     }
 }
