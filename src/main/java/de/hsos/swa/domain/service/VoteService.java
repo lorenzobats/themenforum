@@ -14,6 +14,9 @@ public class VoteService {
 
     public void votePost(Post post, User user, VoteType voteType) {
         //Wenn es sich nicht um ein Post des Users handelt
+        post.addUpvote();
+        user.addUpvotePost(post);
+        // TODO: Switch case scheint noch nicht zu funktionieren
         if (!post.getCreator().getId().equals(user.getId())) {
             switch (voteType) {
                 case UP:

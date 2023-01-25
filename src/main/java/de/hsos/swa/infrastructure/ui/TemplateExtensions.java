@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 @TemplateExtension
 public class TemplateExtensions {
     public static Integer totalVotes(Post post) {
-        return post.getUpVotes() - post.getDownVotes();
+        return post.getUpvotes() - post.getDownvotes();
     }
 
     public static String parsedCreatedAtDate(Post post) {

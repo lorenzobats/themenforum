@@ -2,6 +2,7 @@ package de.hsos.swa.infrastructure.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.User;
 
 import javax.persistence.*;
@@ -20,40 +21,28 @@ public class UserPersistenceModel {
     @Column(name = "user_name")
     String name;
 
+
+    // TODO: Hier vllt besser die Strings (IDs) Speichern?
     @OneToMany(
-            mappedBy = "userPersistenceModel",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    @JsonBackReference
-    List<TopicPersistenceModel> topics = new ArrayList<>();
+    List<CommentPersistenceModel> upvotedComments = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "userPersistenceModel",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    @JsonBackReference
-    List<PostPersistenceModel> posts = new ArrayList<>();
+    List<CommentPersistenceModel> downvotedComments = new ArrayList<>();
+
 
     @OneToMany(
-            mappedBy = "userPersistenceModel",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    @JsonBackReference
-    List<CommentPersistenceModel> comments = new ArrayList<>();
+    List<PostPersistenceModel> upvotedPosts = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "userPersistenceModel",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    @JsonBackReference
-    List<CommentVotePersistenceModel> commentVotes = new ArrayList<>();
-
-    @OneToMany(
-            mappedBy = "userPersistenceModel",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    @JsonBackReference
-    List<PostVotePersistenceModel> postVotes = new ArrayList<>();
+    List<PostPersistenceModel> downvotedPosts = new ArrayList<>();
 
     public UserPersistenceModel() {
     }
@@ -67,6 +56,14 @@ public class UserPersistenceModel {
         this.name = name;
     }
 
+    public UserPersistenceModel(UUID id, String name, List<CommentPersistenceModel> upvotedComments, List<CommentPersistenceModel> downvotedComments, List<PostPersistenceModel> upvotedPosts, List<PostPersistenceModel> downvotedPosts) {
+        this.id = id;
+        this.name = name;
+        this.upvotedComments = upvotedComments;
+        this.downvotedComments = downvotedComments;
+        this.upvotedPosts = upvotedPosts;
+        this.downvotedPosts = downvotedPosts;
+    }
 
     public static class Converter {
         public static User toDomainEntity(UserPersistenceModel userPersistenceModel) {
@@ -74,7 +71,12 @@ public class UserPersistenceModel {
         }
 
         public static UserPersistenceModel toPersistenceModel(User user) {
-            return new UserPersistenceModel(user.getId(), user.getName());
+            // TODO: vllt hier nur die IDs als Liste von Strings speichern? Ebenfalls in Domain entity?
+            List<CommentPersistenceModel> upVotedComments = user.getUpvotedComments().stream().map(CommentPersistenceModel.Converter::toPersistenceModel).toList();
+            List<CommentPersistenceModel> downVotedComments = user.getDownvotedComments().stream().map(CommentPersistenceModel.Converter::toPersistenceModel).toList();
+            List<PostPersistenceModel> upVotedPosts = user.getUpvotedPosts().stream().map(PostPersistenceModel.Converter::toPersistenceModel).toList();
+            List<PostPersistenceModel> downVotedPosts = user.getDownvotedPosts().stream().map(PostPersistenceModel.Converter::toPersistenceModel).toList();
+            return new UserPersistenceModel(user.getId(), user.getName(), upVotedComments, downVotedComments, upVotedPosts, downVotedPosts);
         }
     }
 }

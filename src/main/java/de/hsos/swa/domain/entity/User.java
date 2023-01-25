@@ -77,6 +77,22 @@ public class User {
     }
 
 
+    public Set<Post> getUpvotedPosts() {
+        return upvotedPosts;
+    }
+
+    public Set<Post> getDownvotedPosts() {
+        return downvotedPosts;
+    }
+
+    public Set<Comment> getUpvotedComments() {
+        return upvotedComments;
+    }
+
+    public Set<Comment> getDownvotedComments() {
+        return downvotedComments;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
