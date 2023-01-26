@@ -1,19 +1,37 @@
-package de.hsos.swa.domain.value_object;
+package de.hsos.swa.domain.entity;
 
-import de.hsos.swa.domain.entity.User;
-
+import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Vote {
 
+    private UUID id;
 
     private User user;
 
     private VoteType voteType;
 
+    private LocalDateTime createdAt;
+
     public Vote(User user, VoteType voteType) {
+        this.id = UUID.randomUUID();
         this.user = user;
         this.voteType = voteType;
+    }
+
+    public Vote(UUID id, User user, VoteType voteType) {
+        this.id = id;
+        this.user = user;
+        this.voteType = voteType;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public User getUser() {

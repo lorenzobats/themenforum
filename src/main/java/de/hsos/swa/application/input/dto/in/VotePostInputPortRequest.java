@@ -1,6 +1,6 @@
 package de.hsos.swa.application.input.dto.in;
 
-import de.hsos.swa.domain.value_object.VoteType;
+import de.hsos.swa.domain.entity.VoteType;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

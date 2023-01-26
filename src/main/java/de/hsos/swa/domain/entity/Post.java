@@ -30,9 +30,7 @@ public class Post {
     @NotNull
     private List<Comment> comments = new ArrayList<>();
 
-    private int upvotes;
-
-    private int downvotes;
+    private List<Vote> votes = new ArrayList<>();
 
 
     public Post(UUID id, String title, String content, LocalDateTime createdAt, Topic topic, User creator) {
@@ -64,14 +62,6 @@ public class Post {
     }
 
 
-    public int getUpvotes() {
-        return upvotes;
-    }
-
-    public int getDownvotes() {
-        return downvotes;
-    }
-
     // GETTER
     public UUID getId() {
         return id;
@@ -99,30 +89,6 @@ public class Post {
 
     public List<Comment> getComments() {
         return comments;
-    }
-
-    public void addUpvote() {
-        this.upvotes++;
-    }
-
-    public void addDownvote() {
-        this.downvotes++;
-    }
-
-    public void removeUpvote() {
-        this.upvotes--;
-    }
-
-    public void removeDownvote() {
-        this.downvotes--;
-    }
-
-    public void setUpvotes(int upvotes) {
-        this.upvotes = upvotes;
-    }
-
-    public void setDownvotes(int downvotes) {
-        this.downvotes = downvotes;
     }
 
     public void addComment(Comment comment) {

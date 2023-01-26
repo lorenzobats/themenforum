@@ -1,4 +1,4 @@
-package de.hsos.swa.domain.value_object;
+package de.hsos.swa.domain.entity;
 
 public enum VoteType {
     UP("up"),

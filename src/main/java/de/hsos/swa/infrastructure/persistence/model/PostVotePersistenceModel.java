@@ -1,8 +1,8 @@
 package de.hsos.swa.infrastructure.persistence.model;
 
 import de.hsos.swa.domain.entity.User;
-import de.hsos.swa.domain.value_object.Vote;
-import de.hsos.swa.domain.value_object.VoteType;
+import de.hsos.swa.domain.entity.Vote;
+import de.hsos.swa.domain.entity.VoteType;
 
 import javax.persistence.*;
 

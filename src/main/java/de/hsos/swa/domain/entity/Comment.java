@@ -1,7 +1,5 @@
 package de.hsos.swa.domain.entity;
 
-import de.hsos.swa.domain.value_object.Vote;
-import de.hsos.swa.domain.value_object.VoteType;
 import io.vertx.codegen.annotations.Nullable;
 
 import javax.validation.Valid;
@@ -30,10 +28,9 @@ public class Comment {
     @NotNull
     private List<Comment> replies = new ArrayList<>();
 
-    @NotNull
-    private final Map<UUID, Vote> votes = new HashMap<>();
-
     private boolean active;
+
+    private List<Vote> votes = new ArrayList<>();
 
     public Comment(LocalDateTime createdAt, User user, String text) {
         this.id = UUID.randomUUID();
@@ -77,7 +74,7 @@ public class Comment {
     }
 
     public String getText() {
-        if(isActive()) {
+        if (isActive()) {
             return text;
         }
         return "<DELETED>";
@@ -89,10 +86,6 @@ public class Comment {
 
     public Comment getParentComment() {
         return this.parentComment;
-    }
-
-    public Map<UUID, Vote> getVotes() {
-        return votes;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -116,34 +109,12 @@ public class Comment {
         return active;
     }
 
-    public void disable(){
+    public void disable() {
         this.active = false;
-    }
-
-
-    // VOTES
-    public void setVote(Vote vote) {
-        this.votes.put(vote.getUser().getId(), vote);
     }
 
     public void removeVote(UUID userId) {
         this.votes.remove(userId);
-    }
-
-    public Integer getDownVotes() {
-        int voting = 0;
-        for (Vote v : this.votes.values()) {
-            voting += (v.getVoteType().equals(VoteType.DOWN) ? 1 : 0);
-        }
-        return voting;
-    }
-
-    public Integer getUpVotes() {
-        int voting = 0;
-        for (Vote v : this.votes.values()) {
-            voting += (v.getVoteType().equals(VoteType.UP) ? 1 : 0);
-        }
-        return voting;
     }
 
     @Override

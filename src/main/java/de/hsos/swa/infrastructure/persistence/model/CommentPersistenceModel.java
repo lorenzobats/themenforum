@@ -1,6 +1,6 @@
 package de.hsos.swa.infrastructure.persistence.model;
 
-import de.hsos.swa.domain.value_object.Vote;
+import de.hsos.swa.domain.entity.Vote;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.User;
 
