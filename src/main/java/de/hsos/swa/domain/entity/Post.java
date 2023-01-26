@@ -104,7 +104,6 @@ public class Post {
         return comments;
     }
 
-
     public void addUpvote() {
         this.upvotes++;
     }

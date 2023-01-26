@@ -19,9 +19,6 @@ public class VoteService {
 
     public void votePost(Post post, User user, VoteType voteType) {
         //Wenn es sich nicht um ein Post des Users handelt
-
-        log.debug(">>VOTE>LENGTH-UPVOTESBEFORE" + user.getUpvotedPosts().size());
-        log.debug(">>VOTE>LENGTH-DOWNVOTESBEFORE" + user.getDownvotedPosts().size());
         if (!post.getCreator().getId().equals(user.getId())) {
             switch (voteType) {
                 case UP:
@@ -50,11 +47,6 @@ public class VoteService {
                     break;
             }
         }
-        for (Post upvotedPost : user.getUpvotedPosts()) {
-            log.debug(">>VOTE>LENGTH-UPVOTESAFTER(ID)" + upvotedPost.getId());
-        }
-        log.debug(">>VOTE>LENGTH-UPVOTESAFTER" + user.getUpvotedPosts().size());
-        log.debug(">>VOTE>LENGTH-DOWNVOTESAFTER" + user.getDownvotedPosts().size());
     }
 
     public void voteComment(Post post, User user, String commentId, VoteType voteType) {
@@ -64,18 +56,25 @@ public class VoteService {
         }
         Comment comment = optionalComment.get();
 
+        // TODO: up/down
         //Wenn es sich nicht um ein Comment des Users handelt
         if (!comment.getUser().getId().equals(user.getId())) {
             switch (voteType) {
                 case UP:
-                    user.addUpvoteComment(comment);
+                    if(user.addUpvoteComment(comment)){
+
+                    }
+
                     user.removeDownvoteComment(comment);
+                    break;
                 case DOWN:
                     user.addDownvoteComment(comment);
                     user.removeUpvoteComment(comment);
+                    break;
                 case NONE:
                     user.removeUpvoteComment(comment);
                     user.removeDownvoteComment(comment);
+                    break;
             }
         }
     }

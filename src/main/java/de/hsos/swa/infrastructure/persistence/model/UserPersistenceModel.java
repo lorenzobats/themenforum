@@ -26,6 +26,24 @@ public class UserPersistenceModel {
             cascade=CascadeType.MERGE
     )
     @JoinTable(
+            name = "comment_upvotes",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "comment_id"))
+    Set<CommentPersistenceModel> upvotedComments = new HashSet<>();
+
+    @ManyToMany(
+            cascade=CascadeType.MERGE
+    )
+    @JoinTable(
+            name = "comment_downvotes",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "comment_id"))
+    Set<CommentPersistenceModel> downvotedComments = new HashSet<>();
+
+    @ManyToMany(
+            cascade=CascadeType.MERGE
+    )
+    @JoinTable(
             name = "post_upvotes",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "post_id"))
@@ -43,46 +61,36 @@ public class UserPersistenceModel {
     public UserPersistenceModel() {
     }
 
-    public UserPersistenceModel(String name) {
-        this.name = name;
-    }
 
-    public UserPersistenceModel(UUID id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-
-    public UserPersistenceModel(UUID id, String name, Set<PostPersistenceModel> downvotedPosts, Set<PostPersistenceModel> upvotedPosts) {
+    public UserPersistenceModel(UUID id, String name, Set<PostPersistenceModel> downvotedPosts, Set<PostPersistenceModel> upvotedPosts, Set<CommentPersistenceModel> downvotedComments, Set<CommentPersistenceModel> upvotedComments) {
         this.id = id;
         this.name = name;
         this.downvotedPosts = downvotedPosts;
         this.upvotedPosts = upvotedPosts;
     }
 
-    public Set<PostPersistenceModel> getUpvotedPosts() {
-        return upvotedPosts;
-    }
-
-    public Set<PostPersistenceModel> getDownvotedPosts() {
-        return downvotedPosts;
-    }
-
     public static class Converter {
         public static User toDomainEntity(UserPersistenceModel userPersistenceModel) {
             Set<Post> downVotedPosts = userPersistenceModel.downvotedPosts.stream().map(PostPersistenceModel.Converter::toDomainEntity).collect(Collectors.toSet());
             Set<Post> upVotedPosts = userPersistenceModel.upvotedPosts.stream().map(PostPersistenceModel.Converter::toDomainEntity).collect(Collectors.toSet());
+            Set<Comment> downVotedComments = userPersistenceModel.downvotedComments.stream().map(CommentPersistenceModel.Converter::toDomainEntity).collect(Collectors.toSet());
+            Set<Comment> upVotedComments = userPersistenceModel.upvotedComments.stream().map(CommentPersistenceModel.Converter::toDomainEntity).collect(Collectors.toSet());
 
             User user = new User(userPersistenceModel.id, userPersistenceModel.name);
+
             user.setDownvotedPosts(downVotedPosts);
             user.setUpvotedPosts(upVotedPosts);
+            user.setDownvotedComments(downVotedComments);
+            user.setUpvotedComments(upVotedComments);
             return user;
         }
 
         public static UserPersistenceModel toPersistenceModel(User user) {
             Set<PostPersistenceModel> upVotedPosts = user.getUpvotedPosts().stream().map(PostPersistenceModel.Converter::toPersistenceModel).collect(Collectors.toSet());
             Set<PostPersistenceModel> downVotedPosts = user.getDownvotedPosts().stream().map(PostPersistenceModel.Converter::toPersistenceModel).collect(Collectors.toSet());
-            return new UserPersistenceModel(user.getId(), user.getName(), downVotedPosts, upVotedPosts);
+            Set<CommentPersistenceModel> upVotedComments = user.getUpvotedComments().stream().map(CommentPersistenceModel.Converter::toPersistenceModel).collect(Collectors.toSet());
+            Set<CommentPersistenceModel> downVotedComments = user.getDownvotedComments().stream().map(CommentPersistenceModel.Converter::toPersistenceModel).collect(Collectors.toSet());
+            return new UserPersistenceModel(user.getId(), user.getName(), downVotedPosts, upVotedPosts, downVotedComments, upVotedComments);
         }
     }
 }

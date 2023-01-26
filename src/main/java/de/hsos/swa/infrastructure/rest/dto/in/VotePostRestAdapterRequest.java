@@ -9,7 +9,7 @@ import javax.validation.constraints.Pattern;
 public class VotePostRestAdapterRequest {
 
     @NotEmpty (message = "voteType is empty")
-    @Pattern(regexp = "up|down", message = "voteType must be one of: up, down")
+    @Pattern(regexp = "up|down|none", message = "voteType must be one of: up, down, none")
     public String voteType;
 
     public VotePostRestAdapterRequest() {}
