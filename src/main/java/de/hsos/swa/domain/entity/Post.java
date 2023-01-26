@@ -7,7 +7,6 @@ import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 import java.util.*;
 
-// TODO: Validierung spezifischer (zB. Titellänge, Descriptionlänge, etc.)
 public class Post {
     @Valid
     private UUID id;
@@ -92,19 +91,18 @@ public class Post {
         return comments;
     }
 
-    public void addComment(Comment comment) {
-        this.comments.add(comment);
+    public List<Vote> getVotes() {
+        return votes;
     }
 
-    public boolean addReplyToComment(String parentCommentId, Comment reply) {
-        Optional<Comment> parentComment = findCommentById(parentCommentId);
-        if (parentComment.isPresent() && parentComment.get().isActive()) {
-            parentComment.get().addReply(reply);
-            return true;
-        }
-        return false;
+    // SETTER
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 
+
+
+    // COMMENTS
     public Optional<Comment> findCommentById(String commentId) {
         Deque<Comment> stack = new ArrayDeque<>(this.comments);
 
@@ -119,6 +117,19 @@ public class Post {
         return Optional.empty();
     }
 
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+    }
+
+    public boolean addReplyToComment(String parentCommentId, Comment reply) {
+        Optional<Comment> parentComment = findCommentById(parentCommentId);
+        if (parentComment.isPresent() && parentComment.get().isActive()) {
+            parentComment.get().addReply(reply);
+            return true;
+        }
+        return false;
+    }
+
     public int getCommentCount() {
         Deque<Comment> stack = new ArrayDeque<>(this.comments);
         int count = 0;
@@ -131,17 +142,48 @@ public class Post {
         return count;
     }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
+
+
+    // VOTES
+    public void addVote(Vote vote) {
+        this.votes.add(vote);
     }
 
-    public void setVotes(List<Vote> votes) {
-        this.votes = votes;
+    public void removeVote(Vote vote) {
+        this.votes.remove(vote);
     }
 
-    public List<Vote> getVotes() {
-        return votes;
+    public Optional<Vote> findVoteByUserId(UUID userId) {
+        for (Vote vote : this.votes) {
+            if(vote.getUser().getId().equals(userId)){
+                return Optional.of(vote);
+            }
+        }
+        return Optional.empty();
     }
+
+    public Integer getDownvotes() {
+        int voting = 0;
+        for (Vote v : this.votes){
+            if(v.getVoteType().equals(VoteType.DOWN)){
+                voting ++;
+            }
+        }
+        return voting;
+    }
+
+    public Integer getUpvotes() {
+        int voting = 0;
+        for (Vote v : this.votes){
+            if(v.getVoteType().equals(VoteType.UP)){
+                voting ++;
+            }
+        }
+        return voting;
+    }
+
+
+
 
     @Override
     public boolean equals(Object o) {
@@ -155,17 +197,4 @@ public class Post {
         return Objects.hash(getId());
     }
 
-    public Integer getDownvotes() {
-        // TODO: Implementieren
-        return votes.size();
-    }
-
-    public Integer getUpvotes() {
-        // TODO: Implementieren
-        return votes.size();
-    }
-
-    public void addVote(Vote vote) {
-        this.votes.add(vote);
-    }
 }

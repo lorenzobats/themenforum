@@ -11,10 +11,12 @@ import de.hsos.swa.domain.entity.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.util.Objects;
 import java.util.UUID;
 
 @ApplicationScoped
+@Transactional(Transactional.TxType.REQUIRES_NEW)
 public class DeleteTopicUseCase implements DeleteTopicInputPort {
 
     @Inject

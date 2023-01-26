@@ -44,6 +44,10 @@ public class Vote {
         return voteType;
     }
 
+    public void setVoteType(VoteType voteType) {
+        this.voteType = voteType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

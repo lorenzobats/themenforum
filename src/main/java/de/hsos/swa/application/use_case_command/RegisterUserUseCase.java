@@ -12,9 +12,11 @@ import de.hsos.swa.domain.factory.UserFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 
 @ApplicationScoped
+@Transactional(Transactional.TxType.REQUIRES_NEW)
 public class RegisterUserUseCase implements RegisterUserInputPort {
 
     @Inject

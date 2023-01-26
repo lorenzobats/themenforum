@@ -5,6 +5,11 @@ import de.hsos.swa.application.input.dto.in.UpdatePostInputPortRequest;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Post;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.transaction.Transactional;
+
+@ApplicationScoped
+@Transactional(Transactional.TxType.REQUIRES_NEW)
 public class UpdatePostUseCase implements UpdatePostInputPort {
     @Override
     public Result<Post> updatePost(UpdatePostInputPortRequest request) {

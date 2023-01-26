@@ -9,7 +9,6 @@ import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 import java.util.*;
 
-// TODO: Validierung spezifischer (zB. Titellänge, Descriptionlänge, etc.)
 public class Comment {
     @Valid
     private UUID id;
@@ -92,17 +91,11 @@ public class Comment {
         return createdAt;
     }
 
-
+    // SETTER
     public void setText(String text) {
         this.text = text;
     }
 
-    // COMMENTS
-    // TODO: in Comment Service auslagern?
-    public void addReply(Comment reply) {
-        reply.parentComment = this;
-        this.replies.add(reply);
-    }
 
     // DELETION
     public boolean isActive() {
@@ -113,13 +106,44 @@ public class Comment {
         this.active = false;
     }
 
+    // COMMENTS
+    public void addReply(Comment reply) {
+        reply.parentComment = this;
+        this.replies.add(reply);
+    }
 
+    // VOTES
     public List<Vote> getVotes() {
         return votes;
     }
 
-    public void setVotes(List<Vote> votes) {
-        this.votes = votes;
+    public Optional<Vote> findVoteByUserId(UUID userId) {
+        for (Vote vote : this.votes) {
+            if(vote.getUser().getId().equals(userId)){
+                return Optional.of(vote);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public Integer getDownvotes() {
+        int voting = 0;
+        for (Vote v : this.votes){
+            if(v.getVoteType().equals(VoteType.DOWN)){
+                voting ++;
+            }
+        }
+        return voting;
+    }
+
+    public Integer getUpvotes() {
+        int voting = 0;
+        for (Vote v : this.votes){
+            if(v.getVoteType().equals(VoteType.UP)){
+                voting ++;
+            }
+        }
+        return voting;
     }
 
     @Override
@@ -132,17 +156,6 @@ public class Comment {
     @Override
     public int hashCode() {
         return Objects.hash(getId());
-    }
-
-
-    public Integer getDownvotes() {
-        // TODO: Implementieren
-        return votes.size();
-    }
-
-    public Integer getUpvotes() {
-        // TODO: Implementieren
-        return votes.size();
     }
 
     public void addVote(Vote vote) {

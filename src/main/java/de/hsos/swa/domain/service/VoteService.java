@@ -14,12 +14,14 @@ public class VoteService {
     Logger log;
 
     public void votePost(Post post, User user, VoteType voteType) {
-
-        //Wenn es sich nicht um ein Post des Users handelt
         if (!post.getCreator().getId().equals(user.getId())) {
-            Vote vote = new Vote(user, voteType);
-            // TODO: ergaenzen
-            post.addVote(vote);
+            Optional<Vote> optionalVote = post.findVoteByUserId(user.getId());
+            if(optionalVote.isPresent()){
+                optionalVote.get().setVoteType(voteType);
+            } else {
+                Vote vote = new Vote(user, voteType);
+                post.addVote(vote);
+            }
         }
     }
 
@@ -30,11 +32,14 @@ public class VoteService {
         }
         Comment comment = optionalComment.get();
 
-        //Wenn es sich nicht um ein Comment des Users handelt
         if (!comment.getUser().getId().equals(user.getId())) {
-            Vote vote = new Vote(user, voteType);
-            // TODO: ergaenzen
-            comment.addVote(vote);
+            Optional<Vote> optionalVote = comment.findVoteByUserId(user.getId());
+            if(optionalVote.isPresent()){
+                optionalVote.get().setVoteType(voteType);
+            } else {
+                Vote vote = new Vote(user, voteType);
+                comment.addVote(vote);
+            }
         }
     }
 }

@@ -12,10 +12,12 @@ import de.hsos.swa.domain.factory.CommentFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
 @ApplicationScoped
+@Transactional(Transactional.TxType.REQUIRES_NEW)
 public class ReplyToCommentUseCase implements ReplyToCommentInputPort {
     @Inject
     PostRepository postRepository;

@@ -5,6 +5,11 @@ import de.hsos.swa.application.input.dto.in.DeletePostVoteInputPortRequest;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Post;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.transaction.Transactional;
+
+@ApplicationScoped
+@Transactional(Transactional.TxType.REQUIRES_NEW)
 public class DeletePostVoteUseCase implements DeletePostVoteInputPort {
 
     @Override
