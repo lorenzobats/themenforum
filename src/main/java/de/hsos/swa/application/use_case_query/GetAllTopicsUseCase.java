@@ -27,12 +27,12 @@ public class GetAllTopicsUseCase implements GetAllTopicsInputPort {
     public Result<List<Topic>> getAllTopics() {
         Result<List<Topic>> topicsResult = topicRepository.getAllTopics();
         if (topicsResult.isSuccessful()) {
-            return Result.isSuccessful(topicsResult.getData());
+            return Result.success(topicsResult.getData());
         }
 
         Result<Map<UUID, Long>> postCountForAllTopics = topicRepository.getPostCountForAllTopics();
         if (topicsResult.isSuccessful()) {
-            return Result.isSuccessful(topicsResult.getData());
+            return Result.success(topicsResult.getData());
         }
 
         return Result.error("Cannot find Topics");

@@ -18,7 +18,7 @@ public class GetAllCommentsUseCase implements GetAllCommentsInputPort {
     public Result<List<Comment>> getAllComments(boolean includeReplies) {
         Result<List<Comment>> commentsResult = commentRepository.getAllComments(includeReplies);
         if (commentsResult.isSuccessful()) {
-            return Result.isSuccessful(commentsResult.getData());
+            return Result.success(commentsResult.getData());
         }
         return Result.error("Cannot find Comments");
     }

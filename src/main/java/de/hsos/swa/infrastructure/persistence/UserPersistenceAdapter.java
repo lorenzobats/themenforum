@@ -30,10 +30,10 @@ public class UserPersistenceAdapter implements UserRepository {
         UserPersistenceModel userPersistenceModel = UserPersistenceModel.Converter.toPersistenceModel(user);
         try {
             entityManager.persist(userPersistenceModel);
-            return Result.isSuccessful(UserPersistenceModel.Converter.toDomainEntity(userPersistenceModel));
+            return Result.success(UserPersistenceModel.Converter.toDomainEntity(userPersistenceModel));
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("User could not be created", e);
-            return Result.exception();
+            return Result.error("User could not be created");
         }
     }
 
@@ -42,7 +42,7 @@ public class UserPersistenceAdapter implements UserRepository {
         UserPersistenceModel userPersistenceModel = UserPersistenceModel.Converter.toPersistenceModel(user);
         try {
             entityManager.merge(userPersistenceModel);
-            return Result.isSuccessful(UserPersistenceModel.Converter.toDomainEntity(userPersistenceModel));
+            return Result.success(UserPersistenceModel.Converter.toDomainEntity(userPersistenceModel));
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("UpdatePost User", e);
             return Result.error("Could not persist User");
@@ -59,10 +59,10 @@ public class UserPersistenceAdapter implements UserRepository {
             if(userList.isEmpty()){
                 return Result.error("");
             }
-            return Result.isSuccessful(UserPersistenceModel.Converter.toDomainEntity(userList.get(0)));
+            return Result.success(UserPersistenceModel.Converter.toDomainEntity(userList.get(0)));
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("GetUserByName Error", e);
-            return Result.exception();
+            return Result.error("GetUserByName Error");
         }
     }
 
@@ -73,10 +73,10 @@ public class UserPersistenceAdapter implements UserRepository {
         UserPersistenceModel user;
         try {
             user = query.getSingleResult();
-            return Result.isSuccessful(UserPersistenceModel.Converter.toDomainEntity(user));
+            return Result.success(UserPersistenceModel.Converter.toDomainEntity(user));
         } catch (Exception e) {
             log.error("GetUserById Error", e);
-            return Result.exception();
+            return Result.error("GetUserById Error");
         }
     }
 
@@ -86,10 +86,10 @@ public class UserPersistenceAdapter implements UserRepository {
             List<UserPersistenceModel> userList = entityManager.createNamedQuery("UserPersistenceModel.findByUsername", UserPersistenceModel.class)
                     .setParameter("username", username)
                     .getResultList();
-            return Result.isSuccessful(userList.isEmpty());
+            return Result.success(userList.isEmpty());
         } catch (Exception e) {
             log.error("GetUserById Error", e);
-            return Result.exception();
+            return Result.error("GetUserById Error");
         }
     }
 }

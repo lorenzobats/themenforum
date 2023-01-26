@@ -7,11 +7,8 @@ import com.blazebit.persistence.view.EntityViewSetting;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.output.repository.CommentRepository;
 import de.hsos.swa.domain.entity.Comment;
-import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.infrastructure.persistence.dto.out.CommentPersistenceView;
-import de.hsos.swa.infrastructure.persistence.dto.out.PostPersistenceView;
 import de.hsos.swa.infrastructure.persistence.model.CommentPersistenceModel;
-import de.hsos.swa.infrastructure.persistence.model.PostPersistenceModel;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
@@ -44,20 +41,20 @@ public class CommentPersistenceAdapter implements CommentRepository {
             if (!includeReplies) {
                 CriteriaBuilder<CommentPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(CommentPersistenceView.class), criteriaBuilder);
                 CommentPersistenceView comment = criteriaBuilderView.getSingleResult();
-                return Result.isSuccessful(CommentPersistenceView.toDomainEntity(comment));
+                return Result.success(CommentPersistenceView.toDomainEntity(comment));
             } else {
                 CommentPersistenceModel comment = criteriaBuilder.getSingleResult();
-                return Result.isSuccessful(CommentPersistenceModel.Converter.toDomainEntity(comment));
+                return Result.success(CommentPersistenceModel.Converter.toDomainEntity(comment));
             }
         } catch (NoResultException e) {
             log.error("getCommentById: No Comments Found", e);
-            return Result.notFound();
+            return Result.error("getCommentById: No Comments Found");
         } catch (PersistenceException e) {
             log.error("getCommentById Persistence Failed", e);
-            return Result.exception();
+            return Result.error("getCommentById Persistence Failed");
         } catch (Exception e) {
             log.error("getCommentById Error", e);
-            return Result.exception();
+            return Result.error("getCommentById Error");
         }
     }
 
@@ -67,13 +64,13 @@ public class CommentPersistenceAdapter implements CommentRepository {
             CriteriaBuilder<CommentPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, CommentPersistenceModel.class);
             return getCommentResultList(includeReplies, criteriaBuilder);
         } catch (NoResultException e) {
-            return Result.notFound();
+            return Result.error("getAllFilteredComments Persistence Failed Not Found");
         } catch (PersistenceException e) {
             log.error("getAllFilteredComments Persistence Failed", e);
-            return Result.exception();
+            return Result.error("getAllFilteredComments Persistence Failed");
         } catch (Exception e) {
             log.error("getAllFilteredComments Error", e);
-            return Result.exception();
+            return Result.error("getAllFilteredComments Error");
         }
     }
 
@@ -83,10 +80,10 @@ public class CommentPersistenceAdapter implements CommentRepository {
             List<CommentPersistenceView> commentList;
             CriteriaBuilder<CommentPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(CommentPersistenceView.class), criteriaBuilder);
             commentList = criteriaBuilderView.getResultList();
-            return Result.isSuccessful(commentList.stream().map(CommentPersistenceView::toDomainEntity).toList());
+            return Result.success(commentList.stream().map(CommentPersistenceView::toDomainEntity).toList());
         }
         List<CommentPersistenceModel> commentList;
         commentList = criteriaBuilder.getResultList();
-        return Result.isSuccessful(commentList.stream().map(CommentPersistenceModel.Converter::toDomainEntity).toList());
+        return Result.success(commentList.stream().map(CommentPersistenceModel.Converter::toDomainEntity).toList());
     }
 }

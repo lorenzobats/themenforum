@@ -51,7 +51,7 @@ public class DeletePostUseCase implements DeletePostInputPort {
         if(Objects.equals(role, "admin")){
             Result<Post> deletePostResult = this.postRepository.deletePost(post.getId());
             if (deletePostResult.isSuccessful()) {
-                return Result.isSuccessful(deletePostResult.getData());
+                return Result.success(deletePostResult.getData());
             }
         }
 
@@ -61,7 +61,7 @@ public class DeletePostUseCase implements DeletePostInputPort {
 
         Result<Post> deletePostResult = this.postRepository.deletePost(post.getId());
         if (deletePostResult.isSuccessful()) {
-            return Result.isSuccessful(deletePostResult.getData());
+            return Result.success(deletePostResult.getData());
         }
 
         return Result.error("Something went wrong " + deletePostResult.getMessage());

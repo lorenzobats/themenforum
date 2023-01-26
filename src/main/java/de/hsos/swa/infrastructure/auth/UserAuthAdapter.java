@@ -35,10 +35,10 @@ public class UserAuthAdapter implements
 
         try {
             entityManager.persist(userAuthEntity);
-            return Result.isSuccessful(new CreateUserAuthOutputPortResponse(userAuthEntity.id, userAuthEntity.username));
+            return Result.success(new CreateUserAuthOutputPortResponse(userAuthEntity.id, userAuthEntity.username));
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("Customer Auth Entity could not be created", e);
-            return Result.exception();
+            return Result.error("Customer Auth Entity could not be created");
         }
     }
 
@@ -48,10 +48,10 @@ public class UserAuthAdapter implements
         query.setParameter("userId", userId);
         try {
             String role = (String) query.getSingleResult();
-            return Result.isSuccessful(role);
+            return Result.success(role);
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("getUserAuthRole Error", e);
-            return Result.exception();
+            return Result.error("getUserAuthRole Error");
         }
     }
 }

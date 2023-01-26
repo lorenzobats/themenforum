@@ -22,6 +22,6 @@ public class GetUserByNameUseCase implements GetUserByNameInputPort {
         if(!userResult.isSuccessful()) {
            return Result.error("Username not found");
         }
-        return Result.isSuccessful(userResult.getData());
+        return Result.success(userResult.getData());
     }
 }

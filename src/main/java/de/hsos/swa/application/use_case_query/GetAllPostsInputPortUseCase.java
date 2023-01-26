@@ -21,7 +21,7 @@ public class GetAllPostsInputPortUseCase implements GetAllPostsInputPort {
     public Result<List<Post>> getAllPosts(boolean includeComments) {
         Result<List<Post>> postsResult = postRepository.getAllPosts(includeComments);
         if (postsResult.isSuccessful()) {
-            return Result.isSuccessful(postsResult.getData());
+            return Result.success(postsResult.getData());
         }
         return Result.error("Cannot find Posts");
     }

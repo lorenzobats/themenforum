@@ -56,7 +56,7 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
             return Result.error("Authentication failed");
         }
 
-        return Result.isSuccessful(createUserResponse.getData());
+        return Result.success(createUserResponse.getData());
 
     }
 

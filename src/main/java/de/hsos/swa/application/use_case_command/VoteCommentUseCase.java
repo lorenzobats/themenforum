@@ -58,6 +58,6 @@ public class VoteCommentUseCase implements VoteCommentInputPort {
         if(optionalComment.isEmpty()){
             return Result.error("Updating Comment went wrong " + updatePostResult.getMessage());
         }
-        return Result.isSuccessful(optionalComment.get());
+        return Result.success(optionalComment.get());
     }
 }

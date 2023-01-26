@@ -38,6 +38,6 @@ public class GetAllTopicsWithPostCountUseCase implements GetAllTopicsWithPostCou
 
         List<TopicWithPostCountDto> result = topicsResult.getData().stream().map(t -> Converter.toDto(t, postCountResult.getData().get(t.getId()))).toList();
 
-        return Result.isSuccessful(result);
+        return Result.success(result);
     }
 }

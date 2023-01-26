@@ -46,6 +46,6 @@ public class CreatePostUseCase implements CreatePostInputPort {
 
         Result<Post> savePostResponse = this.postRepository.savePost(post);
 
-        return Result.isSuccessful(savePostResponse.getData());
+        return Result.success(savePostResponse.getData());
     }
 }

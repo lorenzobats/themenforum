@@ -50,6 +50,6 @@ public class DeleteTopicUseCase implements DeleteTopicInputPort {
             return Result.error("Could not Delete Topic " + deleteTopicResult.getMessage());
         }
 
-        return Result.isSuccessful(deleteTopicResult.getData());
+        return Result.success(deleteTopicResult.getData());
     }
 }

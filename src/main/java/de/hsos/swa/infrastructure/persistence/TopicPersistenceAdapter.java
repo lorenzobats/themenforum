@@ -31,10 +31,10 @@ public class TopicPersistenceAdapter implements TopicRepository {
         List<TopicPersistenceModel> topicList;
         try {
             topicList = query.getResultList();
-            return Result.isSuccessful(topicList.stream().map(TopicPersistenceModel.Converter::toDomainEntity).toList());
+            return Result.success(topicList.stream().map(TopicPersistenceModel.Converter::toDomainEntity).toList());
         } catch (Exception e) {
             log.error("GetAllTopics Error", e);
-            return Result.exception();
+            return Result.error("GetAllTopics Error");
         }
     }
 
@@ -46,7 +46,7 @@ public class TopicPersistenceAdapter implements TopicRepository {
         for (Tuple tuple : resultList) {
             resultMap.put((UUID) tuple.get("topic_id"), (Long) tuple.get("post_count"));
         }
-        return Result.isSuccessful(resultMap);
+        return Result.success(resultMap);
     }
 
     @Override
@@ -55,12 +55,12 @@ public class TopicPersistenceAdapter implements TopicRepository {
             TopicPersistenceModel post = entityManager.find(TopicPersistenceModel.class, topicId);
             if (post != null) {
                 entityManager.remove(post);
-                return Result.isSuccessful(TopicPersistenceModel.Converter.toDomainEntity(post));
+                return Result.success(TopicPersistenceModel.Converter.toDomainEntity(post));
             }
             return Result.error("");
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("Delete Error", e);
-            return Result.exception();
+            return Result.error("Delete Error");
         }
     }
 
@@ -69,10 +69,10 @@ public class TopicPersistenceAdapter implements TopicRepository {
         TopicPersistenceModel topicPersistenceModel = TopicPersistenceModel.Converter.toPersistenceModel(topic);
         try {
             entityManager.persist(topicPersistenceModel);
-            return Result.isSuccessful(TopicPersistenceModel.Converter.toDomainEntity(topicPersistenceModel));
+            return Result.success(TopicPersistenceModel.Converter.toDomainEntity(topicPersistenceModel));
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("saveTopic Error", e);
-            return Result.exception();
+            return Result.error("saveTopic Error");
         }
     }
 
@@ -84,10 +84,10 @@ public class TopicPersistenceAdapter implements TopicRepository {
         TopicPersistenceModel topic;
         try {
             topic = query.getSingleResult();
-            return Result.isSuccessful(TopicPersistenceModel.Converter.toDomainEntity(topic));
+            return Result.success(TopicPersistenceModel.Converter.toDomainEntity(topic));
         } catch (Exception e) {
             log.error("GetTopicById Error", e);
-            return Result.exception();
+            return Result.error("GetTopicById Error");
         }
     }
 }

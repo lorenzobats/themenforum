@@ -8,9 +8,10 @@ public class Result<T> {
     private boolean isSuccessful;
     private String errorMessage = "";
 
-    public Result() {}
+    public Result() {
+    }
 
-    public static <T> Result<T> isSuccessful(T data) {
+    public static <T> Result<T> success(T data) {
         Result<T> result = new Result<>();
         result.data = data;
         result.status = ResultStatus.SUCCESS;
@@ -32,15 +33,8 @@ public class Result<T> {
         return result;
     }
 
-    public static <T> Result<T> exception() {
-        Result<T> result = new Result<>();
-        result.status = ResultStatus.EXCEPTION;
-        result.isSuccessful = false;
-        return result;
-    }
-
     public T getData() {
-        if(this.isSuccessful || data != null) {
+        if (this.isSuccessful || data != null) {
             return data;
         } else {
             throw new NullPointerException("Data isn't initialized");

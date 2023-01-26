@@ -60,7 +60,7 @@ public class DeleteCommentUseCase implements DeleteCommentInputPort {
         if(role.equals("admin")){
             Result<Post> updatePostPostResult = this.postRepository.updatePost(post);
             if (updatePostPostResult.isSuccessful()) {
-                return Result.isSuccessful(comment); // TODO: Was zurückgeben?
+                return Result.success(comment); // TODO: Was zurückgeben?
             }
         }
 
@@ -72,7 +72,7 @@ public class DeleteCommentUseCase implements DeleteCommentInputPort {
         if (deletePostResult.isSuccessful()) {
             Result<Post> updatePostPostResult = this.postRepository.updatePost(post);
             if (updatePostPostResult.isSuccessful()) {
-                return Result.isSuccessful(comment); // TODO: Was zurückgeben?
+                return Result.success(comment); // TODO: Was zurückgeben?
             }
         }
         return Result.error("Something went wrong " + deletePostResult.getMessage());

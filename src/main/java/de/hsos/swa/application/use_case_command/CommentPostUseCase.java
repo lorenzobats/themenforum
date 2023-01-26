@@ -48,7 +48,7 @@ public class CommentPostUseCase implements CommentPostInputPort {
         Result<Post> updatePostResult = this.postRepository.updatePost(post);
 
         if (updatePostResult.isSuccessful()) {
-            return Result.isSuccessful(comment);
+            return Result.success(comment);
         }
 
         return Result.error("Something went wrong " + updatePostResult.getMessage());
