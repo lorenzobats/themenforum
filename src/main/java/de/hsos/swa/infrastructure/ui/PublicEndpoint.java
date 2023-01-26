@@ -6,6 +6,7 @@ import de.hsos.swa.application.use_case_query.PostFilterParams;
 import de.hsos.swa.application.input.dto.in.GetFilteredPostInputPortRequest;
 import de.hsos.swa.application.input.dto.in.GetTopicByIdInputPortRequest;
 import de.hsos.swa.application.util.Result;
+import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.Topic;
 import io.quarkus.qute.CheckedTemplate;
@@ -49,6 +50,8 @@ public class PublicEndpoint {
         public static native TemplateInstance post(Post post);
         public static native TemplateInstance topics(List<Topic> allTopics);
         public static native TemplateInstance topic(Topic topic, List<Post> posts);
+        public static native TemplateInstance comment(Comment comment);
+
     }
 
     @GET

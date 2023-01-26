@@ -18,6 +18,11 @@ body {
     align-items: center
 }
 
+.comments-wrapper {
+    margin-top: 12px;
+}
+
+
 .sort-selector {
     font-size: large;
 }

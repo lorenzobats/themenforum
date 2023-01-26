@@ -1,11 +1,16 @@
 package de.hsos.swa.infrastructure.ui;
 
+import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.Topic;
 import io.quarkus.qute.TemplateExtension;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
 
 @TemplateExtension
 public class TemplateExtensions {
@@ -22,4 +27,25 @@ public class TemplateExtensions {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
         return topic.getCreatedAt().format(formatter);
     }
+
+    public static String parsedCreatedAtDate(Comment comment) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
+        return comment.getCreatedAt().format(formatter);
+    }
+
+    public static List<Comment> commentsFlat(Post post) {
+        List<Comment> flatComments = new ArrayList<>();
+        Stack<Comment> stack = new Stack<>();
+        stack.addAll(post.getComments());
+
+        while (!stack.isEmpty()) {
+            Comment currentComment = stack.pop();
+            flatComments.add(currentComment);
+            if (currentComment.getReplies() != null && !currentComment.getReplies().isEmpty()) {
+                stack.addAll(currentComment.getReplies());
+            }
+        }
+        return flatComments;
+    }
+
 }
