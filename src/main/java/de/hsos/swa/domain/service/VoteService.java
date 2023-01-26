@@ -5,20 +5,23 @@ import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.domain.value_object.Vote;
 import de.hsos.swa.domain.value_object.VoteType;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.util.Optional;
 
 @ApplicationScoped
 public class VoteService {
 
+    @Inject
+    Logger log;
+
     public void votePost(Post post, User user, VoteType voteType) {
         //Wenn es sich nicht um ein Post des Users handelt
-        post.addUpvote();
-        post.addDownvote();
-        user.addUpvotePost(post);
-        user.addDownvotePost(post);
-        // TODO: Switch case scheint noch nicht zu funktionieren
+
+        log.debug(">>VOTE>LENGTH-UPVOTESBEFORE" + user.getUpvotedPosts().size());
+        log.debug(">>VOTE>LENGTH-DOWNVOTESBEFORE" + user.getDownvotedPosts().size());
         if (!post.getCreator().getId().equals(user.getId())) {
             switch (voteType) {
                 case UP:
@@ -28,6 +31,7 @@ public class VoteService {
                     if (user.removeDownvotePost(post)) {
                         post.removeDownvote();
                     }
+                    break;
                 case DOWN:
                     if (user.addDownvotePost(post)) {
                         post.addDownvote();
@@ -35,6 +39,7 @@ public class VoteService {
                     if (user.removeUpvotePost(post)) {
                         post.removeUpvote();
                     }
+                    break;
                 case NONE:
                     if (user.removeUpvotePost(post)) {
                         post.removeUpvote();
@@ -42,8 +47,14 @@ public class VoteService {
                     if (user.removeDownvotePost(post)) {
                         post.removeDownvote();
                     }
+                    break;
             }
         }
+        for (Post upvotedPost : user.getUpvotedPosts()) {
+            log.debug(">>VOTE>LENGTH-UPVOTESAFTER(ID)" + upvotedPost.getId());
+        }
+        log.debug(">>VOTE>LENGTH-UPVOTESAFTER" + user.getUpvotedPosts().size());
+        log.debug(">>VOTE>LENGTH-DOWNVOTESAFTER" + user.getDownvotedPosts().size());
     }
 
     public void voteComment(Post post, User user, String commentId, VoteType voteType) {

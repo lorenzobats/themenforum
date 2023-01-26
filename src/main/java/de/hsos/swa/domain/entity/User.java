@@ -93,6 +93,22 @@ public class User {
         return downvotedComments;
     }
 
+    public void setUpvotedPosts(Set<Post> upvotedPosts) {
+        this.upvotedPosts = upvotedPosts;
+    }
+
+    public void setDownvotedPosts(Set<Post> downvotedPosts) {
+        this.downvotedPosts = downvotedPosts;
+    }
+
+    public void setUpvotedComments(Set<Comment> upvotedComments) {
+        this.upvotedComments = upvotedComments;
+    }
+
+    public void setDownvotedComments(Set<Comment> downvotedComments) {
+        this.downvotedComments = downvotedComments;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

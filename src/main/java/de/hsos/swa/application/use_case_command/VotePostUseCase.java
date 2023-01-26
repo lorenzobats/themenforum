@@ -8,6 +8,7 @@ import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.domain.service.VoteService;
+import de.hsos.swa.domain.value_object.VoteType;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -52,7 +53,7 @@ public class VotePostUseCase implements VotePostInputPort {
 
         Result<User> updatedUserResult = this.userRepository.updateUser(user);
 
-        if(updatedUserResult.isSuccessful()) {
+        if(!updatedUserResult.isSuccessful()) {
             return Result.error("Could not updated User");
         }
 
