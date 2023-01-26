@@ -169,7 +169,7 @@ public class PostRestAdapter {
                 PostDto postDto = PostDto.Converter.fromDomainEntity(postResult.getData());
                 return Response.status(Response.Status.OK).entity(postDto).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getMessage()).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("postResult.getMessage()").build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }

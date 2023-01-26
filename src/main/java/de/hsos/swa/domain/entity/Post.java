@@ -30,6 +30,7 @@ public class Post {
     @NotNull
     private List<Comment> comments = new ArrayList<>();
 
+    @NotNull
     private List<Vote> votes = new ArrayList<>();
 
 
@@ -65,6 +66,10 @@ public class Post {
     // GETTER
     public UUID getId() {
         return id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getTitle() {
@@ -130,6 +135,18 @@ public class Post {
         return count;
     }
 
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public void setVotes(List<Vote> votes) {
+        this.votes = votes;
+    }
+
+    public List<Vote> getVotes() {
+        return votes;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -140,5 +157,19 @@ public class Post {
     @Override
     public int hashCode() {
         return Objects.hash(getId());
+    }
+
+    public Integer getDownvotes() {
+        // TODO: Implementieren
+        return 10;
+    }
+
+    public Integer getUpvotes() {
+        // TODO: Implementieren
+        return 10;
+    }
+
+    public void addVote(Vote vote) {
+        this.votes.add(vote);
     }
 }

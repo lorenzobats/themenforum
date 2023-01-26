@@ -15,12 +15,14 @@ public class Vote {
     private LocalDateTime createdAt;
 
     public Vote(User user, VoteType voteType) {
+        this.createdAt = LocalDateTime.now();
         this.id = UUID.randomUUID();
         this.user = user;
         this.voteType = voteType;
     }
 
-    public Vote(UUID id, User user, VoteType voteType) {
+    public Vote(UUID id, User user, VoteType voteType, LocalDateTime createdAt) {
+        this.createdAt = createdAt;
         this.id = id;
         this.user = user;
         this.voteType = voteType;
@@ -45,13 +47,12 @@ public class Vote {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Vote vote = (Vote) o;
-        return Objects.equals(user, vote.user) && voteType == vote.voteType;
+        if (!(o instanceof Vote vote)) return false;
+        return getId().equals(vote.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(user, voteType);
+        return Objects.hash(getId());
     }
 }

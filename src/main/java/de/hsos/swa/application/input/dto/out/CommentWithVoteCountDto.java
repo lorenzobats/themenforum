@@ -37,8 +37,8 @@ public class CommentWithVoteCountDto {
                     String.valueOf(comment.getId()),
                     comment.getUser().getName(),
                     comment.getText(),
-                    comment.getDownVotes(),
-                    comment.getUpVotes());
+                    comment.getDownvotes(),
+                    comment.getUpvotes());
 
             commentDto.replies = repliesDto;
 

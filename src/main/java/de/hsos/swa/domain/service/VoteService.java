@@ -1,9 +1,6 @@
 package de.hsos.swa.domain.service;
 
-import de.hsos.swa.domain.entity.Comment;
-import de.hsos.swa.domain.entity.Post;
-import de.hsos.swa.domain.entity.User;
-import de.hsos.swa.domain.entity.VoteType;
+import de.hsos.swa.domain.entity.*;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -17,11 +14,11 @@ public class VoteService {
     Logger log;
 
     public void votePost(Post post, User user, VoteType voteType) {
+        Vote vote = new Vote(user, voteType);
+        post.addVote(vote);
         //Wenn es sich nicht um ein Post des Users handelt
         if (!post.getCreator().getId().equals(user.getId())) {
-            switch (voteType) {
 
-            }
         }
     }
 
@@ -32,10 +29,10 @@ public class VoteService {
         }
         Comment comment = optionalComment.get();
 
-        // TODO: up/down
         //Wenn es sich nicht um ein Comment des Users handelt
         if (!comment.getUser().getId().equals(user.getId())) {
-
+            Vote vote = new Vote(user, voteType);
+            comment.addVote(vote);
         }
     }
 }

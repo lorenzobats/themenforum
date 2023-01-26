@@ -1,9 +1,6 @@
 package de.hsos.swa.infrastructure.persistence.model;
 
-import de.hsos.swa.domain.entity.Topic;
-import de.hsos.swa.domain.entity.Comment;
-import de.hsos.swa.domain.entity.Post;
-import de.hsos.swa.domain.entity.User;
+import de.hsos.swa.domain.entity.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -35,16 +32,15 @@ public class PostPersistenceModel {
     UserPersistenceModel userPersistenceModel;
 
     @OneToMany(
-            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     List<CommentPersistenceModel> comments = new ArrayList<>();
 
-    @Basic
-    int upvotes;
 
-    @Basic
-    int downvotes;
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    List<VotePersistenceModel> votes = new ArrayList<>();
 
     public PostPersistenceModel() {
     }
@@ -56,9 +52,7 @@ public class PostPersistenceModel {
             LocalDateTime createdAt,
             TopicPersistenceModel topicPersistenceModel,
             UserPersistenceModel userPersistenceModel,
-            List<CommentPersistenceModel> comments,
-            int upvotes,
-            int downvotes) {
+            List<CommentPersistenceModel> comments) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -66,27 +60,10 @@ public class PostPersistenceModel {
         this.topicPersistenceModel = topicPersistenceModel;
         this.userPersistenceModel = userPersistenceModel;
         this.comments = comments;
-        this.upvotes = upvotes;
-        this.downvotes = downvotes;
     }
 
-    public PostPersistenceModel(
-            UUID id,
-            String title,
-            String content,
-            LocalDateTime createdAt,
-            TopicPersistenceModel topicPersistenceModel,
-            UserPersistenceModel userPersistenceModel,
-            int upvotes,
-            int downvotes) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.createdAt = createdAt;
-        this.topicPersistenceModel = topicPersistenceModel;
-        this.userPersistenceModel = userPersistenceModel;
-        this.upvotes = upvotes;
-        this.downvotes = downvotes;
+    public void setVotes(List<VotePersistenceModel> votes) {
+        this.votes = votes;
     }
 
     public static class Converter {
@@ -94,8 +71,6 @@ public class PostPersistenceModel {
             User user = UserPersistenceModel.Converter.toDomainEntity(postPersistenceModel.userPersistenceModel);
             Topic topic = TopicPersistenceModel.Converter.toDomainEntity(postPersistenceModel.topicPersistenceModel);
             List<Comment> comments = postPersistenceModel.comments.stream().map(CommentPersistenceModel.Converter::toDomainEntity).toList();
-
-
             Post post = new Post(
                     postPersistenceModel.id,
                     postPersistenceModel.title,
@@ -105,8 +80,8 @@ public class PostPersistenceModel {
                     user);
             comments.forEach(post::addComment);
 
-            post.setUpvotes(postPersistenceModel.upvotes);
-            post.setDownvotes(postPersistenceModel.downvotes);
+            List<Vote> votes = postPersistenceModel.votes.stream().map(VotePersistenceModel.Converter::toDomainEntity).toList();
+            post.setVotes(votes);
 
             return post;
         }
@@ -116,16 +91,20 @@ public class PostPersistenceModel {
             TopicPersistenceModel topicPersistenceModel = TopicPersistenceModel.Converter.toPersistenceModel(post.getTopic());
             List<CommentPersistenceModel> comments = post.getComments().stream().map(CommentPersistenceModel.Converter::toPersistenceModel).toList();
 
-            return new PostPersistenceModel(
+            PostPersistenceModel postPersistenceModel = new PostPersistenceModel(
                     post.getId(),
                     post.getTitle(),
                     post.getContent(),
                     post.getCreatedAt(),
                     topicPersistenceModel,
                     userPersistenceModel,
-                    comments,
-                    post.getUpvotes(),
-                    post.getDownvotes());
+                    comments);
+
+            List<VotePersistenceModel> votes = post.getVotes().stream().map(VotePersistenceModel.Converter::toPersistenceModel).toList();
+
+            postPersistenceModel.setVotes(votes);
+
+            return postPersistenceModel;
         }
     }
 }

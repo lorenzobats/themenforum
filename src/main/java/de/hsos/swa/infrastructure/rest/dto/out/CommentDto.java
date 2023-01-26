@@ -15,7 +15,6 @@ public class CommentDto {
     public LocalDateTime createdAt;
     public String parentId;
     public List<CommentDto> replies = new ArrayList<>();
-
     public Integer downVoteCount;
     public Integer upVoteCount;
 
@@ -41,8 +40,8 @@ public class CommentDto {
                     comment.getUser().getName(),
                     comment.getText(),
                     comment.getCreatedAt(),
-                    comment.getDownVotes(),
-                    comment.getUpVotes());
+                    comment.getDownvotes(),
+                    comment.getUpvotes());
 
             commentDto.replies = repliesDto;
 

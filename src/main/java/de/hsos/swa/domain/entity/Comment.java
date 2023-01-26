@@ -113,8 +113,13 @@ public class Comment {
         this.active = false;
     }
 
-    public void removeVote(UUID userId) {
-        this.votes.remove(userId);
+
+    public List<Vote> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(List<Vote> votes) {
+        this.votes = votes;
     }
 
     @Override
@@ -127,5 +132,20 @@ public class Comment {
     @Override
     public int hashCode() {
         return Objects.hash(getId());
+    }
+
+
+    public Integer getDownvotes() {
+        // TODO: Implementieren
+        return 10;
+    }
+
+    public Integer getUpvotes() {
+        // TODO: Implementieren
+        return 10;
+    }
+
+    public void addVote(Vote vote) {
+        this.votes.add(vote);
     }
 }

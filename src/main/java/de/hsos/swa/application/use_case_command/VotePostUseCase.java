@@ -8,6 +8,7 @@ import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.domain.service.VoteService;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -25,6 +26,9 @@ public class VotePostUseCase implements VotePostInputPort {
     @Inject
     VoteService voteService;
 
+    @Inject
+    Logger log;
+
 
 
     @Override
@@ -41,22 +45,18 @@ public class VotePostUseCase implements VotePostInputPort {
         }
         Post post = postResult.getData();
 
-        try {
-            this.voteService.votePost(post, user, request.voteType());
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
-        }
+        log.debug(">>VOTE ADDED BEFORE" + post.getVotes().size());
 
+        this.voteService.votePost(post, user, request.voteType());
+
+
+        log.debug(">>VOTE ADDED" + post.getVotes().size());
+
+        post.setTitle("Neuer Titel");
         Result<Post> updatePostResult = this.postRepository.updatePost(post);
 
-
-        Result<User> updatedUserResult = this.userRepository.updateUser(user);
-
-        if(!updatedUserResult.isSuccessful()) {
-            return Result.error("Could not updated User");
-        }
-
         if (updatePostResult.isSuccessful()) {
+            log.debug(">>Success");
             return Result.isSuccessful(updatePostResult.getData());
         }
 
