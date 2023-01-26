@@ -43,7 +43,34 @@
         </form>
     </div>
 
-    <div class="comments"></div>
+    <div class="comments-wrapper">
+        {#for comment in post.commentsFlat}
+            <div class="content-box">
+            <div class="vote-container"
+                 style="margin-right: 12px; display: flex; flex-direction: column; align-items: center">
+                <div>up</div>
+                <div>{post.totalVotes}</div>
+                <div>down</div>
+            </div>
+            <div style="width: 100%">
+            <span class="sub-info">
+            by <a href="#">{comment.user.name}</a> |
+            {comment.parsedCreatedAtDate}</span>
+            {#if comment.parentComment}
+                <br><span>Reply to: {comment.parentComment.text} | by {comment.parentComment.user.name}</span>
+            {/if}
+            <p style="font-weight: bolder">{comment.text}</p>
+
+            <form>
+                <textarea style="display: block; width: 100%" id="reply-text" required></textarea>
+                <div style="margin-top: 12px;">
+                    <button class="btn btn-secondary" type="submit">reply</button>
+                </div>
+            </form>
+            </div>
+            </div>
+            {/}
+    </div>
 </div>
 
 </body>
