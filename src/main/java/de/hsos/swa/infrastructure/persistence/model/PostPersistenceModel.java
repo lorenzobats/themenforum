@@ -71,6 +71,9 @@ public class PostPersistenceModel {
             User user = UserPersistenceModel.Converter.toDomainEntity(postPersistenceModel.userPersistenceModel);
             Topic topic = TopicPersistenceModel.Converter.toDomainEntity(postPersistenceModel.topicPersistenceModel);
             List<Comment> comments = postPersistenceModel.comments.stream().map(CommentPersistenceModel.Converter::toDomainEntity).toList();
+            List<Vote> votes = postPersistenceModel.votes.stream().map(VotePersistenceModel.Converter::toDomainEntity).toList();
+
+
             Post post = new Post(
                     postPersistenceModel.id,
                     postPersistenceModel.title,
@@ -78,10 +81,9 @@ public class PostPersistenceModel {
                     postPersistenceModel.createdAt,
                     topic,
                     user);
-            comments.forEach(post::addComment);
 
-            List<Vote> votes = postPersistenceModel.votes.stream().map(VotePersistenceModel.Converter::toDomainEntity).toList();
-            post.setVotes(votes);
+            comments.forEach(post::addComment);
+            votes.forEach(post::addVote);
 
             return post;
         }

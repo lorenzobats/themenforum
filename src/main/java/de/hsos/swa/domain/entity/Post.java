@@ -68,10 +68,6 @@ public class Post {
         return id;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -161,12 +157,12 @@ public class Post {
 
     public Integer getDownvotes() {
         // TODO: Implementieren
-        return 10;
+        return votes.size();
     }
 
     public Integer getUpvotes() {
         // TODO: Implementieren
-        return 10;
+        return votes.size();
     }
 
     public void addVote(Vote vote) {

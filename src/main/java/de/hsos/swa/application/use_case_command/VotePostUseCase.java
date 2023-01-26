@@ -12,9 +12,11 @@ import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.util.UUID;
 
 @ApplicationScoped
+@Transactional(Transactional.TxType.REQUIRES_NEW)
 public class VotePostUseCase implements VotePostInputPort {
 
     @Inject
@@ -45,18 +47,12 @@ public class VotePostUseCase implements VotePostInputPort {
         }
         Post post = postResult.getData();
 
-        log.debug(">>VOTE ADDED BEFORE" + post.getVotes().size());
-
         this.voteService.votePost(post, user, request.voteType());
 
 
-        log.debug(">>VOTE ADDED" + post.getVotes().size());
-
-        post.setTitle("Neuer Titel");
         Result<Post> updatePostResult = this.postRepository.updatePost(post);
 
         if (updatePostResult.isSuccessful()) {
-            log.debug(">>Success");
             return Result.isSuccessful(updatePostResult.getData());
         }
 

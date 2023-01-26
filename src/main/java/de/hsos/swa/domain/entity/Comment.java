@@ -137,12 +137,12 @@ public class Comment {
 
     public Integer getDownvotes() {
         // TODO: Implementieren
-        return 10;
+        return votes.size();
     }
 
     public Integer getUpvotes() {
         // TODO: Implementieren
-        return 10;
+        return votes.size();
     }
 
     public void addVote(Vote vote) {

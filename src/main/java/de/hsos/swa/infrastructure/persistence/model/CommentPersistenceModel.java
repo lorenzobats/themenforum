@@ -110,7 +110,6 @@ public class CommentPersistenceModel {
             List<VotePersistenceModel> votes = parentComment.getVotes().stream().map(VotePersistenceModel.Converter::toPersistenceModel).toList();
 
             CommentPersistenceModel commentPersistenceModel = new CommentPersistenceModel(parentComment.getId(), parentComment.getText(), parentComment.getCreatedAt(), userPersistenceModel, parentComment.isActive());
-            commentPersistenceModel.setVotes(votes);
             return  commentPersistenceModel;
         }
     }

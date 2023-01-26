@@ -14,11 +14,12 @@ public class VoteService {
     Logger log;
 
     public void votePost(Post post, User user, VoteType voteType) {
-        Vote vote = new Vote(user, voteType);
-        post.addVote(vote);
+
         //Wenn es sich nicht um ein Post des Users handelt
         if (!post.getCreator().getId().equals(user.getId())) {
-
+            Vote vote = new Vote(user, voteType);
+            // TODO: ergaenzen
+            post.addVote(vote);
         }
     }
 
@@ -32,6 +33,7 @@ public class VoteService {
         //Wenn es sich nicht um ein Comment des Users handelt
         if (!comment.getUser().getId().equals(user.getId())) {
             Vote vote = new Vote(user, voteType);
+            // TODO: ergaenzen
             comment.addVote(vote);
         }
     }
