@@ -81,7 +81,7 @@ public class CommentPersistenceModel {
             }
 
             List<Vote> votes = commentPersistenceModel.votes.stream().map(VotePersistenceModel.Converter::toDomainEntity).toList();
-            comment.setVotes(votes);
+            votes.forEach(comment::addVote);
 
             return comment;
         }
@@ -113,5 +113,4 @@ public class CommentPersistenceModel {
             return  commentPersistenceModel;
         }
     }
-
 }
