@@ -58,10 +58,10 @@ public class PublicEndpoint {
         if(topic != null) {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             filterParams.put(PostFilterParams.TOPIC, topic);
-            Result<List<Post>> filteredPosts = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, false));
+            Result<List<Post>> filteredPosts = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, true));
             return Templates.posts(filteredPosts.getData());
         }
-        Result<List<Post>> allPosts = getAllPostsInputPort.getAllPosts(false);
+        Result<List<Post>> allPosts = getAllPostsInputPort.getAllPosts(true);
         return Templates.posts(allPosts.getData());
     }
 
@@ -93,7 +93,7 @@ public class PublicEndpoint {
         if(topicResult.isSuccessful()) {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             filterParams.put(PostFilterParams.TOPIC, topicResult.getData().getTitle());
-            Result<List<Post>> postsResult = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, false));
+            Result<List<Post>> postsResult = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, true));
 
             if(postsResult.isSuccessful()) {
                 return Templates.topic(topicResult.getData(), postsResult.getData());

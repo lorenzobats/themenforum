@@ -8,7 +8,6 @@ import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.domain.service.VoteService;
-import de.hsos.swa.domain.value_object.VoteType;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

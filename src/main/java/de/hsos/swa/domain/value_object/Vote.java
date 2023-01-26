@@ -6,6 +6,7 @@ import java.util.Objects;
 
 public class Vote {
 
+
     private User user;
 
     private VoteType voteType;

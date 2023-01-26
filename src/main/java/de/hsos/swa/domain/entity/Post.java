@@ -1,8 +1,5 @@
 package de.hsos.swa.domain.entity;
 
-import de.hsos.swa.domain.value_object.Vote;
-import de.hsos.swa.domain.value_object.VoteType;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -153,6 +150,18 @@ public class Post {
         }
 
         return Optional.empty();
+    }
+
+    public int getCommentCount() {
+        Deque<Comment> stack = new ArrayDeque<>(this.comments);
+        int count = 0;
+
+        while(!stack.isEmpty()) {
+            Comment comment = stack.pop();
+            count++;
+            stack.addAll(comment.getReplies());
+        }
+        return count;
     }
 
     @Override

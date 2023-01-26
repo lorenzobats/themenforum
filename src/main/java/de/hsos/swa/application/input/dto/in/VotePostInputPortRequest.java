@@ -3,7 +3,6 @@ package de.hsos.swa.application.input.dto.in;
 import de.hsos.swa.domain.value_object.VoteType;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 public record VotePostInputPortRequest(

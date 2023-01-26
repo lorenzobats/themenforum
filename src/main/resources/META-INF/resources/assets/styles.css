@@ -1,0 +1,37 @@
+h1, h5 {
+    font-family: "BioRhyme", monospace;
+}
+
+body {
+    font-family: "Inconsolata", monospace !important;
+}
+
+.title-info {
+    margin: 0;
+}
+
+.content-box {
+    border: 2px #bbbbbb90 solid;
+    padding: 12px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center
+}
+
+.sort-selector {
+    font-size: large;
+}
+
+a {
+    color: #6476bd !important;
+    text-decoration: none !important;
+}
+
+a:hover {
+    text-decoration: underline !important;
+}
+
+span {
+    color: #919191;
+}
+

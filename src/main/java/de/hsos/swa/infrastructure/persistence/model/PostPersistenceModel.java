@@ -1,7 +1,6 @@
 package de.hsos.swa.infrastructure.persistence.model;
 
 import de.hsos.swa.domain.entity.Topic;
-import de.hsos.swa.domain.value_object.Vote;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
@@ -9,7 +8,6 @@ import de.hsos.swa.domain.entity.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Entity(name = "Post")
 @Table(name = "post_table")

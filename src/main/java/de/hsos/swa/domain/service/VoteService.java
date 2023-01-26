@@ -3,7 +3,6 @@ package de.hsos.swa.domain.service;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
-import de.hsos.swa.domain.value_object.Vote;
 import de.hsos.swa.domain.value_object.VoteType;
 import org.jboss.logging.Logger;
 

@@ -2,8 +2,7 @@ package de.hsos.swa.domain.value_object;
 
 public enum VoteType {
     UP("up"),
-    DOWN("down"),
-    NONE("none");
+    DOWN("down");
 
     private final String value;
 

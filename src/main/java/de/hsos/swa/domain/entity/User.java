@@ -1,8 +1,6 @@
 package de.hsos.swa.domain.entity;
 
 
-import de.hsos.swa.domain.value_object.Vote;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.*;
