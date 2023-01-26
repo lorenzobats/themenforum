@@ -23,6 +23,10 @@ public class TemplateExtensions {
         return post.getCreatedAt().format(formatter);
     }
 
+    public static String parsedPostId(Post post) {
+        return post.getId().toString();
+    }
+
     public static String parsedCreatedAtDate(Topic topic) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
         return topic.getCreatedAt().format(formatter);

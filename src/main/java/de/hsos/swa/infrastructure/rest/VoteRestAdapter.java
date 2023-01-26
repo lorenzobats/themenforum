@@ -17,6 +17,6 @@ public class VoteRestAdapter {
     // TODO: implementieren => nutze "GetVotedPostsByUserInputPort"
     @RolesAllowed({"admin", "member"})
     public Response getAllVotesByUser() {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        return Response.status(Response.Status.NOT_ACCEPTABLE).build();
     }
 }
