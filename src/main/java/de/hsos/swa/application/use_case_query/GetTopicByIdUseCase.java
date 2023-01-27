@@ -8,9 +8,11 @@ import de.hsos.swa.domain.entity.Topic;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.util.UUID;
 
 @RequestScoped
+@Transactional(Transactional.TxType.REQUIRES_NEW)
 public class GetTopicByIdUseCase implements GetTopicByIdInputPort {
 
     @Inject

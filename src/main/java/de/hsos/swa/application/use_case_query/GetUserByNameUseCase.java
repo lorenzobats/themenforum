@@ -7,9 +7,12 @@ import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.User;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
-@ApplicationScoped
+@RequestScoped
+@Transactional(Transactional.TxType.REQUIRES_NEW)
 public class GetUserByNameUseCase implements GetUserByNameInputPort {
 
     @Inject

@@ -6,9 +6,10 @@ import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Comment;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.transaction.Transactional;
 
-@ApplicationScoped
+@RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 public class UpdateCommentUseCase implements UpdateCommentInputPort {
     @Override

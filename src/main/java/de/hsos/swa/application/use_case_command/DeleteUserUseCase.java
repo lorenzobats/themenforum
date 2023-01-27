@@ -2,17 +2,61 @@ package de.hsos.swa.application.use_case_command;
 
 import de.hsos.swa.application.input.DeleteUserInputPort;
 import de.hsos.swa.application.input.dto.in.DeleteUserInputPortRequest;
+import de.hsos.swa.application.output.auth.getUserAuthRole.GetUserAuthRoleOutputPort;
+import de.hsos.swa.application.output.repository.TopicRepository;
+import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.User;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-@ApplicationScoped
+@RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 public class DeleteUserUseCase implements DeleteUserInputPort {
+    @Inject
+    UserRepository userRepository;
+
+    @Inject
+    GetUserAuthRoleOutputPort userAuthRoleOutputPort;
+
+    /**
+     * Deaktiviert einen User auf Basis der übergebenen Informationen.
+     * @param request enthält Themen-ID und Nutzernamen der Lösch-Anfrage
+     * @return Result<Topic> enthält gelöschtes Thema bzw. Fehlermeldung bei Misserfolg
+     */
     @Override
     public Result<User> deleteUser(DeleteUserInputPortRequest request) {
-        return null;
+        Result<User> requestingUserResult = this.userRepository.getUserByName(request.username());
+        if (!requestingUserResult.isSuccessful()) {
+            return Result.error("Cannot find user " + request.username());
+        }
+        User requestingUser = requestingUserResult.getData();
+
+        Result<String> roleResult = this.userAuthRoleOutputPort.getUserAuthRole(requestingUser.getId());
+        if (!roleResult.isSuccessful()) {
+            return Result.error("Cannot find user role " + request.username());
+        }
+        String role = roleResult.getData();
+
+        if(!role.equals("admin")){
+            return Result.error("Not allowed to disable user");
+        }
+
+        Result<User> userResult = this.userRepository.getUserById(request.userId());
+        if (!userResult.isSuccessful()) {
+            return Result.error("Cannot find userId " + request.userId());
+        }
+        User user = userResult.getData();
+
+        user.setName("DELETED");
+        // Todo. Auth Set Role "disabled"
+
+        Result<User> updateUserResult = this.userRepository.updateUser(user);
+        if (!updateUserResult.isSuccessful()) {
+            return Result.error("Cannot update post ");
+        }
+        return Result.success(user);
     }
 }

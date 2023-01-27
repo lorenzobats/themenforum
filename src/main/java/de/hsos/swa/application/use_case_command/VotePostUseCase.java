@@ -11,11 +11,12 @@ import de.hsos.swa.domain.service.VoteService;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.UUID;
 
-@ApplicationScoped
+@RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 public class VotePostUseCase implements VotePostInputPort {
 
