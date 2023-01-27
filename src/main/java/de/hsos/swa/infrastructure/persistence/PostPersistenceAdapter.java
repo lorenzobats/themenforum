@@ -8,6 +8,7 @@ import de.hsos.swa.application.use_case_query.PostFilterParams;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.domain.entity.Post;
+import de.hsos.swa.infrastructure.persistence.cte.CommentCTE;
 import de.hsos.swa.infrastructure.persistence.model.CommentPersistenceModel;
 import de.hsos.swa.infrastructure.persistence.model.PostPersistenceModel;
 import de.hsos.swa.infrastructure.persistence.dto.out.PostPersistenceView;
@@ -112,6 +113,25 @@ public class PostPersistenceAdapter implements PostRepository {
     @Override
     public Result<Post> getPostByCommentId(UUID commentId) {
         try {
+            CriteriaBuilder<CommentCTE> cb = criteriaBuilderFactory.create(entityManager, CommentCTE.class)
+                    .withRecursive(CommentCTE.class)
+                    .from(CommentPersistenceModel.class, "comment")
+                    .bind("id").select("comment.id")
+                    .bind("parentComment").select("comment.parentComment")
+                    .where("id").eq(commentId)
+                    .unionAll()
+                    .from(CommentPersistenceModel.class, "comment")
+                    .from(CommentCTE.class, "parentNode")
+                    .bind("id").select("comment.id")
+                    .bind("parentComment").select("comment.parentComment")
+                    .where("comment.id").eqExpression("parentNode.parentComment.id")
+                    .end();
+            log.debug(">>> SIZE" +cb.getResultList().size());
+            for (CommentCTE commentCTE : cb.getResultList()){
+                log.debug(">>> ID" +commentCTE.getId());
+            }
+
+
             CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
 
             // Subquery um CommentPersistenceModel mit übergebener commentId, inklusive replies (rekursiv) zu finden
