@@ -110,42 +110,42 @@ public class PostPersistenceAdapter implements PostRepository {
         }
     }
 
+    // https://persistence.blazebit.com/documentation/1.5/core/manual/en_US/
     @Override
     public Result<Post> getPostByCommentId(UUID commentId) {
         try {
-            CriteriaBuilder<CommentCTE> cb = criteriaBuilderFactory.create(entityManager, CommentCTE.class)
+
+            // 1. Get UUID of Root CommentPersistenceModel recursively using CommentCTE and Blaze Persistence
+            CriteriaBuilder<UUID> cb2 = criteriaBuilderFactory.create(entityManager, UUID.class)
                     .withRecursive(CommentCTE.class)
-                    .from(CommentPersistenceModel.class, "comment")
-                    .bind("id").select("comment.id")
-                    .bind("parentComment").select("comment.parentComment")
-                    .where("id").eq(commentId)
+                        .from(CommentPersistenceModel.class, "comment")
+                        .bind("id").select("comment.id")
+                        .bind("parentComment").select("comment.parentComment")
+                        .where("id").eq(commentId)
                     .unionAll()
-                    .from(CommentPersistenceModel.class, "comment")
-                    .from(CommentCTE.class, "parentNode")
-                    .bind("id").select("comment.id")
-                    .bind("parentComment").select("comment.parentComment")
-                    .where("comment.id").eqExpression("parentNode.parentComment.id")
-                    .end();
-            log.debug(">>> SIZE" +cb.getResultList().size());
-            for (CommentCTE commentCTE : cb.getResultList()){
-                log.debug(">>> ID" +commentCTE.getId());
-            }
+                        .from(CommentPersistenceModel.class, "comment")
+                        .from(CommentCTE.class, "parentNode")
+                        .bind("id").select("comment.id")
+                        .bind("parentComment").select("comment.parentComment")
+                        .where("comment.id").eqExpression("parentNode.parentComment.id")
+                    .end()
+                    .where("parentComment").isNull()
+                    .from(CommentCTE.class, "rootComment")
+                    .select("rootComment.id");
 
+            log.debug(">>> (ROOT COMMENT ID): ");
+            UUID rootCommentID = cb2.getSingleResult();
+            log.debug(">>> (ROOT COMMENT ID): " + rootCommentID );
+            log.debug(">>> (ROOT COMMENT ID): " + rootCommentID );
 
-            CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
-
-            // Subquery um CommentPersistenceModel mit übergebener commentId, inklusive replies (rekursiv) zu finden
-            // String subqueryString = "SELECT c FROM Comment c WHERE c.commentId = :commentId OR c.parentComment IS NOT NULL OR c.replies IS NOT EMPTY";
-            // https://persistence.blazebit.com/documentation/1.5/core/manual/en_US/
+            // 2. Subquery to find CommentPersitenceModel with id = rootCommentID
             CriteriaBuilder<CommentPersistenceModel> subquery = criteriaBuilderFactory.create(entityManager, CommentPersistenceModel.class);
-            subquery.whereOr()
-                    .where("id").eq(commentId)
-                    .where("replies").isNotEmpty()
-                    .endOr();
+            subquery.where("id").eq(rootCommentID);
 
-            // Subquery mi PostPersistenceModel joinen im Feld "comments"
-            // String queryString = "SELECT p FROM Post p WHERE :subquery MEMBER OF p.comments";
-            criteriaBuilder.where("comments").in(subquery).end();   // Beendet Subquery und returnt zu Parent Query
+            // 3. Find the Post that references the CommentPersistenceModel with id = rootCommentID
+            CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
+            criteriaBuilder.where("comments").in(subquery).end();
+
 
             PostPersistenceModel post = criteriaBuilder.getSingleResult();
             return Result.success(PostPersistenceModel.Converter.toDomainEntity(post));
