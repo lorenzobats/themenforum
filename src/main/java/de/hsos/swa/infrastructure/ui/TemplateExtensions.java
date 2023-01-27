@@ -4,7 +4,10 @@ import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.Topic;
 import io.quarkus.qute.TemplateExtension;
+import io.quarkus.security.identity.SecurityIdentity;
 
+import javax.inject.Inject;
+import javax.ws.rs.core.SecurityContext;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -14,6 +17,7 @@ import java.util.Stack;
 
 @TemplateExtension
 public class TemplateExtensions {
+
     public static Integer totalVotes(Post post) {
         return post.getUpvotes() - post.getDownvotes();
     }

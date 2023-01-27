@@ -13,9 +13,15 @@
 </head>
 <body>
 <div class="container">
-    <h1 class="mt-4">Alle Beiträge</h1>
-    <p><a href="/ui/public/topics">[Browse Topics]</a></p>
-
+    <div class="header">
+        <div>
+        <h1 class="mt-4">Alle Beiträge</h1>
+        <p><a href="/ui/public/topics">[Browse Topics]</a></p>
+        </div>
+        <div>
+                <button class="btn btn-primary">Login</button>
+        </div>
+    </div>
     <div class="sort-selector" style="display: flex">
         <p><a href="#">Pupular</a></p>
         <p style="margin-left: 4px; margin-right: 4px;"> | </p>
@@ -26,7 +32,7 @@
         <div class="content-box">
         <div class="vote-container"
              style="margin-right: 12px; display: flex; flex-direction: column; align-items: center">
-            <div class="vote"><a href="">«</a></div>
+            <div class="vote"><a href="/ui/public/posts/{entry.id}/upvotes">«</a></div>
             <div>{entry.totalVotes}</div>
             <div class="vote"><a href="">»</a></div>
         </div>

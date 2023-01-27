@@ -7,9 +7,12 @@ import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.Topic;
+import de.hsos.swa.domain.entity.VoteType;
+import de.hsos.swa.infrastructure.rest.VoteRestAdapter;
 import de.hsos.swa.infrastructure.rest.dto.in.ReplyToCommentRestAdapterRequest;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
+import io.quarkus.security.identity.SecurityIdentity;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import javax.annotation.security.PermitAll;
@@ -57,6 +60,11 @@ public class PublicEndpoint {
     @Inject
     GetPostByCommentIdInputPort getPostByCommentIdInputPort;
 
+    @Inject
+    VotePostInputPort votePostInputPort;
+
+    @Inject
+    VoteCommentInputPort voteCommentInputPort;
 
     @CheckedTemplate
     public static class Templates {
@@ -122,6 +130,31 @@ public class PublicEndpoint {
         }
         return Templates.topic(null, null);
     }
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Path("/posts/{id}/upvotes")
+    @RolesAllowed({"admin", "member"})
+    public Response votePost(@PathParam("id") String postId, @Context SecurityContext securityContext) {
+        String username = securityContext.getUserPrincipal().getName();
+        Result<Post> postResult = this.votePostInputPort.votePost(new VotePostInputPortRequest(postId, username, VoteType.UP));
+
+        if(postResult.isSuccessful()) {
+            return Response.status(301).location(URI.create("/ui/public/posts/")).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
+
+//    @GET
+//    @Produces(MediaType.TEXT_HTML)
+//    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+//    @Path("/posts/{id}/upvotes")
+//    @RolesAllowed({"admin", "member"})
+//    public Response voteComment(@PathParam("id") String commentId) {
+//
+//    }
 
     @POST
     @Produces(MediaType.TEXT_HTML)

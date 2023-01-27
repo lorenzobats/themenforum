@@ -16,6 +16,11 @@
     <h1 class="mt-4">Alle Topics</h1>
     <p><a href="/ui/public/posts">[Browse Posts]</a></p>
 
+    <form style="display: flex; align-items: center; margin-bottom: 20px;">
+        <input type="search" id="tsearch" name="tsearch" required placeholder="search topics...">
+        <button class="btn btn-primary" style="margin-left: 12px;">Search</button>
+    </form>
+
     {#for entry in allTopics}
         <div class="content-box">
             <div>
