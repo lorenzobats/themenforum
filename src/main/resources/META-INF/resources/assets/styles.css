@@ -28,6 +28,13 @@ body {
     margin-top: 12px;
 }
 
+.vote-container {
+    margin-right: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .vote{
     font-family: "BioRhyme", monospace;
     font-size: 18px;

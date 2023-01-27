@@ -134,11 +134,40 @@ public class PublicEndpoint {
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Path("/posts/{id}/upvotes")
+    @Path("/posts/{id}/upvote")
     @RolesAllowed({"admin", "member"})
-    public Response votePost(@PathParam("id") String postId, @Context SecurityContext securityContext) {
+    public Response upvotePost(@PathParam("id") String postId, @Context SecurityContext securityContext) {
         String username = securityContext.getUserPrincipal().getName();
         Result<Post> postResult = this.votePostInputPort.votePost(new VotePostInputPortRequest(postId, username, VoteType.UP));
+
+        if(postResult.isSuccessful()) {
+            return Response.status(301).location(URI.create("/ui/public/posts/")).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Path("/posts/{id}/downvote")
+    @RolesAllowed({"admin", "member"})
+    public Response downvotePost(@PathParam("id") String postId, @Context SecurityContext securityContext) {
+        String username = securityContext.getUserPrincipal().getName();
+        Result<Post> postResult = this.votePostInputPort.votePost(new VotePostInputPortRequest(postId, username, VoteType.DOWN));
+
+        if(postResult.isSuccessful()) {
+            return Response.status(301).location(URI.create("/ui/public/posts/")).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Path("/posts/{id}/resetvote")
+    @RolesAllowed({"admin", "member"})
+    public Response resetVotePost(@PathParam("id") String postId, @Context SecurityContext securityContext) {
+        String username = securityContext.getUserPrincipal().getName();
+        Result<Post> postResult = this.votePostInputPort.votePost(new VotePostInputPortRequest(postId, username, VoteType.NONE));
 
         if(postResult.isSuccessful()) {
             return Response.status(301).location(URI.create("/ui/public/posts/")).build();
