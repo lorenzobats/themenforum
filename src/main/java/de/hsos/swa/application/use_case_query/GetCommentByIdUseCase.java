@@ -8,9 +8,11 @@ import de.hsos.swa.domain.entity.Comment;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.util.UUID;
 
 @RequestScoped
+@Transactional(Transactional.TxType.REQUIRES_NEW)
 public class GetCommentByIdUseCase implements GetCommentByIdInputPort {
 
     @Inject

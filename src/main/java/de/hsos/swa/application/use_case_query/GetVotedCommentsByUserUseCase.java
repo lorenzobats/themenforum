@@ -5,8 +5,12 @@ import de.hsos.swa.application.input.dto.in.GetVotedCommentsByUserInputPortReque
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Comment;
 
+import javax.enterprise.context.RequestScoped;
+import javax.transaction.Transactional;
 import java.util.List;
 
+@RequestScoped
+@Transactional(Transactional.TxType.REQUIRES_NEW)
 public class GetVotedCommentsByUserUseCase implements GetVotedCommentsByUserInputPort {
 
     @Override

@@ -11,12 +11,13 @@ import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.domain.service.VoteService;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
-@ApplicationScoped
+@RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 public class VoteCommentUseCase implements VoteCommentInputPort {
 

@@ -12,7 +12,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @RequestScoped
-@Transactional
+@Transactional(Transactional.TxType.REQUIRES_NEW)
 public class GetFilteredPostsInputPortUseCase implements GetFilteredPostsInputPort {
 
     @Inject

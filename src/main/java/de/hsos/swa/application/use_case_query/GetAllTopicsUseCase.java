@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RequestScoped
-@Transactional(value = Transactional.TxType.REQUIRES_NEW)
+@Transactional(Transactional.TxType.REQUIRES_NEW)
 public class GetAllTopicsUseCase implements GetAllTopicsInputPort {
 
     @Inject
