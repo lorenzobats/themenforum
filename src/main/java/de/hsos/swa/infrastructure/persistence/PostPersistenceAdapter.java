@@ -116,7 +116,7 @@ public class PostPersistenceAdapter implements PostRepository {
         try {
 
             // 1. Get UUID of Root CommentPersistenceModel recursively using CommentCTE and Blaze Persistence
-            CriteriaBuilder<UUID> cb2 = criteriaBuilderFactory.create(entityManager, UUID.class)
+            CriteriaBuilder<UUID> subquery = criteriaBuilderFactory.create(entityManager, UUID.class)
                     .withRecursive(CommentCTE.class)
                         .from(CommentPersistenceModel.class, "comment")
                         .bind("id").select("comment.id")
@@ -133,19 +133,9 @@ public class PostPersistenceAdapter implements PostRepository {
                     .from(CommentCTE.class, "rootComment")
                     .select("rootComment.id");
 
-            log.debug(">>> (ROOT COMMENT ID): ");
-            UUID rootCommentID = cb2.getSingleResult();
-            log.debug(">>> (ROOT COMMENT ID): " + rootCommentID );
-            log.debug(">>> (ROOT COMMENT ID): " + rootCommentID );
-
-            // 2. Subquery to find CommentPersitenceModel with id = rootCommentID
-            CriteriaBuilder<CommentPersistenceModel> subquery = criteriaBuilderFactory.create(entityManager, CommentPersistenceModel.class);
-            subquery.where("id").eq(rootCommentID);
-
-            // 3. Find the Post that references the CommentPersistenceModel with id = rootCommentID
+            // 2. Find the Post that references the CommentPersistenceModel with id = rootCommentID
             CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
             criteriaBuilder.where("comments").in(subquery).end();
-
 
             PostPersistenceModel post = criteriaBuilder.getSingleResult();
             return Result.success(PostPersistenceModel.Converter.toDomainEntity(post));
