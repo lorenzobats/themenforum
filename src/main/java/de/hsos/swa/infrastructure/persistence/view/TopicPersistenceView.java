@@ -1,4 +1,4 @@
-package de.hsos.swa.infrastructure.persistence.dto.out;
+package de.hsos.swa.infrastructure.persistence.view;
 
 import com.blazebit.persistence.view.EntityView;
 import com.blazebit.persistence.view.IdMapping;

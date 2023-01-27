@@ -1,4 +1,4 @@
-package de.hsos.swa.infrastructure.persistence.dto.out;
+package de.hsos.swa.infrastructure.persistence.view;
 
 import com.blazebit.persistence.view.EntityView;
 import com.blazebit.persistence.view.IdMapping;
@@ -7,7 +7,6 @@ import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.infrastructure.persistence.model.CommentPersistenceModel;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @EntityView(CommentPersistenceModel.class)

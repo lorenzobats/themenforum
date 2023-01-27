@@ -12,14 +12,8 @@ import java.util.UUID;
 @CTE
 @Entity
 public class CommentCTE {
-    private UUID id;
-    private CommentPersistenceModel parentComment;
-
     @Id
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
-
+    public UUID id;
     @ManyToOne
-    public CommentPersistenceModel getParentComment() { return parentComment; }
-    public void setParentComment(CommentPersistenceModel parentComment) { this.parentComment = parentComment; }
+    public CommentPersistenceModel parentComment;
 }

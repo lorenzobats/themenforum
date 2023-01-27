@@ -7,7 +7,7 @@ import com.blazebit.persistence.view.EntityViewSetting;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.output.repository.CommentRepository;
 import de.hsos.swa.domain.entity.Comment;
-import de.hsos.swa.infrastructure.persistence.dto.out.CommentPersistenceView;
+import de.hsos.swa.infrastructure.persistence.view.CommentPersistenceView;
 import de.hsos.swa.infrastructure.persistence.model.CommentPersistenceModel;
 import org.jboss.logging.Logger;
 

@@ -1,6 +1,6 @@
 package de.hsos.swa.infrastructure.rest.dto.out;
 import de.hsos.swa.domain.entity.Post;
-import de.hsos.swa.infrastructure.persistence.dto.out.PostPersistenceView;
+import de.hsos.swa.infrastructure.persistence.view.PostPersistenceView;
 
 import java.time.LocalDateTime;
 import java.util.List;

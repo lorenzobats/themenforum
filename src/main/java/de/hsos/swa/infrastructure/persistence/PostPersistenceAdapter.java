@@ -11,7 +11,7 @@ import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.infrastructure.persistence.cte.CommentCTE;
 import de.hsos.swa.infrastructure.persistence.model.CommentPersistenceModel;
 import de.hsos.swa.infrastructure.persistence.model.PostPersistenceModel;
-import de.hsos.swa.infrastructure.persistence.dto.out.PostPersistenceView;
+import de.hsos.swa.infrastructure.persistence.view.PostPersistenceView;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
@@ -115,7 +115,7 @@ public class PostPersistenceAdapter implements PostRepository {
     public Result<Post> getPostByCommentId(UUID commentId) {
         try {
 
-            // 1. Get UUID of Root CommentPersistenceModel recursively using CommentCTE and Blaze Persistence
+            // Rekursive CTE zur Suche des zur übergebenen commentID zugehörigen Kommentars auf erster Ebene
             CriteriaBuilder<UUID> subquery = criteriaBuilderFactory.create(entityManager, UUID.class)
                     .withRecursive(CommentCTE.class)
                         .from(CommentPersistenceModel.class, "comment")
@@ -124,16 +124,16 @@ public class PostPersistenceAdapter implements PostRepository {
                         .where("id").eq(commentId)
                     .unionAll()
                         .from(CommentPersistenceModel.class, "comment")
-                        .from(CommentCTE.class, "parentNode")
+                        .from(CommentCTE.class, "previous_comment")
                         .bind("id").select("comment.id")
                         .bind("parentComment").select("comment.parentComment")
-                        .where("comment.id").eqExpression("parentNode.parentComment.id")
+                        .where("comment.id").eqExpression("previous_comment.parentComment.id")
                     .end()
                     .where("parentComment").isNull()
-                    .from(CommentCTE.class, "rootComment")
-                    .select("rootComment.id");
+                    .from(CommentCTE.class, "first_level_comment")
+                    .select("first_level_comment.id");
 
-            // 2. Find the Post that references the CommentPersistenceModel with id = rootCommentID
+            // Nutzen der zuvor formulierten Subquery, um Post zu finden
             CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
             criteriaBuilder.where("comments").in(subquery).end();
 
