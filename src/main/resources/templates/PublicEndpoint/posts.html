@@ -13,9 +13,15 @@
 </head>
 <body>
 <div class="container">
-    <h1 class="mt-4">Alle Beiträge</h1>
-    <p><a href="/ui/public/topics">[Browse Topics]</a></p>
-
+    <div class="header">
+        <div>
+            <h1 class="mt-4">Alle Beiträge</h1>
+            <p><a href="/ui/public/topics">[Browse Topics]</a></p>
+        </div>
+        <div>
+            <button class="btn btn-primary">Login</button>
+        </div>
+    </div>
     <div class="sort-selector" style="display: flex">
         <p><a href="#">Pupular</a></p>
         <p style="margin-left: 4px; margin-right: 4px;"> | </p>
@@ -24,12 +30,17 @@
 
     {#for entry in allPosts}
         <div class="content-box">
-        <div class="vote-container"
-             style="margin-right: 12px; display: flex; flex-direction: column; align-items: center">
-            <div class="vote"><a href="">«</a></div>
+            <div style="margin-right: 4px;">
+                <a href="/ui/public/posts/{entry.id}/resetvote">X</a>
+            </div>
+        <div class="vote-container">
+
+        <div class="vote"><a href="/ui/public/posts/{entry.id}/upvote">«</a></div>
             <div>{entry.totalVotes}</div>
-            <div class="vote"><a href="">»</a></div>
+            <div class="vote"><a href="/ui/public/posts/{entry.id}/downvote">»</a></div>
         </div>
+
+
         <div>
         <h5 class="title-info">{entry.title}</h5>
         <span class="sub-info">{entry.parsedCreatedAtDate} |

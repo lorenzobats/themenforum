@@ -62,7 +62,7 @@
             <p style="font-weight: bolder">{comment.text}</p>
 
             <form action="/ui/public/replyTo/{comment.id}" method="post">
-                <label for="reply-text"></label><textarea style="display: block; width: 100%" id="reply-text" name="replytext" required></textarea>
+                <textarea style="display: block; width: 100%" id="reply-text" name="replytext" required placeholder="your reply..."></textarea>
                 <div style="margin-top: 12px;">
                     <button class="btn btn-secondary" type="submit">reply</button>
                 </div>
