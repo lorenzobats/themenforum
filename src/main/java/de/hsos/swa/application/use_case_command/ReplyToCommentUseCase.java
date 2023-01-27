@@ -35,12 +35,12 @@ public class ReplyToCommentUseCase implements ReplyToCommentInputPort {
 
         User user = getUserResponse.getData();
 
-        Result<Post> getPostResponse = this.postRepository.getPostById(UUID.fromString(request.postId()), true);
-        if (!getPostResponse.isSuccessful()) {
-            return Result.error("Post does not exist");
+        Result<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(request.commentId()));
+        if (!postResult.isSuccessful()) {
+            return Result.error(postResult.getMessage());
         }
 
-        Post post = getPostResponse.getData();
+        Post post = postResult.getData();
 
         Comment reply = CommentFactory.createComment(request.commentText(), user);
 
@@ -48,13 +48,13 @@ public class ReplyToCommentUseCase implements ReplyToCommentInputPort {
             return Result.error("Comment is inactive");
         }
 
-        Result<Post> updatePostResponse = this.postRepository.updatePost(post);
+        Result<Post> updatedPostResult = this.postRepository.updatePost(post);
 
-        if (updatePostResponse.isSuccessful()) {
-            Optional<Comment> savedComment = updatePostResponse.getData().findCommentById(reply.getId().toString());
+        if (updatedPostResult.isSuccessful()) {
+            Optional<Comment> savedComment = updatedPostResult.getData().findCommentById(reply.getId().toString());
             return savedComment.map(Result::success).orElseGet(() -> Result.error("Reply not saved"));
         }
 
-        return Result.error("Something went wrong " + updatePostResponse.getMessage());
+        return Result.error("Something went wrong " + updatedPostResult.getMessage());
     }
 }
