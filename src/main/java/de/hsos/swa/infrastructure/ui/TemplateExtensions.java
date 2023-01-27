@@ -18,9 +18,17 @@ public class TemplateExtensions {
         return post.getUpvotes() - post.getDownvotes();
     }
 
+    public static Integer totalVotes(Comment comment) {
+        return comment.getUpvotes() - comment.getDownvotes();
+    }
+
     public static String parsedCreatedAtDate(Post post) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
         return post.getCreatedAt().format(formatter);
+    }
+
+    public static String parsedPostId(Post post) {
+        return post.getId().toString();
     }
 
     public static String parsedCreatedAtDate(Topic topic) {

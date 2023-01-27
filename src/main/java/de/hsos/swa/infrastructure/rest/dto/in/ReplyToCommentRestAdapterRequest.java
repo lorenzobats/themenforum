@@ -7,9 +7,6 @@ import javax.validation.constraints.NotBlank;
 
 public class ReplyToCommentRestAdapterRequest {
 
-    @NotBlank(message = "postId is empty")
-    public String postId;
-
     @NotBlank(message = "text is empty")
     public String text;
 
@@ -17,7 +14,7 @@ public class ReplyToCommentRestAdapterRequest {
 
     public static class Converter {
         public static ReplyToCommentInputPortRequest toInputPortCommand(ReplyToCommentRestAdapterRequest adapterRequest, String commentId, String username) {
-            return new ReplyToCommentInputPortRequest(adapterRequest.postId, commentId, username, adapterRequest.text);
+            return new ReplyToCommentInputPortRequest(commentId, username, adapterRequest.text);
         }
     }
 }

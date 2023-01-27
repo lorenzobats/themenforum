@@ -120,7 +120,6 @@ public class PostPersistenceAdapter implements PostRepository {
             CriteriaBuilder<CommentPersistenceModel> subquery = criteriaBuilderFactory.create(entityManager, CommentPersistenceModel.class);
             subquery.whereOr()
                     .where("id").eq(commentId)
-                    .where("parentComment").isNotNull()
                     .where("replies").isNotEmpty()
                     .endOr();
 
