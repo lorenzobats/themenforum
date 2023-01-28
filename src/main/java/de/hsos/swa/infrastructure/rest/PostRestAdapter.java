@@ -73,7 +73,7 @@ public class PostRestAdapter {
                                 @QueryParam("dateFrom") LocalDateTime dateFrom,
                                 @QueryParam("dateTo") LocalDateTime dateTo,
                                 @QueryParam("topic") String topic,
-                                @DefaultValue("SORT_BY_VOTES") @QueryParam("sortBy") SortingParams sortBy) {
+                                @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy) {
         try {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             if (username != null)

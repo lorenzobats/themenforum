@@ -6,6 +6,6 @@ import java.util.Comparator;
 
 public class SortByUpvotes implements Comparator<Post> {
     public int compare(Post a, Post b) {
-        return a.getTotalVotes().compareTo(b.getTotalVotes());
+        return b.getTotalVotes().compareTo(a.getTotalVotes());
     }
 }
