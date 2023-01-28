@@ -3,6 +3,7 @@ package de.hsos.swa.infrastructure.ui;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
+import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.use_case_query.PostFilterParams;
 import de.hsos.swa.application.use_case_query.SortingParams;
 import de.hsos.swa.application.util.Result;
@@ -47,6 +48,9 @@ public class PublicEndpoint {
     GetAllTopicsInputPort getAllTopicsInputPort;
 
     @Inject
+    GetAllTopicsWithPostCountInputPort getAllTopicsWithPostCountInputPort;
+
+    @Inject
     GetTopicByIdInputPort getTopicByIdInputPort;
 
     @Inject
@@ -73,7 +77,7 @@ public class PublicEndpoint {
 
         public static native TemplateInstance post(Post post, boolean isLoggedIn, String username);
 
-        public static native TemplateInstance topics(List<Topic> allTopics, boolean isLoggedIn, String username);
+        public static native TemplateInstance topics(List<TopicWithPostCountDto> allTopics, boolean isLoggedIn, String username);
 
         public static native TemplateInstance topic(Topic topic, List<Post> posts, boolean isLoggedIn, String username);
 
@@ -132,7 +136,7 @@ public class PublicEndpoint {
             username = securityContext.getUserPrincipal().getName();
             isLoggedIn = true;
         }
-        Result<List<Topic>> allTopics = getAllTopicsInputPort.getAllTopics();
+        Result<List<TopicWithPostCountDto>> allTopics = getAllTopicsWithPostCountInputPort.getAllTopics();
         return Templates.topics(allTopics.getData(), isLoggedIn, username);
     }
 

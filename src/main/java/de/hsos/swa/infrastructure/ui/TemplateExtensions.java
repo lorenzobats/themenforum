@@ -1,5 +1,6 @@
 package de.hsos.swa.infrastructure.ui;
 
+import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.Topic;
@@ -30,6 +31,11 @@ public class TemplateExtensions {
     public static String parsedCreatedAtDate(Topic topic) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
         return topic.getCreatedAt().format(formatter);
+    }
+
+    public static String parsedCreatedAtDate(TopicWithPostCountDto topic) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
+        return topic.createdAt.format(formatter);
     }
 
     public static String parsedCreatedAtDate(Comment comment) {
