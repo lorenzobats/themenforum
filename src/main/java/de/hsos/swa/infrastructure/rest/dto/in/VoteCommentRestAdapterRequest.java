@@ -3,21 +3,19 @@ package de.hsos.swa.infrastructure.rest.dto.in;
 import de.hsos.swa.application.input.dto.in.VoteCommentInputPortRequest;
 import de.hsos.swa.domain.entity.VoteType;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotNull;
 
 
 public class VoteCommentRestAdapterRequest {
 
 
-    @NotEmpty (message = "voteType is empty")
-    @Pattern(regexp = "up|down|none", message = "voteType must be one of: up, down, none")
-    public String voteType;
+    @NotNull(message = "voteType is empty")
+    public VoteType voteType;
     public VoteCommentRestAdapterRequest() {}
 
     public static class Converter {
         public static VoteCommentInputPortRequest toInputPortCommand(VoteCommentRestAdapterRequest adapterRequest, String commentId, String username) {
-            return new VoteCommentInputPortRequest(commentId, username, VoteType.fromValue(adapterRequest.voteType));
+            return new VoteCommentInputPortRequest(commentId, username, adapterRequest.voteType);
         }
     }
 }

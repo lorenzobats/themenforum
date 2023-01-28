@@ -15,11 +15,14 @@
 <div class="container mt-4">
     <p><a href="/ui/public/posts">[Browse Posts]</a></p>
     <div style="display: flex; align-items: center; margin-bottom: 20px">
-        <div class="vote-container"
-             style="margin-right: 12px; display: flex; flex-direction: column; align-items: center">
-            <div class="vote"><a href="">«</a></div>
+        <div style="margin-right: 4px;">
+            <a href="#" onclick="votePost('{post.id}','NONE')">X</a>
+        </div>
+        <div class="vote-container">
+
+            <div class="vote"><a href="#" onclick="votePost('{post.id}','UP')">«</a></div>
             <div>{post.totalVotes}</div>
-            <div class="vote"><a href="">»</a></div>
+            <div class="vote"><a href="#" onclick="votePost('{post.id}','DOWN')">»</a></div>
         </div>
         <div>
             <h2 class="title-info">{post.title}</h2>
@@ -34,13 +37,6 @@
     </div>
 
     <div class="comment-form">
-        {!<form action="/ui/public/comments/{post.id}" method="post">!}
-            {!<label for="text" style="display: block; font-weight: bold">write a comment</label>!}
-            {!<textarea style="display: block; width: 100%" id="text" name="text" required></textarea>!}
-            {!<div style="margin-top: 12px;">!}
-                {!<button class="btn btn-primary" type="submit">post comment</button>!}
-            {!</div>!}
-        {!</form>!}
         <div>
             <label for="text" style="display: block; font-weight: bold">write a comment</label>
             <textarea style="display: block; width: 100%" id="{post.id}-text" name="text" required></textarea>
@@ -53,11 +49,14 @@
     <div class="comments-wrapper">
         {#for comment in post.commentsFlat}
             <div class="content-box">
-            <div class="vote-container"
-                 style="margin-right: 12px; display: flex; flex-direction: column; align-items: center">
-                <div class="vote"><a href="">«</a></div>
+            <div style="margin-right: 4px;">
+                <a href="#" onclick="voteComment('{comment.id}','NONE')">X</a>
+            </div>
+            <div class="vote-container">
+
+                <div class="vote"><a href="#" onclick="voteComment('{comment.id}','UP')">«</a></div>
                 <div>{comment.totalVotes}</div>
-                <div class="vote"><a href="">»</a></div>
+                <div class="vote"><a href="#" onclick="voteComment('{comment.id}','DOWN')">»</a></div>
             </div>
             <div style="width: 100%">
             <span class="sub-info">
@@ -68,12 +67,15 @@
             {/if}
             <p style="font-weight: bolder">{comment.text}</p>
 
-            <form action="/ui/public/replyTo/{comment.id}" method="post">
-                <textarea style="display: block; width: 100%" id="reply-text" name="replytext" required placeholder="your reply..."></textarea>
-                <div style="margin-top: 12px;">
-                    <button class="btn btn-secondary" type="submit">reply</button>
+
+            <div class="comment-form">
+                <div>
+                    <textarea style="display: block; width: 100%" id="{comment.id}-text" name="replytext" required placeholder="your reply..."></textarea>
+                    <div style="margin-top: 12px;">
+                        <button class="btn btn-secondary" id="submit-btn" onClick="submitReply('{comment.id}')">reply</button>
+                    </div>
                 </div>
-            </form>
+            </div>
             </div>
             </div>
             {/}
@@ -83,9 +85,10 @@
 </body>
 
 <script>
-    function submitComment(commentId) {
-        let commentText = document.getElementById("{post.id}-text").value;
-        let url = '/ui/public/comments/' + commentId;
+    function submitComment(postId) {
+
+        let commentText = document.getElementById(postId + "-text").value;
+        let url = '/ui/public/comments/' + postId;
         fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -101,8 +104,89 @@
             .then(() => {
                 location.reload();
             })
-            .catch(error => console.error(error));
+            .catch(error => {
+                console.error(error);
+            });
     }
-</script>
 
+    function submitReply(commentId) {
+
+        let replyText = document.getElementById(commentId + "-text").value;
+        let url = '/ui/public/replyTo/' + commentId;
+        fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(replyText),
+        })
+            .then(() => {
+                location.reload();
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
+    function votePost(postId, voteType) {
+        let url = '/ui/public/posts/' + postId + '/vote';
+        fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(voteType),
+        })
+            .then(() => {
+                location.reload();
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
+    function voteComment(commentId, voteType) {
+        let url = '/ui/public/comments/' + commentId + '/vote';
+        fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(voteType),
+        })
+            .then(() => {
+                location.reload();
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
+    function logout() {
+        document.cookie = "quarkus-credential=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "quarkus-redirect-location=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        location.reload();
+    }
+
+    function login() {
+        document.cookie = "quarkus-redirect-location=" + window.location;
+        window.open("/ui/public/login", "_self")
+    }
+
+</script>
 </html>

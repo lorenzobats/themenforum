@@ -4,19 +4,19 @@ import de.hsos.swa.application.input.dto.in.VotePostInputPortRequest;
 import de.hsos.swa.domain.entity.VoteType;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 public class VotePostRestAdapterRequest {
 
-    @NotEmpty (message = "voteType is empty")
-    @Pattern(regexp = "up|down|none", message = "voteType must be one of: up, down, none")
-    public String voteType;
+    @NotNull(message = "voteType is empty")
+    public VoteType voteType;
 
     public VotePostRestAdapterRequest() {}
 
     public static class Converter {
         public static VotePostInputPortRequest toInputPortCommand(VotePostRestAdapterRequest adapterRequest, String postId, String username) {
-            return new VotePostInputPortRequest(postId, username, VoteType.fromValue(adapterRequest.voteType));
+            return new VotePostInputPortRequest(postId, username, adapterRequest.voteType);
         }
     }
 }

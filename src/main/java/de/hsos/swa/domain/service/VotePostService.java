@@ -10,18 +10,29 @@ import java.util.Optional;
 @ApplicationScoped
 public class VotePostService {
 
-    @Inject
-    Logger log;
-
-    public void votePost(Post post, User user, VoteType voteType) {
-        if (!post.getCreator().getId().equals(user.getId())) {
-            Optional<Vote> optionalVote = post.findVoteByUserId(user.getId());
-            if (optionalVote.isPresent()) {
-                optionalVote.get().setVoteType(voteType);
-            } else {
-                Vote vote = new Vote(user, voteType);
-                post.addVote(vote);
-            }
+    public boolean votePost(Post post, User user, VoteType voteType) {
+        if(post.getCreator().getId().equals(user.getId())){
+            return false;
         }
+        Optional<Vote> optionalVote = post.findVoteByUserId(user.getId());
+        if (optionalVote.isPresent()) {
+            Vote existingVote = optionalVote.get();
+
+            if(voteType.equals(existingVote.getVoteType())){
+                return false;
+            }
+
+            if(voteType.equals(VoteType.NONE)){
+                post.removeVote(existingVote);
+                return true;
+            }
+
+            existingVote.setVoteType(voteType);
+            return true;
+        } else {
+            Vote vote = new Vote(user, voteType);
+            post.addVote(vote);
+        }
+        return true;
     }
 }

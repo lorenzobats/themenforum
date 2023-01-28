@@ -23,10 +23,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.*;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -81,6 +78,7 @@ public class PublicEndpoint {
         public static native TemplateInstance topic(Topic topic, List<Post> posts, boolean isLoggedIn, String username);
 
         public static native TemplateInstance comment(Comment comment, boolean isLoggedIn, String username);
+        public static native TemplateInstance login();
 
     }
 
@@ -161,51 +159,11 @@ public class PublicEndpoint {
         return Templates.topic(null, null, isLoggedIn, username);
     }
 
-    @GET
-    @Produces(MediaType.TEXT_HTML)
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Path("/posts/{id}/upvote")
-    @RolesAllowed({"admin", "member"})
-    public Response upvotePost(@PathParam("id") String postId, @Context SecurityContext securityContext) {
-        String username = securityContext.getUserPrincipal().getName();
-        Result<Post> postResult = this.votePostInputPort.votePost(new VotePostInputPortRequest(postId, username, VoteType.UP));
 
-        if(postResult.isSuccessful()) {
-            return Response.status(Response.Status.OK).location(URI.create("/ui/public/posts/")).build();
-        }
-        return Response.status(Response.Status.BAD_REQUEST).build();
-    }
 
-    @GET
-    @Produces(MediaType.TEXT_HTML)
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Path("/posts/{id}/downvote")
-    @RolesAllowed({"admin", "member"})
-    public Response downvotePost(@PathParam("id") String postId, @Context SecurityContext securityContext) {
-        String username = securityContext.getUserPrincipal().getName();
-        Result<Post> postResult = this.votePostInputPort.votePost(new VotePostInputPortRequest(postId, username, VoteType.DOWN));
 
-        if(postResult.isSuccessful()) {
-            return Response.status(Response.Status.OK).location(URI.create("/ui/public/posts/")).build();
-        }
-        return Response.status(Response.Status.BAD_REQUEST).build();
-    }
 
-    @GET
-    @Produces(MediaType.TEXT_HTML)
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Path("/posts/{id}/resetvote")
-    @RolesAllowed({"admin", "member"})
-    public Response resetVotePost(@PathParam("id") String postId, @Context SecurityContext securityContext) {
-        String username = securityContext.getUserPrincipal().getName();
-        Result<Post> postResult = this.votePostInputPort.votePost(new VotePostInputPortRequest(postId, username, VoteType.NONE));
-
-        if(postResult.isSuccessful()) {
-            return Response.status(Response.Status.OK).location(URI.create("/ui/public/posts/")).build();
-        }
-        return Response.status(Response.Status.BAD_REQUEST).build();
-    }
-
+    // ACTIONS
     @POST
     @Produces(MediaType.TEXT_HTML)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -222,28 +180,63 @@ public class PublicEndpoint {
                 return Response.status(Response.Status.OK).build();
             }
         }
-        return Response.status(Response.Status.OK).build();
-
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     @POST
     @Produces(MediaType.TEXT_HTML)
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Path("/replyTo/{commentId}")
     @RolesAllowed({"admin", "member"})
-    public Response replyToComment(@FormParam("replytext") String replyText, @PathParam("commentId") String commentId, @Context SecurityContext securityContext) {
+    public Response replyToComment(@JsonProperty String replyText, @PathParam("commentId") String commentId, @Context SecurityContext securityContext) {
         String username = securityContext.getUserPrincipal().getName();
         Result<Comment> replyResult = this.replyToCommentInputPort.replyToComment(new ReplyToCommentInputPortRequest(commentId, username, replyText));
 
         if(!replyResult.isSuccessful()) {
-            return Response.status(Response.Status.BAD_REQUEST).location(URI.create("/ui/public/posts")).build();
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
         Result<Post> updatedPostResult = this.getPostByCommentIdInputPort.getPostByCommentId(new GetPostByCommentIdInputPortRequest(replyResult.getData().getId().toString()));
 
         if(updatedPostResult.isSuccessful()) {
-            return Response.status(301).location(URI.create("/ui/public/posts/" + updatedPostResult.getData().getId())).build();
+            return Response.status(Response.Status.OK).build();
         }
-        return Response.status(Response.Status.BAD_REQUEST).location(URI.create("/ui/public/posts")).build();
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
+    @POST
+    @Produces(MediaType.TEXT_HTML)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/posts/{id}/vote")
+    @RolesAllowed({"admin", "member"})
+    public Response votePost(@JsonProperty VoteType voteType, @PathParam("id") String postId, @Context SecurityContext securityContext) {
+        String username = securityContext.getUserPrincipal().getName();
+        Result<Post> postResult = this.votePostInputPort.votePost(new VotePostInputPortRequest(postId, username, voteType));
+
+        if(postResult.isSuccessful()) {
+            return Response.status(Response.Status.OK).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
+    @POST
+    @Produces(MediaType.TEXT_HTML)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/comments/{id}/vote")
+    @RolesAllowed({"admin", "member"})
+    public Response voteComment(@JsonProperty VoteType voteType, @PathParam("id") String postId, @Context SecurityContext securityContext) {
+        String username = securityContext.getUserPrincipal().getName();
+        Result<Comment> commentResult = this.voteCommentInputPort.voteComment(new VoteCommentInputPortRequest(postId, username, voteType));
+
+        if(commentResult.isSuccessful()) {
+            return Response.status(Response.Status.OK).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
+    @GET
+    @Path("/login")
+    public TemplateInstance login(){
+        return Templates.login();
     }
 }

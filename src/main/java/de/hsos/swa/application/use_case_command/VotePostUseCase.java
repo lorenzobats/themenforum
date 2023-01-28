@@ -47,8 +47,11 @@ public class VotePostUseCase implements VotePostInputPort {
         }
         Post post = postResult.getData();
 
-        this.votePostService.votePost(post, user, request.voteType());
+        boolean updated = this.votePostService.votePost(post, user, request.voteType());
 
+       if(!updated) {
+            return Result.success(post);
+        }
 
         Result<Post> updatePostResult = this.postRepository.updatePost(post);
 
