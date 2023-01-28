@@ -3,6 +3,7 @@ package de.hsos.swa.infrastructure.ui;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
 import de.hsos.swa.application.use_case_query.PostFilterParams;
+import de.hsos.swa.application.use_case_query.SortingParams;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
@@ -95,7 +96,7 @@ public class PublicEndpoint {
         if (topic != null) {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             filterParams.put(PostFilterParams.TOPIC, topic);
-            Result<List<Post>> filteredPosts = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, true));
+            Result<List<Post>> filteredPosts = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, true, SortingParams.VOTES));
             return Templates.posts(filteredPosts.getData(), isLoggedIn, username);
         }
         Result<List<Post>> allPosts = getAllPostsInputPort.getAllPosts(true);
@@ -147,7 +148,7 @@ public class PublicEndpoint {
         if (topicResult.isSuccessful()) {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             filterParams.put(PostFilterParams.TOPIC, topicResult.getData().getTitle());
-            Result<List<Post>> postsResult = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, true));
+            Result<List<Post>> postsResult = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, true, SortingParams.VOTES));
 
             if (postsResult.isSuccessful()) {
                 return Templates.topic(topicResult.getData(), postsResult.getData(), isLoggedIn, username);
