@@ -5,15 +5,18 @@ import de.hsos.swa.application.input.dto.in.GetFilteredPostInputPortRequest;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Post;
+import de.hsos.swa.domain.service.SortByDate;
+import de.hsos.swa.domain.service.SortByUpvotes;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
-public class GetFilteredPostsInputPortUseCase implements GetFilteredPostsInputPort {
+public class GetFilteredPostsUseCase implements GetFilteredPostsInputPort {
 
     @Inject
     PostRepository postRepository;
@@ -22,8 +25,16 @@ public class GetFilteredPostsInputPortUseCase implements GetFilteredPostsInputPo
     public Result<List<Post>> getFilteredPosts(GetFilteredPostInputPortRequest request) {
         Result<List<Post>> postsResult = postRepository.getAllFilteredPosts(request.filterParams(), request.includeComments());
         if (postsResult.isSuccessful()) {
-            return Result.success(postsResult.getData());
+
+            List<Post> sortedPosts = new ArrayList<>(postsResult.getData());
+
+            switch (request.sortingParams()) {
+                case SORT_BY_VOTES -> sortedPosts.sort(new SortByUpvotes());
+                case SORT_BY_DATE -> sortedPosts.sort(new SortByDate());
+            }
+            return Result.success(sortedPosts);
         }
+
         return Result.error("Cannot find Posts");
     }
 }

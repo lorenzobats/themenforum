@@ -4,6 +4,8 @@ import de.hsos.swa.application.input.GetAllPostsInputPort;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Post;
+import de.hsos.swa.domain.service.SortByDate;
+import de.hsos.swa.domain.service.SortByUpvotes;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -20,9 +22,11 @@ public class GetAllPostsInputPortUseCase implements GetAllPostsInputPort {
     @Override
     public Result<List<Post>> getAllPosts(boolean includeComments) {
         Result<List<Post>> postsResult = postRepository.getAllPosts(includeComments);
-        if (postsResult.isSuccessful()) {
-            return Result.success(postsResult.getData());
+
+        if (!postsResult.isSuccessful()) {
+            return Result.error("Cannot find Posts");
         }
-        return Result.error("Cannot find Posts");
+
+        return Result.success(postsResult.getData());
     }
 }

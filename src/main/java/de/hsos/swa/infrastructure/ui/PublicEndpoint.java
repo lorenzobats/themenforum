@@ -3,6 +3,7 @@ package de.hsos.swa.infrastructure.ui;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
 import de.hsos.swa.application.use_case_query.PostFilterParams;
+import de.hsos.swa.application.use_case_query.SortingParams;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
@@ -66,9 +67,12 @@ public class PublicEndpoint {
     @Inject
     VoteCommentInputPort voteCommentInputPort;
 
+    @Inject
+    SecurityIdentity securityIdentity;
+
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance posts(List<Post> allPosts);
+        public static native TemplateInstance posts(List<Post> allPosts, String username);
 
         public static native TemplateInstance post(Post post);
 
@@ -83,15 +87,17 @@ public class PublicEndpoint {
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Path("/posts")
-    public TemplateInstance posts(@QueryParam("topic") String topic) {
+    public TemplateInstance posts(@QueryParam("topic") String topic,@DefaultValue("SORT_BY_VOTES") @QueryParam("sortBy")SortingParams sortBy, @Context SecurityContext securityContext) {
+        String username = securityIdentity.isAnonymous() ? "anonym" : securityContext.getUserPrincipal().getName();
+
         if (topic != null) {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             filterParams.put(PostFilterParams.TOPIC, topic);
-            Result<List<Post>> filteredPosts = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, true));
-            return Templates.posts(filteredPosts.getData());
+            Result<List<Post>> filteredPosts = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, true, sortBy));
+            return Templates.posts(filteredPosts.getData(), username);
         }
         Result<List<Post>> allPosts = getAllPostsInputPort.getAllPosts(true);
-        return Templates.posts(allPosts.getData());
+        return Templates.posts(allPosts.getData(), username);
     }
 
     @GET
@@ -117,12 +123,12 @@ public class PublicEndpoint {
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Path("/topics/{id}")
-    public TemplateInstance topic(@PathParam("id") String id) {
+    public TemplateInstance topic(@PathParam("id") String id, @DefaultValue("SORT_BY_VOTES") @QueryParam("sortBy") SortingParams sortBy) {
         Result<Topic> topicResult = getTopicByIdInputPort.getTopicById(new GetTopicByIdInputPortRequest(id));
         if (topicResult.isSuccessful()) {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             filterParams.put(PostFilterParams.TOPIC, topicResult.getData().getTitle());
-            Result<List<Post>> postsResult = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, true));
+            Result<List<Post>> postsResult = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, true, sortBy));
 
             if (postsResult.isSuccessful()) {
                 return Templates.topic(topicResult.getData(), postsResult.getData());

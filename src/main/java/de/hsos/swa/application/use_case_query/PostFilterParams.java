@@ -1,6 +1,5 @@
 package de.hsos.swa.application.use_case_query;
 
-import javax.swing.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -11,10 +10,7 @@ public enum PostFilterParams {
     DATE_FROM(LocalDateTime.class),
     DATE_TO(LocalDateTime.class),
 
-    TOPIC(String.class),
-
-    SORT_BY(String.class),
-    SORT_ORDER(SortOrder.class);
+    TOPIC(String.class);
 
     private final Class<?> paramType;
 

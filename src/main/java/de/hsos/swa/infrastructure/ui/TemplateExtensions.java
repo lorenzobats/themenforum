@@ -18,14 +18,6 @@ import java.util.Stack;
 @TemplateExtension
 public class TemplateExtensions {
 
-    public static Integer totalVotes(Post post) {
-        return post.getUpvotes() - post.getDownvotes();
-    }
-
-    public static Integer totalVotes(Comment comment) {
-        return comment.getUpvotes() - comment.getDownvotes();
-    }
-
     public static String parsedCreatedAtDate(Post post) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
         return post.getCreatedAt().format(formatter);

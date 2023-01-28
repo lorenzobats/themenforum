@@ -146,6 +146,10 @@ public class Comment {
         return voting;
     }
 
+    public Integer getTotalVotes() {
+        return this.getUpvotes() - this.getDownvotes();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -2,6 +2,7 @@ package de.hsos.swa.infrastructure.rest;
 
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
+import de.hsos.swa.application.use_case_query.SortingParams;
 import de.hsos.swa.infrastructure.rest.dto.in.VotePostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
@@ -72,8 +73,7 @@ public class PostRestAdapter {
                                 @QueryParam("dateFrom") LocalDateTime dateFrom,
                                 @QueryParam("dateTo") LocalDateTime dateTo,
                                 @QueryParam("topic") String topic,
-                                @QueryParam("sortBy") String sortBy,
-                                @QueryParam("sortOrder") SortOrder sortOrder) {
+                                @DefaultValue("SORT_BY_VOTES") @QueryParam("sortBy") SortingParams sortBy) {
         try {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             if (username != null)
@@ -86,17 +86,15 @@ public class PostRestAdapter {
                 filterParams.put(PostFilterParams.DATE_TO, dateTo);
             if(topic != null)
                 filterParams.put(PostFilterParams.TOPIC, topic);
-            if (sortBy != null)
-                filterParams.put(PostFilterParams.SORT_BY, sortBy); // TODO: Implementieren nach Datum / nach anzahlUpvotes
-            if (sortOrder != null)
-                filterParams.put(PostFilterParams.SORT_ORDER, sortOrder);   // TODO: Implementieren
 
-            GetFilteredPostInputPortRequest query = new GetFilteredPostInputPortRequest(filterParams, includeComments);
+            GetFilteredPostInputPortRequest query = new GetFilteredPostInputPortRequest(filterParams, includeComments, sortBy);
             Result<List<Post>> postsResult = this.getFilteredPostsInputPort.getFilteredPosts(query);
+
             if (postsResult.isSuccessful()) {
                 List<PostDto> postsResponse = postsResult.getData().stream().map(PostDto.Converter::fromDomainEntity).toList();
                 return Response.status(Response.Status.OK).entity(postsResponse).build();
             }
+
             return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(postsResult.getMessage())).build();
         } catch (DateTimeParseException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getMessage())).build();

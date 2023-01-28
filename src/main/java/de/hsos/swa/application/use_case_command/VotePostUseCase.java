@@ -7,10 +7,9 @@ import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
-import de.hsos.swa.domain.service.VoteService;
+import de.hsos.swa.domain.service.VotePostService;
 import org.jboss.logging.Logger;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -27,7 +26,7 @@ public class VotePostUseCase implements VotePostInputPort {
     UserRepository userRepository;
 
     @Inject
-    VoteService voteService;
+    VotePostService votePostService;
 
     @Inject
     Logger log;
@@ -48,7 +47,7 @@ public class VotePostUseCase implements VotePostInputPort {
         }
         Post post = postResult.getData();
 
-        this.voteService.votePost(post, user, request.voteType());
+        this.votePostService.votePost(post, user, request.voteType());
 
 
         Result<Post> updatePostResult = this.postRepository.updatePost(post);

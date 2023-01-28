@@ -8,9 +8,8 @@ import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
-import de.hsos.swa.domain.service.VoteService;
+import de.hsos.swa.domain.service.VoteCommentService;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -28,7 +27,7 @@ public class VoteCommentUseCase implements VoteCommentInputPort {
     UserRepository userRepository;
 
     @Inject
-    VoteService voteService;
+    VoteCommentService voteCommentService;
 
 
     @Override
@@ -47,7 +46,7 @@ public class VoteCommentUseCase implements VoteCommentInputPort {
         Post post = postResult.getData();
 
         try {
-            this.voteService.voteComment(post, user, request.commentId(), request.voteType());
+            this.voteCommentService.voteComment(post, user, request.commentId(), request.voteType());
         } catch (Exception e) {
             return Result.error(e.getMessage());
         }

@@ -1,6 +1,7 @@
 package de.hsos.swa.application.input;
 
 import de.hsos.swa.application.input.dto.in.GetFilteredPostInputPortRequest;
+import de.hsos.swa.application.use_case_query.SortingParams;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Post;
 

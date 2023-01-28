@@ -1,6 +1,5 @@
 package de.hsos.swa.infrastructure.rest.dto.out;
 import de.hsos.swa.domain.entity.Post;
-import de.hsos.swa.infrastructure.persistence.view.PostPersistenceView;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,8 +14,8 @@ public class PostDto {
 
     public TopicDto topic;
     public List<CommentDto> comments;
-    public Integer downVoteCount;
-    public Integer upVoteCount;
+    public Integer downvoteCount;
+    public Integer upvoteCount;
 
 
     public PostDto(String id, String title) {
@@ -24,7 +23,7 @@ public class PostDto {
         this.title = title;
     }
 
-    public PostDto(String id, String title, String content, LocalDateTime createdAt, String creator, TopicDto topic, List<CommentDto> comments, Integer downVoteCount, Integer upVoteCount) {
+    public PostDto(String id, String title, String content, LocalDateTime createdAt, String creator, TopicDto topic, List<CommentDto> comments, Integer downvoteCount, Integer upvoteCount) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -32,8 +31,8 @@ public class PostDto {
         this.creator = creator;
         this.topic = topic;
         this.comments = comments;
-        this.downVoteCount = downVoteCount;
-        this.upVoteCount = upVoteCount;
+        this.downvoteCount = downvoteCount;
+        this.upvoteCount = upvoteCount;
     }
 
     public static class Converter {
@@ -50,11 +49,6 @@ public class PostDto {
                     comments,
                     post.getDownvotes(),
                     post.getUpvotes());
-        }
-
-        // TODO: TEST
-        public static PostDto fromPersistenceEntity(PostPersistenceView post) {
-            return new PostDto(post.id().toString(), post.title());
         }
     }
 }
