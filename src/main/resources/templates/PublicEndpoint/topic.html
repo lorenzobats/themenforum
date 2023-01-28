@@ -32,10 +32,10 @@
         <h5 class="title-info">{entry.title}</h5>
         <span class="sub-info">{entry.parsedCreatedAtDate} |
             by <a href="#">{entry.creator.name}</a> |
-            <a href="http://localhost:8080/ui/public/topics/{entry.topic.id}">{entry.topic.title}</a> |
+            <a href="/ui/public/topics/{entry.topic.id}">{entry.topic.title}</a> |
             {entry.commentCount} comments |
         </span>
-        <a href="http://localhost:8080/ui/public/posts/{entry.id}">read</a>
+        <a href="/ui/public/posts/{entry.id}">read</a>
         </div>
         </div>
         {/}

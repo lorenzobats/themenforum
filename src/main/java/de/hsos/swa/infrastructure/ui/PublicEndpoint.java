@@ -68,56 +68,81 @@ public class PublicEndpoint {
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance posts(List<Post> allPosts);
+        public static native TemplateInstance posts(List<Post> allPosts, boolean isLoggedIn, String username);
 
-        public static native TemplateInstance post(Post post);
+        public static native TemplateInstance post(Post post, boolean isLoggedIn, String username);
 
-        public static native TemplateInstance topics(List<Topic> allTopics);
+        public static native TemplateInstance topics(List<Topic> allTopics, boolean isLoggedIn, String username);
 
-        public static native TemplateInstance topic(Topic topic, List<Post> posts);
+        public static native TemplateInstance topic(Topic topic, List<Post> posts, boolean isLoggedIn, String username);
 
-        public static native TemplateInstance comment(Comment comment);
+        public static native TemplateInstance comment(Comment comment, boolean isLoggedIn, String username);
 
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Path("/posts")
-    public TemplateInstance posts(@QueryParam("topic") String topic) {
+    @PermitAll
+    public TemplateInstance posts(@QueryParam("topic") String topic, @Context SecurityContext securityContext) {
+        boolean isLoggedIn = false;
+        String username = "";
+        if (securityContext.getUserPrincipal() != null) {
+            username = securityContext.getUserPrincipal().getName();
+            isLoggedIn = true;
+        }
+
         if (topic != null) {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             filterParams.put(PostFilterParams.TOPIC, topic);
             Result<List<Post>> filteredPosts = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, true));
-            return Templates.posts(filteredPosts.getData());
+            return Templates.posts(filteredPosts.getData(), isLoggedIn, username);
         }
         Result<List<Post>> allPosts = getAllPostsInputPort.getAllPosts(true);
-        return Templates.posts(allPosts.getData());
+        return Templates.posts(allPosts.getData(), isLoggedIn, username);
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Path("/posts/{id}")
-    public TemplateInstance post(@PathParam("id") String id, @DefaultValue("true") @QueryParam("includeComments") boolean includeComments) {
+    public TemplateInstance post(@PathParam("id") String id, @DefaultValue("true") @QueryParam("includeComments") boolean includeComments, @Context SecurityContext securityContext) {
+        boolean isLoggedIn = false;
+        String username = "";
+        if (securityContext.getUserPrincipal() != null) {
+            username = securityContext.getUserPrincipal().getName();
+            isLoggedIn = true;
+        }
         Result<Post> postResult = getPostByIdInputPort.getPostById(new GetPostByIdInputPortRequest(id, includeComments));
         if (postResult.isSuccessful()) {
-            return Templates.post(postResult.getData());
+            return Templates.post(postResult.getData(), isLoggedIn, username);
         }
-
-        return Templates.post(null);
+        return Templates.post(null, isLoggedIn, username);
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Path("/topics")
-    public TemplateInstance topics() {
+    public TemplateInstance topics(@Context SecurityContext securityContext) {
+        boolean isLoggedIn = false;
+        String username = "";
+        if (securityContext.getUserPrincipal() != null) {
+            username = securityContext.getUserPrincipal().getName();
+            isLoggedIn = true;
+        }
         Result<List<Topic>> allTopics = getAllTopicsInputPort.getAllTopics();
-        return Templates.topics(allTopics.getData());
+        return Templates.topics(allTopics.getData(), isLoggedIn, username);
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Path("/topics/{id}")
-    public TemplateInstance topic(@PathParam("id") String id) {
+    public TemplateInstance topic(@PathParam("id") String id, @Context SecurityContext securityContext) {
+        boolean isLoggedIn = false;
+        String username = "";
+        if (securityContext.getUserPrincipal() != null) {
+            username = securityContext.getUserPrincipal().getName();
+            isLoggedIn = true;
+        }
         Result<Topic> topicResult = getTopicByIdInputPort.getTopicById(new GetTopicByIdInputPortRequest(id));
         if (topicResult.isSuccessful()) {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
@@ -125,10 +150,10 @@ public class PublicEndpoint {
             Result<List<Post>> postsResult = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, true));
 
             if (postsResult.isSuccessful()) {
-                return Templates.topic(topicResult.getData(), postsResult.getData());
+                return Templates.topic(topicResult.getData(), postsResult.getData(), isLoggedIn, username);
             }
         }
-        return Templates.topic(null, null);
+        return Templates.topic(null, null, isLoggedIn, username);
     }
 
     @GET
