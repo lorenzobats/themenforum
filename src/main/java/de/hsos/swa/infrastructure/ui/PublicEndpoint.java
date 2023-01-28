@@ -39,8 +39,6 @@ import java.util.Map;
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
 public class PublicEndpoint {
 
-    @Inject
-    GetAllPostsInputPort getAllPostsInputPort;
 
     @Inject
     GetFilteredPostsInputPort getFilteredPostsInputPort;
@@ -104,7 +102,8 @@ public class PublicEndpoint {
             Result<List<Post>> filteredPosts = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, true, SortingParams.VOTES));
             return Templates.posts(filteredPosts.getData(), isLoggedIn, username);
         }
-        Result<List<Post>> allPosts = getAllPostsInputPort.getAllPosts(true);
+        GetFilteredPostInputPortRequest request = new GetFilteredPostInputPortRequest(new HashMap<>(), true, SortingParams.VOTES);
+        Result<List<Post>> allPosts = getFilteredPostsInputPort.getFilteredPosts(request);
         return Templates.posts(allPosts.getData(), isLoggedIn, username);
     }
 
@@ -191,6 +190,7 @@ public class PublicEndpoint {
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
+
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -205,16 +205,6 @@ public class PublicEndpoint {
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
-
-
-//    @GET
-//    @Produces(MediaType.TEXT_HTML)
-//    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-//    @Path("/posts/{id}/upvotes")
-//    @RolesAllowed({"admin", "member"})
-//    public Response voteComment(@PathParam("id") String commentId) {
-//
-//    }
 
     @POST
     @Produces(MediaType.TEXT_HTML)

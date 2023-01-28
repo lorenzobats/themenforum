@@ -6,6 +6,10 @@ import java.util.Comparator;
 
 public class SortByDate implements Comparator<Post> {
     public int compare(Post a, Post b) {
-        return b.getCreatedAt().compareTo(a.getCreatedAt());
+        int result = b.getCreatedAt().compareTo(a.getCreatedAt());
+        if(result == 0) {
+            result = b.getTotalVotes().compareTo(a.getTotalVotes());
+        }
+        return result;
     }
 }
