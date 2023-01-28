@@ -34,13 +34,20 @@
     </div>
 
     <div class="comment-form">
-        <form action="/ui/public/comments/{post.id}" method="post">
+        {!<form action="/ui/public/comments/{post.id}" method="post">!}
+            {!<label for="text" style="display: block; font-weight: bold">write a comment</label>!}
+            {!<textarea style="display: block; width: 100%" id="text" name="text" required></textarea>!}
+            {!<div style="margin-top: 12px;">!}
+                {!<button class="btn btn-primary" type="submit">post comment</button>!}
+            {!</div>!}
+        {!</form>!}
+        <div>
             <label for="text" style="display: block; font-weight: bold">write a comment</label>
-            <textarea style="display: block; width: 100%" id="text" name="text" required></textarea>
+            <textarea style="display: block; width: 100%" id="{post.id}-text" name="text" required></textarea>
             <div style="margin-top: 12px;">
-                <button class="btn btn-primary" type="submit">post comment</button>
+                <button class="btn btn-primary" id="submit-btn" onClick="submitComment('{post.id}')">post comment</button>
             </div>
-        </form>
+        </div>
     </div>
 
     <div class="comments-wrapper">
@@ -75,5 +82,27 @@
 
 </body>
 
+<script>
+    function submitComment(commentId) {
+        let commentText = document.getElementById("{post.id}-text").value;
+        let url = '/ui/public/comments/' + commentId;
+        fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(commentText),
+        })
+            .then(() => {
+                location.reload();
+            })
+            .catch(error => console.error(error));
+    }
+</script>
 
 </html>

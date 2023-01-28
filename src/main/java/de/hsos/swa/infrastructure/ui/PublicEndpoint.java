@@ -1,5 +1,6 @@
 package de.hsos.swa.infrastructure.ui;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
 import de.hsos.swa.application.use_case_query.PostFilterParams;
@@ -14,6 +15,7 @@ import de.hsos.swa.infrastructure.rest.dto.in.ReplyToCommentRestAdapterRequest;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 import io.quarkus.security.identity.SecurityIdentity;
+import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import javax.annotation.security.PermitAll;
@@ -66,6 +68,9 @@ public class PublicEndpoint {
 
     @Inject
     VoteCommentInputPort voteCommentInputPort;
+
+    @Inject
+    Logger log;
 
     @CheckedTemplate
     public static class Templates {
@@ -167,7 +172,7 @@ public class PublicEndpoint {
         Result<Post> postResult = this.votePostInputPort.votePost(new VotePostInputPortRequest(postId, username, VoteType.UP));
 
         if(postResult.isSuccessful()) {
-            return Response.status(301).location(URI.create("/ui/public/posts/")).build();
+            return Response.status(Response.Status.OK).location(URI.create("/ui/public/posts/")).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -182,7 +187,7 @@ public class PublicEndpoint {
         Result<Post> postResult = this.votePostInputPort.votePost(new VotePostInputPortRequest(postId, username, VoteType.DOWN));
 
         if(postResult.isSuccessful()) {
-            return Response.status(301).location(URI.create("/ui/public/posts/")).build();
+            return Response.status(Response.Status.OK).location(URI.create("/ui/public/posts/")).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -196,7 +201,7 @@ public class PublicEndpoint {
         Result<Post> postResult = this.votePostInputPort.votePost(new VotePostInputPortRequest(postId, username, VoteType.NONE));
 
         if(postResult.isSuccessful()) {
-            return Response.status(301).location(URI.create("/ui/public/posts/")).build();
+            return Response.status(Response.Status.OK).location(URI.create("/ui/public/posts/")).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -213,22 +218,21 @@ public class PublicEndpoint {
 
     @POST
     @Produces(MediaType.TEXT_HTML)
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Path("/comments/{id}")
     @RolesAllowed({"admin", "member"})
-    public Response commentPost(@FormParam("text") String commentText, @PathParam("id") String postId, @Context SecurityContext securityContext) {
+    public Response commentPost(@JsonProperty String commentText, @PathParam("id") String postId, @Context SecurityContext securityContext) {
         String username = securityContext.getUserPrincipal().getName();
-
         Result<Comment> commentResult = this.commentPostInputPort.commentPost(new CommentPostInputPortRequest(postId, username, commentText));
 
         if (commentResult.isSuccessful()) {
             Result<Post> updatedPostResult = this.getPostByIdInputPort.getPostById(new GetPostByIdInputPortRequest(postId, true));
 
             if (updatedPostResult.isSuccessful()) {
-                return Response.status(301).location(URI.create("/ui/public/posts/" + updatedPostResult.getData().getId())).build();
+                return Response.status(Response.Status.OK).build();
             }
         }
-        return Response.status(Response.Status.BAD_REQUEST).location(URI.create("/ui/public/posts")).build();
+        return Response.status(Response.Status.OK).build();
 
     }
 
