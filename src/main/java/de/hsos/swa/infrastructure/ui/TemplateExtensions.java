@@ -4,17 +4,11 @@ import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.Topic;
+import de.hsos.swa.infrastructure.ui.dto.CommentWithDepth;
 import io.quarkus.qute.TemplateExtension;
-import io.quarkus.security.identity.SecurityIdentity;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.SecurityContext;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 @TemplateExtension
 public class TemplateExtensions {
@@ -58,4 +52,23 @@ public class TemplateExtensions {
         return flatComments;
     }
 
+    public static List<CommentWithDepth> commentsFlatWithDepth(Post post) {
+        List<CommentWithDepth> flatComments = new ArrayList<>();
+        Stack<CommentWithDepth> stack = new Stack<>();
+        for (Comment comment : post.getComments()) {
+            stack.push(new CommentWithDepth(comment, 0));
+        }
+
+        while (!stack.isEmpty()) {
+            CommentWithDepth current = stack.pop();
+            flatComments.add(current);
+
+            if (current.object().getReplies() != null && !current.object().getReplies().isEmpty()) {
+                for (Comment reply : current.object().getReplies()) {
+                    stack.push(new CommentWithDepth(reply, current.depth() + 1));
+                }
+            }
+        }
+        return flatComments;
+    }
 }

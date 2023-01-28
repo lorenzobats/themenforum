@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Login</title>
+    <title>Register</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/assets/styles.css">
@@ -14,24 +14,26 @@
 <div class="container">
     <div class="header">
         <div class="mb-4">
-            <h1 class="mt-4">Login</h1>
+            <h1 class="mt-4">Register</h1>
         </div>
     </div>
-    <form action="j_security_check" method="post" class="container">
+    <form action="register()" class="container">
         <div class="form-group">
             <label><b>Username</b></label>
-            <input type="text" placeholder="Enter Username" name="j_username" required>
+            <input type="text" placeholder="Enter Username" name="username" required>
         </div>
         <div class="form-group mb-4">
             <label><b>Password</b></label>
-            <input type="password" placeholder="Enter Password" name="j_password" required>
+            <input type="password" placeholder="Enter Password" name="password" required>
         </div>
-        <button type="submit" class="btn btn-primary">Login</button>
+        <button type="submit" class="btn btn-primary">Register</button>
     </form>
 </div>
 </body>
 <script>
-
+function register(){
+    console.log("register");
+}
 </script>
 </html>
 

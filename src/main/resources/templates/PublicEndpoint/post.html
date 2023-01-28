@@ -13,81 +13,128 @@
 </head>
 <body>
 <div class="container mt-4">
-    <p><a href="/ui/public/posts">[Browse Posts]</a></p>
-    <div style="display: flex; align-items: center; margin-bottom: 20px">
-        <div style="margin-right: 4px;">
-            <a href="#" onclick="votePost('{post.id}','NONE')">X</a>
-        </div>
-        <div class="vote-container">
-
-            <div class="vote"><a href="#" onclick="votePost('{post.id}','UP')">«</a></div>
-            <div>{post.totalVotes}</div>
-            <div class="vote"><a href="#" onclick="votePost('{post.id}','DOWN')">»</a></div>
+    <div class="header">
+        <div>
+            <p><a href="/ui/public/posts">[Browse Posts]</a></p>
+            <div style="display: flex; align-items: center; margin-bottom: 20px">
+                {#if isLoggedIn}
+                <div style="margin-right: 4px;">
+                    <a href="#" onclick="votePost('{post.id}','NONE')">X</a>
+                </div>
+                <div class="vote-container">
+                    <div class="vote"><a href="#" onclick="votePost('{post.id}','UP')">«</a></div>
+                    <div>{post.totalVotes}</div>
+                    <div class="vote"><a href="#" onclick="votePost('{post.id}','DOWN')">»</a></div>
+                </div>
+                {/if}
+                <div>
+                    <h2 class="title-info">{post.title}</h2>
+                </div>
+            </div>
         </div>
         <div>
-            <h2 class="title-info">{post.title}</h2>
+            {#if isLoggedIn}
+                Logged in as: {username}
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            {#else}
+                <button class="btn btn-primary" onclick="login()">Login</button>
+                <button class="btn btn-light" onclick="window.open('/ui/public/register', '_blank')">Register</button>
+            {/if}
         </div>
     </div>
+
     <span class="sub-info">{post.parsedCreatedAtDate} |
-            by <a href="#">{post.creator.name}</a> |
+        by <strong>{post.creator.name}</strong> |
             <a href="/ui/public/topics/{post.topic.id}">{post.topic.title}</a> |
-            {post.commentCount} comments</span>
+            {post.commentCount} comments
+            {#if !isLoggedIn} | voting: {post.totalVotes}{/if}</span>
     <div class="post-content" style="margin-top: 20px;">
         <p>{post.content}</p>
     </div>
 
+    {#if isLoggedIn}
     <div class="comment-form">
         <div>
             <label for="text" style="display: block; font-weight: bold">write a comment</label>
-            <textarea style="display: block; width: 100%" id="{post.id}-text" name="text" required></textarea>
+            <textarea style="display: block; width: 100%" id="{post.id}-text" name="text" maxlength="250" minlength="1" required></textarea>
             <div style="margin-top: 12px;">
                 <button class="btn btn-primary" id="submit-btn" onClick="submitComment('{post.id}')">post comment</button>
             </div>
         </div>
     </div>
-
+    {/if}
     <div class="comments-wrapper">
-        {#for comment in post.commentsFlat}
-            <div class="content-box">
+        {#for comment in post.commentsFlatWithDepth}
+            {#if comment.object.isActive}
+            <div class="content-box" style="margin-left: {comment.depth}00px" id="{comment.object.id}">
+            {#if isLoggedIn}
             <div style="margin-right: 4px;">
-                <a href="#" onclick="voteComment('{comment.id}','NONE')">X</a>
+                <a href="#" onclick="voteComment('{comment.object.id}','NONE')">X</a>
             </div>
-            <div class="vote-container">
 
-                <div class="vote"><a href="#" onclick="voteComment('{comment.id}','UP')">«</a></div>
-                <div>{comment.totalVotes}</div>
-                <div class="vote"><a href="#" onclick="voteComment('{comment.id}','DOWN')">»</a></div>
+            <div class="vote-container">
+                <div class="vote"><a href="#" onclick="voteComment('{comment.object.id}','UP')">«</a></div>
+                <div>{comment.object.totalVotes}</div>
+                <div class="vote"><a href="#" onclick="voteComment('{comment.object.id}','DOWN')">»</a></div>
             </div>
+                {#else}
+                    <div style="margin-right: 10px">{comment.object.totalVotes}</div>
+            {/if}
             <div style="width: 100%">
             <span class="sub-info">
-            by <a href="#">{comment.user.name}</a> |
-            {comment.parsedCreatedAtDate}</span>
-            {#if comment.parentComment}
-                <br><span>Reply to: {comment.parentComment.text} | by {comment.parentComment.user.name}</span>
-            {/if}
-            <p style="font-weight: bolder">{comment.text}</p>
+                by <strong>{comment.object.user.name}</strong> |
+            {comment.object.parsedCreatedAtDate}
+                {#if comment.object.parentComment} | <a href="#{comment.object.parentComment.id}">goto parent</a>{/if}
+                {#if isLoggedIn} | <a href="#{comment.object.id}" id="{comment.object.id}-toggle-btn" onClick="toggleReply('{comment.object.id}')">reply</a>{/if}
+                {#if username == comment.object.user.name} | <a style="color: red" href="#{comment.object.id}" id="{comment.object.id}-delete-btn" onClick="deleteComment('{comment.object.id}')">delete</a>{/if}
 
-
+            </span>
+            {!{#if comment.object.parentComment}!}
+                {!<br><span>Reply to: <a>{comment.object.parentComment.text}</a> | by {comment.object.parentComment.user.name}</span>!}
+            {!{/if}!}
+            <div class="post-content" style="margin-top: 20px;">
+                <p>{comment.object.text}</p>
+            </div>
+            {#if isLoggedIn}
             <div class="comment-form">
-                <div>
-                    <textarea style="display: block; width: 100%" id="{comment.id}-text" name="replytext" required placeholder="your reply..."></textarea>
+                <div id="{comment.object.id}-box" style="display: none">
+                <textarea style="display: block; width: 100%" id="{comment.object.id}-text" name="replytext" maxlength="250" minlength="1" required placeholder="your reply..."></textarea>
                     <div style="margin-top: 12px;">
-                        <button class="btn btn-secondary" id="submit-btn" onClick="submitReply('{comment.id}')">reply</button>
+                        <button class="btn btn-secondary" id="submit-btn" onClick="submitReply('{comment.object.id}')">post reply</button>
                     </div>
                 </div>
+                </div>
+                {/if}
             </div>
             </div>
-            </div>
+            {#else}
+                <div class="content-box" style="margin-left: {comment.depth}00px" id="{comment.object.id}">
+                {!<div style="margin-right: 10px">{comment.object.totalVotes}</div>!}
+                <div style="width: 100%">
+                <div class="post-content" style="margin-top: 0;">
+                    <p style="color: gray; margin-bottom: 0">{comment.object.text}</p>
+                </div>
+                </div>
+                </div>
+            {/if}
             {/}
     </div>
-</div>
-
 </body>
-
 <script>
-    function submitComment(postId) {
 
-        let commentText = document.getElementById(postId + "-text").value;
+    function toggleReply(commentId) {
+        document.getElementById(commentId + "-box").style.display = "block";
+        document.getElementById(commentId + "-toggle-btn").style.display = "none";
+        console.log(commentId);
+    }
+
+    function submitComment(postId) {
+        let commentText = document.getElementById(postId + "-text");
+        if (!commentText.checkValidity()) {
+            return;
+        }
+
+        let data = { "commentText" : commentText.value};
         let url = '/ui/public/comments/' + postId;
         fetch(url, {
             method: 'POST',
@@ -99,10 +146,16 @@
             },
             redirect: 'follow',
             referrerPolicy: 'no-referrer',
-            body: JSON.stringify(commentText),
+            body: JSON.stringify(data),
         })
-            .then(() => {
-                location.reload();
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    response.text().then(errorMessage => {
+                       // console.log(errorMessage);
+                    });
+                }
             })
             .catch(error => {
                 console.error(error);
@@ -110,8 +163,11 @@
     }
 
     function submitReply(commentId) {
-
-        let replyText = document.getElementById(commentId + "-text").value;
+        let replyText = document.getElementById(commentId + "-text");
+        if (!replyText.checkValidity()) {
+            return;
+        }
+        let data = { "replyText" : replyText.value};
         let url = '/ui/public/replyTo/' + commentId;
         fetch(url, {
             method: 'POST',
@@ -123,10 +179,16 @@
             },
             redirect: 'follow',
             referrerPolicy: 'no-referrer',
-            body: JSON.stringify(replyText),
+            body: JSON.stringify(data),
         })
-            .then(() => {
-                location.reload();
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    response.text().then(errorMessage => {
+                        //console.log(errorMessage);
+                    });
+                }
             })
             .catch(error => {
                 console.error(error);
@@ -147,8 +209,14 @@
             referrerPolicy: 'no-referrer',
             body: JSON.stringify(voteType),
         })
-            .then(() => {
-                location.reload();
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    response.text().then(errorMessage => {
+                        //console.log(errorMessage);
+                    });
+                }
             })
             .catch(error => {
                 console.error(error);
@@ -188,5 +256,32 @@
         window.open("/ui/public/login", "_self")
     }
 
+    function deleteComment(commentId) {
+        let url = '/ui/public/comments/' + commentId;
+        fetch(url, {
+            method: 'DELETE',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+        })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    response.text().then(errorMessage => {
+                        //console.log(errorMessage);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
 </script>
+
 </html>

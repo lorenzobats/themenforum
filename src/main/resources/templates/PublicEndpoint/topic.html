@@ -11,43 +11,84 @@
 </head>
 <body>
 <div class="container">
-    <h1 class="mt-4"><span>Topic:</span> {topic.title}</h1>
-    <p><a href="/ui/public/topics">[Browse Topics]</a></p>
-
-    <div style="display: flex">
-        <p><a href="#">Pupular</a></p>
+    <div class="header">
+        <div>
+            <h1 class="mt-4"><span>Topic[</span>{topic.title}<span>]</span></h1>
+            <p><a href="/ui/public/topics">[Browse Topics]</a></p>
+        </div>
+        <div>
+            {#if isLoggedIn}
+                Logged in as: {username}
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            {#else}
+                <button class="btn btn-primary" onclick="login()">Login</button>
+                <button class="btn btn-light" onclick="window.open('/ui/public/register', '_blank')">Register</button>
+            {/if}
+        </div>
+    </div>
+    <div class="sort-selector" style="display: flex">
+        <p><a href="#">Popular</a></p>
         <p style="margin-left: 4px; margin-right: 4px;"> | </p>
         <p><a href="#">New</a></p>
     </div>
 
     {#for entry in posts}
         <div class="content-box">
-        <div class="vote-container"
-             style="margin-right: 12px; display: flex; flex-direction: column; align-items: center">
-            <div class="vote"><a href="">«</a></div>
+        {#if isLoggedIn}
+            <div style="margin-right: 4px;">
+                <a href="#" onclick="vote('{entry.id}','NONE')">X</a>
+            </div>
+            <div class="vote-container">
+
+            <div class="vote"><a href="#" onclick="vote('{entry.id}','UP')">«</a></div>
             <div>{entry.totalVotes}</div>
-            <div class="vote"><a href="">»</a></div>
-        </div>
+            <div class="vote"><a href="#" onclick="vote('{entry.id}','DOWN')">»</a></div>
+            </div>
+            {#else}
+                <div style="margin-right: 10px">{entry.totalVotes}</div>
+        {/if}
+
+
         <div>
-        <h5 class="title-info">{entry.title}</h5>
+        <h5 style="cursor: pointer" onclick="window.open('/ui/public/posts/{entry.id}', '_self')" class="title-info">{entry.title}</h5>
         <span class="sub-info">{entry.parsedCreatedAtDate} |
-            by <a href="#">{entry.creator.name}</a> |
+            by <strong>{entry.creator.name}</strong> |
             <a href="/ui/public/topics/{entry.topic.id}">{entry.topic.title}</a> |
             {entry.commentCount} comments |
+            <a href="/ui/public/posts/{entry.id}">read</a>
         </span>
-        <a href="/ui/public/posts/{entry.id}">read</a>
         </div>
         </div>
         {/}
 </div>
 </body>
 <script>
+    function vote(postId, voteType) {
+        let url = '/ui/public/posts/' + postId + '/vote';
+        fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(voteType),
+        })
+            .then(() => {
+                location.reload();
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
     function logout() {
         document.cookie = "quarkus-credential=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         document.cookie = "quarkus-redirect-location=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         location.reload();
     }
-
     function login() {
         document.cookie = "quarkus-redirect-location=" + window.location;
         window.open("/ui/public/login", "_self")

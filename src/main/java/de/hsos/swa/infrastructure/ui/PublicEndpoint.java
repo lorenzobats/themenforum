@@ -13,6 +13,9 @@ import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.domain.entity.VoteType;
 import de.hsos.swa.infrastructure.rest.VoteRestAdapter;
 import de.hsos.swa.infrastructure.rest.dto.in.ReplyToCommentRestAdapterRequest;
+import de.hsos.swa.infrastructure.ui.dto.in.CommentPostUIRequest;
+import de.hsos.swa.infrastructure.ui.dto.in.DeletePostUIRequest;
+import de.hsos.swa.infrastructure.ui.dto.in.ReplyToCommentUIRequest;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -69,6 +72,14 @@ public class PublicEndpoint {
     VoteCommentInputPort voteCommentInputPort;
 
     @Inject
+    DeletePostInputPort deletePostInputPort;
+
+
+    @Inject
+    DeleteCommentInputPort deleteCommentInputPort;
+
+
+    @Inject
     Logger log;
 
     @CheckedTemplate
@@ -83,7 +94,20 @@ public class PublicEndpoint {
 
         public static native TemplateInstance comment(Comment comment, boolean isLoggedIn, String username);
         public static native TemplateInstance login();
+        public static native TemplateInstance register();
 
+    }
+
+    @GET
+    @Path("/login")
+    public TemplateInstance login(){
+        return Templates.login();
+    }
+
+    @GET
+    @Path("/register")
+    public TemplateInstance register(){
+        return Templates.register();
     }
 
     @GET
@@ -164,27 +188,21 @@ public class PublicEndpoint {
     }
 
 
-
-
-
     // ACTIONS
     @POST
     @Produces(MediaType.TEXT_HTML)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/comments/{id}")
     @RolesAllowed({"admin", "member"})
-    public Response commentPost(@JsonProperty String commentText, @PathParam("id") String postId, @Context SecurityContext securityContext) {
+    public Response commentPost(@JsonProperty CommentPostUIRequest request, @PathParam("id") String postId, @Context SecurityContext securityContext) {
         String username = securityContext.getUserPrincipal().getName();
-        Result<Comment> commentResult = this.commentPostInputPort.commentPost(new CommentPostInputPortRequest(postId, username, commentText));
+        Result<Comment> commentResult = this.commentPostInputPort.commentPost(new CommentPostInputPortRequest(postId, username, request.commentText()));
 
-        if (commentResult.isSuccessful()) {
-            Result<Post> updatedPostResult = this.getPostByIdInputPort.getPostById(new GetPostByIdInputPortRequest(postId, true));
-
-            if (updatedPostResult.isSuccessful()) {
-                return Response.status(Response.Status.OK).build();
-            }
+        if (!commentResult.isSuccessful()) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        return Response.status(Response.Status.BAD_REQUEST).build();
+        return Response.status(Response.Status.OK).build();
+
     }
 
     @POST
@@ -192,20 +210,15 @@ public class PublicEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/replyTo/{commentId}")
     @RolesAllowed({"admin", "member"})
-    public Response replyToComment(@JsonProperty String replyText, @PathParam("commentId") String commentId, @Context SecurityContext securityContext) {
+    public Response replyToComment(@JsonProperty ReplyToCommentUIRequest request, @PathParam("commentId") String commentId, @Context SecurityContext securityContext) {
         String username = securityContext.getUserPrincipal().getName();
-        Result<Comment> replyResult = this.replyToCommentInputPort.replyToComment(new ReplyToCommentInputPortRequest(commentId, username, replyText));
+        Result<Comment> replyResult = this.replyToCommentInputPort.replyToComment(new ReplyToCommentInputPortRequest(commentId, username, request.replyText()));
 
         if(!replyResult.isSuccessful()) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        Result<Post> updatedPostResult = this.getPostByCommentIdInputPort.getPostByCommentId(new GetPostByCommentIdInputPortRequest(replyResult.getData().getId().toString()));
-
-        if(updatedPostResult.isSuccessful()) {
-            return Response.status(Response.Status.OK).build();
-        }
-        return Response.status(Response.Status.BAD_REQUEST).build();
+        return Response.status(Response.Status.OK).build();
     }
 
     @POST
@@ -238,9 +251,34 @@ public class PublicEndpoint {
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-    @GET
-    @Path("/login")
-    public TemplateInstance login(){
-        return Templates.login();
+
+    @DELETE
+    @Produces(MediaType.TEXT_HTML)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/posts/{id}")
+    @RolesAllowed({"admin", "member"})
+    public Response deletePost(@PathParam("id") String postId, @Context SecurityContext securityContext) {
+        String username = securityContext.getUserPrincipal().getName();
+        Result<Post> deletePostResult = this.deletePostInputPort.deletePost(new DeletePostInputPortRequest(postId, username));
+
+        if(deletePostResult.isSuccessful()) {
+            return Response.status(Response.Status.OK).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
+    @DELETE
+    @Produces(MediaType.TEXT_HTML)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/comments/{id}")
+    @RolesAllowed({"admin", "member"})
+    public Response deleteComment(@PathParam("id") String commentId, @Context SecurityContext securityContext) {
+        String username = securityContext.getUserPrincipal().getName();
+        Result<Comment> deleteCommentResult = this.deleteCommentInputPort.deleteComment(new DeleteCommentInputPortRequest(commentId, username));
+
+        if(deleteCommentResult.isSuccessful()) {
+            return Response.status(Response.Status.OK).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 }
