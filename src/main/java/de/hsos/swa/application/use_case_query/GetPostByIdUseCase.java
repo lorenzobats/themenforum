@@ -40,9 +40,9 @@ public class GetPostByIdUseCase implements GetPostByIdInputPort {
                 }
                 case DATE -> {
                     if (request.orderParams() == OrderParams.ASC) {
-                        sortedComments.sort(new SortByDate<Comment>().reversed());
-                    } else {
                         sortedComments.sort(new SortByDate<Comment>());
+                    } else {
+                        sortedComments.sort(new SortByDate<Comment>().reversed());
                     }
                 }
                 default -> throw new IllegalArgumentException("Cant sort comments");
