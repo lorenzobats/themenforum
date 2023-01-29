@@ -34,12 +34,18 @@ public class PostPersistenceModel {
     @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true)
+
     List<CommentPersistenceModel> comments = new ArrayList<>();
 
 
     @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true)
+    @JoinTable(
+            name = "post_vote",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "vote_id")
+    )
     List<VotePersistenceModel> votes = new ArrayList<>();
 
     public PostPersistenceModel() {

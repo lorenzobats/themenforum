@@ -6,6 +6,8 @@ import de.hsos.swa.domain.entity.VoteType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "PostVote")
@@ -24,6 +26,21 @@ public class VotePersistenceModel {
     @Basic
     LocalDateTime createdAt;
 
+    @ManyToOne
+    @JoinTable(
+            name = "post_vote",
+            joinColumns = @JoinColumn(name = "vote_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id")
+    )
+    PostPersistenceModel postVote;
+
+    @ManyToOne
+    @JoinTable(
+            name = "comment_vote",
+            joinColumns = @JoinColumn(name = "vote_id"),
+            inverseJoinColumns = @JoinColumn(name = "comment_id")
+    )
+    CommentPersistenceModel commentVote;
 
     public VotePersistenceModel() {
     }

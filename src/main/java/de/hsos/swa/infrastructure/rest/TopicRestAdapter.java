@@ -1,6 +1,7 @@
 package de.hsos.swa.infrastructure.rest;
 
 import de.hsos.swa.application.input.dto.in.DeleteTopicInputPortRequest;
+import de.hsos.swa.application.input.dto.out.TopicWithEmbeddedPostCountDto;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
@@ -56,11 +57,12 @@ public class TopicRestAdapter {
 
     @GET
     public Response getAllTopics() {
+        // TODO Query Param einfuehren // ebenfalls gedanken ueber DTO machen
         try {
-            Result<List<TopicWithPostCountDto>> topicsResult = this.getAllTopicsWithPostCountInputPort.getAllTopics();
+            Result<List<TopicWithEmbeddedPostCountDto>> topicsResult = this.getAllTopicsWithPostCountInputPort.getAllTopicsTest();
             if (topicsResult.isSuccessful()) {
-                List<TopicDto> topicsResponse = topicsResult.getData().stream().map(TopicDto.Converter::fromInputPortDto).toList();
-                return Response.status(Response.Status.OK).entity(topicsResponse).build();
+                //List<TopicDto> topicsResponse = topicsResult.getData().stream().map(TopicDto.Converter::fromInputPortDto).toList();
+                return Response.status(Response.Status.OK).entity(topicsResult.getData()).build();
             }
             return Response.status(Response.Status.NOT_FOUND).entity(topicsResult.getMessage()).build();
         } catch (ConstraintViolationException e) {

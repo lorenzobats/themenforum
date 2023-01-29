@@ -40,6 +40,11 @@ public class CommentPersistenceModel {
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
+    @JoinTable(
+            name = "comment_vote",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "vote_id")
+    )
     List<VotePersistenceModel> votes = new ArrayList<>();
 
     @Basic

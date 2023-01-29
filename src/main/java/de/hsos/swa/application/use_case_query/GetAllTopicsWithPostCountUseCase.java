@@ -1,6 +1,7 @@
 package de.hsos.swa.application.use_case_query;
 
 import de.hsos.swa.application.input.GetAllTopicsWithPostCountInputPort;
+import de.hsos.swa.application.input.dto.out.TopicWithEmbeddedPostCountDto;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.util.Result;
@@ -41,5 +42,16 @@ public class GetAllTopicsWithPostCountUseCase implements GetAllTopicsWithPostCou
         List<TopicWithPostCountDto> result = topicsResult.getData().stream().map(t -> Converter.toDto(t, postCountResult.getData().get(t.getId()))).toList();
 
         return Result.success(result);
+    }
+
+    // TODO: Implementieren und testen
+    @Override
+    public Result<List<TopicWithEmbeddedPostCountDto>> getAllTopicsTest() {
+        Result<List<TopicWithEmbeddedPostCountDto>> topicsResult = topicRepository.getAllTopicsWithPostCount();
+        if (!topicsResult.isSuccessful()) {
+            return Result.error("Could not get Topics");
+        }
+
+        return Result.success(topicsResult.getData());
     }
 }

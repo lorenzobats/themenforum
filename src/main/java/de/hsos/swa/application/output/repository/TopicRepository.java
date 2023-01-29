@@ -1,5 +1,6 @@
 package de.hsos.swa.application.output.repository;
 
+import de.hsos.swa.application.input.dto.out.TopicWithEmbeddedPostCountDto;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Topic;
 
@@ -18,4 +19,6 @@ public interface TopicRepository {
     Result<Map<UUID, Long>> getPostCountForAllTopics();
 
     Result<Topic> deleteTopic(UUID topicId);
+
+    Result<List<TopicWithEmbeddedPostCountDto>> getAllTopicsWithPostCount();
 }

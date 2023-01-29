@@ -1,9 +1,15 @@
 package de.hsos.swa.infrastructure.persistence;
 
+import com.blazebit.persistence.CriteriaBuilder;
+import com.blazebit.persistence.CriteriaBuilderFactory;
+import com.blazebit.persistence.view.EntityViewManager;
+import com.blazebit.persistence.view.EntityViewSetting;
+import de.hsos.swa.application.input.dto.out.TopicWithEmbeddedPostCountDto;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.infrastructure.persistence.model.TopicPersistenceModel;
+import de.hsos.swa.infrastructure.persistence.view.TopicPersistenceView;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
@@ -20,6 +26,11 @@ import java.util.UUID;
 public class TopicPersistenceAdapter implements TopicRepository {
     @Inject
     EntityManager entityManager;
+    @Inject
+    CriteriaBuilderFactory criteriaBuilderFactory;
+
+    @Inject
+    EntityViewManager entityViewManager;
 
     @Inject
     Logger log;
@@ -62,6 +73,15 @@ public class TopicPersistenceAdapter implements TopicRepository {
             log.error("Delete Error", e);
             return Result.error("Delete Error");
         }
+    }
+
+    @Override
+    public Result<List<TopicWithEmbeddedPostCountDto>> getAllTopicsWithPostCount() {
+        CriteriaBuilder<TopicPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, TopicPersistenceModel.class);
+        List<TopicPersistenceView> postList;
+        CriteriaBuilder<TopicPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(TopicPersistenceView.class), criteriaBuilder);
+        postList = criteriaBuilderView.getResultList();
+        return Result.success(postList.stream().map(TopicPersistenceView::toDomainEntityWithPostCount).toList());
     }
 
     @Override

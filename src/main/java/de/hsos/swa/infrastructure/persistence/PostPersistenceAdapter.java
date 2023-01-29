@@ -33,7 +33,6 @@ public class PostPersistenceAdapter implements PostRepository {
     @Inject
     EntityViewManager entityViewManager;
 
-
     @Inject
     Logger log;
 
