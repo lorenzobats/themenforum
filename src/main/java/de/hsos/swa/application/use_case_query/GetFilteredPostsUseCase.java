@@ -24,23 +24,23 @@ public class GetFilteredPostsUseCase implements GetFilteredPostsInputPort {
     @Override
     public Result<List<Post>> getFilteredPosts(GetFilteredPostInputPortRequest request) {
         Result<List<Post>> postsResult = postRepository.getAllFilteredPosts(request.filterParams(), request.includeComments());
-        if (postsResult.isSuccessful()) {
 
+        if (postsResult.isSuccessful()) {
             List<Post> sortedPosts = new ArrayList<>(postsResult.getData());
 
             switch (request.sortingParams()) {
                 case VOTES -> {
                     if (request.orderParams() == OrderParams.ASC) {
-                        sortedPosts.sort(new SortByUpvotes().reversed());
+                        sortedPosts.sort(new SortByUpvotes<Post>().reversed());
                     } else {
-                        sortedPosts.sort(new SortByUpvotes());
+                        sortedPosts.sort(new SortByUpvotes<Post>());
                     }
                 }
                 case DATE -> {
                     if (request.orderParams() == OrderParams.ASC) {
-                        sortedPosts.sort(new SortByDate().reversed());
+                        sortedPosts.sort(new SortByDate<Post>().reversed());
                     } else {
-                        sortedPosts.sort(new SortByDate());
+                        sortedPosts.sort(new SortByDate<Post>());
                     }
                 }
                 default -> throw new IllegalArgumentException("Cant sort posts");

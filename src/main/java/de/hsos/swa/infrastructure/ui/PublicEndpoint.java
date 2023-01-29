@@ -142,14 +142,22 @@ public class PublicEndpoint {
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Path("/posts/{id}")
-    public TemplateInstance post(@PathParam("id") String id, @DefaultValue("true") @QueryParam("includeComments") boolean includeComments, @Context SecurityContext securityContext) {
+    public TemplateInstance post(
+            @PathParam("id") String id,
+            @DefaultValue("true") @QueryParam("includeComments") boolean includeComments,
+            @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
+            @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy,
+            @Context SecurityContext securityContext) {
         boolean isLoggedIn = false;
         String username = "";
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
             isLoggedIn = true;
         }
-        Result<Post> postResult = getPostByIdInputPort.getPostById(new GetPostByIdInputPortRequest(id, includeComments));
+
+        GetPostByIdInputPortRequest request = new GetPostByIdInputPortRequest(id, includeComments, sortBy, orderBy);
+        Result<Post> postResult = getPostByIdInputPort.getPostById(request);
+
         if (postResult.isSuccessful()) {
             return Templates.post(postResult.getData(), isLoggedIn, username);
         }

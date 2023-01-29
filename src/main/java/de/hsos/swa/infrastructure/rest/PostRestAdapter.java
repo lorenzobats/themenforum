@@ -104,15 +104,20 @@ public class PostRestAdapter {
 
     @GET
     @Path("{id}")
-    public Response getPostById(@PathParam("id") String id,
-                                @DefaultValue("true") @QueryParam("includeComments") boolean includeComments) {
+    public Response getPostById(
+            @PathParam("id") String id,
+            @DefaultValue("true") @QueryParam("includeComments") boolean includeComments,
+            @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
+            @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy) {
         try {
-            GetPostByIdInputPortRequest query = new GetPostByIdInputPortRequest(id, includeComments);
+            GetPostByIdInputPortRequest query = new GetPostByIdInputPortRequest(id, includeComments, sortBy, orderBy);
             Result<Post> postResult = this.getPostByIdInputPort.getPostById(query);
+
             if (postResult.isSuccessful()) {
                 PostDto response = PostDto.Converter.fromDomainEntity(postResult.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
+            
             return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(postResult.getMessage())).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();

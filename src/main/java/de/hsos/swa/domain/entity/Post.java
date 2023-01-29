@@ -7,7 +7,7 @@ import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class Post {
+public class Post implements SortedEntity {
     @Valid
     private UUID id;
 
