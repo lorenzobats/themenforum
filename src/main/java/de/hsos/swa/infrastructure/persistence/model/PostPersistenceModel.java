@@ -44,8 +44,7 @@ public class PostPersistenceModel {
     @JoinTable(
             name = "post_vote",
             joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "vote_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "vote_id"))
     List<VotePersistenceModel> votes = new ArrayList<>();
 
     public PostPersistenceModel() {

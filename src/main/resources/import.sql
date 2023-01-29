@@ -52,3 +52,14 @@ INSERT INTO comment_table (id, active, createdat, text, parent_comment_id, user_
 
 INSERT INTO post_table_comment_table (post_id, comments_id) VALUES ('55a7409f-c0eb-453e-b7ef-89f905963ce9', '9ac4c6fd-68e1-4b41-97fd-817284290411');
 INSERT INTO post_table_comment_table (post_id, comments_id) VALUES ('959b81a0-35b3-4f9d-a08b-4879173a1e2c', 'ee774407-a71f-4d4e-b829-f26d38e2ee81');
+
+INSERT INTO vote_table(id, createdat, votetype, user_id) VALUES ('09f21fbb-1130-446d-b3c2-44dd8a839c12', '2023-01-22 19:29:59.697731', 'UP', '8be3a431-5b87-4223-ab76-bd3308da4cfd');
+INSERT INTO vote_table(id, createdat, votetype, user_id) VALUES ('09f21fbb-1230-446d-b3c2-44dd8a839c12', '2023-01-22 19:29:59.697731', 'UP', 'c8f79ffc-7ce0-4673-a22c-5cf210b83f13');
+INSERT INTO vote_table(id, createdat, votetype, user_id) VALUES ('09f21fbb-1330-446d-b3c2-44dd8a839c12', '2023-01-22 19:29:59.697731', 'UP', '9fe9d31c-71ac-45fc-b236-f8d53dfd00bb');
+INSERT INTO vote_table(id, createdat, votetype, user_id) VALUES ('09f21fbb-1430-446d-b3c2-44dd8a839c12', '2023-01-22 19:29:59.697731', 'UP', '77cc0520-c6d0-4f06-964f-9af0834fc6db');
+INSERT INTO vote_table(id, createdat, votetype, user_id) VALUES ('09f21fbb-1530-446d-b3c2-44dd8a839c12', '2023-01-22 19:29:59.697731', 'UP', '8be3a431-5b87-4223-ab76-bd3308da4cfd');
+
+INSERT INTO post_vote(post_id, vote_id) VALUES ('55a7409f-c0eb-453e-b7ef-89f905963ce9', '09f21fbb-1130-446d-b3c2-44dd8a839c12');
+INSERT INTO post_vote(post_id, vote_id) VALUES ('55a7409f-c0eb-453e-b7ef-89f905963ce9', '09f21fbb-1230-446d-b3c2-44dd8a839c12');
+INSERT INTO post_vote(post_id, vote_id) VALUES ('55a7409f-c0eb-453e-b7ef-89f905963ce9', '09f21fbb-1330-446d-b3c2-44dd8a839c12');
+INSERT INTO post_vote(post_id, vote_id) VALUES ('55a7409f-c0eb-453e-b7ef-89f905963ce9', '09f21fbb-1430-446d-b3c2-44dd8a839c12');
