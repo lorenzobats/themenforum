@@ -144,7 +144,7 @@ public class PublicEndpoint {
     @Path("/posts/{id}")
     public TemplateInstance post(
             @PathParam("id") String id,
-            @DefaultValue("true") @QueryParam("includeComments") boolean includeComments,
+            @DefaultValue("false") @QueryParam("includeComments") boolean includeComments,
             @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
             @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy,
             @Context SecurityContext securityContext) {
@@ -181,7 +181,10 @@ public class PublicEndpoint {
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Path("/topics/{id}")
-    public TemplateInstance topic(@PathParam("id") String id, @Context SecurityContext securityContext) {
+    public TemplateInstance topic(@PathParam("id") String id,
+                                  @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
+                                  @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy,
+                                  @Context SecurityContext securityContext) {
         boolean isLoggedIn = false;
         String username = "";
 
@@ -195,7 +198,7 @@ public class PublicEndpoint {
         if (topicResult.isSuccessful()) {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             filterParams.put(PostFilterParams.TOPIC, topicResult.getData().getTitle());
-            GetFilteredPostInputPortRequest request = new GetFilteredPostInputPortRequest(filterParams, true, SortingParams.VOTES, OrderParams.DESC);
+            GetFilteredPostInputPortRequest request = new GetFilteredPostInputPortRequest(filterParams, true, sortBy, orderBy);
             Result<List<Post>> postsResult = getFilteredPostsInputPort.getFilteredPosts(request);
 
             if (postsResult.isSuccessful()) {

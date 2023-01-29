@@ -13,10 +13,6 @@ public record GetPostByIdInputPortRequest(
         SortingParams sortingParams,
         OrderParams orderParams
 ) {
-    public GetPostByIdInputPortRequest(String id, boolean includeComments) {
-        this(id, includeComments, SortingParams.VOTES, OrderParams.DESC);
-    }
-
     public GetPostByIdInputPortRequest(String id, boolean includeComments, SortingParams sortingParams, OrderParams orderParams) {
         this.id = id;
         this.includeComments = includeComments;
