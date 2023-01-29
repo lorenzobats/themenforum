@@ -2,21 +2,21 @@ package de.hsos.swa.infrastructure.rest;
 
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
-import de.hsos.swa.application.use_case_query.SortingParams;
-import de.hsos.swa.infrastructure.rest.dto.in.VotePostRestAdapterRequest;
-import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
-import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
-import de.hsos.swa.infrastructure.rest.dto.in.CreatePostRestAdapterRequest;
+import de.hsos.swa.application.use_case_query.OrderParams;
 import de.hsos.swa.application.use_case_query.PostFilterParams;
+import de.hsos.swa.application.use_case_query.SortingParams;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Post;
+import de.hsos.swa.infrastructure.rest.dto.in.CreatePostRestAdapterRequest;
+import de.hsos.swa.infrastructure.rest.dto.in.VotePostRestAdapterRequest;
+import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
 import de.hsos.swa.infrastructure.rest.validation.PostValidationService;
+import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import org.jboss.logging.Logger;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.swing.*;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.NotNull;
@@ -47,9 +47,6 @@ public class PostRestAdapter {
     GetPostByIdInputPort getPostByIdInputPort;
 
     @Inject
-    GetAllPostsInputPort getAllPostsInputPort;
-
-    @Inject
     GetFilteredPostsInputPort getFilteredPostsInputPort;
 
     @Inject
@@ -73,7 +70,8 @@ public class PostRestAdapter {
                                 @QueryParam("dateFrom") LocalDateTime dateFrom,
                                 @QueryParam("dateTo") LocalDateTime dateTo,
                                 @QueryParam("topic") String topic,
-                                @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy) {
+                                @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
+                                @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy) {
         try {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             if (username != null)
@@ -84,10 +82,10 @@ public class PostRestAdapter {
                 filterParams.put(PostFilterParams.DATE_FROM, dateFrom);
             if (dateTo != null)
                 filterParams.put(PostFilterParams.DATE_TO, dateTo);
-            if(topic != null)
+            if (topic != null)
                 filterParams.put(PostFilterParams.TOPIC, topic);
 
-            GetFilteredPostInputPortRequest query = new GetFilteredPostInputPortRequest(filterParams, includeComments, sortBy);
+            GetFilteredPostInputPortRequest query = new GetFilteredPostInputPortRequest(filterParams, includeComments, sortBy, orderBy);
             Result<List<Post>> postsResult = this.getFilteredPostsInputPort.getFilteredPosts(query);
 
             if (postsResult.isSuccessful()) {
@@ -197,6 +195,6 @@ public class PostRestAdapter {
     @Path("/{id}/vote")
     @RolesAllowed("member")
     public Response deletePostVote(@PathParam("id") String id, @Context SecurityContext securityContext) {
-            return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 }

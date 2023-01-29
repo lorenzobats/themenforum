@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
+import de.hsos.swa.application.use_case_query.OrderParams;
 import de.hsos.swa.application.use_case_query.PostFilterParams;
 import de.hsos.swa.application.use_case_query.SortingParams;
 import de.hsos.swa.application.util.Result;
@@ -11,14 +12,10 @@ import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.domain.entity.VoteType;
-import de.hsos.swa.infrastructure.rest.VoteRestAdapter;
-import de.hsos.swa.infrastructure.rest.dto.in.ReplyToCommentRestAdapterRequest;
 import de.hsos.swa.infrastructure.ui.dto.in.CommentPostUIRequest;
-import de.hsos.swa.infrastructure.ui.dto.in.DeletePostUIRequest;
 import de.hsos.swa.infrastructure.ui.dto.in.ReplyToCommentUIRequest;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
-import io.quarkus.security.identity.SecurityIdentity;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
@@ -27,8 +24,10 @@ import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
-import javax.ws.rs.core.*;
-import java.net.URI;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,20 +92,22 @@ public class PublicEndpoint {
         public static native TemplateInstance topic(Topic topic, List<Post> posts, boolean isLoggedIn, String username);
 
         public static native TemplateInstance comment(Comment comment, boolean isLoggedIn, String username);
+
         public static native TemplateInstance login();
+
         public static native TemplateInstance register();
 
     }
 
     @GET
     @Path("/login")
-    public TemplateInstance login(){
+    public TemplateInstance login() {
         return Templates.login();
     }
 
     @GET
     @Path("/register")
-    public TemplateInstance register(){
+    public TemplateInstance register() {
         return Templates.register();
     }
 
@@ -114,23 +115,28 @@ public class PublicEndpoint {
     @Produces(MediaType.TEXT_HTML)
     @Path("/posts")
     @PermitAll
-    public TemplateInstance posts(@QueryParam("topic") String topic, @Context SecurityContext securityContext) {
+    public TemplateInstance posts(
+            @QueryParam("topic") String topic,
+            @DefaultValue("DATE") @QueryParam("sortBy") SortingParams sortBy,
+            @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy,
+            @Context SecurityContext securityContext) {
         boolean isLoggedIn = false;
         String username = "";
+
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
             isLoggedIn = true;
         }
 
+        Map<PostFilterParams, Object> filterParams = new HashMap<>();
         if (topic != null) {
-            Map<PostFilterParams, Object> filterParams = new HashMap<>();
             filterParams.put(PostFilterParams.TOPIC, topic);
-            Result<List<Post>> filteredPosts = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, true, SortingParams.VOTES));
-            return Templates.posts(filteredPosts.getData(), isLoggedIn, username);
         }
-        GetFilteredPostInputPortRequest request = new GetFilteredPostInputPortRequest(new HashMap<>(), true, SortingParams.VOTES);
-        Result<List<Post>> allPosts = getFilteredPostsInputPort.getFilteredPosts(request);
-        return Templates.posts(allPosts.getData(), isLoggedIn, username);
+
+        GetFilteredPostInputPortRequest request = new GetFilteredPostInputPortRequest(filterParams, true, sortBy, orderBy);
+        Result<List<Post>> filteredPosts = getFilteredPostsInputPort.getFilteredPosts(request);
+
+        return Templates.posts(filteredPosts.getData(), isLoggedIn, username);
     }
 
     @GET
@@ -170,15 +176,19 @@ public class PublicEndpoint {
     public TemplateInstance topic(@PathParam("id") String id, @Context SecurityContext securityContext) {
         boolean isLoggedIn = false;
         String username = "";
+
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
             isLoggedIn = true;
         }
+
         Result<Topic> topicResult = getTopicByIdInputPort.getTopicById(new GetTopicByIdInputPortRequest(id));
+
         if (topicResult.isSuccessful()) {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             filterParams.put(PostFilterParams.TOPIC, topicResult.getData().getTitle());
-            Result<List<Post>> postsResult = getFilteredPostsInputPort.getFilteredPosts(new GetFilteredPostInputPortRequest(filterParams, true, SortingParams.VOTES));
+            GetFilteredPostInputPortRequest request = new GetFilteredPostInputPortRequest(filterParams, true, SortingParams.VOTES, OrderParams.DESC);
+            Result<List<Post>> postsResult = getFilteredPostsInputPort.getFilteredPosts(request);
 
             if (postsResult.isSuccessful()) {
                 return Templates.topic(topicResult.getData(), postsResult.getData(), isLoggedIn, username);
@@ -201,8 +211,8 @@ public class PublicEndpoint {
         if (!commentResult.isSuccessful()) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        return Response.status(Response.Status.OK).build();
 
+        return Response.status(Response.Status.OK).build();
     }
 
     @POST
@@ -214,7 +224,7 @@ public class PublicEndpoint {
         String username = securityContext.getUserPrincipal().getName();
         Result<Comment> replyResult = this.replyToCommentInputPort.replyToComment(new ReplyToCommentInputPortRequest(commentId, username, request.replyText()));
 
-        if(!replyResult.isSuccessful()) {
+        if (!replyResult.isSuccessful()) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
@@ -230,7 +240,7 @@ public class PublicEndpoint {
         String username = securityContext.getUserPrincipal().getName();
         Result<Post> postResult = this.votePostInputPort.votePost(new VotePostInputPortRequest(postId, username, voteType));
 
-        if(postResult.isSuccessful()) {
+        if (postResult.isSuccessful()) {
             return Response.status(Response.Status.OK).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -245,7 +255,7 @@ public class PublicEndpoint {
         String username = securityContext.getUserPrincipal().getName();
         Result<Comment> commentResult = this.voteCommentInputPort.voteComment(new VoteCommentInputPortRequest(postId, username, voteType));
 
-        if(commentResult.isSuccessful()) {
+        if (commentResult.isSuccessful()) {
             return Response.status(Response.Status.OK).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -261,7 +271,7 @@ public class PublicEndpoint {
         String username = securityContext.getUserPrincipal().getName();
         Result<Post> deletePostResult = this.deletePostInputPort.deletePost(new DeletePostInputPortRequest(postId, username));
 
-        if(deletePostResult.isSuccessful()) {
+        if (deletePostResult.isSuccessful()) {
             return Response.status(Response.Status.OK).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -276,7 +286,7 @@ public class PublicEndpoint {
         String username = securityContext.getUserPrincipal().getName();
         Result<Comment> deleteCommentResult = this.deleteCommentInputPort.deleteComment(new DeleteCommentInputPortRequest(commentId, username));
 
-        if(deleteCommentResult.isSuccessful()) {
+        if (deleteCommentResult.isSuccessful()) {
             return Response.status(Response.Status.OK).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();

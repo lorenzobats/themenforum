@@ -29,8 +29,21 @@ public class GetFilteredPostsUseCase implements GetFilteredPostsInputPort {
             List<Post> sortedPosts = new ArrayList<>(postsResult.getData());
 
             switch (request.sortingParams()) {
-                case VOTES -> sortedPosts.sort(new SortByUpvotes());
-                case DATE -> sortedPosts.sort(new SortByDate());
+                case VOTES -> {
+                    if (request.orderParams() == OrderParams.ASC) {
+                        sortedPosts.sort(new SortByUpvotes().reversed());
+                    } else {
+                        sortedPosts.sort(new SortByUpvotes());
+                    }
+                }
+                case DATE -> {
+                    if (request.orderParams() == OrderParams.ASC) {
+                        sortedPosts.sort(new SortByDate().reversed());
+                    } else {
+                        sortedPosts.sort(new SortByDate());
+                    }
+                }
+                default -> throw new IllegalArgumentException("Cant sort posts");
             }
             return Result.success(sortedPosts);
         }

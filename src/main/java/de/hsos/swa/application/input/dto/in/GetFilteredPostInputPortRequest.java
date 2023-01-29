@@ -1,5 +1,6 @@
 package de.hsos.swa.application.input.dto.in;
 
+import de.hsos.swa.application.use_case_query.OrderParams;
 import de.hsos.swa.application.use_case_query.PostFilterParams;
 import de.hsos.swa.application.use_case_query.SortingParams;
 
@@ -8,12 +9,21 @@ import java.util.Map;
 public record GetFilteredPostInputPortRequest(
         Map<PostFilterParams, Object> filterParams,
         Boolean includeComments,
-        SortingParams sortingParams) {
+        SortingParams sortingParams,
+        OrderParams orderParams) {
 
-    public GetFilteredPostInputPortRequest(Map<PostFilterParams, Object> filterParams, Boolean includeComments, SortingParams sortingParams) {
+
+
+    //Eventuell overloaded Constructor ohne Sorting und Order
+    public GetFilteredPostInputPortRequest(
+            Map<PostFilterParams, Object> filterParams,
+            Boolean includeComments,
+            SortingParams sortingParams,
+            OrderParams orderParams) {
         this.filterParams = filterParams;
         this.includeComments = includeComments;
         this.sortingParams = sortingParams;
+        this.orderParams = orderParams;
         if (!this.validateMapTest()) {
             // TODO: Custom Validator
             throw new RuntimeException("InvalidFilterParams");
