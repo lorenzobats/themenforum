@@ -68,7 +68,7 @@
             <div style="margin-right: 10px">{entry.totalVotes}</div>
         {/if}
 
-
+<div style="display: flex; justify-content: space-between;width: 100%; align-items: center;">
         <div>
         <h5 style="cursor: pointer" onclick="window.open('/ui/public/posts/{entry.id}', '_self')" class="title-info">{entry.title}</h5>
 
@@ -78,8 +78,9 @@
             {entry.commentCount} comments |
             <a href="/ui/public/posts/{entry.id}">read</a>
         </span>
+        </div>
         <div>
-        {#if username == entry.creator.name}<button class="btn btn-danger" onclick="deletePost('{entry.id}')">delete</button>{/if}
+        {#if username == entry.creator.name}<button class="btn btn-outline-danger" onclick="deletePost('{entry.id}')">X</button>{/if}
         </div>
         </div>
         </div>
