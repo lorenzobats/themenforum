@@ -16,12 +16,15 @@
                 {/if}
             </div>
         </div>
-        <div>
+
+        <div style="display: flex;justify-content: space-between;" class="mb-2">
             <form style="display: flex; align-items: center; margin-bottom: 20px;">
                 <input type="search" id="tsearch" name="tsearch" required placeholder="search topics...">
                 <button class="btn btn-primary" style="margin-left: 12px;">Search</button>
             </form>
+            <button class="btn btn-primary" onclick="createTopic()">Create Topic</button>
         </div>
+
         {#for entry in allTopics}
             <div class="content-box">
             <div>
@@ -48,5 +51,9 @@
     function login() {
         document.cookie = "quarkus-redirect-location=" + window.location;
         window.open("/ui/login", "_self")
+    }
+
+    function createTopic() {
+        window.open('/ui/topics/new', '_self');
     }
 </script>

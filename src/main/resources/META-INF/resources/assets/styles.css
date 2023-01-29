@@ -55,6 +55,10 @@ body {
     font-size: large;
 }
 
+.sort-selector > p {
+    margin-bottom: 0;
+}
+
 a {
     color: #6476bd !important;
     text-decoration: none !important;

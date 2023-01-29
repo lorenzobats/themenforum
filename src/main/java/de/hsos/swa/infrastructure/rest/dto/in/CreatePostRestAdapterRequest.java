@@ -2,6 +2,7 @@ package de.hsos.swa.infrastructure.rest.dto.in;
 
 import de.hsos.swa.application.input.dto.in.CreatePostInputPortRequest;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ public class CreatePostRestAdapterRequest {
 
     public static class Converter {
         public static CreatePostInputPortRequest toInputPortCommand(CreatePostRestAdapterRequest adapterRequest, String username) {
-            return new CreatePostInputPortRequest(adapterRequest.title, adapterRequest.content, UUID.fromString(adapterRequest.topicId), username);
+            return new @Valid CreatePostInputPortRequest(adapterRequest.title, adapterRequest.content, UUID.fromString(adapterRequest.topicId), username);
         }
     }
 }

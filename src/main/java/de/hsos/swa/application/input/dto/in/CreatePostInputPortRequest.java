@@ -4,12 +4,12 @@ import de.hsos.swa.application.input.validation.constraints.ValidInputPortReques
 import de.hsos.swa.application.input.validation.constraints.ValidUsername;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import java.util.UUID;
 
 @ValidInputPortRequest
 public record CreatePostInputPortRequest(
         // TODO: Validation PostTitle (Length, Trailing Spaces)
+        @Valid
         String title,
 
         // TODO: Validation Content (Length, Trailing Spaces)

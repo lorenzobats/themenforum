@@ -1,0 +1,102 @@
+{@de.hsos.swa.domain.entity.Post post}
+
+{#include base}
+    {#title}New Topic{/title}
+    {#body}
+        <div class="header">
+        <div>
+
+            <h1 class="mt-4">New Topic</h1>
+            <p><a href="/ui/topics">[Browse Topics]</a></p>
+
+        </div>
+        <div>
+            Logged in as: {username}
+            <button class="btn btn-light" onclick="logout()">Logout</button>
+        </div>
+        </div>
+
+
+        <form onsubmit="createTopic();">
+            <div class="form-group">
+                <label><b>Title</b></label>
+                <input style="display: block; width: 100%" type="text" placeholder="Enter Title" id="topicTitle" name="title" maxlength="100" minlength="1" required>
+            </div>
+
+            <div class="form-group mb-4">
+                <label><b>Description</b></label>
+                <textarea style="display: block; width: 100%" placeholder="Enter Description" id="topicDescription" name="text" maxlength="250" minlength="1"required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create Topic</button>
+        </form>
+        <div id="error-box" class="alert alert-danger mt-4" style="display: none;"></div>
+
+
+    {/body}
+{/include}
+
+<script>
+
+    onsubmit = (event) => { event.preventDefault() };
+
+    function createTopic() {
+        let title = document.querySelector('#topicTitle').value;
+        let description = document.querySelector('#topicDescription').value;
+
+        let data = {
+            title: title,
+            description: description,
+        };
+
+        let url = '/ui/topics/';
+        fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (response.ok) {
+                    let location = response.headers.get("Location")
+                    window.location = location;
+                } else {
+                    response.json().then(error => {
+                        console.log(error);
+
+                        let errorMessage = "<strong>Invalid Input:</strong><br>"
+                        error.errors.forEach(err => {
+
+                            errorMessage += err.message + '<br>';
+                        });
+
+                        let errorBox = document.querySelector(`#error-box`);
+                        errorBox.innerHTML = errorMessage;
+                        errorBox.style.display = 'block';
+                    });
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
+    function logout() {
+        document.cookie = "quarkus-credential=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "quarkus-redirect-location=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        window.open("/ui/topics", "_self")
+    }
+
+    function login() {
+        document.cookie = "quarkus-redirect-location=" + window.location;
+        window.open("/ui/login", "_self")
+    }
+
+
+</script>

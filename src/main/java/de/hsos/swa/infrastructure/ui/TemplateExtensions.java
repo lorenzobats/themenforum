@@ -2,7 +2,7 @@ package de.hsos.swa.infrastructure.ui;
 
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.domain.entity.*;
-import de.hsos.swa.infrastructure.ui.dto.CommentWithDepth;
+import de.hsos.swa.infrastructure.ui.dto.out.CommentWithDepth;
 import io.quarkus.qute.TemplateExtension;
 
 import java.time.format.DateTimeFormatter;

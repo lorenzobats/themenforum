@@ -1,5 +1,6 @@
 package de.hsos.swa.application.input;
 
+import de.hsos.swa.application.input.validation.constraints.ValidInputPortRequest;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.input.dto.in.CreatePostInputPortRequest;
 import de.hsos.swa.domain.entity.Post;
