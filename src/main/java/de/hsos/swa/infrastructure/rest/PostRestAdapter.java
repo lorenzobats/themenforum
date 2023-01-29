@@ -70,6 +70,7 @@ public class PostRestAdapter {
                                 @QueryParam("dateFrom") LocalDateTime dateFrom,
                                 @QueryParam("dateTo") LocalDateTime dateTo,
                                 @QueryParam("topic") String topic,
+                                @QueryParam("topicId") UUID topicId,
                                 @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
                                 @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy) {
         try {
@@ -84,6 +85,8 @@ public class PostRestAdapter {
                 filterParams.put(PostFilterParams.DATE_TO, dateTo);
             if (topic != null)
                 filterParams.put(PostFilterParams.TOPIC, topic);
+            if (topicId != null)
+                filterParams.put(PostFilterParams.TOPICID, topicId);
 
             GetFilteredPostInputPortRequest query = new GetFilteredPostInputPortRequest(filterParams, includeComments, sortBy, orderBy);
             Result<List<Post>> postsResult = this.getFilteredPostsInputPort.getFilteredPosts(query);

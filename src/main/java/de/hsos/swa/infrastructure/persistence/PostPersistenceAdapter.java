@@ -66,6 +66,9 @@ public class PostPersistenceAdapter implements PostRepository {
             if (filterParams.containsKey(PostFilterParams.TOPIC))
                 criteriaBuilder.where("topicPersistenceModel.title").eq(filterParams.get(PostFilterParams.TOPIC));
 
+            if (filterParams.containsKey(PostFilterParams.TOPICID))
+                criteriaBuilder.where("topicPersistenceModel.id").eq(filterParams.get(PostFilterParams.TOPICID));
+
             if (filterParams.containsKey(PostFilterParams.DATE_FROM))
                 criteriaBuilder.where("createdAt").ge(filterParams.get(PostFilterParams.DATE_FROM));
 

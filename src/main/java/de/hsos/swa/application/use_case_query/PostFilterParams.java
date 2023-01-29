@@ -9,8 +9,8 @@ public enum PostFilterParams {
     USERID(UUID.class),
     DATE_FROM(LocalDateTime.class),
     DATE_TO(LocalDateTime.class),
-
-    TOPIC(String.class);
+    TOPIC(String.class),
+    TOPICID(UUID.class);
 
     private final Class<?> paramType;
 
