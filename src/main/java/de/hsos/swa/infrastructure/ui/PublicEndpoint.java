@@ -10,7 +10,6 @@ import de.hsos.swa.application.use_case_query.SortingParams;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
-import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.domain.entity.VoteType;
 import de.hsos.swa.infrastructure.ui.dto.in.CommentPostUIRequest;
 import de.hsos.swa.infrastructure.ui.dto.in.ReplyToCommentUIRequest;
@@ -34,11 +33,10 @@ import java.util.Map;
 
 //TODO Error Templates erstellen
 
-@Path("/ui/public")
+@Path("/ui/")
 @PermitAll
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
 public class PublicEndpoint {
-
 
     @Inject
     GetFilteredPostsInputPort getFilteredPostsInputPort;
@@ -47,22 +45,13 @@ public class PublicEndpoint {
     GetPostByIdInputPort getPostByIdInputPort;
 
     @Inject
-    GetAllTopicsInputPort getAllTopicsInputPort;
-
-    @Inject
     GetAllTopicsWithPostCountInputPort getAllTopicsWithPostCountInputPort;
-
-    @Inject
-    GetTopicByIdInputPort getTopicByIdInputPort;
 
     @Inject
     CommentPostInputPort commentPostInputPort;
 
     @Inject
     ReplyToCommentInputPort replyToCommentInputPort;
-
-    @Inject
-    GetPostByCommentIdInputPort getPostByCommentIdInputPort;
 
     @Inject
     VotePostInputPort votePostInputPort;
@@ -83,22 +72,33 @@ public class PublicEndpoint {
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance posts(List<Post> allPosts, boolean isLoggedIn, String username);
 
-        public static native TemplateInstance post(Post post, boolean isLoggedIn, String username);
-
-        public static native TemplateInstance topics(List<TopicWithPostCountDto> allTopics, boolean isLoggedIn, String username);
-
-        public static native TemplateInstance topic(Topic topic, List<Post> posts, boolean isLoggedIn, String username);
-
-        public static native TemplateInstance comment(Comment comment, boolean isLoggedIn, String username);
-
+        // AUTH
         public static native TemplateInstance login();
 
         public static native TemplateInstance register();
 
+        // TOPICS
+        public static native TemplateInstance topics(List<TopicWithPostCountDto> allTopics, boolean isLoggedIn, String username);
+
+
+        // POSTS
+        public static native TemplateInstance posts(String topicTitle, List<Post> allPosts, boolean isLoggedIn, String username);
+
+        public static native TemplateInstance post(Post post, boolean isLoggedIn, String username);
+
+        // COMMENT
+        public static native TemplateInstance comment(Comment comment, boolean isLoggedIn, String username);
     }
 
+
+    @GET
+    // TODO: Index
+    public TemplateInstance index() {
+        return Templates.login();
+    }
+
+    // AUTH
     @GET
     @Path("/login")
     public TemplateInstance login() {
@@ -108,62 +108,11 @@ public class PublicEndpoint {
     @GET
     @Path("/register")
     public TemplateInstance register() {
-        return Templates.register();
+        // TODO Registrieren
+        return Templates.login();
     }
 
-    @GET
-    @Produces(MediaType.TEXT_HTML)
-    @Path("/posts")
-    @PermitAll
-    public TemplateInstance posts(
-            @QueryParam("topic") String topic,
-            @DefaultValue("DATE") @QueryParam("sortBy") SortingParams sortBy,
-            @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy,
-            @Context SecurityContext securityContext) {
-        boolean isLoggedIn = false;
-        String username = "";
-
-        if (securityContext.getUserPrincipal() != null) {
-            username = securityContext.getUserPrincipal().getName();
-            isLoggedIn = true;
-        }
-
-        Map<PostFilterParams, Object> filterParams = new HashMap<>();
-        if (topic != null) {
-            filterParams.put(PostFilterParams.TOPIC, topic);
-        }
-
-        GetFilteredPostInputPortRequest request = new GetFilteredPostInputPortRequest(filterParams, true, sortBy, orderBy);
-        Result<List<Post>> filteredPosts = getFilteredPostsInputPort.getFilteredPosts(request);
-
-        return Templates.posts(filteredPosts.getData(), isLoggedIn, username);
-    }
-
-    @GET
-    @Produces(MediaType.TEXT_HTML)
-    @Path("/posts/{id}")
-    public TemplateInstance post(
-            @PathParam("id") String id,
-            @DefaultValue("false") @QueryParam("includeComments") boolean includeComments,
-            @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
-            @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy,
-            @Context SecurityContext securityContext) {
-        boolean isLoggedIn = false;
-        String username = "";
-        if (securityContext.getUserPrincipal() != null) {
-            username = securityContext.getUserPrincipal().getName();
-            isLoggedIn = true;
-        }
-
-        GetPostByIdInputPortRequest request = new GetPostByIdInputPortRequest(id, includeComments, sortBy, orderBy);
-        Result<Post> postResult = getPostByIdInputPort.getPostById(request);
-
-        if (postResult.isSuccessful()) {
-            return Templates.post(postResult.getData(), isLoggedIn, username);
-        }
-        return Templates.post(null, isLoggedIn, username);
-    }
-
+    // TOPICS
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Path("/topics")
@@ -178,34 +127,66 @@ public class PublicEndpoint {
         return Templates.topics(allTopics.getData(), isLoggedIn, username);
     }
 
+
+    // POSTS
     @GET
     @Produces(MediaType.TEXT_HTML)
-    @Path("/topics/{id}")
-    public TemplateInstance topic(@PathParam("id") String id,
-                                  @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
-                                  @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy,
-                                  @Context SecurityContext securityContext) {
+    @Path("/posts")
+    @PermitAll
+    public TemplateInstance posts(
+            @QueryParam("topic") String topic,
+            @QueryParam("username") String username,
+            @DefaultValue("DATE") @QueryParam("sortBy") SortingParams sortBy,
+            @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy,
+
+            @Context SecurityContext securityContext) {
+        boolean isLoggedIn = false;
+        String principalUsername = "";
+
+        if (securityContext.getUserPrincipal() != null) {
+            principalUsername = securityContext.getUserPrincipal().getName();
+            isLoggedIn = true;
+        }
+
+        Map<PostFilterParams, Object> filterParams = new HashMap<>();
+        if (topic != null)
+            filterParams.put(PostFilterParams.TOPIC, topic);
+        if (username != null)   // Profiltemplate?
+            filterParams.put(PostFilterParams.USERNAME, username);
+
+        GetFilteredPostInputPortRequest request = new GetFilteredPostInputPortRequest(filterParams, true, sortBy, orderBy);
+        Result<List<Post>> filteredPosts = getFilteredPostsInputPort.getFilteredPosts(request);
+
+        if(filterParams.containsKey(PostFilterParams.TOPIC)){
+            return Templates.posts(String.valueOf(filterParams.get(PostFilterParams.TOPIC)), filteredPosts.getData(), isLoggedIn, principalUsername);
+        }
+
+        return Templates.posts(null, filteredPosts.getData(), isLoggedIn, principalUsername);
+    }
+
+    // POSTS
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    @Path("/posts/{id}")
+    public TemplateInstance post(
+            @PathParam("id") String id,
+            @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
+            @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy,
+            @Context SecurityContext securityContext) {
         boolean isLoggedIn = false;
         String username = "";
-
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
             isLoggedIn = true;
         }
 
-        Result<Topic> topicResult = getTopicByIdInputPort.getTopicById(new GetTopicByIdInputPortRequest(id));
+        GetPostByIdInputPortRequest request = new GetPostByIdInputPortRequest(id, true, sortBy, orderBy);
+        Result<Post> postResult = getPostByIdInputPort.getPostById(request);
 
-        if (topicResult.isSuccessful()) {
-            Map<PostFilterParams, Object> filterParams = new HashMap<>();
-            filterParams.put(PostFilterParams.TOPIC, topicResult.getData().getTitle());
-            GetFilteredPostInputPortRequest request = new GetFilteredPostInputPortRequest(filterParams, true, sortBy, orderBy);
-            Result<List<Post>> postsResult = getFilteredPostsInputPort.getFilteredPosts(request);
-
-            if (postsResult.isSuccessful()) {
-                return Templates.topic(topicResult.getData(), postsResult.getData(), isLoggedIn, username);
-            }
+        if (postResult.isSuccessful()) {
+            return Templates.post(postResult.getData(), isLoggedIn, username);
         }
-        return Templates.topic(null, null, isLoggedIn, username);
+        return Templates.post(null, isLoggedIn, username);  // TODO: Error laden
     }
 
 
