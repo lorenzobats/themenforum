@@ -12,6 +12,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @RequestScoped
@@ -30,18 +32,10 @@ public class GetFilteredPostsUseCase implements GetFilteredPostsInputPort {
 
             switch (request.sortingParams()) {
                 case VOTES -> {
-                    if (request.orderParams() == OrderParams.ASC) {
-                        sortedPosts.sort(new SortByUpvotes<Post>().reversed());
-                    } else {
-                        sortedPosts.sort(new SortByUpvotes<Post>());
-                    }
+                    sortPosts(sortedPosts, request.orderParams() == OrderParams.ASC, new SortByUpvotes<>());
                 }
                 case DATE -> {
-                    if (request.orderParams() == OrderParams.ASC) {
-                        sortedPosts.sort(new SortByDate<Post>().reversed());
-                    } else {
-                        sortedPosts.sort(new SortByDate<Post>());
-                    }
+                    sortPosts(sortedPosts, request.orderParams() == OrderParams.ASC, new SortByDate<>());
                 }
                 default -> throw new IllegalArgumentException("Cant sort posts");
             }
@@ -49,5 +43,13 @@ public class GetFilteredPostsUseCase implements GetFilteredPostsInputPort {
         }
 
         return Result.error("Cannot find Posts");
+    }
+
+    private void sortPosts(List<Post> posts, boolean reversed, Comparator<Post> comparator) {
+        posts.sort(comparator);
+
+        if (reversed) {
+            Collections.reverse(posts);
+        }
     }
 }

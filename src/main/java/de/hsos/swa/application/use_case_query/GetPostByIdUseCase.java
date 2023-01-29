@@ -12,9 +12,7 @@ import de.hsos.swa.domain.service.SortByUpvotes;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
@@ -32,18 +30,10 @@ public class GetPostByIdUseCase implements GetPostByIdInputPort {
 
             switch (request.sortingParams()) {
                 case VOTES -> {
-                    if (request.orderParams() == OrderParams.ASC) {
-                        sortedComments.sort(new SortByUpvotes<Comment>());
-                    } else {
-                        sortedComments.sort(new SortByUpvotes<Comment>().reversed());
-                    }
+                    sortReplies(sortedComments, request.orderParams() != OrderParams.ASC, new SortByUpvotes<>());
                 }
                 case DATE -> {
-                    if (request.orderParams() == OrderParams.ASC) {
-                        sortedComments.sort(new SortByDate<Comment>());
-                    } else {
-                        sortedComments.sort(new SortByDate<Comment>().reversed());
-                    }
+                    sortReplies(sortedComments, request.orderParams() != OrderParams.ASC, new SortByDate<>());
                 }
                 default -> throw new IllegalArgumentException("Cant sort comments");
             }
@@ -53,5 +43,28 @@ public class GetPostByIdUseCase implements GetPostByIdInputPort {
             return Result.success(postResult.getData());
         }
         return Result.error("Cannot find Post");
+    }
+
+    private void sortReplies(List<Comment> comments, boolean reverse, Comparator<Comment> comparator) {
+        Queue<Comment> queue = new LinkedList<>(comments);
+        // Sort the top-level comments
+        comments.sort(comparator);
+        // Reverse the list if the reverse option is true
+        if (reverse) {
+            Collections.reverse(comments);
+        }
+        // While there are comments in the queue
+        while (!queue.isEmpty()) {
+            // Dequeue a comment
+            Comment comment = queue.remove();
+            // Sort the replies
+            comment.getReplies().sort(comparator);
+            // Reverse the list if the reverse option is true
+            if (reverse) {
+                Collections.reverse(comment.getReplies());
+            }
+            // Add the replies to the queue
+            queue.addAll(comment.getReplies());
+        }
     }
 }
