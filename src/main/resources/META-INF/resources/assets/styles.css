@@ -1,3 +1,8 @@
+@font-face {
+    font-family: "BioRhyme";
+    src: url("/assets/fonts/biorhyme/BioRhyme-Regular.ttf");
+}
+
 h1, h5 {
     font-family: "BioRhyme", monospace;
 }
@@ -13,6 +18,7 @@ body {
 }
 
 .title-info {
+    font-family: "BioRhyme", monospace;
     margin: 0;
 }
 
