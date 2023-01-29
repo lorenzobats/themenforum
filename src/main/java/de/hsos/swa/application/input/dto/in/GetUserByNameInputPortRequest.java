@@ -1,7 +1,7 @@
 package de.hsos.swa.application.input.dto.in;
 
-import javax.validation.constraints.NotEmpty;
+import de.hsos.swa.application.input.validation.constraints.ValidUsername;
 
 public record GetUserByNameInputPortRequest(
-        @NotEmpty(message = "username empty") String username
+        @ValidUsername String username
 ) {}

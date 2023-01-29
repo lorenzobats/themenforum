@@ -1,9 +1,13 @@
 package de.hsos.swa.application.input.dto.in;
 
-import javax.validation.constraints.NotEmpty;
+import de.hsos.swa.application.input.validation.constraints.ValidInputPortRequest;
+import de.hsos.swa.application.input.validation.constraints.ValidUsername;
 
+@ValidInputPortRequest
 public record CreateTopicInputPortRequest(
-        @NotEmpty(message = "Field: 'title' is missing") String title,
-        @NotEmpty(message = "Field: 'description' is missing") String description,
-        @NotEmpty(message = "Field: 'username' is missing") String username
+        // TODO: Validation TopicTitle (Length, Trailing Spaces)
+        String title,
+        // TODO: Validation TopicDescription (Length, Trailing Spaces)
+        String description,
+        @ValidUsername String username
 ) {}

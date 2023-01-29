@@ -39,13 +39,30 @@
         <div class="content-box">
         {#if isLoggedIn}
             <div style="margin-right: 4px;">
+                {#if entry.loggedInUserHasVoted(username)}
                 <a href="#" onclick="vote('{entry.id}','NONE')">X</a>
+                    {#else}
+                    <p style="margin: 0; color: darkgrey"></p>
+                {/if}
             </div>
         <div class="vote-container">
 
-        <div class="vote"><a href="#" onclick="vote('{entry.id}','UP')">«</a></div>
+        <div class="vote">
+            {#if !entry.loggedInUserHasUpvoted(username) && entry.loggedInUserCanVote(username)}
+            <a href="#" onclick="vote('{entry.id}','UP')">«</a>
+            {#else}
+                <p style="margin: 0; color: darkgrey">«</p>
+            {/if}
+        </div>
             <div>{entry.totalVotes}</div>
-            <div class="vote"><a href="#" onclick="vote('{entry.id}','DOWN')">»</a></div>
+
+            <div class="vote">
+            {#if !entry.loggedInUserHasDownvoted(username) && entry.loggedInUserCanVote(username)}
+                <a href="#" onclick="vote('{entry.id}','DOWN')">»</a>
+            {#else}
+                <p style="margin: 0; color: darkgrey">»</p>
+                {/if}
+                </div>
         </div>
         {#else}
             <div style="margin-right: 10px">{entry.totalVotes}</div>

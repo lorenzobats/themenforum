@@ -72,7 +72,7 @@ public class TopicRestAdapter {
     @Path("{id}")
     public Response getTopicById(@PathParam("id") String id) {
         try {
-            GetTopicByIdInputPortRequest query = new GetTopicByIdInputPortRequest(id);
+            GetTopicByIdInputPortRequest query = new GetTopicByIdInputPortRequest("");
             Result<Topic> topicResult = this.getTopicByIdInputPort.getTopicById(query);
             if (topicResult.isSuccessful()) {
                 TopicDto response = TopicDto.Converter.fromDomainEntity(topicResult.getData());

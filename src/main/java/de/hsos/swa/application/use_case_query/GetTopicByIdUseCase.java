@@ -20,7 +20,7 @@ public class GetTopicByIdUseCase implements GetTopicByIdInputPort {
 
     @Override
     public Result<Topic> getTopicById(GetTopicByIdInputPortRequest request) {
-        Result<Topic> topicResult = topicRepository.getTopicById(UUID.fromString(request.id()));
+        Result<Topic> topicResult = topicRepository.getTopicById(UUID.fromString(request.topicId()));
         if (topicResult.isSuccessful()) {
             return Result.success(topicResult.getData());
         }

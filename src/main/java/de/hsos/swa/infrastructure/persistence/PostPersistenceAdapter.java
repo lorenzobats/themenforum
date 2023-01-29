@@ -119,19 +119,19 @@ public class PostPersistenceAdapter implements PostRepository {
             CriteriaBuilder<UUID> subquery = criteriaBuilderFactory.create(entityManager, UUID.class)
                     .withRecursive(CommentCTE.class)
                         .from(CommentPersistenceModel.class, "comment")
-                        .bind("id").select("comment.id")
+                        .bind("id").select("comment.topicId")
                         .bind("parentComment").select("comment.parentComment")
                         .where("id").eq(commentId)
                     .unionAll()
                         .from(CommentPersistenceModel.class, "comment")
                         .from(CommentCTE.class, "previous_comment")
-                        .bind("id").select("comment.id")
+                        .bind("id").select("comment.topicId")
                         .bind("parentComment").select("comment.parentComment")
-                        .where("comment.id").eqExpression("previous_comment.parentComment.id")
+                        .where("comment.topicId").eqExpression("previous_comment.parentComment.topicId")
                     .end()
                     .where("parentComment").isNull()
                     .from(CommentCTE.class, "first_level_comment")
-                    .select("first_level_comment.id");
+                    .select("first_level_comment.topicId");
 
             // Nutzen der zuvor formulierten Subquery, um Post zu finden
             CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);

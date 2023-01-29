@@ -11,9 +11,7 @@ public class VotePostRestAdapterRequest {
 
     @NotNull(message = "voteType is empty")
     public VoteType voteType;
-
     public VotePostRestAdapterRequest() {}
-
     public static class Converter {
         public static VotePostInputPortRequest toInputPortCommand(VotePostRestAdapterRequest adapterRequest, String postId, String username) {
             return new VotePostInputPortRequest(postId, username, adapterRequest.voteType);

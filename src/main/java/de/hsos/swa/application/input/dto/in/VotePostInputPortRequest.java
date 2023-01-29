@@ -1,12 +1,14 @@
 package de.hsos.swa.application.input.dto.in;
 
+import de.hsos.swa.application.input.validation.constraints.ValidId;
+import de.hsos.swa.application.input.validation.constraints.ValidInputPortRequest;
+import de.hsos.swa.application.input.validation.constraints.ValidUsername;
 import de.hsos.swa.domain.entity.VoteType;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
+@ValidInputPortRequest
 public record VotePostInputPortRequest(
-        @NotBlank(message = "postId is missing") String postId,
-        @NotBlank(message = "username is missing") String username,
-        @NotNull(message = "voteType is missing") VoteType voteType
+        @ValidId String postId,
+        @ValidUsername String username,
+        // TODO: VoteType implementieren
+        VoteType voteType
 ){}

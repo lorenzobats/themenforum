@@ -4,7 +4,7 @@ import de.hsos.swa.application.use_case_query.PostFilterParams;
 import de.hsos.swa.application.use_case_query.SortingParams;
 
 import java.util.Map;
-
+// Todo Validierung!
 public record GetFilteredPostInputPortRequest(
         Map<PostFilterParams, Object> filterParams,
         Boolean includeComments,

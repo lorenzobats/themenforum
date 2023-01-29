@@ -6,6 +6,7 @@ import de.hsos.swa.domain.entity.Post;
 
 import java.util.List;
 
+// TODO: Kann ggf.Weg weil nur filterung benutzt
 public interface GetAllPostsInputPort {
     Result<List<Post>> getAllPosts(boolean includeComments);
 }

@@ -1,5 +1,8 @@
 package de.hsos.swa.application.input.dto.in;
 
-public record UpdateCommentInputPortRequest(
+import de.hsos.swa.application.input.validation.constraints.ValidInputPortRequest;
 
+@ValidInputPortRequest
+public record UpdateCommentInputPortRequest(
+// TODO: Implementieren
 ) { }

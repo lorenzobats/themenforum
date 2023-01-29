@@ -1,8 +1,8 @@
 package de.hsos.swa.application.input.dto.in;
 
-import javax.validation.constraints.NotBlank;
+import de.hsos.swa.application.input.validation.constraints.ValidUsername;
 
 public record GetVotedPostsByUserInputPortRequest(
-        @NotBlank(message = "username is empty") String username
+        @ValidUsername String username
 ) {
 }

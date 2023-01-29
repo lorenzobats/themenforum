@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 
 public class VoteCommentRestAdapterRequest {
 
-
     @NotNull(message = "voteType is empty")
     public VoteType voteType;
     public VoteCommentRestAdapterRequest() {}
