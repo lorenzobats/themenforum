@@ -16,7 +16,4 @@ public class CommentValidationService {
     public void validateReply(@Valid ReplyToCommentRestAdapterRequest request) {
 
     }
-
-
-
 }

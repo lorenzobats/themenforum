@@ -42,9 +42,6 @@ public class CommentRestAdapter {
     ReplyToCommentInputPort replyToCommentInputPort;
 
     @Inject
-    VoteEntityInputPort voteEntityInputPort;
-
-    @Inject
     DeleteCommentInputPort deleteCommentInputPort;
 
     @Inject

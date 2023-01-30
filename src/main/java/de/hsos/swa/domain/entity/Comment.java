@@ -1,5 +1,6 @@
 package de.hsos.swa.domain.entity;
 
+import de.hsos.swa.domain.vo.VoteType;
 import io.vertx.codegen.annotations.Nullable;
 
 import javax.validation.Valid;

@@ -9,10 +9,9 @@ import de.hsos.swa.application.use_case_query.OrderParams;
 import de.hsos.swa.application.use_case_query.PostFilterParams;
 import de.hsos.swa.application.use_case_query.SortingParams;
 import de.hsos.swa.application.util.Result;
-import de.hsos.swa.domain.entity.Comment;
-import de.hsos.swa.domain.entity.Post;
-import de.hsos.swa.domain.entity.Topic;
-import de.hsos.swa.domain.entity.VoteType;
+import de.hsos.swa.domain.entity.*;
+import de.hsos.swa.domain.vo.VoteType;
+import de.hsos.swa.domain.vo.VotedEntityType;
 import de.hsos.swa.infrastructure.ui.dto.in.CommentPostUIRequest;
 import de.hsos.swa.infrastructure.ui.dto.in.CreatePostUIRequest;
 import de.hsos.swa.infrastructure.ui.dto.in.CreateTopicUIRequest;
@@ -63,9 +62,6 @@ public class PublicEndpoint {
 
     @Inject
     ReplyToCommentInputPort replyToCommentInputPort;
-
-    @Inject
-    VotePostInputPort votePostInputPort;
 
     @Inject
     VoteEntityInputPort voteEntityInputPort;
@@ -262,7 +258,7 @@ public class PublicEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/replyTo/{commentId}")
     @RolesAllowed({"admin", "member"})
-    public Response replyToComment(@JsonProperty ReplyToCommentUIRequest request, @PathParam("commentId") String commentId, @Context SecurityContext securityContext) {
+    public Response replyToComment(@JsonProperty ReplyToCommentUIRequest request, @PathParam("entityId") String commentId, @Context SecurityContext securityContext) {
         String username = securityContext.getUserPrincipal().getName();
         Result<Comment> replyResult = this.replyToCommentInputPort.replyToComment(new ReplyToCommentInputPortRequest(commentId, username, request.replyText));
 
@@ -281,9 +277,9 @@ public class PublicEndpoint {
     @RolesAllowed({"admin", "member"})
     public Response votePost(@JsonProperty VoteType voteType, @PathParam("id") String postId, @Context SecurityContext securityContext) {
         String username = securityContext.getUserPrincipal().getName();
-        Result<Post> postResult = this.votePostInputPort.votePost(new VotePostInputPortRequest(postId, username, voteType));
+        Result<Vote> voteResult = this.voteEntityInputPort.vote(new VoteEntityInputPortRequest(postId, username, voteType, VotedEntityType.POST));
 
-        if (postResult.isSuccessful()) {
+        if (voteResult.isSuccessful()) {
             return Response.status(Response.Status.OK).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -296,9 +292,9 @@ public class PublicEndpoint {
     @RolesAllowed({"admin", "member"})
     public Response voteComment(@JsonProperty VoteType voteType, @PathParam("id") String postId, @Context SecurityContext securityContext) {
         String username = securityContext.getUserPrincipal().getName();
-        Result<Comment> commentResult = this.voteEntityInputPort.vote(new VoteEntityInputPortRequest(postId, username, voteType));
+        Result<Vote> voteResult = this.voteEntityInputPort.vote(new VoteEntityInputPortRequest(postId, username, voteType, VotedEntityType.COMMENT));
 
-        if (commentResult.isSuccessful()) {
+        if (voteResult.isSuccessful()) {
             return Response.status(Response.Status.OK).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();

@@ -1,5 +1,7 @@
 package de.hsos.swa.domain.entity;
 
+import de.hsos.swa.domain.vo.VoteType;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;

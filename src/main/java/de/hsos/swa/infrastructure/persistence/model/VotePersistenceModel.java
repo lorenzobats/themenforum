@@ -2,12 +2,10 @@ package de.hsos.swa.infrastructure.persistence.model;
 
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.domain.entity.Vote;
-import de.hsos.swa.domain.entity.VoteType;
+import de.hsos.swa.domain.vo.VoteType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "PostVote")

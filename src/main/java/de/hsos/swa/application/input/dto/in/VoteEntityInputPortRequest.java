@@ -3,14 +3,15 @@ package de.hsos.swa.application.input.dto.in;
 import de.hsos.swa.application.input.validation.constraints.ValidId;
 import de.hsos.swa.application.input.validation.constraints.ValidInputPortRequest;
 import de.hsos.swa.application.input.validation.constraints.ValidUsername;
-import de.hsos.swa.domain.entity.VoteType;
-import de.hsos.swa.domain.entity.VotedEntity;
+import de.hsos.swa.domain.vo.VotedEntityType;
+import de.hsos.swa.domain.vo.VoteType;
 
 @ValidInputPortRequest
 public record VoteEntityInputPortRequest(
-        @ValidId String commentId,
+        @ValidId String entityId,
         @ValidUsername String username,
+
         // TODO VoteType Validator
         VoteType voteType,
-        String entityType
+        VotedEntityType entityType
 ) { }

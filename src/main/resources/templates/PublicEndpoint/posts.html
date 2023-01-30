@@ -27,14 +27,16 @@
             <p style="margin-left: 4px; margin-right: 4px;"> | </p>
             <p><a href="/ui/posts?sortBy=DATE&orderBy=DESC">New</a></p>
         </div>
-        <button class="btn btn-primary" onclick="createPost()">Create Post</button>
+            <div>
+                <button class="btn btn-primary" onclick="createPost()">Create Post</button>
+            </div>
         </div>
         {#for entry in allPosts}
             <div class="content-box">
             {#if isLoggedIn}
                 <div style="margin-right: 4px;">
-                    {#if entry.loggedInUserHasVoted(username)}
-                        <a href="#" onclick="vote('{entry.id}','NONE')">X</a>
+                    {#if entry.loggedInUserVote(username)}
+                        <a href="#" onclick="deleteVote('{entry.loggedInUserVote(username).id}')">X</a>
                     {#else}
                         <p style="margin: 0; color: darkgrey"></p>
                     {/if}
@@ -42,7 +44,7 @@
                 <div class="vote-container">
 
                 <div class="vote">
-                    {#if !entry.loggedInUserHasUpvoted(username) && entry.loggedInUserCanVote(username)}
+                    {#if entry.loggedInUserCanUpvote(username)}
                         <a href="#" onclick="vote('{entry.id}','UP')">«</a>
                     {#else}
                         <p style="margin: 0; color: darkgrey">«</p>
@@ -51,7 +53,7 @@
                 <div>{entry.totalVotes}</div>
 
                 <div class="vote">
-                {#if !entry.loggedInUserHasDownvoted(username) && entry.loggedInUserCanVote(username)}
+                {#if entry.loggedInUserCanDownvote(username)}
                     <a href="#" onclick="vote('{entry.id}','DOWN')">»</a>
                 {#else}
                     <p style="margin: 0; color: darkgrey">»</p>
@@ -67,14 +69,14 @@
                 <h5 style="cursor: pointer" onclick="window.open('/ui/posts/{entry.id}', '_self')" class="title-info">{entry.title}</h5>
 
                 <span class="sub-info">{entry.parsedCreatedAtDate} |
-            by <strong>{entry.creator.name}</strong> |
+            by <strong>{entry.user.name}</strong> |
             <a href="/ui/posts?topic={entry.topic.title}">{entry.topic.title}</a> |
             {entry.commentCount} comments |
             <a href="/ui/posts?topic={entry.topic.title}">read</a>
         </span>
             </div>
             <div>
-            {#if username == entry.creator.name}<button class="btn btn-outline-danger" onclick="deletePost('{entry.id}')">X</button>{/if}
+            {#if username == entry.user.name}<button class="btn btn-outline-danger" onclick="deletePost('{entry.id}')">X</button>{/if}
             </div>
             </div>
             </div>
@@ -127,6 +129,33 @@
 
     function deletePost(postId) {
         let url = '/ui/posts/' + postId;
+        fetch(url, {
+            method: 'DELETE',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+        })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    response.text().then(errorMessage => {
+                        //console.log(errorMessage);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
+    function deleteVote(voteId) {
+        let url = '/api/v1/votes/' + voteId;
         fetch(url, {
             method: 'DELETE',
             mode: 'cors',

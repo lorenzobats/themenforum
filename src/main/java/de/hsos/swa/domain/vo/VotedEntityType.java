@@ -1,4 +1,4 @@
-package de.hsos.swa.application.output.dto;
+package de.hsos.swa.domain.vo;
 
 public enum VotedEntityType {
     POST,

@@ -2,6 +2,7 @@ package de.hsos.swa.infrastructure.ui;
 
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.domain.entity.*;
+import de.hsos.swa.domain.vo.VoteType;
 import de.hsos.swa.infrastructure.ui.dto.out.CommentWithDepth;
 import io.quarkus.qute.TemplateExtension;
 
@@ -35,42 +36,27 @@ public class TemplateExtensions {
         return comment.getCreatedAt().format(formatter);
     }
 
-    public static VoteType loggedInUserVote(Post post, String username) {
+    public static Vote loggedInUserVote(Post post, String username) {
         for (Vote vote : post.getVotes()) {
             if(vote.getUser().getName().equals(username)){
-                return vote.getVoteType();
+                return vote;
             }
         }
-        return VoteType.NONE;
+        return null;
     }
 
-    public static boolean loggedInUserCanVote(Post post, String username) {
-        return !post.getUser().getName().equals(username);
-    }
-    public static boolean loggedInUserHasVoted(Post post, String username) {
-        return !loggedInUserVote(post, username).equals(VoteType.NONE);
-    }
-    public static boolean loggedInUserHasDownvoted(Post post, String username) {
-        return loggedInUserVote(post, username).equals(VoteType.DOWN);
+
+    public static boolean loggedInUserCanDownvote(Post post, String username) {
+        Vote vote = loggedInUserVote(post, username);
+        return !post.getUser().getName().equals(username) &&
+                (vote == null || vote.getVoteType() != VoteType.DOWN);
+
     }
 
-    public static boolean loggedInUserHasUpvoted(Post post, String username) {
-        return loggedInUserVote(post, username).equals(VoteType.UP);
-    }
-
-    public static List<Comment> commentsFlat(Post post) {
-        List<Comment> flatComments = new ArrayList<>();
-        Stack<Comment> stack = new Stack<>();
-        stack.addAll(post.getComments());
-
-        while (!stack.isEmpty()) {
-            Comment currentComment = stack.pop();
-            flatComments.add(currentComment);
-            if (currentComment.getReplies() != null && !currentComment.getReplies().isEmpty()) {
-                stack.addAll(currentComment.getReplies());
-            }
-        }
-        return flatComments;
+    public static boolean loggedInUserCanUpvote(Post post, String username) {
+        Vote vote = loggedInUserVote(post, username);
+        return !post.getUser().getName().equals(username) &&
+                (vote == null || vote.getVoteType() != VoteType.UP);
     }
 
     public static List<CommentWithDepth> commentsFlatWithDepth(Post post) {

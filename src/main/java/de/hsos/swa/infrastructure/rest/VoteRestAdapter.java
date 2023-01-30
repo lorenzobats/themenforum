@@ -1,14 +1,11 @@
 package de.hsos.swa.infrastructure.rest;
 import de.hsos.swa.application.input.DeleteVoteInputPort;
 import de.hsos.swa.application.input.VoteEntityInputPort;
-import de.hsos.swa.application.input.VotePostInputPort;
 import de.hsos.swa.application.input.dto.in.DeleteVoteInputPortRequest;
 import de.hsos.swa.application.input.dto.in.VoteEntityInputPortRequest;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Vote;
 import de.hsos.swa.infrastructure.rest.dto.in.VoteEntityRestAdapterRequest;
-import de.hsos.swa.infrastructure.rest.validation.CommentValidationService;
-import de.hsos.swa.infrastructure.rest.validation.PostValidationService;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import de.hsos.swa.infrastructure.rest.validation.VoteValidationService;
 
@@ -43,7 +40,7 @@ public class VoteRestAdapter {
 
 
     @POST
-    public Response votePost(@NotNull VoteEntityRestAdapterRequest request, @Context SecurityContext securityContext) {
+    public Response vote(@NotNull VoteEntityRestAdapterRequest request, @Context SecurityContext securityContext) {
         try {
             voteValidationService.validateVote(request);
             String username = securityContext.getUserPrincipal().getName();

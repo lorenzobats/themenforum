@@ -8,7 +8,6 @@ import de.hsos.swa.application.use_case_query.SortingParams;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.infrastructure.rest.dto.in.CreatePostRestAdapterRequest;
-import de.hsos.swa.infrastructure.rest.dto.in.VotePostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
 import de.hsos.swa.infrastructure.rest.validation.PostValidationService;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
@@ -51,9 +50,6 @@ public class PostRestAdapter {
 
     @Inject
     GetFilteredPostsInputPort getFilteredPostsInputPort;
-
-    @Inject
-    VotePostInputPort votePostInputPort;
 
     @Inject
     DeletePostInputPort deletePostInputPort;

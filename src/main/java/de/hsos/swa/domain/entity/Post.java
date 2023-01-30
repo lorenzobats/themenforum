@@ -1,5 +1,7 @@
 package de.hsos.swa.domain.entity;
 
+import de.hsos.swa.domain.vo.VoteType;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

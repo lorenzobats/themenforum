@@ -38,9 +38,6 @@ import java.util.List;
 public class TopicRestAdapter {
 
     @Inject
-    GetAllTopicsInputPort getAllTopicsInputPort;
-
-    @Inject
     GetAllTopicsWithPostCountInputPort getAllTopicsWithPostCountInputPort;
 
     @Inject

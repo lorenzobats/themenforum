@@ -9,12 +9,28 @@
                 <div style="display: flex; align-items: center; margin-bottom: 20px">
                     {#if isLoggedIn}
                         <div style="margin-right: 4px;">
-                            <a href="#" onclick="votePost('{post}','NONE')">X</a>
+                            {#if post.loggedInUserVote(username)}
+                            <a href="#" onclick="deleteVote('{post.loggedInUserVote(username).id}')">X</a>
+                            {#else}
+                                <p style="margin: 0; color: darkgrey"></p>
+                            {/if}
                         </div>
                         <div class="vote-container">
-                        <div class="vote"><a href="#" onclick="votePost('{post.id}','UP')">«</a></div>
+                        <div class="vote">
+                            {#if post.loggedInUserCanUpvote(username)}
+                                <a href="#" onclick="votePost('{post.id}','UP')">«</a>
+                            {#else}
+                                <p style="margin: 0; color: darkgrey">«</p>
+                            {/if}
+                        </div>
                         <div>{post.totalVotes}</div>
-                        <div class="vote"><a href="#" onclick="votePost('{post.id}','DOWN')">»</a></div>
+                        <div class="vote">
+                        {#if post.loggedInUserCanDownvote(username)}
+                            <a href="#" onclick="votePost('{post.id}','DOWN')">»</a>
+                        {#else}
+                            <p style="margin: 0; color: darkgrey">»</p>
+                        {/if}
+                        </div>
                         </div>
                     {/if}
                     <div>
@@ -34,7 +50,7 @@
         </div>
 
         <span class="sub-info">{post.parsedCreatedAtDate} |
-        by <strong>{post.creator.name}</strong> |
+        by <strong>{post.user.name}</strong> |
             <a href="/ui/posts?topic={post.topic.title}">{post.topic.title}</a> |
             {post.commentCount} comments
             {#if ! isLoggedIn} | voting: {post.totalVotes}{/if}</span>
@@ -127,10 +143,10 @@
 {/include}
 
 <script>
-    function toggleReply(commentId) {
-        document.getElementById(commentId + "-box").style.display = "block";
-        document.getElementById(commentId + "-toggle-btn").style.display = "none";
-        console.log(commentId);
+    function toggleReply(entityId) {
+        document.getElementById(entityId + "-box").style.display = "block";
+        document.getElementById(entityId + "-toggle-btn").style.display = "none";
+        console.log(entityId);
     }
 
     function submitComment(postId) {
@@ -167,13 +183,13 @@
             });
     }
 
-    function submitReply(commentId) {
-        let replyText = document.getElementById(commentId + "-text");
+    function submitReply(entityId) {
+        let replyText = document.getElementById(entityId + "-text");
         if (!replyText.checkValidity()) {
             return;
         }
         let data = { "replyText" : replyText.value};
-        let url = '/ui/replyTo/' + commentId;
+        let url = '/ui/replyTo/' + entityId;
         fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -228,8 +244,8 @@
             });
     }
 
-    function voteComment(commentId, voteType) {
-        let url = '/ui/comments/' + commentId + '/vote';
+    function voteComment(entityId, voteType) {
+        let url = '/ui/comments/' + entityId + '/vote';
         fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -261,8 +277,35 @@
         window.open("/ui/login", "_self")
     }
 
-    function deleteComment(commentId) {
-        let url = '/ui/comments/' + commentId;
+    function deleteComment(entityId) {
+        let url = '/ui/comments/' + entityId;
+        fetch(url, {
+            method: 'DELETE',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+        })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    response.text().then(errorMessage => {
+                        //console.log(errorMessage);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
+    function deleteVote(voteId) {
+        let url = '/api/v1/votes/' + voteId;
         fetch(url, {
             method: 'DELETE',
             mode: 'cors',

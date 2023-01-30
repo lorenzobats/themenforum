@@ -61,7 +61,7 @@ public class PostPersistenceAdapter implements PostRepository {
                 criteriaBuilder.where("userPersistenceModel.name").eq(filterParams.get(PostFilterParams.USERNAME));
 
             if (filterParams.containsKey(PostFilterParams.USERID))
-                criteriaBuilder.where("userPersistenceModel.commentId").eq(filterParams.get(PostFilterParams.USERID));
+                criteriaBuilder.where("userPersistenceModel.entityId").eq(filterParams.get(PostFilterParams.USERID));
 
             if (filterParams.containsKey(PostFilterParams.TOPIC))
                 criteriaBuilder.where("topicPersistenceModel.title").eq(filterParams.get(PostFilterParams.TOPIC));

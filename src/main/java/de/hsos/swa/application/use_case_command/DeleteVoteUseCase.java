@@ -9,6 +9,7 @@ import de.hsos.swa.application.output.repository.VoteRepository;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.*;
 import de.hsos.swa.domain.service.VoteEntityService;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -27,35 +28,46 @@ public class DeleteVoteUseCase implements DeleteVoteInputPort {
     PostRepository postRepository;
 
     @Inject
+    VoteEntityService voteEntityService;
+
+    @Inject
     UserRepository userRepository;
 
     @Inject
-    VoteEntityService voteEntityService;
+    Logger log;
 
     @Override
     public Result<Vote> deleteVote(DeleteVoteInputPortRequest request) {
+        Result<User> userResult = this.userRepository.getUserByName(request.username());
+        if (!userResult.isSuccessful()) {
+            return Result.error("Cannot retrieve User");
+        }
+        User user = userResult.getData();
+
+
         Result<VotePersistenceDto> voteResult = this.voteRepository.getVoteById(UUID.fromString(request.vote()));
         if (!voteResult.isSuccessful()) {
             return Result.error("Cannot find Vote");
         }
-
         VotePersistenceDto vote = voteResult.getData();
 
         Result<Post> postResult = new Result<>();
         Optional<Vote> optionalVote = Optional.empty();
         switch (vote.votedEntityType()) {
             case COMMENT -> {
-                postResult = this.postRepository.getPostById(vote.votedEntityId(), false);
+                postResult = this.postRepository.getPostByCommentId(vote.votedEntityId());
                 if (postResult.isSuccessful()) {
                     Optional<Comment> optionalComment = postResult.getData().findCommentById(String.valueOf(vote.votedEntityId()));
                     if (optionalComment.isPresent()) {
-                        optionalVote = this.voteEntityService.deleteVote(optionalComment.get(), vote.vote().getUser());
+                        optionalVote = this.voteEntityService.deleteVote(optionalComment.get(), user);
                     }
                 }
             }
             case POST -> {
-                postResult = this.postRepository.getPostByCommentId(vote.votedEntityId());
-                optionalVote = this.voteEntityService.deleteVote(postResult.getData(), vote.vote().getUser());
+                postResult = this.postRepository.getPostById(vote.votedEntityId(),true);
+                if (postResult.isSuccessful()) {
+                    optionalVote = this.voteEntityService.deleteVote(postResult.getData(), user);
+                }
             }
         }
 

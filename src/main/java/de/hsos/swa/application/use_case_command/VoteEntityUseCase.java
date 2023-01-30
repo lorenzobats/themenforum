@@ -40,30 +40,37 @@ public class VoteEntityUseCase implements VoteEntityInputPort {
         User user = userResult.getData();
 
 
-        Result<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(request.commentId()));
-        if (!postResult.isSuccessful()) {
-            return Result.error("Cannot retrieve Post");
+        Result<Post> postResult = new Result<>();
+        Optional<Vote> optionalVote = Optional.empty();
+        switch (request.entityType()) {
+            case COMMENT -> {
+                postResult = this.postRepository.getPostByCommentId(UUID.fromString(request.entityId()));
+                if (postResult.isSuccessful()) {
+                    Optional<Comment> optionalComment = postResult.getData().findCommentById(request.entityId());
+                    if (optionalComment.isPresent()) {
+                        optionalVote = this.voteEntityService.vote(optionalComment.get(), user, request.voteType());
+                        if (optionalVote.isEmpty()) {
+                            return Result.error("Comment could not be voted");
+                        }
+                    }
+                }
+            }
+            case POST -> {
+                postResult = this.postRepository.getPostById(UUID.fromString(request.entityId()),true);
+                optionalVote = this.voteEntityService.vote(postResult.getData(), user, request.voteType());
+                if (optionalVote.isEmpty()) {
+                    return Result.error("Post could not be voted");
+                }
+            }
         }
-        Post post = postResult.getData();
 
-        Optional<Comment> comment = post.findCommentById(request.commentId());
 
-        if(comment.isEmpty()) {
-            return Result.error("Comment not found");
-        }
+        Result<Post> updatePostResult = this.postRepository.updatePost(postResult.getData());
 
-        Optional<Vote> optionalVote = this.voteEntityService.vote(comment.get(), user, request.voteType());
-
-        if (optionalVote.isEmpty()) {
-            return Result.error("Post could not be voted");
-        }
-
-        Result<Post> updatePostResult = this.postRepository.updatePost(post);
-
-        if (updatePostResult.isSuccessful()) {
+        if (updatePostResult.isSuccessful() && optionalVote.isPresent()) {
             return Result.success(optionalVote.get());
         }
 
-        return Result.error("Something went wrong while voting Post" + updatePostResult.getMessage());
+        return Result.error("Something went wrong while voting Entity" + updatePostResult.getMessage());
     }
 }
