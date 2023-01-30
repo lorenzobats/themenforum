@@ -77,6 +77,7 @@ public class TopicPersistenceAdapter implements TopicRepository {
 
     @Override
     public Result<List<TopicWithEmbeddedPostCountDto>> getAllTopicsWithPostCount() {
+        // TODO: Try Catch
         CriteriaBuilder<TopicPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, TopicPersistenceModel.class);
         List<TopicPersistenceView> postList;
         CriteriaBuilder<TopicPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(TopicPersistenceView.class), criteriaBuilder);

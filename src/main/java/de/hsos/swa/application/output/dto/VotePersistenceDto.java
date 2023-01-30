@@ -4,8 +4,8 @@ import de.hsos.swa.domain.entity.Vote;
 
 import java.util.UUID;
 
-public record VoteWithTypeAndParentID(
+public record VotePersistenceDto(
     Vote vote,
-    String parentType,
-    UUID parentId
+    VotedEntityType votedEntityType,
+    UUID votedEntityId
 ) { }

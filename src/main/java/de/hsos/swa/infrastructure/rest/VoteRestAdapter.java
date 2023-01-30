@@ -3,16 +3,20 @@ import de.hsos.swa.application.input.DeleteVoteInputPort;
 import de.hsos.swa.application.input.VoteCommentInputPort;
 import de.hsos.swa.application.input.VotePostInputPort;
 import de.hsos.swa.application.input.dto.in.DeleteVoteInputPortRequest;
+import de.hsos.swa.application.input.dto.in.GetTopicByIdInputPortRequest;
 import de.hsos.swa.application.input.dto.in.VoteCommentInputPortRequest;
 import de.hsos.swa.application.input.dto.in.VotePostInputPortRequest;
+import de.hsos.swa.application.output.repository.VoteRepository;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
+import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.domain.entity.Vote;
 import de.hsos.swa.infrastructure.rest.dto.in.VoteCommentRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.dto.in.VotePostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.dto.out.CommentDto;
 import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
+import de.hsos.swa.infrastructure.rest.dto.out.TopicDto;
 import de.hsos.swa.infrastructure.rest.validation.CommentValidationService;
 import de.hsos.swa.infrastructure.rest.validation.PostValidationService;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
@@ -28,6 +32,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.UUID;
 
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
@@ -42,8 +47,8 @@ public class VoteRestAdapter {
     @Inject
     VoteCommentInputPort voteCommentInputPort;
 
-    @Inject
-    DeleteVoteInputPort deleteVoteInputPort;
+    //@Inject
+    //DeleteVoteInputPort deleteVoteInputPort;
 
     @Inject
     PostValidationService postValidationService;
@@ -51,11 +56,22 @@ public class VoteRestAdapter {
     @Inject
     CommentValidationService commentValidationService;
 
+    @Inject
+    VoteRepository voteRepository;
+
     @GET
     // TODO: implementieren => nutze "GetVotedPostsByUserInputPort"
     @RolesAllowed({"admin", "member"})
     public Response getAllVotesByUser() {
         return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+    }
+
+
+
+    @GET
+    @Path("{id}")
+    public Response getVoteById(@PathParam("id") String id) {
+        return Response.status(Response.Status.OK).entity(this.voteRepository.getVoteById(UUID.fromString(id))).build();
     }
 
     @POST
@@ -96,24 +112,22 @@ public class VoteRestAdapter {
         }
     }
 
-    @DELETE
-    @Path("/post/{id}")
-    @RolesAllowed("member")
-    public Response deleteVote(@PathParam("id") String id, @Context SecurityContext securityContext) {
-        try {
-            String username = securityContext.getUserPrincipal().getName();
-
-            Result<Vote> voteResult = this.deleteVoteInputPort.deleteVote(new DeleteVoteInputPortRequest(id, username));
-
-            if (voteResult.isSuccessful()) {
-                return Response.status(Response.Status.OK).entity(voteResult.getData()).build();
-            }
-
-            return Response.status(Response.Status.BAD_REQUEST).entity(voteResult.getMessage()).build();
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
-        }
-    }
-
-
+//    @DELETE
+//    @Path("/post/{id}")
+//    @RolesAllowed("member")
+//    public Response deleteVote(@PathParam("id") String id, @Context SecurityContext securityContext) {
+//        try {
+//            String username = securityContext.getUserPrincipal().getName();
+//
+//            Result<Vote> voteResult = this.deleteVoteInputPort.deleteVote(new DeleteVoteInputPortRequest(id, username));
+//
+//            if (voteResult.isSuccessful()) {
+//                return Response.status(Response.Status.OK).entity(voteResult.getData()).build();
+//            }
+//
+//            return Response.status(Response.Status.BAD_REQUEST).entity(voteResult.getMessage()).build();
+//        } catch (ConstraintViolationException e) {
+//            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+//        }
+//    }
 }
