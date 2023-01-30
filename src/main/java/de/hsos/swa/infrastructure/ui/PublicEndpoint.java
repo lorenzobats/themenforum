@@ -3,7 +3,6 @@ package de.hsos.swa.infrastructure.ui;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
-import de.hsos.swa.application.input.dto.out.TopicWithEmbeddedPostCountDto;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.use_case_query.OrderParams;
 import de.hsos.swa.application.use_case_query.PostFilterParams;
@@ -33,7 +32,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +58,9 @@ public class PublicEndpoint {
 
     @Inject
     GetAllTopicsWithPostCountInputPort getAllTopicsWithPostCountInputPort;
+
+    @Inject
+    SearchTopicsInputPort searchTopicsInputPort;
 
     @Inject
     CommentPostInputPort commentPostInputPort;
@@ -102,7 +107,7 @@ public class PublicEndpoint {
 
         public static native TemplateInstance post(Post post, boolean isLoggedIn, String username);
 
-        public static native TemplateInstance createPost(List<TopicWithEmbeddedPostCountDto> allTopics, String username);
+        public static native TemplateInstance createPost(List<TopicWithPostCountDto> allTopics, String username);
 
 
         // COMMENT
@@ -134,12 +139,19 @@ public class PublicEndpoint {
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Path("/topics")
-    public TemplateInstance topics(@Context SecurityContext securityContext) {
+    public TemplateInstance topics(
+            @Context SecurityContext securityContext,
+            @QueryParam("search") String searchString
+    ) {
         boolean isLoggedIn = false;
         String username = "";
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
             isLoggedIn = true;
+        }
+        if(searchString != null){
+            Result<List<TopicWithPostCountDto>> searchedTopics = searchTopicsInputPort.searchTopics(new SearchTopicsInputPortRequest(searchString));
+            return Templates.topics(searchedTopics.getData(), isLoggedIn, username);
         }
         Result<List<TopicWithPostCountDto>> allTopics = getAllTopicsWithPostCountInputPort.getAllTopics();
         return Templates.topics(allTopics.getData(), isLoggedIn, username);
@@ -154,7 +166,7 @@ public class PublicEndpoint {
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
         }
-        Result<List<TopicWithEmbeddedPostCountDto>> allTopics = getAllTopicsWithPostCountInputPort.getAllTopicsTest();
+        Result<List<TopicWithPostCountDto>> allTopics = getAllTopicsWithPostCountInputPort.getAllTopics();
         return Templates.createTopic(username);
     }
 
@@ -227,7 +239,7 @@ public class PublicEndpoint {
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
         }
-        Result<List<TopicWithEmbeddedPostCountDto>> allTopics = getAllTopicsWithPostCountInputPort.getAllTopicsTest();
+        Result<List<TopicWithPostCountDto>> allTopics = getAllTopicsWithPostCountInputPort.getAllTopics();
         return Templates.createPost(allTopics.getData(), username);
     }
 
@@ -340,7 +352,8 @@ public class PublicEndpoint {
             }
 
             Topic topic = topicResult.getData();
-            return Response.status(Response.Status.CREATED).location(URI.create("/ui/posts?topic=" + topic.getTitle())).build();
+            return Response.status(Response.Status.CREATED).location(URI.create("/ui/posts?topic=" + URLEncoder.encode(topic.getTitle(), StandardCharsets.UTF_8)))
+                    .build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new UIValidationResult(e.getConstraintViolations(), Response.Status.BAD_REQUEST, "/ui/posts/")).build();
         }

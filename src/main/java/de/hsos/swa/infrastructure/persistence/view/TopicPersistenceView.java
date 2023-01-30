@@ -1,7 +1,7 @@
 package de.hsos.swa.infrastructure.persistence.view;
 
 import com.blazebit.persistence.view.*;
-import de.hsos.swa.application.input.dto.out.TopicWithEmbeddedPostCountDto;
+import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.infrastructure.persistence.model.TopicPersistenceModel;
 import de.hsos.swa.infrastructure.persistence.view.subquery.PostCountSubqueryProvider;
@@ -27,11 +27,9 @@ public record TopicPersistenceView(
         return new Topic(view.id, view.title, view.description, view.createdAt, UserPersistenceView.toDomainEntity(view.owner));
     }
 
-    public static TopicWithEmbeddedPostCountDto toDomainEntityWithPostCount(TopicPersistenceView view) {
+    public static TopicWithPostCountDto toDomainEntityWithPostCount(TopicPersistenceView view) {
         Topic topic = new Topic(view.id, view.title, view.description, view.createdAt, UserPersistenceView.toDomainEntity(view.owner));
-        return new TopicWithEmbeddedPostCountDto(topic, view.posts());
+        return new TopicWithPostCountDto(topic, view.posts());
     }
-
-
 };
 

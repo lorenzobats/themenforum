@@ -6,5 +6,7 @@ import de.hsos.swa.application.util.Result;
 import java.util.UUID;
 
 public interface VoteRepository {
+    // READ
     Result<VotePersistenceDto> getVoteById(UUID voteId);
+    // TODO: GetALlVotes
 }

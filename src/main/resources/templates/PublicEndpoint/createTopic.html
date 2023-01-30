@@ -65,7 +65,7 @@
             .then(response => {
                 if (response.ok) {
                     let location = response.headers.get("Location")
-                    window.location = location;
+                    window.location = encodeURI(location);
                 } else {
                     response.json().then(error => {
                         console.log(error);

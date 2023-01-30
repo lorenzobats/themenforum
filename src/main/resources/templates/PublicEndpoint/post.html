@@ -188,8 +188,9 @@
         if (!replyText.checkValidity()) {
             return;
         }
-        let data = { "replyText" : replyText.value};
-        let url = '/ui/replyTo/' + entityId;
+        console.log(entityId)
+        let data = { text : replyText.value};
+        let url = '/api/v1/comments/' + entityId;
         fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -216,8 +217,14 @@
             });
     }
 
-    function votePost(postId, voteType) {
-        let url = '/ui/posts/' + postId + '/vote';
+    function votePost(entityId, voteType) {
+
+        let url = '/api/v1/votes/';
+        let data = {
+            voteType : voteType,
+            entityType : "POST",
+            entityId : entityId
+        };
         fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -228,7 +235,7 @@
             },
             redirect: 'follow',
             referrerPolicy: 'no-referrer',
-            body: JSON.stringify(voteType),
+            body: JSON.stringify(data),
         })
             .then(response => {
                 if (response.ok) {
@@ -245,7 +252,12 @@
     }
 
     function voteComment(entityId, voteType) {
-        let url = '/ui/comments/' + entityId + '/vote';
+        let url = '/api/v1/votes/';
+        let data = {
+            voteType : voteType,
+            entityType : "COMMENT",
+            entityId : entityId
+        };
         fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -256,10 +268,16 @@
             },
             redirect: 'follow',
             referrerPolicy: 'no-referrer',
-            body: JSON.stringify(voteType),
+            body: JSON.stringify(data),
         })
-            .then(() => {
-                location.reload();
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    response.text().then(errorMessage => {
+                        //console.log(errorMessage);
+                    });
+                }
             })
             .catch(error => {
                 console.error(error);

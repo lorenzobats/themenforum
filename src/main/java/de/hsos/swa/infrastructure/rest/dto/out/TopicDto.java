@@ -36,8 +36,8 @@ public class TopicDto {
             return new TopicDto(topic.getId().toString(), topic.getTitle(), topic.getDescription(), topic.getCreatedAt(), topic.getOwner().getName());
         }
 
-        public static TopicDto fromInputPortDto(TopicWithPostCountDto topic) {
-            return new TopicDto(topic.id, topic.title, topic.description, topic.createdAt, topic.owner, topic.numberOfPosts);
+        public static TopicDto fromInputPortDto(TopicWithPostCountDto dto) {
+            return new TopicDto(dto.topic.getId().toString(), dto.topic.getTitle(), dto.topic.getDescription(), dto.topic.getCreatedAt(), dto.topic.getOwner().getName(), dto.numberOfPosts);
         }
     }
 }

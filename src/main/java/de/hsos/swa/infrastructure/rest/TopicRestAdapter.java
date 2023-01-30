@@ -1,14 +1,13 @@
 package de.hsos.swa.infrastructure.rest;
 
 import de.hsos.swa.application.input.dto.in.DeleteTopicInputPortRequest;
-import de.hsos.swa.application.input.dto.out.TopicWithEmbeddedPostCountDto;
+import de.hsos.swa.application.input.dto.in.SearchTopicsInputPortRequest;
+import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.input.*;
-import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.input.dto.in.CreateTopicInputPortRequest;
 import de.hsos.swa.application.input.dto.in.GetTopicByIdInputPortRequest;
 import de.hsos.swa.domain.entity.Topic;
-import de.hsos.swa.infrastructure.rest.dto.in.CommentPostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.dto.out.TopicDto;
 import de.hsos.swa.infrastructure.rest.dto.in.CreateTopicRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.TopicValidationService;
@@ -16,7 +15,6 @@ import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
-import org.jboss.logging.Logger;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -39,30 +37,29 @@ public class TopicRestAdapter {
 
     @Inject
     GetAllTopicsWithPostCountInputPort getAllTopicsWithPostCountInputPort;
-
+    @Inject
+    SearchTopicsInputPort searchTopicsInputPort;
     @Inject
     GetTopicByIdInputPort getTopicByIdInputPort;
-
     @Inject
     CreateTopicInputPort createTopicInputPort;
-
     @Inject
     DeleteTopicInputPort deleteTopicInputPort;
-
     @Inject
     TopicValidationService validationService;
-
-    @Inject
-    Logger log;
-
 
     @GET
     public Response getAllTopics(@QueryParam("search") String searchString) {
         try {
-            Result<List<TopicWithEmbeddedPostCountDto>> topicsResult = this.getAllTopicsWithPostCountInputPort.getAllTopicsTest();
+
+            Result<List<TopicWithPostCountDto>> topicsResult;
+            if (searchString != null)
+                topicsResult = this.searchTopicsInputPort.searchTopics(new SearchTopicsInputPortRequest(searchString));
+            else topicsResult = this.getAllTopicsWithPostCountInputPort.getAllTopics();
+
             if (topicsResult.isSuccessful()) {
-                //List<TopicDto> topicsResponse = topicsResult.getData().stream().map(TopicDto.Converter::fromInputPortDto).toList();
-                return Response.status(Response.Status.OK).entity(topicsResult.getData()).build();
+                List<TopicDto> topicsResponse = topicsResult.getData().stream().map(TopicDto.Converter::fromInputPortDto).toList();
+                return Response.status(Response.Status.OK).entity(topicsResponse).build();
             }
             return Response.status(Response.Status.NOT_FOUND).entity(topicsResult.getMessage()).build();
         } catch (ConstraintViolationException e) {

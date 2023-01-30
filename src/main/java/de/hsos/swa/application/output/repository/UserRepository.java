@@ -4,12 +4,21 @@ import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.User;
 
 public interface UserRepository {
-    Result<Boolean> isUserNameAvailable(String username);
+    // CREATE
+    Result<User> saveUser(User user);
 
+
+    // READ
+    // TODO: getAllUsers
     Result<User> getUserById(String userId);
 
     Result<User> getUserByName(String username);
 
-    Result<User> saveUser(User user);
+    Result<Boolean> isUserNameAvailable(String username);
+
+    // UPDATE
     Result<User> updateUser(User user);
+
+    // DELETE
+    // TODO DeleteUser
 }

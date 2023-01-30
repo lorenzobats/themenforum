@@ -28,7 +28,7 @@ public class TemplateExtensions {
 
     public static String parsedCreatedAtDate(TopicWithPostCountDto topic) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
-        return topic.createdAt.format(formatter);
+        return topic.topic.getCreatedAt().format(formatter);
     }
 
     public static String parsedCreatedAtDate(Comment comment) {

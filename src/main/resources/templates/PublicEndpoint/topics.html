@@ -21,6 +21,7 @@
             <form style="display: flex; align-items: center; margin-bottom: 20px;">
                 <input type="search" id="search" name="search" required placeholder="search topics...">
                 <button class="btn btn-primary" style="margin-left: 12px;">Search</button>
+                <button class="btn btn-light ml-2" onclick="resetSearch()">Reset</button>
             </form>
             <div>
             <button class="btn btn-primary" onclick="createTopic()">Create Topic</button>
@@ -30,20 +31,28 @@
         {#for entry in allTopics}
             <div class="content-box">
             <div>
-            <h5 style="cursor: pointer" onclick="window.open('/ui/posts?topic={entry.title}', '_self')" class="title-info">{entry.title}</h5>
-            <span class="sub-info">{entry.description}</span><br>
+            <h5 style="cursor: pointer" onclick="window.open('/ui/posts?topic={entry.topic.title}', '_self')" class="title-info">{entry.topic.title}</h5>
+            <span class="sub-info">{entry.topic.description}</span><br>
             <span class="sub-info">
-            {entry.parsedCreatedAtDate} |
-                by <strong>{entry.owner}</strong> |
+            {entry.topic.parsedCreatedAtDate} |
+                by <strong>{entry.topic.owner.name}</strong> |
             {entry.numberOfPosts} posts |
             </span>
-            <a href="/ui/posts?topic={entry.title}">goto</a>
+            <a href="/ui/posts?topic={entry.topic.title}">goto</a>
             </div>
             </div>
             {/}
     {/body}
 {/include}
 <script>
+
+    window.onload = function() {
+        let searchParam = new URL(window.location.href).searchParams.get("search");
+        if (searchParam) {
+            document.getElementById("search").value = searchParam;
+        }
+    };
+
     function logout() {
         document.cookie = "quarkus-credential=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         document.cookie = "quarkus-redirect-location=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -57,5 +66,11 @@
 
     function createTopic() {
         window.open('/ui/topics/new', '_self');
+    }
+
+    function resetSearch() {
+        document.getElementById("search").value = "";
+        window.location.search = "";
+        window.location.href = "/ui/topics";
     }
 </script>

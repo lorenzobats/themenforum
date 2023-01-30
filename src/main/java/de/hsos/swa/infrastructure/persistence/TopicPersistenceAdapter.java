@@ -4,7 +4,7 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViewSetting;
-import de.hsos.swa.application.input.dto.out.TopicWithEmbeddedPostCountDto;
+import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.domain.entity.Topic;
@@ -16,9 +16,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.*;
 import javax.transaction.Transactional;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RequestScoped
@@ -35,56 +33,7 @@ public class TopicPersistenceAdapter implements TopicRepository {
     @Inject
     Logger log;
 
-    @Override
-    public Result<List<Topic>> getAllTopics() {
-        TypedQuery<TopicPersistenceModel> query = entityManager.createNamedQuery("TopicPersistenceModel.findAll", TopicPersistenceModel.class);
-
-        List<TopicPersistenceModel> topicList;
-        try {
-            topicList = query.getResultList();
-            return Result.success(topicList.stream().map(TopicPersistenceModel.Converter::toDomainEntity).toList());
-        } catch (Exception e) {
-            log.error("GetAllTopics Error", e);
-            return Result.error("GetAllTopics Error");
-        }
-    }
-
-    public Result<Map<UUID, Long>> getPostCountForAllTopics() {
-        String queryString = "SELECT t.id AS topic_id, COUNT(p) as post_count FROM Topic t LEFT JOIN Post p ON t = p.topicPersistenceModel GROUP BY t.id";
-        TypedQuery<Tuple> query = entityManager.createQuery(queryString, Tuple.class);
-        List<Tuple> resultList = query.getResultList();
-        Map<UUID, Long> resultMap = new HashMap<>();
-        for (Tuple tuple : resultList) {
-            resultMap.put((UUID) tuple.get("topic_id"), (Long) tuple.get("post_count"));
-        }
-        return Result.success(resultMap);
-    }
-
-    @Override
-    public Result<Topic> deleteTopic(UUID topicId) {
-        try {
-            TopicPersistenceModel post = entityManager.find(TopicPersistenceModel.class, topicId);
-            if (post != null) {
-                entityManager.remove(post);
-                return Result.success(TopicPersistenceModel.Converter.toDomainEntity(post));
-            }
-            return Result.error("");
-        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            log.error("Delete Error", e);
-            return Result.error("Delete Error");
-        }
-    }
-
-    @Override
-    public Result<List<TopicWithEmbeddedPostCountDto>> getAllTopicsWithPostCount() {
-        // TODO: Try Catch
-        CriteriaBuilder<TopicPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, TopicPersistenceModel.class);
-        List<TopicPersistenceView> postList;
-        CriteriaBuilder<TopicPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(TopicPersistenceView.class), criteriaBuilder);
-        postList = criteriaBuilderView.getResultList();
-        return Result.success(postList.stream().map(TopicPersistenceView::toDomainEntityWithPostCount).toList());
-    }
-
+    // CREATE
     @Override
     public Result<Topic> saveTopic(Topic topic) {
         TopicPersistenceModel topicPersistenceModel = TopicPersistenceModel.Converter.toPersistenceModel(topic);
@@ -95,6 +44,31 @@ public class TopicPersistenceAdapter implements TopicRepository {
             log.error("saveTopic Error", e);
             return Result.error("saveTopic Error");
         }
+    }
+
+    // READ
+    @Override
+    public Result<List<TopicWithPostCountDto>> getAllTopicsWithPostCount() {
+        // TODO: Try Catch
+        CriteriaBuilder<TopicPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, TopicPersistenceModel.class);
+        List<TopicPersistenceView> postList;
+        CriteriaBuilder<TopicPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(TopicPersistenceView.class), criteriaBuilder);
+        postList = criteriaBuilderView.getResultList();
+        return Result.success(postList.stream().map(TopicPersistenceView::toDomainEntityWithPostCount).toList());
+    }
+
+    @Override
+    public Result<List<TopicWithPostCountDto>> searchTopic(String searchString) {
+        // TODO: Try Catch
+        CriteriaBuilder<TopicPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, TopicPersistenceModel.class);
+        criteriaBuilder
+                .whereOr()
+                .where("title").like().value("%" + searchString + "%").noEscape()
+                .where("description").like().value("%" + searchString + "%").noEscape()
+                .endOr();
+        CriteriaBuilder<TopicPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(TopicPersistenceView.class), criteriaBuilder);
+        List<TopicPersistenceView> postList = criteriaBuilderView.getResultList();
+        return Result.success(postList.stream().map(TopicPersistenceView::toDomainEntityWithPostCount).toList());
     }
 
     @Override
@@ -109,6 +83,22 @@ public class TopicPersistenceAdapter implements TopicRepository {
         } catch (Exception e) {
             log.error("GetTopicById Error", e);
             return Result.error("GetTopicById Error");
+        }
+    }
+
+    // DELETE
+    @Override
+    public Result<Topic> deleteTopic(UUID topicId) {
+        try {
+            TopicPersistenceModel post = entityManager.find(TopicPersistenceModel.class, topicId);
+            if (post != null) {
+                entityManager.remove(post);
+                return Result.success(TopicPersistenceModel.Converter.toDomainEntity(post));
+            }
+            return Result.error("");
+        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
+            log.error("Delete Error", e);
+            return Result.error("Delete Error");
         }
     }
 }

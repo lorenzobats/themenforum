@@ -38,6 +38,9 @@ public class CommentRestAdapter {
     GetCommentByIdInputPort getCommentByIdInputPort;
 
     @Inject
+    GetAllCommentsInputPort getAllCommentsInputPort;
+
+    @Inject
     CommentPostInputPort commentPostInputPort;
 
     @Inject
@@ -46,8 +49,7 @@ public class CommentRestAdapter {
     @Inject
     DeleteCommentInputPort deleteCommentInputPort;
 
-    @Inject
-    GetAllCommentsInputPort getAllCommentsInputPort;
+
 
     @Inject
     CommentValidationService validationService;
