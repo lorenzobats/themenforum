@@ -23,9 +23,16 @@
         </div>
         <div style="display: flex;justify-content: space-between;" class="mb-2">
         <div class="sort-selector" style="display: flex">
-            <p><a href="/ui/posts?sortBy=VOTES&orderBy=DESC">Popular</a></p>
-            <p style="margin-left: 4px; margin-right: 4px;"> | </p>
-            <p><a href="/ui/posts?sortBy=DATE&orderBy=DESC">New</a></p>
+            {#if topicTitle}
+                <p><a href="/ui/posts?topic={topicTitle}&sortBy=VOTES&orderBy=DESC">Popular</a></p>
+                <p style="margin-left: 4px; margin-right: 4px;"> | </p>
+                <p><a href="/ui/posts?topic={topicTitle}&sortBy=DATE&orderBy=DESC">New</a></p>
+            {#else}
+                <p><a href="/ui/posts?sortBy=VOTES&orderBy=DESC">Popular</a></p>
+                <p style="margin-left: 4px; margin-right: 4px;"> | </p>
+                <p><a href="/ui/posts?sortBy=DATE&orderBy=DESC">New</a></p>
+            {/if}
+
         </div>
             <div>
                 <button class="btn btn-primary" onclick="createPost()">Create Post</button>
@@ -72,7 +79,7 @@
             by <strong>{entry.user.name}</strong> |
             <a href="/ui/posts?topic={entry.topic.title}">{entry.topic.title}</a> |
             {entry.commentCount} comments |
-            <a href="/ui/posts?topic={entry.topic.title}">read</a>
+            <a href="/ui/posts/{entry.id}">read</a>
         </span>
             </div>
             <div>
