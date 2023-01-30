@@ -12,7 +12,6 @@ public class VotePostRestAdapterRequest {
     @NotNull(message = "voteType is empty")
     public VoteType voteType;
 
-
     @NotNull(message = "postId is empty")
     public String postId;
 

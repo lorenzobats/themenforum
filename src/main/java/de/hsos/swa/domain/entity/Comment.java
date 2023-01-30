@@ -165,4 +165,8 @@ public class Comment implements SortedEntity {
     public void addVote(Vote vote) {
         this.votes.add(vote);
     }
+
+    public void removeVote(Vote vote) {
+        this.votes.remove(vote);
+    }
 }

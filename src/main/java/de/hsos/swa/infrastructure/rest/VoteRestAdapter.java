@@ -47,8 +47,8 @@ public class VoteRestAdapter {
     @Inject
     VoteCommentInputPort voteCommentInputPort;
 
-    //@Inject
-    //DeleteVoteInputPort deleteVoteInputPort;
+    @Inject
+    DeleteVoteInputPort deleteVoteInputPort;
 
     @Inject
     PostValidationService postValidationService;
@@ -56,23 +56,6 @@ public class VoteRestAdapter {
     @Inject
     CommentValidationService commentValidationService;
 
-    @Inject
-    VoteRepository voteRepository;
-
-    @GET
-    // TODO: implementieren => nutze "GetVotedPostsByUserInputPort"
-    @RolesAllowed({"admin", "member"})
-    public Response getAllVotesByUser() {
-        return Response.status(Response.Status.NOT_ACCEPTABLE).build();
-    }
-
-
-
-    @GET
-    @Path("{id}")
-    public Response getVoteById(@PathParam("id") String id) {
-        return Response.status(Response.Status.OK).entity(this.voteRepository.getVoteById(UUID.fromString(id))).build();
-    }
 
     @POST
     @Path("/post")
@@ -112,22 +95,22 @@ public class VoteRestAdapter {
         }
     }
 
-//    @DELETE
-//    @Path("/post/{id}")
-//    @RolesAllowed("member")
-//    public Response deleteVote(@PathParam("id") String id, @Context SecurityContext securityContext) {
-//        try {
-//            String username = securityContext.getUserPrincipal().getName();
-//
-//            Result<Vote> voteResult = this.deleteVoteInputPort.deleteVote(new DeleteVoteInputPortRequest(id, username));
-//
-//            if (voteResult.isSuccessful()) {
-//                return Response.status(Response.Status.OK).entity(voteResult.getData()).build();
-//            }
-//
-//            return Response.status(Response.Status.BAD_REQUEST).entity(voteResult.getMessage()).build();
-//        } catch (ConstraintViolationException e) {
-//            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
-//        }
-//    }
+    @DELETE
+    @Path("/{id}")
+    @RolesAllowed("member")
+    public Response deleteVote(@PathParam("id") String id, @Context SecurityContext securityContext) {
+        try {
+            String username = securityContext.getUserPrincipal().getName();
+
+            Result<Vote> voteResult = this.deleteVoteInputPort.deleteVote(new DeleteVoteInputPortRequest(id, username));
+
+            if (voteResult.isSuccessful()) {
+                return Response.status(Response.Status.OK).entity(voteResult.getData()).build();
+            }
+
+            return Response.status(Response.Status.BAD_REQUEST).entity(voteResult.getMessage()).build();
+        } catch (ConstraintViolationException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+        }
+    }
 }

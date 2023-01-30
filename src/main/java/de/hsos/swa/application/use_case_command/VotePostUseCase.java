@@ -50,7 +50,7 @@ public class VotePostUseCase implements VotePostInputPort {
         boolean updated = this.votePostService.votePost(post, user, request.voteType());
 
        if(!updated) {
-            return Result.success(post);
+            return Result.error("Post could not be voted");
         }
 
         Result<Post> updatePostResult = this.postRepository.updatePost(post);

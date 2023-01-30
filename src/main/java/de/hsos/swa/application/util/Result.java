@@ -9,6 +9,7 @@ public class Result<T> {
     private String errorMessage = "";
 
     public Result() {
+        this.isSuccessful = false;
     }
 
     public static <T> Result<T> success(T data) {
