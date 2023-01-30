@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response;
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Path("/votes")
+@Path("api/v1/votes")
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
 public class VoteRestAdapter {
 

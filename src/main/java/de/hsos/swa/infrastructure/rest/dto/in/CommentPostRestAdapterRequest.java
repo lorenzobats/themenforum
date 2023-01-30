@@ -1,7 +1,9 @@
 package de.hsos.swa.infrastructure.rest.dto.in;
 
 import de.hsos.swa.application.input.dto.in.CommentPostInputPortRequest;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+@Schema(name = "CommentCreationDTO")
 public class CommentPostRestAdapterRequest {
 
     public String postId;

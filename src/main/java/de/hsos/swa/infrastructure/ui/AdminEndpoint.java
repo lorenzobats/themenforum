@@ -1,6 +1,9 @@
 package de.hsos.swa.infrastructure.ui;
 
 
+import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.transaction.Transactional;

@@ -1,12 +1,13 @@
 package de.hsos.swa.infrastructure.rest.dto.in;
 
 import de.hsos.swa.application.input.dto.in.CreatePostInputPortRequest;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
-
+@Schema(name = "PostCreationDTO")
 public class CreatePostRestAdapterRequest {
 
     @NotBlank(message = "title is empty")

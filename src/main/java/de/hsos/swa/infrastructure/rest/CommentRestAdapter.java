@@ -5,6 +5,7 @@ import de.hsos.swa.application.input.dto.in.*;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.use_case_query.GetAllCommentsUseCase;
 import de.hsos.swa.domain.entity.Comment;
+import de.hsos.swa.infrastructure.rest.dto.in.CreatePostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.dto.in.VoteCommentRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.dto.out.TopicDto;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
@@ -13,6 +14,12 @@ import de.hsos.swa.infrastructure.rest.dto.in.ReplyToCommentRestAdapterRequest;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.infrastructure.rest.dto.out.CommentDto;
 import de.hsos.swa.infrastructure.rest.validation.CommentValidationService;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -30,7 +37,7 @@ import java.util.List;
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Path("/comments")
+@Path("api/v1/comments")
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
 public class CommentRestAdapter {
 
@@ -90,7 +97,12 @@ public class CommentRestAdapter {
 
     @POST
     @RolesAllowed("member")
-    public Response commentPost(CommentPostRestAdapterRequest request, @Context SecurityContext securityContext) {
+    public Response commentPost(
+            @RequestBody(
+                    description = "Post to create",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = CommentPostRestAdapterRequest.class))
+            ) CommentPostRestAdapterRequest request, @Context SecurityContext securityContext) {
         try {
             validationService.validateComment(request);
             String username = securityContext.getUserPrincipal().getName();

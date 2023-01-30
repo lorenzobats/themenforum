@@ -1,10 +1,11 @@
 package de.hsos.swa.infrastructure.ui.dto.in;
 
 import de.hsos.swa.application.input.dto.in.CreateTopicInputPortRequest;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
 
-
+@Schema(hidden = true)
 public class CreateTopicUIRequest implements UIRequest{
 
     @NotBlank(message = "title is empty")

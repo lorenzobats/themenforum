@@ -12,6 +12,9 @@ import de.hsos.swa.infrastructure.rest.dto.in.VotePostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
 import de.hsos.swa.infrastructure.rest.validation.PostValidationService;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.jboss.logging.Logger;
 
 import javax.annotation.security.RolesAllowed;
@@ -36,7 +39,7 @@ import java.util.UUID;
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Path("/posts")
+@Path("api/v1/posts")
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
 
 public class PostRestAdapter {
@@ -64,15 +67,15 @@ public class PostRestAdapter {
 
 
     @GET
-    public Response getAllPosts(@DefaultValue("true") @QueryParam("includeComments") Boolean includeComments,
-                                @QueryParam("username") String username,
-                                @QueryParam("userId") UUID userId,
-                                @QueryParam("dateFrom") LocalDateTime dateFrom,
-                                @QueryParam("dateTo") LocalDateTime dateTo,
-                                @QueryParam("topic") String topic,
-                                @QueryParam("topicId") UUID topicId,
-                                @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
-                                @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy) {
+    public Response getPosts(@DefaultValue("true") @QueryParam("includeComments") Boolean includeComments,
+                             @QueryParam("username") String username,
+                             @QueryParam("userId") UUID userId,
+                             @QueryParam("dateFrom") LocalDateTime dateFrom,
+                             @QueryParam("dateTo") LocalDateTime dateTo,
+                             @QueryParam("topic") String topic,
+                             @QueryParam("topicId") UUID topicId,
+                             @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
+                             @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy) {
         try {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             if (username != null)
@@ -130,7 +133,13 @@ public class PostRestAdapter {
 
     @POST
     @RolesAllowed({"member"})
-    public Response createPost(@NotNull CreatePostRestAdapterRequest request, @Context SecurityContext securityContext) {
+    public Response createPost(
+            @NotNull @RequestBody(
+                    description = "Post to create",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = CreatePostRestAdapterRequest.class))
+            ) CreatePostRestAdapterRequest request,
+            @Context SecurityContext securityContext) {
         try {
             validationService.validatePost(request);
             String username = securityContext.getUserPrincipal().getName();

@@ -21,6 +21,7 @@ import de.hsos.swa.infrastructure.ui.validation.UIValidationResult;
 import de.hsos.swa.infrastructure.ui.validation.UIValidationService;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
@@ -45,7 +46,6 @@ import java.util.Map;
 @PermitAll
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
 public class PublicEndpoint {
-
 
     @Inject
     UIValidationService validationService;

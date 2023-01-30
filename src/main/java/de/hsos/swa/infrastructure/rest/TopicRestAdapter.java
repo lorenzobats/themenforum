@@ -8,10 +8,14 @@ import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.input.dto.in.CreateTopicInputPortRequest;
 import de.hsos.swa.application.input.dto.in.GetTopicByIdInputPortRequest;
 import de.hsos.swa.domain.entity.Topic;
+import de.hsos.swa.infrastructure.rest.dto.in.CommentPostRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.dto.out.TopicDto;
 import de.hsos.swa.infrastructure.rest.dto.in.CreateTopicRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.TopicValidationService;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.jboss.logging.Logger;
 
 import javax.annotation.security.RolesAllowed;
@@ -29,7 +33,7 @@ import java.util.List;
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Path("/topics")
+@Path("api/v1/topics")
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
 public class TopicRestAdapter {
 
@@ -88,7 +92,12 @@ public class TopicRestAdapter {
 
     @POST
     @RolesAllowed("member")
-    public Response createTopic(CreateTopicRestAdapterRequest request, @Context SecurityContext securityContext) {
+    public Response createTopic(
+            @RequestBody(
+                    description = "Post to create",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = CreateTopicRestAdapterRequest.class))
+            ) CreateTopicRestAdapterRequest request, @Context SecurityContext securityContext) {
         try {
             validationService.validateTopic(request);
             String username = securityContext.getUserPrincipal().getName();

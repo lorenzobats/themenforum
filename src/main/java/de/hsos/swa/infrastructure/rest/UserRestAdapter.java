@@ -27,7 +27,7 @@ import javax.ws.rs.core.SecurityContext;
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Path("/users")
+@Path("api/v1/users")
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
 public class UserRestAdapter {
 
