@@ -94,7 +94,7 @@ public class PostPersistenceModel {
         }
 
         public static PostPersistenceModel toPersistenceModel(Post post) {
-            UserPersistenceModel userPersistenceModel = UserPersistenceModel.Converter.toPersistenceModel(post.getCreator());
+            UserPersistenceModel userPersistenceModel = UserPersistenceModel.Converter.toPersistenceModel(post.getUser());
             TopicPersistenceModel topicPersistenceModel = TopicPersistenceModel.Converter.toPersistenceModel(post.getTopic());
             List<CommentPersistenceModel> comments = post.getComments().stream().map(CommentPersistenceModel.Converter::toPersistenceModel).toList();
 

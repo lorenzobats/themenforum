@@ -7,7 +7,7 @@ import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class Post implements SortedEntity {
+public class Post implements SortedEntity, VotedEntity {
     @Valid
     private UUID id;
 
@@ -24,7 +24,7 @@ public class Post implements SortedEntity {
     private Topic topic;
 
     @Valid
-    private User creator;
+    private User user;
 
     @NotNull
     private List<Comment> comments = new ArrayList<>();
@@ -33,32 +33,32 @@ public class Post implements SortedEntity {
     private List<Vote> votes = new ArrayList<>();
 
 
-    public Post(UUID id, String title, String content, LocalDateTime createdAt, Topic topic, User creator) {
+    public Post(UUID id, String title, String content, LocalDateTime createdAt, Topic topic, User user) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
         this.topic = topic;
-        this.creator = creator;
+        this.user = user;
     }
 
-    public Post(UUID id, String title, String content, LocalDateTime createdAt, Topic topic, User creator, List<Comment> comments) {
+    public Post(UUID id, String title, String content, LocalDateTime createdAt, Topic topic, User user, List<Comment> comments) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
         this.topic = topic;
-        this.creator = creator;
+        this.user = user;
         this.comments = comments;
     }
 
-    public Post(String title, String content, LocalDateTime createdAt, Topic topic, User creator) {
+    public Post(String title, String content, LocalDateTime createdAt, Topic topic, User user) {
         this.id = UUID.randomUUID();
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
         this.topic = topic;
-        this.creator = creator;
+        this.user = user;
     }
 
 
@@ -83,8 +83,8 @@ public class Post implements SortedEntity {
         return topic;
     }
 
-    public User getCreator() {
-        return creator;
+    public User getUser() {
+        return user;
     }
 
     public List<Comment> getComments() {

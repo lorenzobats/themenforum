@@ -21,7 +21,6 @@ import de.hsos.swa.infrastructure.ui.validation.UIValidationResult;
 import de.hsos.swa.infrastructure.ui.validation.UIValidationService;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
@@ -69,7 +68,7 @@ public class PublicEndpoint {
     VotePostInputPort votePostInputPort;
 
     @Inject
-    VoteCommentInputPort voteCommentInputPort;
+    VoteEntityInputPort voteEntityInputPort;
 
     @Inject
     DeletePostInputPort deletePostInputPort;
@@ -297,7 +296,7 @@ public class PublicEndpoint {
     @RolesAllowed({"admin", "member"})
     public Response voteComment(@JsonProperty VoteType voteType, @PathParam("id") String postId, @Context SecurityContext securityContext) {
         String username = securityContext.getUserPrincipal().getName();
-        Result<Comment> commentResult = this.voteCommentInputPort.voteComment(new VoteCommentInputPortRequest(postId, username, voteType));
+        Result<Comment> commentResult = this.voteEntityInputPort.vote(new VoteEntityInputPortRequest(postId, username, voteType));
 
         if (commentResult.isSuccessful()) {
             return Response.status(Response.Status.OK).build();

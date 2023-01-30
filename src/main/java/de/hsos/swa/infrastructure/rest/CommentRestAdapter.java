@@ -42,7 +42,7 @@ public class CommentRestAdapter {
     ReplyToCommentInputPort replyToCommentInputPort;
 
     @Inject
-    VoteCommentInputPort voteCommentInputPort;
+    VoteEntityInputPort voteEntityInputPort;
 
     @Inject
     DeleteCommentInputPort deleteCommentInputPort;
@@ -127,34 +127,6 @@ public class CommentRestAdapter {
         }
     }
 
-
-//    @PUT
-//    // TODO: implementieren => nutze "UpdateCommentInputPort"
-//    @RolesAllowed({"member"})
-//    public Response updateComment(@Context SecurityContext securityContext) {
-//        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
-//    }
-
-//    @PATCH
-//    @Path("/{id}/vote")
-//    @RolesAllowed("member")
-//    public Response voteComment(@NotNull VoteCommentRestAdapterRequest request, @PathParam("id") String id, @Context SecurityContext securityContext) {
-//        try {
-//            validationService.validateVote(request);
-//            String username = securityContext.getUserPrincipal().getName();
-//            VoteCommentInputPortRequest command = VoteCommentRestAdapterRequest.Converter.toInputPortCommand(request, id, username);
-//            Result<Comment> commentResult = this.voteCommentInputPort.voteComment(command);
-//            if (commentResult.isSuccessful()) {
-//                CommentDto commentDto = CommentDto.Converter.fromDomainEntity(commentResult.getData());
-//                return Response.status(Response.Status.OK).entity(commentDto).build();
-//            }
-//            return Response.status(Response.Status.BAD_REQUEST).entity(commentResult.getMessage()).build();
-//        } catch (ConstraintViolationException e) {
-//            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
-//        }
-//    }
-
-
     @DELETE
     @Path("/{id}/")
     @RolesAllowed({"member", "admin"})
@@ -172,13 +144,5 @@ public class CommentRestAdapter {
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
-    }
-
-    @DELETE
-    // TODO: implementieren => nutze "DeleteCommentVoteInputPort"
-    @Path("/{id}/vote")
-    @RolesAllowed("member")
-    public Response deleteCommentVote(@PathParam("id") String id, @Context SecurityContext securityContext) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 }

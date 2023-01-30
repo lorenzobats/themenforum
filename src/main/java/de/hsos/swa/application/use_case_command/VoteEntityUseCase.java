@@ -1,14 +1,15 @@
 package de.hsos.swa.application.use_case_command;
 
-import de.hsos.swa.application.input.VoteCommentInputPort;
-import de.hsos.swa.application.input.dto.in.VoteCommentInputPortRequest;
+import de.hsos.swa.application.input.VoteEntityInputPort;
+import de.hsos.swa.application.input.dto.in.VoteEntityInputPortRequest;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
-import de.hsos.swa.domain.service.VoteCommentService;
+import de.hsos.swa.domain.entity.Vote;
+import de.hsos.swa.domain.service.VoteEntityService;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -18,7 +19,7 @@ import java.util.UUID;
 
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
-public class VoteCommentUseCase implements VoteCommentInputPort {
+public class VoteEntityUseCase implements VoteEntityInputPort {
 
     @Inject
     PostRepository postRepository;
@@ -27,11 +28,11 @@ public class VoteCommentUseCase implements VoteCommentInputPort {
     UserRepository userRepository;
 
     @Inject
-    VoteCommentService voteCommentService;
+    VoteEntityService voteEntityService;
 
 
     @Override
-    public Result<Comment> voteComment(VoteCommentInputPortRequest request) {
+    public Result<Vote> vote(VoteEntityInputPortRequest request) {
         Result<User> userResult = this.userRepository.getUserByName(request.username());
         if (!userResult.isSuccessful()) {
             return Result.error("Cannot retrieve User");
@@ -45,20 +46,24 @@ public class VoteCommentUseCase implements VoteCommentInputPort {
         }
         Post post = postResult.getData();
 
-        boolean updated = this.voteCommentService.voteComment(post, user, request.commentId(), request.voteType());
-        if(!updated) {
+        Optional<Comment> comment = post.findCommentById(request.commentId());
+
+        if(comment.isEmpty()) {
+            return Result.error("Comment not found");
+        }
+
+        Optional<Vote> optionalVote = this.voteEntityService.vote(comment.get(), user, request.voteType());
+
+        if (optionalVote.isEmpty()) {
             return Result.error("Post could not be voted");
         }
 
         Result<Post> updatePostResult = this.postRepository.updatePost(post);
-        if (!updatePostResult.isSuccessful()) {
-            return Result.error("Could not update Post");
+
+        if (updatePostResult.isSuccessful()) {
+            return Result.success(optionalVote.get());
         }
 
-        Optional<Comment> optionalComment = post.findCommentById(request.commentId());
-        if(optionalComment.isEmpty()){
-            return Result.error("Updating Comment went wrong " + updatePostResult.getMessage());
-        }
-        return Result.success(optionalComment.get());
+        return Result.error("Something went wrong while voting Post" + updatePostResult.getMessage());
     }
 }

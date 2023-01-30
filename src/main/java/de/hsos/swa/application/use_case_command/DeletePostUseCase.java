@@ -12,7 +12,6 @@ import de.hsos.swa.domain.entity.User;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -70,7 +69,7 @@ public class DeletePostUseCase implements DeletePostInputPort {
         String role = roleResult.getData();
 
 
-        if(!post.getCreator().getId().equals(user.getId()) && !role.equals("admin")){
+        if(!post.getUser().getId().equals(user.getId()) && !role.equals("admin")){
             return Result.error("Not allowed to delete post");
         }
 

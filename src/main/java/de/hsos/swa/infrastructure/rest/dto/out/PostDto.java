@@ -44,7 +44,7 @@ public class PostDto {
                     post.getTitle(),
                     post.getContent(),
                     post.getCreatedAt(),
-                    post.getCreator().getName(),
+                    post.getUser().getName(),
                     topic ,
                     comments,
                     post.getDownvotes(),

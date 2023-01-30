@@ -45,7 +45,7 @@ public class TemplateExtensions {
     }
 
     public static boolean loggedInUserCanVote(Post post, String username) {
-        return !post.getCreator().getName().equals(username);
+        return !post.getUser().getName().equals(username);
     }
     public static boolean loggedInUserHasVoted(Post post, String username) {
         return !loggedInUserVote(post, username).equals(VoteType.NONE);

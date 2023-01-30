@@ -9,7 +9,7 @@ import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class Comment implements SortedEntity {
+public class Comment implements SortedEntity, VotedEntity {
     @Valid
     private UUID id;
     @NotBlank
@@ -68,9 +68,6 @@ public class Comment implements SortedEntity {
         return id;
     }
 
-    public User getUser() {
-        return user;
-    }
 
     public String getText() {
         if (isActive()) {
@@ -117,6 +114,11 @@ public class Comment implements SortedEntity {
         return votes;
     }
 
+    public User getUser() {
+        return this.user;
+    }
+
+    @Override
     public Optional<Vote> findVoteByUserId(UUID userId) {
         for (Vote vote : this.votes) {
             if(vote.getUser().getId().equals(userId)){

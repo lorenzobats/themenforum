@@ -1,25 +1,16 @@
 package de.hsos.swa.infrastructure.rest;
 import de.hsos.swa.application.input.DeleteVoteInputPort;
-import de.hsos.swa.application.input.VoteCommentInputPort;
+import de.hsos.swa.application.input.VoteEntityInputPort;
 import de.hsos.swa.application.input.VotePostInputPort;
 import de.hsos.swa.application.input.dto.in.DeleteVoteInputPortRequest;
-import de.hsos.swa.application.input.dto.in.GetTopicByIdInputPortRequest;
-import de.hsos.swa.application.input.dto.in.VoteCommentInputPortRequest;
-import de.hsos.swa.application.input.dto.in.VotePostInputPortRequest;
-import de.hsos.swa.application.output.repository.VoteRepository;
+import de.hsos.swa.application.input.dto.in.VoteEntityInputPortRequest;
 import de.hsos.swa.application.util.Result;
-import de.hsos.swa.domain.entity.Comment;
-import de.hsos.swa.domain.entity.Post;
-import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.domain.entity.Vote;
-import de.hsos.swa.infrastructure.rest.dto.in.VoteCommentRestAdapterRequest;
-import de.hsos.swa.infrastructure.rest.dto.in.VotePostRestAdapterRequest;
-import de.hsos.swa.infrastructure.rest.dto.out.CommentDto;
-import de.hsos.swa.infrastructure.rest.dto.out.PostDto;
-import de.hsos.swa.infrastructure.rest.dto.out.TopicDto;
+import de.hsos.swa.infrastructure.rest.dto.in.VoteEntityRestAdapterRequest;
 import de.hsos.swa.infrastructure.rest.validation.CommentValidationService;
 import de.hsos.swa.infrastructure.rest.validation.PostValidationService;
 import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
+import de.hsos.swa.infrastructure.rest.validation.VoteValidationService;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -32,7 +23,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.UUID;
 
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
@@ -42,54 +32,30 @@ import java.util.UUID;
 public class VoteRestAdapter {
 
     @Inject
-    VotePostInputPort votePostInputPort;
-
-    @Inject
-    VoteCommentInputPort voteCommentInputPort;
+    VoteEntityInputPort voteEntityInputPort;
 
     @Inject
     DeleteVoteInputPort deleteVoteInputPort;
 
     @Inject
-    PostValidationService postValidationService;
+    VoteValidationService voteValidationService;
 
-    @Inject
-    CommentValidationService commentValidationService;
 
 
     @POST
-    @Path("/post")
-    public Response votePost(@NotNull VotePostRestAdapterRequest request, @Context SecurityContext securityContext) {
+    public Response votePost(@NotNull VoteEntityRestAdapterRequest request, @Context SecurityContext securityContext) {
         try {
-            postValidationService.validateVote(request);
+            voteValidationService.validateVote(request);
             String username = securityContext.getUserPrincipal().getName();
-            VotePostInputPortRequest command = VotePostRestAdapterRequest.Converter.toInputPortCommand(request, username);
-            Result<Post> postResult = this.votePostInputPort.votePost(command);
+            VoteEntityInputPortRequest command = VoteEntityRestAdapterRequest.Converter.toInputPortCommand(request, username);
 
-            if (postResult.isSuccessful()) {
-                PostDto postDto = PostDto.Converter.fromDomainEntity(postResult.getData());
-                return Response.status(Response.Status.OK).entity(postDto).build();
+            Result<Vote> voteResult = this.voteEntityInputPort.vote(command);
+
+            if (voteResult.isSuccessful()) {
+                //TODO VoteDTO returnen
+                return Response.status(Response.Status.OK).entity(voteResult.getData()).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).entity("postResult.getMessage()").build();
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
-        }
-    }
-
-    @POST
-    @Path("/comment")
-    @RolesAllowed("member")
-    public Response voteComment(@NotNull VoteCommentRestAdapterRequest request, @Context SecurityContext securityContext) {
-        try {
-            commentValidationService.validateVote(request);
-            String username = securityContext.getUserPrincipal().getName();
-            VoteCommentInputPortRequest command = VoteCommentRestAdapterRequest.Converter.toInputPortCommand(request, username);
-            Result<Comment> commentResult = this.voteCommentInputPort.voteComment(command);
-            if (commentResult.isSuccessful()) {
-                CommentDto commentDto = CommentDto.Converter.fromDomainEntity(commentResult.getData());
-                return Response.status(Response.Status.OK).entity(commentDto).build();
-            }
-            return Response.status(Response.Status.BAD_REQUEST).entity(commentResult.getMessage()).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }

@@ -157,38 +157,6 @@ public class PostRestAdapter {
         }
     }
 
-
-    @PUT
-    // TODO: implementieren => nutze "UpdatePostInputPort"
-    @RolesAllowed({"member"})
-    public Response updatePost(@Context SecurityContext securityContext) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
-    }
-
-
-    // TODO: Dont allow "none" -> Domain Service muss Vote löschen
-    // TODO: Evtl. in Vote Adapter verschieben?
-//    @Deprecated
-//    @PATCH
-//    @Path("/{id}/vote")
-//    @RolesAllowed("member")
-//    public Response votePost(@NotNull VotePostRestAdapterRequest request, @PathParam("id") String id, @Context SecurityContext securityContext) {
-//        try {
-//            validationService.validateVote(request);
-//            String username = securityContext.getUserPrincipal().getName();
-//            VotePostInputPortRequest command = VotePostRestAdapterRequest.Converter.toInputPortCommand(request, id, username);
-//            Result<Post> postResult = this.votePostInputPort.votePost(command);
-//
-//            if (postResult.isSuccessful()) {
-//                PostDto postDto = PostDto.Converter.fromDomainEntity(postResult.getData());
-//                return Response.status(Response.Status.OK).entity(postDto).build();
-//            }
-//            return Response.status(Response.Status.BAD_REQUEST).entity("postResult.getMessage()").build();
-//        } catch (ConstraintViolationException e) {
-//            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
-//        }
-//    }
-
     @DELETE
     @Path("/{id}")
     @RolesAllowed({"member", "admin"})
