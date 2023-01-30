@@ -3,10 +3,12 @@ package de.hsos.swa.infrastructure.rest.dto.in;
 import de.hsos.swa.application.input.dto.in.VoteEntityInputPortRequest;
 import de.hsos.swa.domain.vo.VoteType;
 import de.hsos.swa.domain.vo.VotedEntityType;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
 
 
+@Schema(name = "VoteCreationDTO")
 public class VoteEntityRestAdapterRequest {
 
     @NotNull(message = "voteType is empty")

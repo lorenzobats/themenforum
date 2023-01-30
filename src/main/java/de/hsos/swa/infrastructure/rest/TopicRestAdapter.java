@@ -57,8 +57,7 @@ public class TopicRestAdapter {
 
 
     @GET
-    public Response getAllTopics() {
-        // TODO Query Param einfuehren // ebenfalls gedanken ueber DTO machen
+    public Response getAllTopics(@QueryParam("search") String searchString) {
         try {
             Result<List<TopicWithEmbeddedPostCountDto>> topicsResult = this.getAllTopicsWithPostCountInputPort.getAllTopicsTest();
             if (topicsResult.isSuccessful()) {

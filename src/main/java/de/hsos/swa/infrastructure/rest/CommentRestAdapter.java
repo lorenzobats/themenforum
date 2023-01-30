@@ -9,6 +9,8 @@ import de.hsos.swa.infrastructure.rest.dto.in.ReplyToCommentRestAdapterRequest;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.infrastructure.rest.dto.out.CommentDto;
 import de.hsos.swa.infrastructure.rest.validation.CommentValidationService;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
@@ -53,6 +55,8 @@ public class CommentRestAdapter {
 
     @GET
     @Path("{id}")
+    @Counted(name = "getCommentById", description = "Wie oft eine Kommentar anahand ID gesucht wurde")
+    @Timed(name = "getCommentByIdTimer", description = "Misst, wie lange es dauert ein Kommentar anhand ID zu suchen")
     public Response getCommentById(@PathParam("id") String id) {
         try {
             GetCommentByIdInputPortRequest query = new GetCommentByIdInputPortRequest(id);
@@ -69,6 +73,8 @@ public class CommentRestAdapter {
 
     @GET
     @RolesAllowed({"admin", "member"})
+    @Counted(name = "getAllComments", description = "Wie oft alle Kommentare abgerufen wurden")
+    @Timed(name = "getAllCommentsTimer", description = "Misst, wie lange es dauert alle Kommentar abzurufen")
     public Response getAllComments(@DefaultValue("true") @QueryParam("includeReplies") Boolean includeReplies) {
         try {
             // TODO: Query (includeComments)
@@ -85,6 +91,8 @@ public class CommentRestAdapter {
 
     @POST
     @RolesAllowed("member")
+    @Counted(name = "postComment", description = "Wie oft ein Kommentar zu einem Post erstellt wurde")
+    @Timed(name = "postCommentTimer", description = "Misst, wie lange es dauert ein Kommentar zu einem Post zu erstellen")
     public Response commentPost(
             @RequestBody(
                     description = "Post to create",
@@ -108,6 +116,8 @@ public class CommentRestAdapter {
 
     @POST
     @Path("/{id}")
+    @Counted(name = "replyToComment", description = "Wie oft ein Kommentar geantwortet wurde")
+    @Timed(name = "replyToCommentTimer", description = "Misst, wie lange es dauert auf ein Kommentar zu antworten")
     public Response replyToComment(@PathParam("id") String id, ReplyToCommentRestAdapterRequest request, @Context SecurityContext securityContext) {
         try {
             validationService.validateReply(request);

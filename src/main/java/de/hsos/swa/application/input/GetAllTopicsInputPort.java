@@ -5,7 +5,6 @@ import de.hsos.swa.domain.entity.Topic;
 
 import java.util.List;
 
-// TODO: Kann ggf. weg, weil nicht verwendet
 public interface GetAllTopicsInputPort {
     Result<List<Topic>> getAllTopics();
 }
