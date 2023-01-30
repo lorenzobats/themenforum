@@ -11,10 +11,15 @@ public class VotePostRestAdapterRequest {
 
     @NotNull(message = "voteType is empty")
     public VoteType voteType;
+
+
+    @NotNull(message = "postId is empty")
+    public String postId;
+
     public VotePostRestAdapterRequest() {}
     public static class Converter {
-        public static VotePostInputPortRequest toInputPortCommand(VotePostRestAdapterRequest adapterRequest, String postId, String username) {
-            return new VotePostInputPortRequest(postId, username, adapterRequest.voteType);
+        public static VotePostInputPortRequest toInputPortCommand(VotePostRestAdapterRequest request, String username) {
+            return new VotePostInputPortRequest(request.postId, username, request.voteType);
         }
     }
 }

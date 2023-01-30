@@ -1,16 +1,19 @@
 package de.hsos.swa.infrastructure.rest;
 
 
-import de.hsos.swa.infrastructure.rest.dto.out.UserDto;
-import de.hsos.swa.infrastructure.rest.dto.in.RegisterUserRestAdapterRequest;
-import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
-import de.hsos.swa.application.util.Result;
-import de.hsos.swa.application.input.dto.in.GetUserByNameInputPortRequest;
 import de.hsos.swa.application.input.GetUserByNameInputPort;
-import de.hsos.swa.application.input.dto.in.RegisterUserInputPortRequest;
 import de.hsos.swa.application.input.RegisterUserInputPort;
+import de.hsos.swa.application.input.dto.in.GetUserByNameInputPortRequest;
+import de.hsos.swa.application.input.dto.in.RegisterUserInputPortRequest;
+import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.User;
+import de.hsos.swa.infrastructure.rest.dto.in.RegisterUserRestAdapterRequest;
+import de.hsos.swa.infrastructure.rest.dto.out.UserDto;
 import de.hsos.swa.infrastructure.rest.validation.UserValidationService;
+import de.hsos.swa.infrastructure.rest.validation.ValidationResult;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -66,7 +69,12 @@ public class UserRestAdapter {
 
     @POST
     @PermitAll
-    public Response registerUser(RegisterUserRestAdapterRequest request) {
+    public Response registerUser(
+            @RequestBody(
+                    description = "Post to create",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = RegisterUserRestAdapterRequest.class))
+            ) RegisterUserRestAdapterRequest request) {
         try {
             validationService.validateUser(request);
             RegisterUserInputPortRequest command = RegisterUserRestAdapterRequest.Converter.toInputPortCommand(request);

@@ -42,10 +42,16 @@ public class VotePersistenceModel {
     )
     CommentPersistenceModel commentVote;
 
+    String votedEntityType;
+
     public VotePersistenceModel() {
     }
 
-    public VotePersistenceModel(UUID id, VoteType voteType, UserPersistenceModel userPersistenceModel, LocalDateTime createdAt) {
+    public VotePersistenceModel(
+            UUID id,
+            VoteType voteType,
+            UserPersistenceModel userPersistenceModel,
+            LocalDateTime createdAt) {
         this.id = id;
         this.voteType = voteType;
         this.userPersistenceModel = userPersistenceModel;
