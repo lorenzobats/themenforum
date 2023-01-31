@@ -6,21 +6,63 @@
         <h1 class="mt-4">Register</h1>
     </div>
 </div>
-<form action="register()" class="container">
+<form class="container">
     <div class="form-group">
         <label><b>Username</b></label>
-        <input type="text" placeholder="Enter Username" name="username" required>
+        <input id="username" type="text" placeholder="Enter Username" name="username" required>
     </div>
     <div class="form-group mb-4">
         <label><b>Password</b></label>
-        <input type="password" placeholder="Enter Password" name="password" required>
+        <input id="password" type="password" placeholder="Enter Password" name="password" required>
     </div>
-    <button type="submit" class="btn btn-primary">Register</button>
+    <button type="submit" class="btn btn-primary" onclick="register()">Register</button>
 </form>
 {/body}
 {/include}
 <script>
+    onsubmit = (event) => { event.preventDefault() };
+
+
     function register() {
         console.log("register");
+
+        let username = document.querySelector('#username').value;
+        let password = document.querySelector('#password').value;
+
+        let data = {
+            username: username,
+            password: password,
+        };
+
+        let url = '/api/v1/users/';
+        fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(data)
+        }).then(response => {
+            if (response.ok) {
+                login()
+            }
+        }).catch(error => {
+                console.error(error);
+        });
     }
+
+    function login() {
+
+        document.querySelector("form").action = "j_security_check";
+        document.querySelector("form").method = "post";
+        document.querySelector('#username').name = "j_username";
+
+        document.querySelector('#password').name = "j_password";
+        document.querySelector("form").submit();
+    }
+
 </script>

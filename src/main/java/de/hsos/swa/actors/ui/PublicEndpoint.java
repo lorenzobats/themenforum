@@ -1,14 +1,16 @@
 package de.hsos.swa.actors.ui;
 
-import de.hsos.swa.actors.ui.validation.UIValidationService;
 import de.hsos.swa.application.input.*;
-import de.hsos.swa.application.input.dto.in.*;
+import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
+import de.hsos.swa.application.input.dto.in.GetPostByIdQuery;
+import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
 import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
 import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
 import de.hsos.swa.application.service.query.params.SortingParams;
-import de.hsos.swa.domain.entity.*;
+import de.hsos.swa.domain.entity.Comment;
+import de.hsos.swa.domain.entity.Post;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 import org.jboss.logging.Logger;
@@ -34,9 +36,6 @@ import java.util.Map;
 public class PublicEndpoint {
 
     @Inject
-    UIValidationService validationService;
-
-    @Inject
     GetFilteredPostsUseCase getFilteredPostsUseCase;
 
     @Inject
@@ -47,29 +46,6 @@ public class PublicEndpoint {
 
     @Inject
     SearchTopicsUseCase searchTopicsUseCase;
-
-    @Inject
-    CommentPostUseCase commentPostUseCase;
-
-    @Inject
-    ReplyToCommentUseCase replyToCommentUseCase;
-
-    @Inject
-    VoteEntityUseCase voteEntityUseCase;
-
-    @Inject
-    DeletePostUseCase deletePostUseCase;
-
-
-    @Inject
-    DeleteCommentUseCase deleteCommentUseCase;
-
-    @Inject
-    CreatePostUseCase createPostUseCase;
-
-    @Inject
-    CreateTopicUseCase createTopicUseCase;
-
 
     @Inject
     Logger log;
@@ -117,8 +93,7 @@ public class PublicEndpoint {
     @GET
     @Path("/register")
     public TemplateInstance register() {
-        // TODO Registrieren
-        return Templates.login();
+        return Templates.register();
     }
 
     // TOPICS
@@ -229,152 +204,4 @@ public class PublicEndpoint {
         return Templates.createPost(allTopics.getData(), username);
     }
 
-
-
-    // TODO: Alle raus und im HTML durch
-    /////////////////////
-    // ACTIONS
-    /////////////////////
-
-    // COMMENT
-//    @POST
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Path("/comments/{id}")
-//    @RolesAllowed({"admin", "member"})
-//    public Response commentPost(@JsonProperty CommentPostUIRequest request, @PathParam("id") String postId, @Context SecurityContext securityContext) {
-//        String username = securityContext.getUserPrincipal().getName();
-//        Result<Comment> commentResult = this.commentPostUseCase.commentPost(new CommentPostCommand(postId, username, request.commentText));
-//
-//        if (!commentResult.isSuccessful()) {
-//            return Response.status(Response.Status.BAD_REQUEST).build();
-//        }
-//
-//        return Response.status(Response.Status.OK).build();
-//    }
-//
-//    @POST
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Path("/replyTo/{commentId}")
-//    @RolesAllowed({"admin", "member"})
-//    public Response replyToComment(@JsonProperty ReplyToCommentUIRequest request, @PathParam("entityId") String commentId, @Context SecurityContext securityContext) {
-//        String username = securityContext.getUserPrincipal().getName();
-//        Result<Comment> replyResult = this.replyToCommentUseCase.replyToComment(new ReplyToCommentCommand(commentId, username, request.replyText));
-//
-//        if (!replyResult.isSuccessful()) {
-//            return Response.status(Response.Status.BAD_REQUEST).build();
-//        }
-//
-//        return Response.status(Response.Status.OK).build();
-//    }
-//
-//    // VOTE
-//    @POST
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Path("/posts/{id}/vote")
-//    @RolesAllowed({"admin", "member"})
-//    public Response votePost(@JsonProperty VoteType voteType, @PathParam("id") String postId, @Context SecurityContext securityContext) {
-//        String username = securityContext.getUserPrincipal().getName();
-//        Result<Vote> voteResult = this.voteEntityUseCase.vote(new VoteEntityCommand(postId, username, voteType, VotedEntityType.POST));
-//
-//        if (voteResult.isSuccessful()) {
-//            return Response.status(Response.Status.OK).build();
-//        }
-//        return Response.status(Response.Status.BAD_REQUEST).build();
-//    }
-//
-//    @POST
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Path("/comments/{id}/vote")
-//    @RolesAllowed({"admin", "member"})
-//    public Response voteComment(@JsonProperty VoteType voteType, @PathParam("id") String postId, @Context SecurityContext securityContext) {
-//        String username = securityContext.getUserPrincipal().getName();
-//        Result<Vote> voteResult = this.voteEntityUseCase.vote(new VoteEntityCommand(postId, username, voteType, VotedEntityType.COMMENT));
-//
-//        if (voteResult.isSuccessful()) {
-//            return Response.status(Response.Status.OK).build();
-//        }
-//        return Response.status(Response.Status.BAD_REQUEST).build();
-//    }
-//
-//    @POST
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Path("/posts/")
-//    @RolesAllowed({"admin", "member"})
-//    public Response createPost(CreatePostUIRequest request, @Context SecurityContext securityContext) {
-//        try {
-//            validationService.validateRequest(request);
-//            String username = securityContext.getUserPrincipal().getName();
-//            CreatePostCommand command = CreatePostUIRequest.Converter.toInputPortCommand(request, username);
-//            Result<Post> postResult = this.createPostUseCase.createPost(command);
-//
-//            if (!postResult.isSuccessful()) {
-//                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error").build();
-//            }
-//
-//            Post post = postResult.getData();
-//            return Response.status(Response.Status.CREATED).location(URI.create("/ui/posts/" + post.getId())).build();
-//        } catch (ConstraintViolationException e) {
-//            return Response.status(Response.Status.BAD_REQUEST).entity(new UIValidationResult(e.getConstraintViolations(), Response.Status.BAD_REQUEST, "/ui/posts/")).build();
-//        }
-//    }
-//
-//    @POST
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Path("/topics/")
-//    @RolesAllowed({"admin", "member"})
-//    public Response createTopic(CreateTopicUIRequest request, @Context SecurityContext securityContext) {
-//        try {
-//            validationService.validateRequest(request);
-//            String username = securityContext.getUserPrincipal().getName();
-//            CreateTopicCommand command = CreateTopicUIRequest.Converter.toInputPortCommand(request, username);
-//            Result<Topic> topicResult = this.createTopicUseCase.createTopic(command);
-//
-//            if (!topicResult.isSuccessful()) {
-//                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error").build();
-//            }
-//
-//            Topic topic = topicResult.getData();
-//            return Response.status(Response.Status.CREATED).location(URI.create("/ui/posts?topic=" + URLEncoder.encode(topic.getTitle(), StandardCharsets.UTF_8)))
-//                    .build();
-//        } catch (ConstraintViolationException e) {
-//            return Response.status(Response.Status.BAD_REQUEST).entity(new UIValidationResult(e.getConstraintViolations(), Response.Status.BAD_REQUEST, "/ui/posts/")).build();
-//        }
-//    }
-//
-//    @DELETE
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Path("/posts/{id}")
-//    @RolesAllowed({"admin", "member"})
-//    public Response deletePost(@PathParam("id") String postId, @Context SecurityContext securityContext) {
-//        String username = securityContext.getUserPrincipal().getName();
-//        Result<Post> deletePostResult = this.deletePostUseCase.deletePost(new DeletePostCommand(postId, username));
-//
-//        if (deletePostResult.isSuccessful()) {
-//            return Response.status(Response.Status.OK).build();
-//        }
-//        return Response.status(Response.Status.BAD_REQUEST).build();
-//    }
-//
-//
-//    @DELETE
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Path("/comments/{id}")
-//    @RolesAllowed({"admin", "member"})
-//    public Response deleteComment(@PathParam("id") String commentId, @Context SecurityContext securityContext) {
-//        String username = securityContext.getUserPrincipal().getName();
-//        Result<Comment> deleteCommentResult = this.deleteCommentUseCase.deleteComment(new DeleteCommentCommand(commentId, username));
-//
-//        if (deleteCommentResult.isSuccessful()) {
-//            return Response.status(Response.Status.OK).build();
-//        }
-//        return Response.status(Response.Status.BAD_REQUEST).build();
-//    }
 }

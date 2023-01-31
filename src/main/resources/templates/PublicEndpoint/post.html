@@ -83,17 +83,30 @@
     {#if comment.object.isActive}
     <div class="content-box" style="margin-left: {comment.depth}00px" id="{comment.object.id}">
         {#if isLoggedIn}
-        <div style="margin-right: 4px;">
-            <a href="#" onclick="voteComment('{comment.object.id}','NONE')">X</a>
-        </div>
-
-        <div class="vote-container">
-            <div class="vote"><a href="#" onclick="voteComment('{comment.object.id}','UP')">«</a></div>
+            <div style="margin-right: 4px;">
+                {#if comment.loggedInUserVote(username)}
+                    <a href="#" onclick="deleteVote('{comment.loggedInUserVote(username).id}')">X</a>
+                {#else}
+                    <p style="margin: 0; color: darkgrey"></p>
+                {/if}
+            </div>
+            <div class="vote-container">
+            <div class="vote">
+                {#if comment.loggedInUserCanUpvote(username)}
+                    <a href="#" onclick="voteComment('{comment.object.id}','UP')">«</a>
+                {#else}
+                    <p style="margin: 0; color: darkgrey">«</p>
+                {/if}
+            </div>
             <div>{comment.object.totalVotes}</div>
-            <div class="vote"><a href="#" onclick="voteComment('{comment.object.id}','DOWN')">»</a></div>
-        </div>
-        {#else}
-        <div style="margin-right: 10px">{comment.object.totalVotes}</div>
+            <div class="vote">
+            {#if comment.loggedInUserCanDownvote(username)}
+                <a href="#" onclick="voteComment('{comment.object.id}','DOWN')">»</a>
+            {#else}
+                <p style="margin: 0; color: darkgrey">»</p>
+            {/if}
+            </div>
+            </div>
         {/if}
         <div style="width: 100%">
             <span class="sub-info">
@@ -159,8 +172,10 @@
             return;
         }
 
-        let data = { "commentText": commentText.value };
-        let url = '/ui/comments/' + postId;
+        let data = {
+            postId : postId,
+            text: commentText.value};
+        let url = '/api/v1/comments/';
         fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -187,14 +202,16 @@
             });
     }
 
-    function submitReply(entityId) {
-        let replyText = document.getElementById(entityId + "-text");
+    function submitReply(commentId) {
+        let replyText = document.getElementById(commentId + "-text");
         if (!replyText.checkValidity()) {
             return;
         }
-        console.log(entityId)
-        let data = { text: replyText.value };
-        let url = '/api/v1/comments/' + entityId;
+        console.log(commentId)
+        let data = {
+            text: replyText.value
+        };
+        let url = '/api/v1/comments/' + commentId;
         fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -300,7 +317,7 @@
     }
 
     function deleteComment(entityId) {
-        let url = '/ui/comments/' + entityId;
+        let url = '/api/v1/comments/' + entityId;
         fetch(url, {
             method: 'DELETE',
             mode: 'cors',

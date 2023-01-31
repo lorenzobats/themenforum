@@ -1,4 +1,4 @@
-package de.hsos.swa.actors.ui.dto.out;
+package de.hsos.swa.actors.ui;
 
 import de.hsos.swa.domain.entity.Comment;
 

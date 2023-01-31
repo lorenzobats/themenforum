@@ -1,6 +1,5 @@
 package de.hsos.swa.actors.ui;
 
-import de.hsos.swa.actors.ui.dto.out.CommentWithDepth;
 import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
 import de.hsos.swa.domain.entity.*;
 import de.hsos.swa.domain.vo.VoteType;
@@ -45,6 +44,15 @@ public class TemplateExtensions {
         return null;
     }
 
+    public static Vote loggedInUserVote(CommentWithDepth comment, String username) {
+        for (Vote vote : comment.object().getVotes()) {
+            if(vote.getUser().getName().equals(username)){
+                return vote;
+            }
+        }
+        return null;
+    }
+
 
     public static boolean loggedInUserCanDownvote(Post post, String username) {
         Vote vote = loggedInUserVote(post, username);
@@ -53,9 +61,22 @@ public class TemplateExtensions {
 
     }
 
+    public static boolean loggedInUserCanDownvote(CommentWithDepth comment, String username) {
+        Vote vote = loggedInUserVote(comment, username);
+        return !comment.object().getUser().getName().equals(username) &&
+                (vote == null || vote.getVoteType() != VoteType.DOWN);
+
+    }
+
     public static boolean loggedInUserCanUpvote(Post post, String username) {
         Vote vote = loggedInUserVote(post, username);
         return !post.getUser().getName().equals(username) &&
+                (vote == null || vote.getVoteType() != VoteType.UP);
+    }
+
+    public static boolean loggedInUserCanUpvote(CommentWithDepth comment, String username) {
+        Vote vote = loggedInUserVote(comment, username);
+        return !comment.object().getUser().getName().equals(username) &&
                 (vote == null || vote.getVoteType() != VoteType.UP);
     }
 

@@ -1,55 +1,58 @@
 {@de.hsos.swa.domain.entity.Post post}
 
 {#include base}
-{#title}New Post{/title}
-{#body}
-<div class="header">
-    <div>
+    {#title}New Post{/title}
+    {#body}
+        <div class="header">
+            <div>
 
-        <h1 class="mt-4">New Post</h1>
-        <p><a href="/ui/posts">[Browse Posts]</a></p>
+                <h1 class="mt-4">New Post</h1>
+                <p><a href="/ui/posts">[Browse Posts]</a></p>
 
-    </div>
-    <div>
-        Logged in as: username
-        <button class="btn btn-light" onclick="logout()">Logout</button>
-    </div>
-</div>
+            </div>
+            <div>
+                Logged in as: username
+                <button class="btn btn-light" onclick="logout()">Logout</button>
+            </div>
+        </div>
 
 
-<form onsubmit="createPost();">
-    <div class="form-group">
+        <form onsubmit="createPost();">
+        <div class="form-group">
         <label><b>Topic</b></label>
         <select style="display: block; width: 100%" required id="postTopic" name="topic">
-            <option value="" disabled selected hidden>Choose Topic</option>
-            {#for entry in allTopics}
+        <option value="" disabled selected hidden>Choose Topic</option>
+        {#for entry in allTopics}
             <option value="{entry.topic.id}">{entry.topic.title}</option>
             {/}
         </select>
-    </div>
-    <div class="form-group">
-        <label><b>Title</b></label>
-        <input style="display: block; width: 100%" type="text" placeholder="Enter Title" id="postTitle" name="title"
-            maxlength="100" minlength="1" required>
-    </div>
+        </div>
+        <div class="form-group">
+            <label><b>Title</b></label>
+            <input style="display: block; width: 100%" type="text" placeholder="Enter Title" id="postTitle" name="title"
+                   maxlength="100" minlength="1" required>
+        </div>
 
-    <div class="form-group mb-4">
-        <label><b>Text</b></label>
-        <textarea style="display: block; width: 100%" placeholder="Enter Text" id="postText" name="text" maxlength="250"
-            minlength="1" required></textarea>
-    </div>
+        <div class="form-group mb-4">
+            <label><b>Text</b></label>
+            <textarea style="display: block; width: 100%" placeholder="Enter Text" id="postText" name="text"
+                      maxlength="250"
+                      minlength="1" required></textarea>
+        </div>
 
-    <button type="submit" class="btn btn-primary">Create Post</button>
-</form>
-<div id="error-box" class="alert alert-danger mt-4" style="display: none;"></div>
+        <button type="submit" class="btn btn-primary">Create Post</button>
+        </form>
+        <div id="error-box" class="alert alert-danger mt-4" style="display: none;"></div>
 
 
-{/body}
+    {/body}
 {/include}
 
 <script>
 
-    onsubmit = (event) => { event.preventDefault() };
+    onsubmit = (event) => {
+        event.preventDefault()
+    };
 
     function createPost() {
         let title = document.querySelector('#postTitle').value;
@@ -59,10 +62,10 @@
         let data = {
             title: title,
             content: text,
-            topic: topic
+            topicId: topic
         };
 
-        let url = '/ui/posts/';
+        let url = '/api/v1/posts/';
         fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -78,7 +81,9 @@
             .then(response => {
                 if (response.ok) {
                     let location = response.headers.get("Location")
-                    window.location = location;
+                    response.json().then(data => {
+                        window.open('/ui/posts/' + data.id, '_self');
+                    })
                 } else {
                     response.json().then(error => {
                         console.log(error);
