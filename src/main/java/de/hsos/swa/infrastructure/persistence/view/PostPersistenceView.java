@@ -23,8 +23,7 @@ public record PostPersistenceView(
         Long downvotes
 ) {
     public static Post toDomainEntity(PostPersistenceView view) {
-        Post post = new Post(view.id, view.upvotes.toString() + view.downvotes.toString(), view.content, view.createdAt, TopicPersistenceView.toDomainEntity(view.topic), UserPersistenceView.toDomainEntity(view.user));
-        return post;
+        return new Post(view.id, view.upvotes.toString() + view.downvotes.toString(), view.content, view.createdAt, TopicPersistenceView.toDomainEntity(view.topic), UserPersistenceView.toDomainEntity(view.user));
     }
 }
 

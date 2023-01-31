@@ -1,17 +1,17 @@
 package de.hsos.swa.actors.rest;
-import de.hsos.swa.actors.rest.dto.in.VoteEntityRestAdapterRequest;
+import de.hsos.swa.actors.rest.dto.in.VoteEntityRequestBody;
+import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.VoteDto;
-import de.hsos.swa.actors.rest.validation.ValidationResult;
-import de.hsos.swa.actors.rest.validation.VoteValidationService;
-import de.hsos.swa.application.input.DeleteVoteInputPort;
-import de.hsos.swa.application.input.GetAllVotesInputPort;
-import de.hsos.swa.application.input.GetAllVotesByUsernameInputPort;
-import de.hsos.swa.application.input.VoteEntityInputPort;
-import de.hsos.swa.application.input.dto.in.DeleteVoteInputPortRequest;
-import de.hsos.swa.application.input.dto.in.GetAllVotesByUsernameInputPortRequest;
-import de.hsos.swa.application.input.dto.in.VoteEntityInputPortRequest;
+import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
+import de.hsos.swa.application.input.DeleteVoteUseCase;
+import de.hsos.swa.application.input.GetAllVotesUseCase;
+import de.hsos.swa.application.input.GetAllVotesByUsernameUseCase;
+import de.hsos.swa.application.input.VoteEntityUseCase;
+import de.hsos.swa.application.input.dto.in.DeleteVoteCommand;
+import de.hsos.swa.application.input.dto.in.GetAllVotesByUsernameQuery;
+import de.hsos.swa.application.input.dto.in.VoteEntityCommand;
 import de.hsos.swa.application.input.dto.out.VoteInputPortDto;
-import de.hsos.swa.application.util.Result;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.domain.entity.Vote;
 
 import javax.annotation.security.RolesAllowed;
@@ -35,19 +35,19 @@ import java.util.List;
 public class VoteRestAdapter {
 
     @Inject
-    VoteEntityInputPort voteEntityInputPort;
+    VoteEntityUseCase voteEntityUseCase;
 
     @Inject
-    DeleteVoteInputPort deleteVoteInputPort;
+    DeleteVoteUseCase deleteVoteUseCase;
 
     @Inject
-    GetAllVotesByUsernameInputPort getAllVotesByUsernameInputPort;
+    GetAllVotesByUsernameUseCase getAllVotesByUsernameUseCase;
 
     @Inject
-    GetAllVotesInputPort getAllVotesInputPort;
+    GetAllVotesUseCase getAllVotesUseCase;
 
     @Inject
-    VoteValidationService voteValidationService;
+    ValidationService voteValidationService;
 
 
     @GET
@@ -56,8 +56,8 @@ public class VoteRestAdapter {
         try {
             Result<List<VoteInputPortDto>> votesResult;
             if(username != null)
-                votesResult = this.getAllVotesByUsernameInputPort.getAllVotesByUsername(new GetAllVotesByUsernameInputPortRequest(username), securityContext);
-            else votesResult = this.getAllVotesInputPort.getAllVotes(securityContext);
+                votesResult = this.getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext);
+            else votesResult = this.getAllVotesUseCase.getAllVotes(securityContext);
 
             if (votesResult.isSuccessful()) {
                 List<VoteDto> votesResponse = votesResult.getData().stream().map(VoteDto::fromInputPortDto).toList();
@@ -71,13 +71,13 @@ public class VoteRestAdapter {
     }
 
     @POST
-    public Response vote(@NotNull VoteEntityRestAdapterRequest request, @Context SecurityContext securityContext) {
+    public Response vote(@NotNull VoteEntityRequestBody request, @Context SecurityContext securityContext) {
         try {
-            voteValidationService.validateVote(request);
+            voteValidationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
-            VoteEntityInputPortRequest command = VoteEntityRestAdapterRequest.Converter.toInputPortCommand(request, username);
+            VoteEntityCommand command = VoteEntityRequestBody.Converter.toInputPortCommand(request, username);
 
-            Result<Vote> voteResult = this.voteEntityInputPort.vote(command);
+            Result<Vote> voteResult = this.voteEntityUseCase.vote(command);
 
             if (voteResult.isSuccessful()) {
                 //TODO VoteDTO returnen
@@ -96,7 +96,7 @@ public class VoteRestAdapter {
         try {
             String username = securityContext.getUserPrincipal().getName();
 
-            Result<Vote> voteResult = this.deleteVoteInputPort.deleteVote(new DeleteVoteInputPortRequest(id, username));
+            Result<Vote> voteResult = this.deleteVoteUseCase.deleteVote(new DeleteVoteCommand(id, username));
 
             if (voteResult.isSuccessful()) {
                 return Response.status(Response.Status.OK).entity(voteResult.getData()).build();

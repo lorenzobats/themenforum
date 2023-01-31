@@ -26,13 +26,13 @@ public class UserPersistenceModel {
     }
 
     public static class Converter {
-        public static User toDomainEntity(UserPersistenceModel userPersistenceModel) {
-            User user = new User(userPersistenceModel.id, userPersistenceModel.name);
+        public static User toDomainEntity(UserPersistenceModel persistenceModel) {
+            User user = new User(persistenceModel.id, persistenceModel.name);
             return user;
         }
 
-        public static UserPersistenceModel toPersistenceModel(User user) {
-            return new UserPersistenceModel(user.getId(), user.getName());
+        public static UserPersistenceModel toPersistenceModel(User domainEntity) {
+            return new UserPersistenceModel(domainEntity.getId(), domainEntity.getName());
         }
     }
 }

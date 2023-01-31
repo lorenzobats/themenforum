@@ -1,7 +1,7 @@
 package de.hsos.swa.application.output.repository;
 
 import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
-import de.hsos.swa.application.util.Result;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.domain.entity.Topic;
 
 import java.util.List;

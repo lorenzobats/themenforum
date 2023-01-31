@@ -1,15 +1,15 @@
 package de.hsos.swa.actors.rest;
 
 
-import de.hsos.swa.actors.rest.dto.in.RegisterUserRestAdapterRequest;
+import de.hsos.swa.actors.rest.dto.in.RegisterUserRequestBody;
+import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.UserDto;
-import de.hsos.swa.actors.rest.validation.UserValidationService;
-import de.hsos.swa.actors.rest.validation.ValidationResult;
-import de.hsos.swa.application.input.GetUserByNameInputPort;
-import de.hsos.swa.application.input.RegisterUserInputPort;
-import de.hsos.swa.application.input.dto.in.GetUserByNameInputPortRequest;
-import de.hsos.swa.application.input.dto.in.RegisterUserInputPortRequest;
-import de.hsos.swa.application.util.Result;
+import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
+import de.hsos.swa.application.input.GetUserByNameUseCase;
+import de.hsos.swa.application.input.RegisterUserUseCase;
+import de.hsos.swa.application.input.dto.in.GetUserByNameQuery;
+import de.hsos.swa.application.input.dto.in.RegisterUserCommand;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.domain.entity.User;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -35,17 +35,17 @@ import javax.ws.rs.core.SecurityContext;
 public class UserRestAdapter {
 
     @Inject
-    RegisterUserInputPort registerUserInputPort;
+    RegisterUserUseCase registerUserUseCase;
 
     @Inject
-    GetUserByNameInputPort getUserByNameInputPort;
+    GetUserByNameUseCase getUserByNameUseCase;
 
     @Inject
-    UserValidationService validationService;
+    ValidationService validationService;
 
 
     @DELETE
-    // TODO: implementieren => nutze "GetAllUsersInputPort"
+    // TODO: implementieren => nutze "GetAllUsersUseCase"
     @RolesAllowed({"admin"})
     public Response getAllUsers(@Context SecurityContext securityContext) {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
@@ -56,7 +56,7 @@ public class UserRestAdapter {
     @RolesAllowed({"admin"})
     public Response getUserByName(@PathParam("username") String username) {
         try {
-            Result<User> userResult = this.getUserByNameInputPort.getUserByName(new GetUserByNameInputPortRequest(username));
+            Result<User> userResult = this.getUserByNameUseCase.getUserByName(new GetUserByNameQuery(username));
             if (userResult.isSuccessful()) {
                 UserDto responseDto = UserDto.Converter.fromDomainEntity(userResult.getData());
                 return Response.status(Response.Status.OK).entity(responseDto).build();
@@ -73,12 +73,12 @@ public class UserRestAdapter {
             @RequestBody(
                     description = "Post to create",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = RegisterUserRestAdapterRequest.class))
-            ) RegisterUserRestAdapterRequest request) {
+                    content = @Content(schema = @Schema(implementation = RegisterUserRequestBody.class))
+            ) RegisterUserRequestBody request) {
         try {
-            validationService.validateUser(request);
-            RegisterUserInputPortRequest command = RegisterUserRestAdapterRequest.Converter.toInputPortCommand(request);
-            Result<User> userResult = this.registerUserInputPort.registerUser(command);
+            validationService.validate(request);
+            RegisterUserCommand command = RegisterUserRequestBody.Converter.toInputPortCommand(request);
+            Result<User> userResult = this.registerUserUseCase.registerUser(command);
             if (userResult.isSuccessful()) {
                 UserDto responseDto = UserDto.Converter.fromDomainEntity(userResult.getData());
                 return Response.status(Response.Status.CREATED).entity(responseDto).build();
@@ -92,7 +92,7 @@ public class UserRestAdapter {
     // TODO: UpdateUser ???
 
     @DELETE
-    // TODO: implementieren => nutze "DeleteUserInputPort"
+    // TODO: implementieren => nutze "DeleteUserUseCase"
     @Path("/{id}/")
     @RolesAllowed({"admin"})
     public Response deleteComment(@PathParam("id") String id, @Context SecurityContext securityContext) {

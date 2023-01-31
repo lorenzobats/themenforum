@@ -81,44 +81,45 @@ public class CommentPersistenceModel {
     }
 
     public static class Converter {
-        public static Comment toDomainEntity(CommentPersistenceModel commentPersistenceModel) {
-            User user = UserPersistenceModel.Converter.toDomainEntity(commentPersistenceModel.userPersistenceModel);
-            Comment comment = new Comment(commentPersistenceModel.id, commentPersistenceModel.createdAt, user, commentPersistenceModel.text, commentPersistenceModel.active);
+        public static Comment toDomainEntity(CommentPersistenceModel persistenceModel) {
+            User user = UserPersistenceModel.Converter.toDomainEntity(persistenceModel.userPersistenceModel);
+            Comment comment = new Comment(persistenceModel.id, persistenceModel.createdAt, user, persistenceModel.text, persistenceModel.active);
 
-            for (CommentPersistenceModel cP : commentPersistenceModel.replies) {
+            for (CommentPersistenceModel cP : persistenceModel.replies) {
                 comment.addReply(CommentPersistenceModel.Converter.toDomainEntity(cP));
             }
 
-            List<Vote> votes = commentPersistenceModel.votes.stream().map(VotePersistenceModel.Converter::toDomainEntity).toList();
+            List<Vote> votes = persistenceModel.votes.stream().map(VotePersistenceModel.Converter::toDomainEntity).toList();
             votes.forEach(comment::addVote);
 
             return comment;
         }
 
-        public static CommentPersistenceModel toPersistenceModel(Comment comment) {
-            UserPersistenceModel user = UserPersistenceModel.Converter.toPersistenceModel(comment.getUser());
+        public static CommentPersistenceModel toPersistenceModel(Comment domainEntity) {
+            UserPersistenceModel user = UserPersistenceModel.Converter.toPersistenceModel(domainEntity.getUser());
             List<CommentPersistenceModel> replies =
-                    comment.getReplies().stream().map(CommentPersistenceModel.Converter::toPersistenceModel).collect(Collectors.toList());
+                    domainEntity.getReplies().stream().map(CommentPersistenceModel.Converter::toPersistenceModel).collect(Collectors.toList());
 
-            List<VotePersistenceModel> votes = comment.getVotes().stream().map(VotePersistenceModel.Converter::toPersistenceModel).toList();
+            List<VotePersistenceModel> votes = domainEntity.getVotes().stream().map(VotePersistenceModel.Converter::toPersistenceModel).toList();
 
             CommentPersistenceModel parent = null;
-            if(comment.getParentComment() != null) {
-                 parent = CommentPersistenceModel.Converter.parentToPersistenceModel(comment.getParentComment());
+            if(domainEntity.getParentComment() != null) {
+                 parent = CommentPersistenceModel.Converter.parentToPersistenceModel(domainEntity.getParentComment());
             }
 
-            CommentPersistenceModel commentPersistenceModel = new CommentPersistenceModel(comment.getId(), comment.getText(), comment.getCreatedAt(), user, parent, replies, comment.isActive());
+            CommentPersistenceModel commentPersistenceModel = new CommentPersistenceModel(domainEntity.getId(), domainEntity.getText(), domainEntity.getCreatedAt(), user, parent, replies, domainEntity.isActive());
             commentPersistenceModel.setVotes(votes);
 
             return commentPersistenceModel;
         }
 
 
-        public static CommentPersistenceModel parentToPersistenceModel(Comment parentComment) {
-            UserPersistenceModel userPersistenceModel = UserPersistenceModel.Converter.toPersistenceModel(parentComment.getUser());
-            List<VotePersistenceModel> votes = parentComment.getVotes().stream().map(VotePersistenceModel.Converter::toPersistenceModel).toList();
+        public static CommentPersistenceModel parentToPersistenceModel(Comment domainEntity) {
+            UserPersistenceModel userPersistenceModel = UserPersistenceModel.Converter.toPersistenceModel(domainEntity.getUser());
+            List<VotePersistenceModel> votes = domainEntity.getVotes().stream().map(VotePersistenceModel.Converter::toPersistenceModel).toList();
 
-            CommentPersistenceModel commentPersistenceModel = new CommentPersistenceModel(parentComment.getId(), parentComment.getText(), parentComment.getCreatedAt(), userPersistenceModel, parentComment.isActive());
+            CommentPersistenceModel commentPersistenceModel = new CommentPersistenceModel(domainEntity.getId(), domainEntity.getText(), domainEntity.getCreatedAt(), userPersistenceModel, domainEntity.isActive());
+            commentPersistenceModel.setVotes(votes);
             return  commentPersistenceModel;
         }
     }

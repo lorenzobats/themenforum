@@ -1,18 +1,17 @@
 package de.hsos.swa.actors.rest;
 
-import de.hsos.swa.actors.rest.dto.in.CreatePostRestAdapterRequest;
+import de.hsos.swa.actors.rest.dto.in.CreatePostRequestBody;
+import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.PostDto;
-import de.hsos.swa.actors.rest.validation.ValidationResult;
+import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
-import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.VoteRepository;
-import de.hsos.swa.application.use_case_query.OrderParams;
-import de.hsos.swa.application.use_case_query.PostFilterParams;
-import de.hsos.swa.application.use_case_query.SortingParams;
-import de.hsos.swa.application.util.Result;
+import de.hsos.swa.application.service.query.params.OrderParams;
+import de.hsos.swa.application.service.query.params.PostFilterParams;
+import de.hsos.swa.application.service.query.params.SortingParams;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.domain.entity.Post;
-import de.hsos.swa.actors.rest.validation.PostValidationService;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
@@ -42,19 +41,19 @@ import java.util.*;
 
 public class PostRestAdapter {
     @Inject
-    CreatePostInputPort createPostInputPort;
+    CreatePostUseCase createPostUseCase;
 
     @Inject
-    GetPostByIdInputPort getPostByIdInputPort;
+    GetPostByIdUseCase getPostByIdUseCase;
 
     @Inject
-    GetFilteredPostsInputPort getFilteredPostsInputPort;
+    GetFilteredPostsUseCase getFilteredPostsUseCase;
 
     @Inject
-    DeletePostInputPort deletePostInputPort;
+    DeletePostUseCase deletePostUseCase;
 
     @Inject
-    PostValidationService validationService;
+    ValidationService validationService;
 
 
     @Inject
@@ -89,8 +88,8 @@ public class PostRestAdapter {
             if (topicId != null)
                 filterParams.put(PostFilterParams.TOPICID, topicId);
 
-            GetFilteredPostInputPortRequest query = new GetFilteredPostInputPortRequest(filterParams, includeComments, sortBy, orderBy);
-            Result<List<Post>> postsResult = this.getFilteredPostsInputPort.getFilteredPosts(query);
+            GetFilteredPostQuery query = new GetFilteredPostQuery(filterParams, includeComments, sortBy, orderBy);
+            Result<List<Post>> postsResult = this.getFilteredPostsUseCase.getFilteredPosts(query);
 
             if (postsResult.isSuccessful()) {
                 List<PostDto> postsResponse = postsResult.getData().stream().map(PostDto.Converter::fromDomainEntity).toList();
@@ -115,8 +114,8 @@ public class PostRestAdapter {
             @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
             @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy) {
         try {
-            GetPostByIdInputPortRequest query = new GetPostByIdInputPortRequest(id, includeComments, sortBy, orderBy);
-            Result<Post> postResult = this.getPostByIdInputPort.getPostById(query);
+            GetPostByIdQuery query = new GetPostByIdQuery(id, includeComments, sortBy, orderBy);
+            Result<Post> postResult = this.getPostByIdUseCase.getPostById(query);
 
             if (postResult.isSuccessful()) {
                 PostDto response = PostDto.Converter.fromDomainEntity(postResult.getData());
@@ -136,14 +135,14 @@ public class PostRestAdapter {
             @NotNull @RequestBody(
                     description = "Post to create",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = CreatePostRestAdapterRequest.class))
-            ) CreatePostRestAdapterRequest request,
+                    content = @Content(schema = @Schema(implementation = CreatePostRequestBody.class))
+            ) CreatePostRequestBody request,
             @Context SecurityContext securityContext) {
         try {
-            validationService.validatePost(request);
+            validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
-            CreatePostInputPortRequest command = CreatePostRestAdapterRequest.Converter.toInputPortCommand(request, username);
-            Result<Post> postResult = this.createPostInputPort.createPost(command);
+            CreatePostCommand command = CreatePostRequestBody.Converter.toInputPortCommand(request, username);
+            Result<Post> postResult = this.createPostUseCase.createPost(command);
 
             if (postResult.isSuccessful()) {
                 PostDto postResponse = PostDto.Converter.fromDomainEntity(postResult.getData());
@@ -162,8 +161,8 @@ public class PostRestAdapter {
     public Response deletePost(@PathParam("id") String id, @Context SecurityContext securityContext) {
         try {
             String username = securityContext.getUserPrincipal().getName();
-            DeletePostInputPortRequest command = new DeletePostInputPortRequest(id, username);
-            Result<Post> postResult = this.deletePostInputPort.deletePost(command);
+            DeletePostCommand command = new DeletePostCommand(id, username);
+            Result<Post> postResult = this.deletePostUseCase.deletePost(command);
 
             if (postResult.isSuccessful()) {
                 PostDto postDto = PostDto.Converter.fromDomainEntity(postResult.getData());

@@ -5,7 +5,7 @@ import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViewSetting;
 import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
-import de.hsos.swa.application.util.Result;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.infrastructure.persistence.model.TopicPersistenceModel;
@@ -54,21 +54,7 @@ public class TopicPersistenceAdapter implements TopicRepository {
         List<TopicPersistenceView> postList;
         CriteriaBuilder<TopicPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(TopicPersistenceView.class), criteriaBuilder);
         postList = criteriaBuilderView.getResultList();
-        return Result.success(postList.stream().map(TopicPersistenceView::toDomainEntityWithPostCount).toList());
-    }
-
-    @Override
-    public Result<List<TopicInputPortDto>> searchTopic(String searchString) {
-        // TODO: Try Catch
-        CriteriaBuilder<TopicPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, TopicPersistenceModel.class);
-        criteriaBuilder
-                .whereOr()
-                .where("title").like().value("%" + searchString + "%").noEscape()
-                .where("description").like().value("%" + searchString + "%").noEscape()
-                .endOr();
-        CriteriaBuilder<TopicPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(TopicPersistenceView.class), criteriaBuilder);
-        List<TopicPersistenceView> postList = criteriaBuilderView.getResultList();
-        return Result.success(postList.stream().map(TopicPersistenceView::toDomainEntityWithPostCount).toList());
+        return Result.success(postList.stream().map(TopicPersistenceView::toOutputPortDto).toList());
     }
 
     @Override
@@ -85,6 +71,22 @@ public class TopicPersistenceAdapter implements TopicRepository {
             return Result.error("GetTopicById Error");
         }
     }
+
+    @Override
+    public Result<List<TopicInputPortDto>> searchTopic(String searchString) {
+        // TODO: Try Catch
+        CriteriaBuilder<TopicPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, TopicPersistenceModel.class);
+        criteriaBuilder
+                .whereOr()
+                .where("title").like().value("%" + searchString + "%").noEscape()
+                .where("description").like().value("%" + searchString + "%").noEscape()
+                .endOr();
+        CriteriaBuilder<TopicPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(TopicPersistenceView.class), criteriaBuilder);
+        List<TopicPersistenceView> postList = criteriaBuilderView.getResultList();
+        return Result.success(postList.stream().map(TopicPersistenceView::toOutputPortDto).toList());
+    }
+
+
 
     // DELETE
     @Override

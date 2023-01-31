@@ -9,10 +9,10 @@ import de.hsos.swa.actors.ui.validation.UIValidationService;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
 import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
-import de.hsos.swa.application.use_case_query.OrderParams;
-import de.hsos.swa.application.use_case_query.PostFilterParams;
-import de.hsos.swa.application.use_case_query.SortingParams;
-import de.hsos.swa.application.util.Result;
+import de.hsos.swa.application.service.query.params.OrderParams;
+import de.hsos.swa.application.service.query.params.PostFilterParams;
+import de.hsos.swa.application.service.query.params.SortingParams;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.domain.entity.*;
 import de.hsos.swa.domain.vo.VoteType;
 import de.hsos.swa.domain.vo.VotedEntityType;
@@ -50,38 +50,38 @@ public class PublicEndpoint {
     UIValidationService validationService;
 
     @Inject
-    GetFilteredPostsInputPort getFilteredPostsInputPort;
+    GetFilteredPostsUseCase getFilteredPostsUseCase;
 
     @Inject
-    GetPostByIdInputPort getPostByIdInputPort;
+    GetPostByIdUseCase getPostByIdUseCase;
 
     @Inject
-    GetAllTopicsWithPostCountInputPort getAllTopicsWithPostCountInputPort;
+    GetAllTopicsUseCase getAllTopicsUseCase;
 
     @Inject
-    SearchTopicsInputPort searchTopicsInputPort;
+    SearchTopicsUseCase searchTopicsUseCase;
 
     @Inject
-    CommentPostInputPort commentPostInputPort;
+    CommentPostUseCase commentPostUseCase;
 
     @Inject
-    ReplyToCommentInputPort replyToCommentInputPort;
+    ReplyToCommentUseCase replyToCommentUseCase;
 
     @Inject
-    VoteEntityInputPort voteEntityInputPort;
+    VoteEntityUseCase voteEntityUseCase;
 
     @Inject
-    DeletePostInputPort deletePostInputPort;
+    DeletePostUseCase deletePostUseCase;
 
 
     @Inject
-    DeleteCommentInputPort deleteCommentInputPort;
+    DeleteCommentUseCase deleteCommentUseCase;
 
     @Inject
-    CreatePostInputPort createPostInputPort;
+    CreatePostUseCase createPostUseCase;
 
     @Inject
-    CreateTopicInputPort createTopicInputPort;
+    CreateTopicUseCase createTopicUseCase;
 
 
     @Inject
@@ -149,10 +149,10 @@ public class PublicEndpoint {
             isLoggedIn = true;
         }
         if(searchString != null){
-            Result<List<TopicInputPortDto>> searchedTopics = searchTopicsInputPort.searchTopics(new SearchTopicsInputPortRequest(searchString));
+            Result<List<TopicInputPortDto>> searchedTopics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(searchString));
             return Templates.topics(searchedTopics.getData(), isLoggedIn, username);
         }
-        Result<List<TopicInputPortDto>> allTopics = getAllTopicsWithPostCountInputPort.getAllTopics();
+        Result<List<TopicInputPortDto>> allTopics = getAllTopicsUseCase.getAllTopics();
         return Templates.topics(allTopics.getData(), isLoggedIn, username);
     }
 
@@ -165,7 +165,7 @@ public class PublicEndpoint {
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
         }
-        Result<List<TopicInputPortDto>> allTopics = getAllTopicsWithPostCountInputPort.getAllTopics();
+        Result<List<TopicInputPortDto>> allTopics = getAllTopicsUseCase.getAllTopics();
         return Templates.createTopic(username);
     }
 
@@ -195,8 +195,8 @@ public class PublicEndpoint {
         if (username != null)   // Profiltemplate?
             filterParams.put(PostFilterParams.USERNAME, username);
 
-        GetFilteredPostInputPortRequest request = new GetFilteredPostInputPortRequest(filterParams, true, sortBy, orderBy);
-        Result<List<Post>> filteredPosts = getFilteredPostsInputPort.getFilteredPosts(request);
+        GetFilteredPostQuery request = new GetFilteredPostQuery(filterParams, true, sortBy, orderBy);
+        Result<List<Post>> filteredPosts = getFilteredPostsUseCase.getFilteredPosts(request);
 
         if (filterParams.containsKey(PostFilterParams.TOPIC)) {
             return Templates.posts(String.valueOf(filterParams.get(PostFilterParams.TOPIC)), filteredPosts.getData(), isLoggedIn, principalUsername);
@@ -220,8 +220,8 @@ public class PublicEndpoint {
             isLoggedIn = true;
         }
 
-        GetPostByIdInputPortRequest request = new GetPostByIdInputPortRequest(id, true, sortBy, orderBy);
-        Result<Post> postResult = getPostByIdInputPort.getPostById(request);
+        GetPostByIdQuery request = new GetPostByIdQuery(id, true, sortBy, orderBy);
+        Result<Post> postResult = getPostByIdUseCase.getPostById(request);
 
         if (postResult.isSuccessful()) {
             return Templates.post(postResult.getData(), isLoggedIn, username);
@@ -238,7 +238,7 @@ public class PublicEndpoint {
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
         }
-        Result<List<TopicInputPortDto>> allTopics = getAllTopicsWithPostCountInputPort.getAllTopics();
+        Result<List<TopicInputPortDto>> allTopics = getAllTopicsUseCase.getAllTopics();
         return Templates.createPost(allTopics.getData(), username);
     }
 
@@ -255,7 +255,7 @@ public class PublicEndpoint {
     @RolesAllowed({"admin", "member"})
     public Response commentPost(@JsonProperty CommentPostUIRequest request, @PathParam("id") String postId, @Context SecurityContext securityContext) {
         String username = securityContext.getUserPrincipal().getName();
-        Result<Comment> commentResult = this.commentPostInputPort.commentPost(new CommentPostInputPortRequest(postId, username, request.commentText));
+        Result<Comment> commentResult = this.commentPostUseCase.commentPost(new CommentPostCommand(postId, username, request.commentText));
 
         if (!commentResult.isSuccessful()) {
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -271,7 +271,7 @@ public class PublicEndpoint {
     @RolesAllowed({"admin", "member"})
     public Response replyToComment(@JsonProperty ReplyToCommentUIRequest request, @PathParam("entityId") String commentId, @Context SecurityContext securityContext) {
         String username = securityContext.getUserPrincipal().getName();
-        Result<Comment> replyResult = this.replyToCommentInputPort.replyToComment(new ReplyToCommentInputPortRequest(commentId, username, request.replyText));
+        Result<Comment> replyResult = this.replyToCommentUseCase.replyToComment(new ReplyToCommentCommand(commentId, username, request.replyText));
 
         if (!replyResult.isSuccessful()) {
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -288,7 +288,7 @@ public class PublicEndpoint {
     @RolesAllowed({"admin", "member"})
     public Response votePost(@JsonProperty VoteType voteType, @PathParam("id") String postId, @Context SecurityContext securityContext) {
         String username = securityContext.getUserPrincipal().getName();
-        Result<Vote> voteResult = this.voteEntityInputPort.vote(new VoteEntityInputPortRequest(postId, username, voteType, VotedEntityType.POST));
+        Result<Vote> voteResult = this.voteEntityUseCase.vote(new VoteEntityCommand(postId, username, voteType, VotedEntityType.POST));
 
         if (voteResult.isSuccessful()) {
             return Response.status(Response.Status.OK).build();
@@ -303,7 +303,7 @@ public class PublicEndpoint {
     @RolesAllowed({"admin", "member"})
     public Response voteComment(@JsonProperty VoteType voteType, @PathParam("id") String postId, @Context SecurityContext securityContext) {
         String username = securityContext.getUserPrincipal().getName();
-        Result<Vote> voteResult = this.voteEntityInputPort.vote(new VoteEntityInputPortRequest(postId, username, voteType, VotedEntityType.COMMENT));
+        Result<Vote> voteResult = this.voteEntityUseCase.vote(new VoteEntityCommand(postId, username, voteType, VotedEntityType.COMMENT));
 
         if (voteResult.isSuccessful()) {
             return Response.status(Response.Status.OK).build();
@@ -320,8 +320,8 @@ public class PublicEndpoint {
         try {
             validationService.validateRequest(request);
             String username = securityContext.getUserPrincipal().getName();
-            CreatePostInputPortRequest command = CreatePostUIRequest.Converter.toInputPortCommand(request, username);
-            Result<Post> postResult = this.createPostInputPort.createPost(command);
+            CreatePostCommand command = CreatePostUIRequest.Converter.toInputPortCommand(request, username);
+            Result<Post> postResult = this.createPostUseCase.createPost(command);
 
             if (!postResult.isSuccessful()) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error").build();
@@ -343,8 +343,8 @@ public class PublicEndpoint {
         try {
             validationService.validateRequest(request);
             String username = securityContext.getUserPrincipal().getName();
-            CreateTopicInputPortRequest command = CreateTopicUIRequest.Converter.toInputPortCommand(request, username);
-            Result<Topic> topicResult = this.createTopicInputPort.createTopic(command);
+            CreateTopicCommand command = CreateTopicUIRequest.Converter.toInputPortCommand(request, username);
+            Result<Topic> topicResult = this.createTopicUseCase.createTopic(command);
 
             if (!topicResult.isSuccessful()) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error").build();
@@ -365,7 +365,7 @@ public class PublicEndpoint {
     @RolesAllowed({"admin", "member"})
     public Response deletePost(@PathParam("id") String postId, @Context SecurityContext securityContext) {
         String username = securityContext.getUserPrincipal().getName();
-        Result<Post> deletePostResult = this.deletePostInputPort.deletePost(new DeletePostInputPortRequest(postId, username));
+        Result<Post> deletePostResult = this.deletePostUseCase.deletePost(new DeletePostCommand(postId, username));
 
         if (deletePostResult.isSuccessful()) {
             return Response.status(Response.Status.OK).build();
@@ -381,7 +381,7 @@ public class PublicEndpoint {
     @RolesAllowed({"admin", "member"})
     public Response deleteComment(@PathParam("id") String commentId, @Context SecurityContext securityContext) {
         String username = securityContext.getUserPrincipal().getName();
-        Result<Comment> deleteCommentResult = this.deleteCommentInputPort.deleteComment(new DeleteCommentInputPortRequest(commentId, username));
+        Result<Comment> deleteCommentResult = this.deleteCommentUseCase.deleteComment(new DeleteCommentCommand(commentId, username));
 
         if (deleteCommentResult.isSuccessful()) {
             return Response.status(Response.Status.OK).build();

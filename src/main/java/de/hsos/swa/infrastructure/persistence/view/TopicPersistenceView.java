@@ -21,13 +21,13 @@ public record TopicPersistenceView(
         Long posts
 ) {
 
-    // https://persistence.blazebit.com/documentation/1.6/entity-view/manual/en_US/#anchor-subquery-mappings
+    // TODO: (QUELLE) https://persistence.blazebit.com/documentation/1.6/entity-view/manual/en_US/#anchor-subquery-mappings
 
     public static Topic toDomainEntity(TopicPersistenceView view) {
         return new Topic(view.id, view.title, view.description, view.createdAt, UserPersistenceView.toDomainEntity(view.owner));
     }
 
-    public static TopicInputPortDto toDomainEntityWithPostCount(TopicPersistenceView view) {
+    public static TopicInputPortDto toOutputPortDto(TopicPersistenceView view) {
         Topic topic = new Topic(view.id, view.title, view.description, view.createdAt, UserPersistenceView.toDomainEntity(view.owner));
         return new TopicInputPortDto(topic, view.posts());
     }

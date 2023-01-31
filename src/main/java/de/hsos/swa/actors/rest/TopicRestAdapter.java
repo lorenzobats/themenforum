@@ -1,16 +1,16 @@
 package de.hsos.swa.actors.rest;
 
-import de.hsos.swa.actors.rest.dto.in.CreateTopicRestAdapterRequest;
+import de.hsos.swa.actors.rest.dto.in.CreateTopicRequestBody;
+import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.TopicDto;
-import de.hsos.swa.actors.rest.validation.TopicValidationService;
-import de.hsos.swa.actors.rest.validation.ValidationResult;
-import de.hsos.swa.application.input.dto.in.DeleteTopicInputPortRequest;
-import de.hsos.swa.application.input.dto.in.SearchTopicsInputPortRequest;
+import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
+import de.hsos.swa.application.input.dto.in.DeleteTopicCommand;
+import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
 import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
-import de.hsos.swa.application.util.Result;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.input.*;
-import de.hsos.swa.application.input.dto.in.CreateTopicInputPortRequest;
-import de.hsos.swa.application.input.dto.in.GetTopicByIdInputPortRequest;
+import de.hsos.swa.application.input.dto.in.CreateTopicCommand;
+import de.hsos.swa.application.input.dto.in.GetTopicByIdQuery;
 import de.hsos.swa.domain.entity.Topic;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -35,18 +35,22 @@ import java.util.List;
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
 public class TopicRestAdapter {
 
+    // QUERIES
     @Inject
-    GetAllTopicsWithPostCountInputPort getAllTopicsWithPostCountInputPort;
+    GetAllTopicsUseCase getAllTopicsUseCase;
     @Inject
-    SearchTopicsInputPort searchTopicsInputPort;
+    SearchTopicsUseCase searchTopicsUseCase;
     @Inject
-    GetTopicByIdInputPort getTopicByIdInputPort;
+    GetTopicByIdUseCase getTopicByIdUseCase;
+
+    // COMMANDS
     @Inject
-    CreateTopicInputPort createTopicInputPort;
+    CreateTopicUseCase createTopicUseCase;
     @Inject
-    DeleteTopicInputPort deleteTopicInputPort;
+    DeleteTopicUseCase deleteTopicUseCase;
+
     @Inject
-    TopicValidationService validationService;
+    ValidationService validationService;
 
     @GET
     public Response getAllTopics(@QueryParam("search") String searchString) {
@@ -54,8 +58,8 @@ public class TopicRestAdapter {
 
             Result<List<TopicInputPortDto>> topicsResult;
             if (searchString != null)
-                topicsResult = this.searchTopicsInputPort.searchTopics(new SearchTopicsInputPortRequest(searchString));
-            else topicsResult = this.getAllTopicsWithPostCountInputPort.getAllTopics();
+                topicsResult = this.searchTopicsUseCase.searchTopics(new SearchTopicsQuery(searchString));
+            else topicsResult = this.getAllTopicsUseCase.getAllTopics();
 
             if (topicsResult.isSuccessful()) {
                 List<TopicDto> topicsResponse = topicsResult.getData().stream().map(TopicDto.Converter::fromInputPortDto).toList();
@@ -71,8 +75,8 @@ public class TopicRestAdapter {
     @Path("{id}")
     public Response getTopicById(@PathParam("id") String id) {
         try {
-            GetTopicByIdInputPortRequest query = new GetTopicByIdInputPortRequest("");
-            Result<Topic> topicResult = this.getTopicByIdInputPort.getTopicById(query);
+            GetTopicByIdQuery query = new GetTopicByIdQuery("");
+            Result<Topic> topicResult = this.getTopicByIdUseCase.getTopicById(query);
             if (topicResult.isSuccessful()) {
                 TopicDto response = TopicDto.Converter.fromDomainEntity(topicResult.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
@@ -83,19 +87,26 @@ public class TopicRestAdapter {
         }
     }
 
+
+
+
+
+
+
+
     @POST
-    @RolesAllowed("member")
+    @RolesAllowed({"member","admin"})
     public Response createTopic(
             @RequestBody(
                     description = "Post to create",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = CreateTopicRestAdapterRequest.class))
-            ) CreateTopicRestAdapterRequest request, @Context SecurityContext securityContext) {
+                    content = @Content(schema = @Schema(implementation = CreateTopicRequestBody.class))
+            ) CreateTopicRequestBody request, @Context SecurityContext securityContext) {
         try {
-            validationService.validateTopic(request);
+            validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
-            CreateTopicInputPortRequest command = CreateTopicRestAdapterRequest.Converter.toInputPortCommand(request, username);
-            Result<Topic> topicResult = this.createTopicInputPort.createTopic(command);
+            CreateTopicCommand command = CreateTopicRequestBody.Converter.toInputPortCommand(request, username);
+            Result<Topic> topicResult = this.createTopicUseCase.createTopic(command);
 
             if (topicResult.isSuccessful()) {
                 TopicDto topicResponse = TopicDto.Converter.fromDomainEntity(topicResult.getData());
@@ -114,8 +125,8 @@ public class TopicRestAdapter {
     public Response deleteTopic(@PathParam("id") String id, @Context SecurityContext securityContext) {
         try {
             String username = securityContext.getUserPrincipal().getName();
-            DeleteTopicInputPortRequest command = new DeleteTopicInputPortRequest(id, username);
-            Result<Topic> postResult = this.deleteTopicInputPort.deleteTopic(command);
+            DeleteTopicCommand command = new DeleteTopicCommand(id, username);
+            Result<Topic> postResult = this.deleteTopicUseCase.deleteTopic(command);
 
             if (postResult.isSuccessful()) {
                 TopicDto postDto = TopicDto.Converter.fromDomainEntity(postResult.getData());

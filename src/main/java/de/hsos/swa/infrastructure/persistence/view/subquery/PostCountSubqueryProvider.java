@@ -5,7 +5,6 @@ import com.blazebit.persistence.view.SubqueryProvider;
 import de.hsos.swa.infrastructure.persistence.model.PostPersistenceModel;
 
 public class PostCountSubqueryProvider implements SubqueryProvider {
-
     @Override
     public <T> T createSubquery(SubqueryInitiator<T> subqueryBuilder) {
         return subqueryBuilder.from(PostPersistenceModel.class, "topicPosts")

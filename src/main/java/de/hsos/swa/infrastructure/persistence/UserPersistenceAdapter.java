@@ -5,10 +5,7 @@ import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.view.EntityViewManager;
 import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
-import de.hsos.swa.application.util.Result;
-import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
-import de.hsos.swa.infrastructure.persistence.model.PostPersistenceModel;
 import de.hsos.swa.infrastructure.persistence.model.UserPersistenceModel;
 import org.jboss.logging.Logger;
 
@@ -17,6 +14,7 @@ import javax.inject.Inject;
 import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 
 @RequestScoped
 @Transactional(value = Transactional.TxType.MANDATORY)
@@ -71,7 +69,7 @@ public class UserPersistenceAdapter implements UserRepository {
     }
 
     @Override
-    public RepositoryResult<User> getUserById(String userId) {
+    public RepositoryResult<User> getUserById(UUID userId) {
         TypedQuery<UserPersistenceModel> query = entityManager
                 .createNamedQuery("UserPersistenceModel.findById", UserPersistenceModel.class)
                 .setParameter("id", userId);

@@ -1,14 +1,14 @@
 package de.hsos.swa.actors.rest;
 
-import de.hsos.swa.actors.rest.dto.in.CommentPostRestAdapterRequest;
-import de.hsos.swa.actors.rest.dto.in.ReplyToCommentRestAdapterRequest;
+import de.hsos.swa.actors.rest.dto.in.CommentPostRequestBody;
+import de.hsos.swa.actors.rest.dto.in.ReplyToCommentRequestBody;
+import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.CommentDto;
-import de.hsos.swa.actors.rest.validation.CommentValidationService;
-import de.hsos.swa.actors.rest.validation.ValidationResult;
+import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
 import de.hsos.swa.domain.entity.Comment;
-import de.hsos.swa.application.util.Result;
+import de.hsos.swa.application.input.dto.out.Result;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -34,25 +34,26 @@ import java.util.List;
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
 public class CommentRestAdapter {
 
+    // QUERIES
     @Inject
-    GetCommentByIdInputPort getCommentByIdInputPort;
+    GetAllCommentsUseCase getAllCommentsUseCase;
+    @Inject
+    GetCommentByIdUseCase getCommentByIdUseCase;
 
+    // COMMANDS
     @Inject
-    GetAllCommentsInputPort getAllCommentsInputPort;
-
-    @Inject
-    CommentPostInputPort commentPostInputPort;
-
-    @Inject
-    ReplyToCommentInputPort replyToCommentInputPort;
+    CommentPostUseCase commentPostUseCase;
 
     @Inject
-    DeleteCommentInputPort deleteCommentInputPort;
+    ReplyToCommentUseCase replyToCommentUseCase;
+
+    @Inject
+    DeleteCommentUseCase deleteCommentUseCase;
 
 
 
     @Inject
-    CommentValidationService validationService;
+    ValidationService validationService;
 
 
     @GET
@@ -61,8 +62,8 @@ public class CommentRestAdapter {
     @Timed(name = "getCommentByIdTimer", description = "Misst, wie lange es dauert ein Kommentar anhand ID zu suchen")
     public Response getCommentById(@PathParam("id") String id) {
         try {
-            GetCommentByIdInputPortRequest query = new GetCommentByIdInputPortRequest(id);
-            Result<Comment> commentResult = this.getCommentByIdInputPort.getCommentById(query);
+            GetCommentByIdQuery query = new GetCommentByIdQuery(id);
+            Result<Comment> commentResult = this.getCommentByIdUseCase.getCommentById(query);
             if (commentResult.isSuccessful()) {
                 CommentDto response = CommentDto.Converter.fromDomainEntity(commentResult.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
@@ -80,7 +81,7 @@ public class CommentRestAdapter {
     public Response getAllComments(@DefaultValue("true") @QueryParam("includeReplies") Boolean includeReplies) {
         try {
             // TODO: Query (includeComments)
-            Result<List<Comment>> commentsResult = this.getAllCommentsInputPort.getAllComments(includeReplies);
+            Result<List<Comment>> commentsResult = this.getAllCommentsUseCase.getAllComments(includeReplies);
             if (commentsResult.isSuccessful()) {
                 List<CommentDto> commentsResponse = commentsResult.getData().stream().map(CommentDto.Converter::fromDomainEntity).toList();
                 return Response.status(Response.Status.OK).entity(commentsResponse).build();
@@ -99,13 +100,13 @@ public class CommentRestAdapter {
             @RequestBody(
                     description = "Post to create",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = CommentPostRestAdapterRequest.class))
-            ) CommentPostRestAdapterRequest request, @Context SecurityContext securityContext) {
+                    content = @Content(schema = @Schema(implementation = CommentPostRequestBody.class))
+            ) CommentPostRequestBody request, @Context SecurityContext securityContext) {
         try {
-            validationService.validateComment(request);
+            validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
-            CommentPostInputPortRequest command = CommentPostRestAdapterRequest.Converter.toInputPortCommand(request, username);
-            Result<Comment> result = this.commentPostInputPort.commentPost(command);
+            CommentPostCommand command = CommentPostRequestBody.Converter.toInputPortCommand(request, username);
+            Result<Comment> result = this.commentPostUseCase.commentPost(command);
             if (result.isSuccessful()) {
                 CommentDto response = CommentDto.Converter.fromDomainEntity(result.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
@@ -120,12 +121,12 @@ public class CommentRestAdapter {
     @Path("/{id}")
     @Counted(name = "replyToComment", description = "Wie oft ein Kommentar geantwortet wurde")
     @Timed(name = "replyToCommentTimer", description = "Misst, wie lange es dauert auf ein Kommentar zu antworten")
-    public Response replyToComment(@PathParam("id") String id, ReplyToCommentRestAdapterRequest request, @Context SecurityContext securityContext) {
+    public Response replyToComment(@PathParam("id") String id, ReplyToCommentRequestBody request, @Context SecurityContext securityContext) {
         try {
-            validationService.validateReply(request);
+            validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
-            ReplyToCommentInputPortRequest command = ReplyToCommentRestAdapterRequest.Converter.toInputPortCommand(request, id, username);
-            Result<Comment> result = this.replyToCommentInputPort.replyToComment(command);
+            ReplyToCommentCommand command = ReplyToCommentRequestBody.Converter.toInputPortCommand(request, id, username);
+            Result<Comment> result = this.replyToCommentUseCase.replyToComment(command);
             if (result.isSuccessful()) {
                 CommentDto response = CommentDto.Converter.fromDomainEntity(result.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
@@ -142,8 +143,8 @@ public class CommentRestAdapter {
     public Response deleteComment(@PathParam("id") String id, @Context SecurityContext securityContext) {
         try {
             String username = securityContext.getUserPrincipal().getName();
-            DeleteCommentInputPortRequest command = new DeleteCommentInputPortRequest(id, username);
-            Result<Comment> commentResult = this.deleteCommentInputPort.deleteComment(command);
+            DeleteCommentCommand command = new DeleteCommentCommand(id, username);
+            Result<Comment> commentResult = this.deleteCommentUseCase.deleteComment(command);
 
             if (commentResult.isSuccessful()) {
                 CommentDto commentDto = CommentDto.Converter.fromDomainEntity(commentResult.getData());

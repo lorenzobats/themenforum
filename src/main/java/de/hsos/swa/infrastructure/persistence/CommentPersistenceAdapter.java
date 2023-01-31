@@ -33,6 +33,7 @@ public class CommentPersistenceAdapter implements CommentRepository {
     @Inject
     Logger log;
 
+    // READ
     @Override
     public RepositoryResult<Comment> getCommentById(UUID commentId, boolean includeReplies) {
         try {
@@ -62,7 +63,7 @@ public class CommentPersistenceAdapter implements CommentRepository {
     public RepositoryResult<List<Comment>> getAllComments(boolean includeReplies) {
         try {
             CriteriaBuilder<CommentPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, CommentPersistenceModel.class);
-            return RepositorygetCommentResultList(includeReplies, criteriaBuilder);
+            return getCommentResultList(includeReplies, criteriaBuilder);
         } catch (NoResultException e) {
             return RepositoryResult.notFound();
         } catch (PersistenceException e) {
@@ -75,7 +76,7 @@ public class CommentPersistenceAdapter implements CommentRepository {
     }
 
     // HILFSMETHODEN
-    private RepositoryResult<List<Comment>> RepositorygetCommentResultList(boolean includeComments, CriteriaBuilder<CommentPersistenceModel> criteriaBuilder) {
+    private RepositoryResult<List<Comment>> getCommentResultList(boolean includeComments, CriteriaBuilder<CommentPersistenceModel> criteriaBuilder) {
         if (!includeComments) {
             List<CommentPersistenceView> commentList;
             CriteriaBuilder<CommentPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(CommentPersistenceView.class), criteriaBuilder);

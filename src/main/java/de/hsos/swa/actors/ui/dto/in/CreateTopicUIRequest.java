@@ -1,6 +1,6 @@
 package de.hsos.swa.actors.ui.dto.in;
 
-import de.hsos.swa.application.input.dto.in.CreateTopicInputPortRequest;
+import de.hsos.swa.application.input.dto.in.CreateTopicCommand;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
@@ -16,8 +16,8 @@ public class CreateTopicUIRequest implements UIRequest{
     public CreateTopicUIRequest() {}
 
     public static class Converter {
-        public static CreateTopicInputPortRequest toInputPortCommand(CreateTopicUIRequest adapterRequest, String username) {
-            return new CreateTopicInputPortRequest(adapterRequest.title, adapterRequest.description, username);
+        public static CreateTopicCommand toInputPortCommand(CreateTopicUIRequest adapterRequest, String username) {
+            return new CreateTopicCommand(adapterRequest.title, adapterRequest.description, username);
         }
     }
 }

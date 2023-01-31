@@ -1,7 +1,7 @@
 package de.hsos.swa.application.output.repository;
 
-import de.hsos.swa.application.use_case_query.PostFilterParams;
-import de.hsos.swa.application.util.Result;
+import de.hsos.swa.application.service.query.params.PostFilterParams;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.domain.entity.Post;
 
 import java.util.List;

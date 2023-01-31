@@ -4,7 +4,7 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViewSetting;
-import de.hsos.swa.application.output.dto.VoteOutputPortDto;
+import de.hsos.swa.application.output.repository.dto.in.VoteOutputPortDto;
 import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.output.repository.VoteRepository;
 import de.hsos.swa.infrastructure.persistence.model.VotePersistenceModel;
@@ -33,7 +33,7 @@ public class VotePersistenceAdapter implements VoteRepository {
     @Inject
     Logger log;
 
-
+    // READ
     @Override
     public RepositoryResult<VoteOutputPortDto> getVoteById(UUID voteId) {
         try {
@@ -43,7 +43,7 @@ public class VotePersistenceAdapter implements VoteRepository {
             CriteriaBuilder<VotePersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(VotePersistenceView.class), criteriaBuilder);
             VotePersistenceView vote = criteriaBuilderView.getSingleResult();
 
-            return RepositoryResult.ok(VotePersistenceView.toApplicationDto(vote));
+            return RepositoryResult.ok(VotePersistenceView.toOutputPortDto(vote));
         } catch (NoResultException e) {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException | TransactionRequiredException e) {
@@ -60,7 +60,7 @@ public class VotePersistenceAdapter implements VoteRepository {
             CriteriaBuilder<VotePersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(VotePersistenceView.class), criteriaBuilder);
             List<VotePersistenceView> votes = criteriaBuilderView.getResultList();
 
-            return RepositoryResult.ok(votes.stream().map(VotePersistenceView::toApplicationDto).toList());
+            return RepositoryResult.ok(votes.stream().map(VotePersistenceView::toOutputPortDto).toList());
         } catch (NoResultException e) {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException | TransactionRequiredException e) {
@@ -76,7 +76,7 @@ public class VotePersistenceAdapter implements VoteRepository {
             CriteriaBuilder<VotePersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(VotePersistenceView.class), criteriaBuilder);
             List<VotePersistenceView> votes = criteriaBuilderView.getResultList();
 
-            return RepositoryResult.ok(votes.stream().map(VotePersistenceView::toApplicationDto).toList());
+            return RepositoryResult.ok(votes.stream().map(VotePersistenceView::toOutputPortDto).toList());
         } catch (NoResultException e) {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException | TransactionRequiredException e) {
@@ -84,6 +84,4 @@ public class VotePersistenceAdapter implements VoteRepository {
             return RepositoryResult.error();
         }
     }
-
-
 }

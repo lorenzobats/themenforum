@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity(name = "PostVote")
+@Entity(name = "Vote")
 @Table(name = "vote_table")
 public class VotePersistenceModel {
     @Id
@@ -55,16 +55,15 @@ public class VotePersistenceModel {
     }
 
     public static class Converter {
-        public static Vote toDomainEntity(VotePersistenceModel votePersistenceModel) {
-            User user = UserPersistenceModel.Converter.toDomainEntity(votePersistenceModel.userPersistenceModel);
-            Vote vote = new Vote(votePersistenceModel.id, user, votePersistenceModel.voteType, votePersistenceModel.createdAt);
-
+        public static Vote toDomainEntity(VotePersistenceModel persistenceModel) {
+            User user = UserPersistenceModel.Converter.toDomainEntity(persistenceModel.userPersistenceModel);
+            Vote vote = new Vote(persistenceModel.id, user, persistenceModel.voteType, persistenceModel.createdAt);
             return vote;
         }
 
-        public static VotePersistenceModel toPersistenceModel(Vote vote) {
-            UserPersistenceModel userPersistenceModel = UserPersistenceModel.Converter.toPersistenceModel(vote.getUser());
-            return new VotePersistenceModel(vote.getId(), vote.getVoteType(), userPersistenceModel, vote.getCreatedAt());
+        public static VotePersistenceModel toPersistenceModel(Vote domainEntity) {
+            UserPersistenceModel userPersistenceModel = UserPersistenceModel.Converter.toPersistenceModel(domainEntity.getUser());
+            return new VotePersistenceModel(domainEntity.getId(), domainEntity.getVoteType(), userPersistenceModel, domainEntity.getCreatedAt());
         }
     }
 }
