@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.query;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.GetAllCommentsUseCase;
 import de.hsos.swa.application.output.repository.CommentRepository;
-import de.hsos.swa.application.output.repository.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.domain.entity.Comment;
 

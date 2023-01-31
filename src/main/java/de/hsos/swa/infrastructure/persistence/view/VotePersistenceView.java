@@ -4,7 +4,7 @@ import com.blazebit.persistence.view.EntityView;
 import com.blazebit.persistence.view.IdMapping;
 import com.blazebit.persistence.view.Mapping;
 import com.blazebit.persistence.view.MappingSubquery;
-import de.hsos.swa.application.output.repository.dto.in.VoteOutputPortDto;
+import de.hsos.swa.application.output.repository.dto.in.VoteQueryDto;
 import de.hsos.swa.domain.vo.VotedEntityType;
 import de.hsos.swa.domain.entity.Vote;
 import de.hsos.swa.domain.vo.VoteType;
@@ -32,10 +32,10 @@ public record VotePersistenceView(
         return new Vote(view.id, UserPersistenceView.toDomainEntity(view.user), view.voteType, view.createdAt);
     }
 
-    public static VoteOutputPortDto toOutputPortDto(VotePersistenceView view) {
+    public static VoteQueryDto toOutputPortDto(VotePersistenceView view) {
         if (view.votedCommentId != null){
-            return new VoteOutputPortDto(VotePersistenceView.toDomainEntity(view), VotedEntityType.COMMENT, view.votedCommentId);
+            return new VoteQueryDto(VotePersistenceView.toDomainEntity(view), VotedEntityType.COMMENT, view.votedCommentId);
         }
-        return new VoteOutputPortDto(VotePersistenceView.toDomainEntity(view), VotedEntityType.POST, view.votedPostId);
+        return new VoteQueryDto(VotePersistenceView.toDomainEntity(view), VotedEntityType.POST, view.votedPostId);
     }
 }

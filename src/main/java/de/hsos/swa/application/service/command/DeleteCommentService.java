@@ -5,7 +5,7 @@ import de.hsos.swa.application.input.DeleteCommentUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteCommentCommand;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.PostRepository;
-import de.hsos.swa.application.output.repository.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.domain.entity.Comment;

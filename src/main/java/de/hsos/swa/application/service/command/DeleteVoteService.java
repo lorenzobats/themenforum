@@ -3,9 +3,9 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.DeleteVoteUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteVoteCommand;
-import de.hsos.swa.application.output.repository.dto.in.VoteOutputPortDto;
+import de.hsos.swa.application.output.repository.dto.in.VoteQueryDto;
 import de.hsos.swa.application.output.repository.PostRepository;
-import de.hsos.swa.application.output.repository.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.VoteRepository;
 import de.hsos.swa.application.input.dto.out.Result;
@@ -48,11 +48,11 @@ public class DeleteVoteService implements DeleteVoteUseCase {
         User user = userResult.get();
 
 
-        RepositoryResult<VoteOutputPortDto> voteResult = this.voteRepository.getVoteById(UUID.fromString(request.vote()));
+        RepositoryResult<VoteQueryDto> voteResult = this.voteRepository.getVoteById(UUID.fromString(request.vote()));
         if (voteResult.badResult()) {
             return Result.error("Cannot find Vote");
         }
-        VoteOutputPortDto vote = voteResult.get();
+        VoteQueryDto vote = voteResult.get();
 
         Result<Post> postResult = new Result<>();
         Optional<Vote> optionalVote = Optional.empty();

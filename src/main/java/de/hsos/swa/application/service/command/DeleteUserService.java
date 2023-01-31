@@ -4,7 +4,7 @@ import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.DeleteUserUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteUserCommand;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
-import de.hsos.swa.application.output.repository.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.domain.entity.User;

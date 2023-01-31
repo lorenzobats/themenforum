@@ -4,7 +4,7 @@ import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.DeleteTopicUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteTopicCommand;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
-import de.hsos.swa.application.output.repository.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.input.dto.out.Result;

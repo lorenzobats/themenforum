@@ -7,8 +7,6 @@ import java.util.*;
 
 @Entity(name = "User")
 @Table(name = "user_table")
-@NamedQuery(name = "UserPersistenceModel.findByUsername", query = "SELECT u FROM User u WHERE u.name = :username")
-@NamedQuery(name = "UserPersistenceModel.findById", query = "SELECT u FROM User u WHERE u.id = :id")
 public class UserPersistenceModel {
     @Id
     UUID id;

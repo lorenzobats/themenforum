@@ -7,7 +7,9 @@ import de.hsos.swa.domain.entity.Post;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
+/**
+ * TODO: JavaDocs
+ */
 public interface PostRepository {
 
     // CREATE

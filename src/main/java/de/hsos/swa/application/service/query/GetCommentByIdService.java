@@ -4,7 +4,7 @@ import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.GetCommentByIdUseCase;
 import de.hsos.swa.application.input.dto.in.GetCommentByIdQuery;
 import de.hsos.swa.application.output.repository.CommentRepository;
-import de.hsos.swa.application.output.repository.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.domain.entity.Comment;
 

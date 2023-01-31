@@ -2,11 +2,9 @@ package de.hsos.swa.infrastructure.persistence;
 
 import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
-import com.blazebit.persistence.view.EntityViewManager;
-import de.hsos.swa.application.output.repository.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.domain.entity.User;
-import de.hsos.swa.infrastructure.persistence.model.TopicPersistenceModel;
 import de.hsos.swa.infrastructure.persistence.model.UserPersistenceModel;
 import org.jboss.logging.Logger;
 
@@ -30,7 +28,9 @@ public class UserPersistenceAdapter implements UserRepository {
     @Inject
     Logger log;
 
-    // CREATE
+
+
+    // COMMANDS
     @Override
     public RepositoryResult<User> saveUser(User user) {
         UserPersistenceModel userPersistenceModel = UserPersistenceModel.Converter.toPersistenceModel(user);
@@ -45,7 +45,9 @@ public class UserPersistenceAdapter implements UserRepository {
         }
     }
 
-    // READ
+
+
+    // QUERIES
     @Override
     public RepositoryResult<List<User>> getAllUsers() {
         try {
@@ -63,18 +65,16 @@ public class UserPersistenceAdapter implements UserRepository {
 
     @Override
     public RepositoryResult<User> getUserByName(String username) {
-        TypedQuery<UserPersistenceModel> query = entityManager
-                .createNamedQuery("UserPersistenceModel.findByUsername", UserPersistenceModel.class)
-                .setParameter("username", username);
-        return getUserRepositoryResult(query);
+        CriteriaBuilder<UserPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, UserPersistenceModel.class);
+        criteriaBuilder.where("name").eq(username);
+        return getUserRepositoryResult(criteriaBuilder);
     }
 
     @Override
     public RepositoryResult<User> getUserById(UUID userId) {
-        TypedQuery<UserPersistenceModel> query = entityManager
-                .createNamedQuery("UserPersistenceModel.findById", UserPersistenceModel.class)
-                .setParameter("id", userId);
-        return getUserRepositoryResult(query);
+        CriteriaBuilder<UserPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, UserPersistenceModel.class);
+        criteriaBuilder.where("id").eq(userId);
+        return getUserRepositoryResult(criteriaBuilder);
     }
 
     // UPDATE
@@ -94,9 +94,9 @@ public class UserPersistenceAdapter implements UserRepository {
 
 
     // HILFSMETHODEN
-    private RepositoryResult<User> getUserRepositoryResult(TypedQuery<UserPersistenceModel> query) {
+    private RepositoryResult<User> getUserRepositoryResult(CriteriaBuilder<UserPersistenceModel> criteriaBuilder) {
         try {
-            UserPersistenceModel user = query.getSingleResult();
+            UserPersistenceModel user = criteriaBuilder.getSingleResult();
             return RepositoryResult.ok(UserPersistenceModel.Converter.toDomainEntity(user));
         } catch (NoResultException e) {
             return RepositoryResult.notFound();
@@ -105,4 +105,5 @@ public class UserPersistenceAdapter implements UserRepository {
             return RepositoryResult.error();
         }
     }
+
 }

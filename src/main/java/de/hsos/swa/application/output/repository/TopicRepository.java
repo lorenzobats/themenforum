@@ -7,22 +7,22 @@ import de.hsos.swa.domain.entity.Topic;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * TODO: JavaDocs
+ */
 public interface TopicRepository {
 
-    // CREATE
+    // COMMANDS
     Result<Topic> saveTopic(Topic topic);
+    // TODO: UPDATE TOPIC
+    Result<Topic> updateTopic(Topic topic);
 
-    // READ
+    Result<Topic> deleteTopic(UUID topicId);
+
+    // QUERIES
     Result<List<TopicInputPortDto>> getAllTopicsWithPostCount();
 
     Result<List<TopicInputPortDto>> searchTopic(String searchString);
 
     Result<Topic> getTopicById(UUID topicId);
-
-
-    // UPDATE
-
-
-    // DELETE
-    Result<Topic> deleteTopic(UUID topicId);
 }
