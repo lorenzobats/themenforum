@@ -82,7 +82,7 @@
                 if (response.ok) {
                     let location = response.headers.get("Location")
                     response.json().then(data => {
-                        window.location = data.id;
+                        window.open('/ui/posts/' + data.id, '_self');
                     })
                 } else {
                     response.json().then(error => {

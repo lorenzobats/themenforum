@@ -89,16 +89,11 @@ public class TopicRestAdapter {
 
 
 
-
-
-
-
-
     @POST
     @RolesAllowed({"member","admin"})
     public Response createTopic(
             @RequestBody(
-                    description = "Post to create",
+                    description = "Topic to create",
                     required = true,
                     content = @Content(schema = @Schema(implementation = CreateTopicRequestBody.class))
             ) CreateTopicRequestBody request, @Context SecurityContext securityContext) {

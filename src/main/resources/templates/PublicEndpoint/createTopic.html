@@ -51,7 +51,7 @@
             description: description,
         };
 
-        let url = '/ui/topics/';
+        let url = '/api/v1/topics/';
         fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -66,8 +66,9 @@
         })
             .then(response => {
                 if (response.ok) {
-                    let location = response.headers.get("Location")
-                    window.location = encodeURI(location);
+                    response.json().then(data => {
+                        window.open('/ui/posts?topic=' + data.title, '_self');
+                    })
                 } else {
                     response.json().then(error => {
                         console.log(error);
