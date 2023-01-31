@@ -5,6 +5,7 @@ import de.hsos.swa.actors.rest.dto.in.RegisterUserRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.UserDto;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
+import de.hsos.swa.application.input.GetAllUsersUseCase;
 import de.hsos.swa.application.input.GetUserByNameUseCase;
 import de.hsos.swa.application.input.RegisterUserUseCase;
 import de.hsos.swa.application.input.dto.in.GetUserByNameQuery;
@@ -41,6 +42,9 @@ public class UserRestAdapter {
     GetUserByNameUseCase getUserByNameUseCase;
 
     @Inject
+    GetAllUsersUseCase getAllUsersUseCase;
+
+    @Inject
     ValidationService validationService;
 
 
@@ -54,9 +58,9 @@ public class UserRestAdapter {
     @GET
     @Path("{username}")
     @RolesAllowed({"admin"})
-    public Response getUserByName(@PathParam("username") String username) {
+    public Response getUserByName(@PathParam("username") String username, @Context SecurityContext securityContext) {
         try {
-            Result<User> userResult = this.getUserByNameUseCase.getUserByName(new GetUserByNameQuery(username));
+            Result<User> userResult = this.getUserByNameUseCase.getUserByName(new GetUserByNameQuery(username), securityContext);
             if (userResult.isSuccessful()) {
                 UserDto responseDto = UserDto.Converter.fromDomainEntity(userResult.getData());
                 return Response.status(Response.Status.OK).entity(responseDto).build();

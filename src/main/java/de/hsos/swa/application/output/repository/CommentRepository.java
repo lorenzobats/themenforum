@@ -9,6 +9,9 @@ import java.util.UUID;
  * TODO: JavaDocs
  */
 public interface CommentRepository {
+
+    //------------------------------------------------------------------------------------------------------------------
+    // QUERIES
     RepositoryResult<List<Comment>> getAllComments(boolean includeReplies);
     RepositoryResult<Comment> getCommentById(UUID commentId, boolean includeReplies);
 }

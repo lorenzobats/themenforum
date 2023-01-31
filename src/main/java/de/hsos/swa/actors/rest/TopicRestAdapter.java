@@ -6,8 +6,8 @@ import de.hsos.swa.actors.rest.dto.out.TopicDto;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
 import de.hsos.swa.application.input.dto.in.DeleteTopicCommand;
 import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
-import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
 import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.CreateTopicCommand;
 import de.hsos.swa.application.input.dto.in.GetTopicByIdQuery;
@@ -75,7 +75,7 @@ public class TopicRestAdapter {
     @Path("{id}")
     public Response getTopicById(@PathParam("id") String id) {
         try {
-            GetTopicByIdQuery query = new GetTopicByIdQuery("");
+            GetTopicByIdQuery query = new GetTopicByIdQuery(id);
             Result<Topic> topicResult = this.getTopicByIdUseCase.getTopicById(query);
             if (topicResult.isSuccessful()) {
                 TopicDto response = TopicDto.Converter.fromDomainEntity(topicResult.getData());

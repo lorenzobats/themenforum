@@ -3,10 +3,10 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.CreateTopicUseCase;
 import de.hsos.swa.application.input.dto.in.CreateTopicCommand;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.domain.factory.TopicFactory;
@@ -48,7 +48,7 @@ public class CreateTopicService implements CreateTopicUseCase {
      */
     @Override
     public Result<Topic> createTopic(CreateTopicCommand request) {
-        RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
         if(getUserByNameResponse.badResult()) {
             return Result.error("Cannot find user " + request.username());
         }
@@ -56,10 +56,10 @@ public class CreateTopicService implements CreateTopicUseCase {
 
         Topic topic = TopicFactory.createTopic(request.title(), request.description(), user);
 
-        Result<Topic> saveTopicResult = this.topicRepository.saveTopic(topic);
-        if (!saveTopicResult.isSuccessful()) {
+        RepositoryResult<Topic> saveTopicResult = this.topicRepository.saveTopic(topic);
+        if (saveTopicResult.badResult()) {
             return Result.error("Cannot create topic ");
         }
-        return Result.success(saveTopicResult.getData());
+        return Result.success(saveTopicResult.get());
     }
 }

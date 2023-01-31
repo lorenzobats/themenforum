@@ -3,9 +3,10 @@ package de.hsos.swa.application.service.query;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.GetFilteredPostsUseCase;
 import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
-import de.hsos.swa.application.output.repository.PostRepository;
-import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.output.repository.PostRepository;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.service.SortByDate;
 import de.hsos.swa.domain.service.SortByUpvotes;
@@ -28,10 +29,10 @@ public class GetFilteredPostsService implements GetFilteredPostsUseCase {
 
     @Override
     public Result<List<Post>> getFilteredPosts(GetFilteredPostQuery request) {
-        Result<List<Post>> postsResult = postRepository.getAllFilteredPosts(request.filterParams(), request.includeComments());
+        RepositoryResult<List<Post>> postsResult = postRepository.getAllFilteredPosts(request.filterParams(), request.includeComments());
 
-        if (postsResult.isSuccessful()) {
-            List<Post> sortedPosts = new ArrayList<>(postsResult.getData());
+        if (postsResult.ok()) {
+            List<Post> sortedPosts = new ArrayList<>(postsResult.get());
 
             switch (request.sortingParams()) {
                 case VOTES -> {

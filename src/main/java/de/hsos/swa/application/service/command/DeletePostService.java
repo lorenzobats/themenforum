@@ -3,11 +3,11 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.DeletePostUseCase;
 import de.hsos.swa.application.input.dto.in.DeletePostCommand;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.PostRepository;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
@@ -53,14 +53,14 @@ public class DeletePostService implements DeletePostUseCase {
      */
     @Override
     public Result<Post> deletePost(DeletePostCommand request) {
-        Result<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.postId()), false);
-        if (!postResult.isSuccessful()) {
+        RepositoryResult<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.postId()), false);
+        if (postResult.badResult()) {
             return Result.error("Cannot find post" + request.postId());
         }
-        Post post = postResult.getData();
+        Post post = postResult.get();
 
 
-        RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.badResult()) {
             return Result.error("Cannot find user " + request.username());
         }
@@ -77,11 +77,11 @@ public class DeletePostService implements DeletePostUseCase {
             return Result.error("Not allowed to delete post");
         }
 
-        Result<Post> deletePostResult = this.postRepository.deletePost(post.getId());
-        if (!deletePostResult.isSuccessful()) {
+        RepositoryResult<Post> deletePostResult = this.postRepository.deletePost(post.getId());
+        if (deletePostResult.badResult()) {
             return Result.error("Cannot delete post ");
         }
 
-        return Result.success(deletePostResult.getData());
+        return Result.success(deletePostResult.get());
     }
 }

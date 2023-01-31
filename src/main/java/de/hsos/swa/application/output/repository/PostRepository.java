@@ -1,7 +1,7 @@
 package de.hsos.swa.application.output.repository;
 
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
-import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.domain.entity.Post;
 
 import java.util.List;
@@ -12,21 +12,21 @@ import java.util.UUID;
  */
 public interface PostRepository {
 
-    // CREATE
-    Result<Post> savePost(Post post);
+    //------------------------------------------------------------------------------------------------------------------
+    // COMMANDS
+    RepositoryResult<Post> savePost(Post post);
 
-    // READ
-    Result<List<Post>> getAllFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments);
+    RepositoryResult<Post> updatePost(Post post);
 
-    Result<List<Post>> getAllPosts(boolean includeComments);
+    RepositoryResult<Post> deletePost(UUID postId);
 
-    Result<Post> getPostById(UUID postId, boolean includeComments);
+    //------------------------------------------------------------------------------------------------------------------
+    // QUERIES
+    RepositoryResult<List<Post>> getAllFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments);
 
-    Result<Post> getPostByCommentId(UUID commentId);
+    RepositoryResult<List<Post>> getAllPosts(boolean includeComments);
 
-    // UPDATE
-    Result<Post> updatePost(Post post);
+    RepositoryResult<Post> getPostById(UUID postId, boolean includeComments);
 
-    // DELETE
-    Result<Post> deletePost(UUID postId);
+    RepositoryResult<Post> getPostByCommentId(UUID commentId);
 }

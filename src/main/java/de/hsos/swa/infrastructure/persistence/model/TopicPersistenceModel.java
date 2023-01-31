@@ -11,8 +11,6 @@ import java.util.UUID;
 
 @Entity(name = "Topic")
 @Table(name = "topic_table")
-@NamedQuery(name = "TopicPersistenceModel.findAll", query = "SELECT t FROM Topic t")
-@NamedQuery(name = "TopicPersistenceModel.findById", query = "SELECT t FROM Topic t WHERE t.id = :id")
 public class TopicPersistenceModel {
     @Id
     UUID id;

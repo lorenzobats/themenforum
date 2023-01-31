@@ -3,11 +3,11 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.DeleteCommentUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteCommentCommand;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.PostRepository;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
@@ -54,11 +54,11 @@ public class DeleteCommentService implements DeleteCommentUseCase {
      */
     @Override
     public Result<Comment> deleteComment(DeleteCommentCommand request) {
-        Result<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(request.commentId()));
-        if (!postResult.isSuccessful()) {
+        RepositoryResult<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(request.commentId()));
+        if (postResult.badResult()) {
             return Result.error("Cannot find post for comment " + request.commentId());
         }
-        Post post = postResult.getData();
+        Post post = postResult.get();
 
         Optional<Comment> optionalComment = post.findCommentById(request.commentId());
         if(optionalComment.isEmpty()){
@@ -66,7 +66,7 @@ public class DeleteCommentService implements DeleteCommentUseCase {
         }
         Comment comment = optionalComment.get();
 
-        RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.badResult()) {
             return Result.error("Cannot find user " + request.username());
         }
@@ -83,8 +83,8 @@ public class DeleteCommentService implements DeleteCommentUseCase {
         }
 
         comment.disable();
-        Result<Post> updatePostResult = this.postRepository.updatePost(post);
-        if (!updatePostResult.isSuccessful()) {
+        RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(post);
+        if (updatePostResult.badResult()) {
             return Result.error("Cannot update post ");
         }
         return Result.success(comment);

@@ -4,8 +4,8 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViewSetting;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
-import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.infrastructure.persistence.cte.CommentCTE;
@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * TODO: Java Docs
+ */
 @RequestScoped
 @Transactional(value = Transactional.TxType.MANDATORY)
 public class PostPersistenceAdapter implements PostRepository {
@@ -36,27 +39,84 @@ public class PostPersistenceAdapter implements PostRepository {
     @Inject
     Logger log;
 
+
+    //------------------------------------------------------------------------------------------------------------------
+    // COMMANDS
     @Override
-    public Result<List<Post>> getAllPosts(boolean includeComments) {
+    public RepositoryResult<Post> savePost(Post post) {
+        PostPersistenceModel postPersistenceModel = PostPersistenceModel.Converter.toPersistenceModel(post);
         try {
-            CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
-            return getPostResultList(includeComments, criteriaBuilder);
-        } catch (NoResultException e) {
-            return Result.error("getAllFilteredPosts Persistence Failed No Posts found");
+            entityManager.persist(postPersistenceModel);
+            return RepositoryResult.ok(PostPersistenceModel.Converter.toDomainEntity(postPersistenceModel));
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
         } catch (PersistenceException e) {
-            log.error("getAllFilteredPosts Persistence Failed", e);
-            return Result.error("getAllFilteredPosts Persistence Failed");
-        } catch (Exception e) {
-            log.error("getAllFilteredPosts Error", e);
-            return Result.error("getAllFilteredPosts Error");
+            log.error(e);
+            return RepositoryResult.error();
         }
     }
 
     @Override
-    public Result<List<Post>> getAllFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments) {
+    @Transactional(value = Transactional.TxType.MANDATORY)
+    public RepositoryResult<Post> updatePost(Post post) {
+        PostPersistenceModel postPersistenceModel = PostPersistenceModel.Converter.toPersistenceModel(post);
+        try {
+            entityManager.merge(postPersistenceModel);
+            return RepositoryResult.ok(PostPersistenceModel.Converter.toDomainEntity(postPersistenceModel));
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
+        } catch (PersistenceException e) {
+            log.error(e);
+            return RepositoryResult.error();
+        }
+    }
+
+    @Override
+    public RepositoryResult<Post> deletePost(UUID postId) {
+        try {
+            PostPersistenceModel post = entityManager.find(PostPersistenceModel.class, postId);
+            if (post != null) {
+                entityManager.remove(post);
+                return RepositoryResult.ok(PostPersistenceModel.Converter.toDomainEntity(post));
+            }
+            return RepositoryResult.notFound();
+        } catch (NoResultException e) {
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
+        } catch (PersistenceException e) {
+            log.error(e);
+            return RepositoryResult.error();
+        }
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    // QUERIES
+    @Override
+    public RepositoryResult<List<Post>> getAllPosts(boolean includeComments) {
+        try {
+            CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
+            return getPostResultList(includeComments, criteriaBuilder);
+        } catch (NoResultException e) {
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
+        } catch (PersistenceException e) {
+            log.error(e);
+            return RepositoryResult.error();
+        }
+    }
+
+    @Override
+    public RepositoryResult<List<Post>> getAllFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments) {
         try {
             CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
 
+            // Optionales Anwenden der FilterParameter
             if (filterParams.containsKey(PostFilterParams.USERNAME))
                 criteriaBuilder.where("userPersistenceModel.name").eq(filterParams.get(PostFilterParams.USERNAME));
 
@@ -77,58 +137,56 @@ public class PostPersistenceAdapter implements PostRepository {
 
             return getPostResultList(includeComments, criteriaBuilder);
         } catch (NoResultException e) {
-            return Result.error("getPostById: No Posts Found");
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
         } catch (PersistenceException e) {
-            log.error("getAllFilteredPosts Persistence Failed", e);
-            return Result.error("getAllFilteredPosts Persistence Failed");
-        } catch (Exception e) {
-            log.error("getAllFilteredPosts Error", e);
-            return Result.error("getAllFilteredPosts Error");
+            log.error(e);
+            return RepositoryResult.error();
         }
     }
 
     @Override
-    public Result<Post> getPostById(UUID postId, boolean includeComments) {
+    public RepositoryResult<Post> getPostById(UUID postId, boolean includeComments) {
         try {
             CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
             criteriaBuilder.where("id").eq(postId);
             if (!includeComments) {
                 CriteriaBuilder<PostPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(PostPersistenceView.class), criteriaBuilder);
                 PostPersistenceView post = criteriaBuilderView.getSingleResult();
-                return Result.success(PostPersistenceView.toDomainEntity(post));
+                return RepositoryResult.ok(PostPersistenceView.toDomainEntity(post));
             } else {
                 PostPersistenceModel post = criteriaBuilder.getSingleResult();
-                return Result.success(PostPersistenceModel.Converter.toDomainEntity(post));
+                return RepositoryResult.ok(PostPersistenceModel.Converter.toDomainEntity(post));
             }
         } catch (NoResultException e) {
-            log.error("getPostById: No Posts Found", e);
-            return Result.error("getPostById: No Posts Found");
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
         } catch (PersistenceException e) {
-            log.error("getPostById Persistence Failed", e);
-            return Result.error("getPostById Persistence Failed");
-        } catch (Exception e) {
-            log.error("getPostById Error", e);
-            return Result.error("getPostById Error");
+            log.error(e);
+            return RepositoryResult.error();
         }
     }
 
-    // https://persistence.blazebit.com/documentation/1.5/core/manual/en_US/
     @Override
-    public Result<Post> getPostByCommentId(UUID commentId) {
+    public RepositoryResult<Post> getPostByCommentId(UUID commentId) {
         try {
             // Rekursive CTE zur Suche des zur übergebenen commentID zugehörigen Kommentars auf erster Ebene
             CriteriaBuilder<UUID> subquery = criteriaBuilderFactory.create(entityManager, UUID.class)
                     .withRecursive(CommentCTE.class)
-                        .from(CommentPersistenceModel.class, "comment")
-                        .bind("id").select("comment.id")
-                        .bind("parentComment").select("comment.parentComment")
-                        .where("id").eq(commentId)
+                    .from(CommentPersistenceModel.class, "comment")
+                    .bind("id").select("comment.id")
+                    .bind("parentComment").select("comment.parentComment")
+                    .where("id").eq(commentId)
                     .unionAll()
-                        .from(CommentPersistenceModel.class, "comment")
-                        .from(CommentCTE.class, "previous_comment")
-                        .bind("id").select("comment.id")
-                        .bind("parentComment").select("comment.parentComment")
-                        .where("comment.id").eqExpression("previous_comment.parentComment.id")
+                    .from(CommentPersistenceModel.class, "comment")
+                    .from(CommentCTE.class, "previous_comment")
+                    .bind("id").select("comment.id")
+                    .bind("parentComment").select("comment.parentComment")
+                    .where("comment.id").eqExpression("previous_comment.parentComment.id")
                     .end()
                     .where("parentComment").isNull()
                     .from(CommentCTE.class, "first_level_comment")
@@ -139,73 +197,39 @@ public class PostPersistenceAdapter implements PostRepository {
             criteriaBuilder.where("comments").in(subquery).end();
 
             PostPersistenceModel post = criteriaBuilder.getSingleResult();
-            return Result.success(PostPersistenceModel.Converter.toDomainEntity(post));
+            return RepositoryResult.ok(PostPersistenceModel.Converter.toDomainEntity(post));
         } catch (NoResultException e) {
-            log.error("getPostByCommentId: No Post Found", e);
-            return Result.error("getPostByCommentId: No Post Found");
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
         } catch (PersistenceException e) {
-            log.error("getPostByCommentId: Persistence Error", e);
-            return Result.error("getPostByCommentId: Persistence Error");
-        } catch (Exception e) {
-            log.error("getPostByCommentId Error", e);
-            return Result.error("getPostByCommentId Error");
+            log.error(e);
+            return RepositoryResult.error();
         }
-
     }
 
-
-    @Override
-    public Result<Post> deletePost(UUID postId) {
+    //------------------------------------------------------------------------------------------------------------------
+    // UTILITY METHODS
+    private RepositoryResult<List<Post>> getPostResultList(boolean includeComments, CriteriaBuilder<PostPersistenceModel> criteriaBuilder) {
         try {
-            PostPersistenceModel post = entityManager.find(PostPersistenceModel.class, postId);
-            if (post != null) {
-                entityManager.remove(post);
-                return Result.success(PostPersistenceModel.Converter.toDomainEntity(post));
+            if (!includeComments) {
+                List<PostPersistenceView> postList;
+                CriteriaBuilder<PostPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(PostPersistenceView.class), criteriaBuilder);
+                postList = criteriaBuilderView.getResultList();
+                return RepositoryResult.ok(postList.stream().map(PostPersistenceView::toDomainEntity).toList());
             }
-            return Result.notFound();
-        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            log.error("Delete Error", e);
-            return Result.error("Could not persist Post");
+            List<PostPersistenceModel> postList;
+            postList = criteriaBuilder.getResultList();
+            return RepositoryResult.ok(postList.stream().map(PostPersistenceModel.Converter::toDomainEntity).toList());
+        } catch (NoResultException e) {
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
+        } catch (PersistenceException e) {
+            log.error(e);
+            return RepositoryResult.error();
         }
-    }
-
-
-    @Override
-    public Result<Post> savePost(Post post) {
-        PostPersistenceModel postPersistenceModel = PostPersistenceModel.Converter.toPersistenceModel(post);
-        try {
-            entityManager.persist(postPersistenceModel);
-            return Result.success(PostPersistenceModel.Converter.toDomainEntity(postPersistenceModel));
-        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            log.error("savePost Error", e);
-            return Result.error("Could not persist Post");
-        }
-    }
-
-
-    @Override
-    @Transactional(value = Transactional.TxType.MANDATORY)
-    public Result<Post> updatePost(Post post) {
-        PostPersistenceModel postPersistenceModel = PostPersistenceModel.Converter.toPersistenceModel(post);
-        try {
-            entityManager.merge(postPersistenceModel);
-            return Result.success(PostPersistenceModel.Converter.toDomainEntity(postPersistenceModel));
-        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            log.error("UpdatePost Error", e);
-            return Result.error("Could not persist Post");
-        }
-    }
-
-    // HILFSMETHODEN
-    private Result<List<Post>> getPostResultList(boolean includeComments, CriteriaBuilder<PostPersistenceModel> criteriaBuilder) {
-        if (!includeComments) {
-            List<PostPersistenceView> postList;
-            CriteriaBuilder<PostPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(PostPersistenceView.class), criteriaBuilder);
-            postList = criteriaBuilderView.getResultList();
-            return Result.success(postList.stream().map(PostPersistenceView::toDomainEntity).toList());
-        }
-        List<PostPersistenceModel> postList;
-        postList = criteriaBuilder.getResultList();
-        return Result.success(postList.stream().map(PostPersistenceModel.Converter::toDomainEntity).toList());
     }
 }

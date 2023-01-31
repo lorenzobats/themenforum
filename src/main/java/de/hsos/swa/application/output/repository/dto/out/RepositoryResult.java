@@ -12,6 +12,11 @@ public class RepositoryResult<T> {
     public final T data;
 
 
+    public RepositoryResult() {
+        this.status = Status.ERROR;
+        this.data = null;
+    }
+
     private RepositoryResult(Status status, T data) {
         this.status = status;
         this.data = data;

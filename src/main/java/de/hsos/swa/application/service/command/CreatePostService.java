@@ -3,11 +3,11 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.CreatePostUseCase;
 import de.hsos.swa.application.input.dto.in.CreatePostCommand;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.PostRepository;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.domain.entity.User;
@@ -49,26 +49,26 @@ public class CreatePostService implements CreatePostUseCase {
      */
     @Override
     public Result<Post> createPost(CreatePostCommand request) {
-        RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
         if(getUserByNameResponse.badResult()) {
             return Result.error("Cannot find user " + request.username());
         }
         User user = getUserByNameResponse.get();
 
 
-        Result<Topic> getTopicByIdResponse = this.topicRepository.getTopicById(request.topicId());
-        if(!getTopicByIdResponse.isSuccessful()) {
+        RepositoryResult<Topic> getTopicByIdResponse = this.topicRepository.getTopicById(request.topicId());
+        if(getTopicByIdResponse.badResult()) {
             return Result.error("Cannot find topic " + request.topicId());
         }
-        Topic topic = getTopicByIdResponse.getData();
+        Topic topic = getTopicByIdResponse.get();
 
 
         Post post = PostFactory.createPost(request.title(), request.content(), topic, user);
 
-        Result<Post> savePostResult = this.postRepository.savePost(post);
-        if (!savePostResult.isSuccessful()) {
+        RepositoryResult<Post> savePostResult = this.postRepository.savePost(post);
+        if (savePostResult.badResult()) {
             return Result.error("Cannot save post ");
         }
-        return Result.success(savePostResult.getData());
+        return Result.success(savePostResult.get());
     }
 }

@@ -3,10 +3,9 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.DeleteUserUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteUserCommand;
-import de.hsos.swa.application.output.auth.AuthorizationGateway;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
-import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.output.auth.AuthorizationGateway;
+import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 
@@ -32,7 +31,7 @@ public class DeleteUserService implements DeleteUserUseCase {
      */
     @Override
     public Result<User> deleteUser(DeleteUserCommand request) {
-        RepositoryResult<User> requestingUserResult = this.userRepository.getUserByName(request.username());
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> requestingUserResult = this.userRepository.getUserByName(request.username());
         if (requestingUserResult.badResult()) {
             return Result.error("Cannot find user " + request.username());
         }
@@ -48,7 +47,7 @@ public class DeleteUserService implements DeleteUserUseCase {
             return Result.error("Not allowed to disable user");
         }
 
-        RepositoryResult<User> userResult = this.userRepository.getUserById(UUID.fromString(request.userId()));
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserById(UUID.fromString(request.userId()));
         if (userResult.badResult()) {
             return Result.error("Cannot find userId " + request.userId());
         }
@@ -58,7 +57,7 @@ public class DeleteUserService implements DeleteUserUseCase {
         user.setName("DELETED");
         // Todo. Auth Set Role "disabled"
 
-        RepositoryResult<User> updateUserResult = this.userRepository.updateUser(user);
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> updateUserResult = this.userRepository.updateUser(user);
         if (updateUserResult.badResult()) {
             return Result.error("Cannot update post ");
         }

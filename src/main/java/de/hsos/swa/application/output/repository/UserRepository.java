@@ -9,14 +9,17 @@ import java.util.UUID;
  * TODO: JavaDocs
  */
 public interface UserRepository {
-    // COMMAND
+
+    //------------------------------------------------------------------------------------------------------------------
+    // COMMANDS
     RepositoryResult<User> saveUser(User user);
     RepositoryResult<User> updateUser(User user);
+    RepositoryResult<User> deleteUser(UUID userId);
 
+    //------------------------------------------------------------------------------------------------------------------
     // QUERIES
     RepositoryResult<List<User>> getAllUsers();
     RepositoryResult<User> getUserById(UUID userId);
-
     RepositoryResult<User> getUserByName(String username);
 
 }
