@@ -1,23 +1,23 @@
 {#include base}
-    {#title}Login {/title}
-    {#body}
-        <div class="header">
-            <div class="mb-4">
-                <h1 class="mt-4">Login</h1>
-            </div>
-        </div>
-        <form action="j_security_check" method="post" class="container">
-            <div class="form-group">
-                <label><b>Username</b></label>
-                <input type="text" placeholder="Enter Username" name="j_username" required>
-            </div>
-            <div class="form-group mb-4">
-                <label><b>Password</b></label>
-                <input type="password" placeholder="Enter Password" name="j_password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Login</button>
-        </form>
-    {/body}
+{#title}Login {/title}
+{#body}
+<div class="header">
+    <div class="mb-4">
+        <h1 class="mt-4">Login</h1>
+    </div>
+</div>
+<form action="j_security_check" method="post" class="container">
+    <div class="form-group">
+        <label><b>Username</b></label>
+        <input type="text" placeholder="Enter Username" name="j_username" required>
+    </div>
+    <div class="form-group mb-4">
+        <label><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="j_password" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
+{/body}
 {/include}
 <script>
 

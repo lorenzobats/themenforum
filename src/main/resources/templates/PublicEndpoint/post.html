@@ -1,145 +1,149 @@
 {@de.hsos.swa.domain.entity.Post post}
 
 {#include base}
-    {#title}{post.title}{/title}
-    {#body}
-        <div class="header">
-            <div>
-                <p><a href="/ui/posts">[Browse Posts]</a></p>
-                <div style="display: flex; align-items: center; margin-bottom: 20px">
-                    {#if isLoggedIn}
-                        <div style="margin-right: 4px;">
-                            {#if post.loggedInUserVote(username)}
-                            <a href="#" onclick="deleteVote('{post.loggedInUserVote(username).id}')">X</a>
-                            {#else}
-                                <p style="margin: 0; color: darkgrey"></p>
-                            {/if}
-                        </div>
-                        <div class="vote-container">
-                        <div class="vote">
-                            {#if post.loggedInUserCanUpvote(username)}
-                                <a href="#" onclick="votePost('{post.id}','UP')">«</a>
-                            {#else}
-                                <p style="margin: 0; color: darkgrey">«</p>
-                            {/if}
-                        </div>
-                        <div>{post.totalVotes}</div>
-                        <div class="vote">
-                        {#if post.loggedInUserCanDownvote(username)}
-                            <a href="#" onclick="votePost('{post.id}','DOWN')">»</a>
-                        {#else}
-                            <p style="margin: 0; color: darkgrey">»</p>
-                        {/if}
-                        </div>
-                        </div>
+{#title}{post.title}{/title}
+{#body}
+<div class="header">
+    <div>
+        <p><a href="/ui/posts">[Browse Posts]</a></p>
+        <div style="display: flex; align-items: center; margin-bottom: 20px">
+            {#if isLoggedIn}
+            <div style="margin-right: 4px;">
+                {#if post.loggedInUserVote(username)}
+                <a href="#" onclick="deleteVote('{post.loggedInUserVote(username).id}')">X</a>
+                {#else}
+                <p style="margin: 0; color: darkgrey"></p>
+                {/if}
+            </div>
+            <div class="vote-container">
+                <div class="vote">
+                    {#if post.loggedInUserCanUpvote(username)}
+                    <a href="#" onclick="votePost('{post.id}','UP')">«</a>
+                    {#else}
+                    <p style="margin: 0; color: darkgrey">«</p>
                     {/if}
-                    <div>
-                        <h2 class="title-info">{post.title}</h2>
-                    </div>
+                </div>
+                <div>{post.totalVotes}</div>
+                <div class="vote">
+                    {#if post.loggedInUserCanDownvote(username)}
+                    <a href="#" onclick="votePost('{post.id}','DOWN')">»</a>
+                    {#else}
+                    <p style="margin: 0; color: darkgrey">»</p>
+                    {/if}
                 </div>
             </div>
+            {/if}
             <div>
-                {#if isLoggedIn}
-                    Logged in as: {username}
-                    <button class="btn btn-secondary" onclick="logout()">Logout</button>
-                {#else}
-                    <button class="btn btn-primary" onclick="login()">Login</button>
-                    <button class="btn btn-light" onclick="window.open('/ui/register', '_blank')">Register</button>
-                {/if}
+                <h2 class="title-info">{post.title}</h2>
             </div>
         </div>
-
-        <span class="sub-info">{post.parsedCreatedAtDate} |
-        by <strong>{post.user.name}</strong> |
-            <a href="/ui/posts?topic={post.topic.title}">{post.topic.title}</a> |
-            {post.commentCount} comments
-            {#if ! isLoggedIn} | voting: {post.totalVotes}{/if}</span>
-        <div class="post-content" style="margin-top: 20px;">
-            <p>{post.content}</p>
-        </div>
-
-
+    </div>
+    <div>
         {#if isLoggedIn}
-            <div class="comment-form">
-            <div>
-            <label for="text" style="display: block; font-weight: bold">write a comment</label>
-            <textarea style="display: block; width: 100%" id="{post.id}-text" name="text" maxlength="250" minlength="1"
-                      required></textarea>
-            <div style="margin-top: 12px;">
-            <button class="btn btn-primary" id="submit-btn" onClick="submitComment('{post.id}')">post comment</button>
-            </div>
-            </div>
-            </div>
+        Logged in as: {username}
+        <button class="btn btn-secondary" onclick="logout()">Logout</button>
+        {#else}
+        <button class="btn btn-primary" onclick="login()">Login</button>
+        <button class="btn btn-light" onclick="window.open('/ui/register', '_blank')">Register</button>
         {/if}
-        <div class="comments-wrapper">
-        <div class="sort-selector" style="display: flex">
-            <p><a href="/ui/posts/{post.id}?sortBy=VOTES&orderBy=DESC">Popular</a></p>
-            <p style="margin-left: 4px; margin-right: 4px;"> | </p>
-            <p><a href="/ui/posts/{post.id}?sortBy=DATE&orderBy=DESC">New</a></p>
+    </div>
+</div>
+
+<span class="sub-info">{post.parsedCreatedAtDate} |
+    by <strong>{post.user.name}</strong> |
+    <a href="/ui/posts?topic={post.topic.title}">{post.topic.title}</a> |
+    {post.commentCount} comments
+    {#if ! isLoggedIn} | voting: {post.totalVotes}{/if}</span>
+<div class="post-content" style="margin-top: 20px;">
+    <p>{post.content}</p>
+</div>
+
+
+{#if isLoggedIn}
+<div class="comment-form">
+    <div>
+        <label for="text" style="display: block; font-weight: bold">write a comment</label>
+        <textarea style="display: block; width: 100%" id="{post.id}-text" name="text" maxlength="250" minlength="1"
+            required></textarea>
+        <div style="margin-top: 12px;">
+            <button class="btn btn-primary" id="submit-btn" onClick="submitComment('{post.id}')">post comment</button>
+        </div>
+    </div>
+</div>
+{/if}
+<div class="comments-wrapper">
+    <div class="sort-selector" style="display: flex">
+        <p><a href="/ui/posts/{post.id}?sortBy=VOTES&orderBy=DESC">Popular</a></p>
+        <p style="margin-left: 4px; margin-right: 4px;"> | </p>
+        <p><a href="/ui/posts/{post.id}?sortBy=DATE&orderBy=DESC">New</a></p>
+    </div>
+
+
+    {#for comment in post.commentsFlatWithDepth}
+    {#if comment.object.isActive}
+    <div class="content-box" style="margin-left: {comment.depth}00px" id="{comment.object.id}">
+        {#if isLoggedIn}
+        <div style="margin-right: 4px;">
+            <a href="#" onclick="voteComment('{comment.object.id}','NONE')">X</a>
         </div>
 
-
-        {#for comment in post.commentsFlatWithDepth}
-            {#if comment.object.isActive}
-                <div class="content-box" style="margin-left: {comment.depth}00px" id="{comment.object.id}">
-                {#if isLoggedIn}
-                    <div style="margin-right: 4px;">
-                        <a href="#" onclick="voteComment('{comment.object.id}','NONE')">X</a>
-                    </div>
-
-                    <div class="vote-container">
-                    <div class="vote"><a href="#" onclick="voteComment('{comment.object.id}','UP')">«</a></div>
-                    <div>{comment.object.totalVotes}</div>
-                    <div class="vote"><a href="#" onclick="voteComment('{comment.object.id}','DOWN')">»</a></div>
-                    </div>
-                    {#else}
-                        <div style="margin-right: 10px">{comment.object.totalVotes}</div>
-                {/if}
-                <div style="width: 100%">
-                <span class="sub-info">
+        <div class="vote-container">
+            <div class="vote"><a href="#" onclick="voteComment('{comment.object.id}','UP')">«</a></div>
+            <div>{comment.object.totalVotes}</div>
+            <div class="vote"><a href="#" onclick="voteComment('{comment.object.id}','DOWN')">»</a></div>
+        </div>
+        {#else}
+        <div style="margin-right: 10px">{comment.object.totalVotes}</div>
+        {/if}
+        <div style="width: 100%">
+            <span class="sub-info">
                 by <strong>{comment.object.user.name}</strong> |
-            {comment.object.parsedCreatedAtDate}
-                    {#if comment.object.parentComment} | <a href="#{comment.object.parentComment.id}">
-                            goto parent</a>{/if}
-                    {#if isLoggedIn} | <a href="#{comment.object.id}" id="{comment.object.id}-toggle-btn" onClick="toggleReply('{comment.object.id}')">
-                            reply</a>{/if}
-                    {#if username == comment.object.user.name} | <a style="color: red" href="#{comment.object.id}" id="{comment.object.id}-delete-btn" onClick="deleteComment('{comment.object.id}')">
-                            delete</a>{/if}
+                {comment.object.parsedCreatedAtDate}
+                {#if comment.object.parentComment} | <a href="#{comment.object.parentComment.id}">
+                    goto parent</a>{/if}
+                {#if isLoggedIn} | <a href="#{comment.object.id}" id="{comment.object.id}-toggle-btn"
+                    onClick="toggleReply('{comment.object.id}')">
+                    reply</a>{/if}
+                {#if username == comment.object.user.name} | <a style="color: red" href="#{comment.object.id}"
+                    id="{comment.object.id}-delete-btn" onClick="deleteComment('{comment.object.id}')">
+                    delete</a>{/if}
 
             </span>
-                {!{#if comment.object.parentComment}!}
-                {!<br><span>Reply to: <a>{comment.object.parentComment.text}</a> | by {comment.object.parentComment.user.name}</span>!}
-                {!{/if}!}
-                <div class="post-content" style="margin-top: 20px;">
-                    <p>{comment.object.text}</p>
-                </div>
-                {#if isLoggedIn}
-                    <div class="comment-form">
-                    <div id="{comment.object.id}-box" style="display: none">
+            {!{#if comment.object.parentComment}!}
+            {!<br><span>Reply to: <a>{comment.object.parentComment.text}</a> | by
+                {comment.object.parentComment.user.name}</span>!}
+            {!{/if}!}
+            <div class="post-content" style="margin-top: 20px;">
+                <p>{comment.object.text}</p>
+            </div>
+            {#if isLoggedIn}
+            <div class="comment-form">
+                <div id="{comment.object.id}-box" style="display: none">
                     <textarea style="display: block; width: 100%" id="{comment.object.id}-text" name="replytext"
-                              maxlength="250" minlength="1" required placeholder="your reply..."></textarea>
+                        maxlength="250" minlength="1" required placeholder="your reply..."></textarea>
                     <div style="margin-top: 12px;">
-                    <button class="btn btn-secondary" id="submit-btn" onClick="submitReply('{comment.object.id}')">post
-                        reply</button>
+                        <button class="btn btn-secondary" id="submit-btn"
+                            onClick="submitReply('{comment.object.id}')">post
+                            reply</button>
                     </div>
-                    </div>
-                    </div>
-                {/if}
                 </div>
-                </div>
-                {#else}
-                    <div class="content-box" style="margin-left: {comment.depth}00px" id="{comment.object.id}">
-                    {!<div style="margin-right: 10px">{comment.object.totalVotes}</div>!}
-                    <div style="width: 100%">
-                    <div class="post-content" style="margin-top: 0;">
-                    <p style="color: gray; margin-bottom: 0">{comment.object.text}</p>
-                </div>
-                </div>
-                </div>
+            </div>
             {/if}
-            {/}
         </div>
-    {/body}
+    </div>
+    {#else}
+    <div class="content-box" style="margin-left: {comment.depth}00px" id="{comment.object.id}">
+        {!<div style="margin-right: 10px">{comment.object.totalVotes}</div>!}
+        <div style="width: 100%">
+            <div class="post-content" style="margin-top: 0;">
+                <p style="color: gray; margin-bottom: 0">{comment.object.text}</p>
+            </div>
+        </div>
+    </div>
+    {/if}
+    {/}
+</div>
+{/body}
 {/include}
 
 <script>
@@ -155,7 +159,7 @@
             return;
         }
 
-        let data = { "commentText" : commentText.value};
+        let data = { "commentText": commentText.value };
         let url = '/ui/comments/' + postId;
         fetch(url, {
             method: 'POST',
@@ -174,7 +178,7 @@
                     location.reload();
                 } else {
                     response.text().then(errorMessage => {
-                       // console.log(errorMessage);
+                        // console.log(errorMessage);
                     });
                 }
             })
@@ -189,7 +193,7 @@
             return;
         }
         console.log(entityId)
-        let data = { text : replyText.value};
+        let data = { text: replyText.value };
         let url = '/api/v1/comments/' + entityId;
         fetch(url, {
             method: 'POST',
@@ -221,9 +225,9 @@
 
         let url = '/api/v1/votes/';
         let data = {
-            voteType : voteType,
-            entityType : "POST",
-            entityId : entityId
+            voteType: voteType,
+            entityType: "POST",
+            entityId: entityId
         };
         fetch(url, {
             method: 'POST',
@@ -254,9 +258,9 @@
     function voteComment(entityId, voteType) {
         let url = '/api/v1/votes/';
         let data = {
-            voteType : voteType,
-            entityType : "COMMENT",
-            entityId : entityId
+            voteType: voteType,
+            entityType: "COMMENT",
+            entityId: entityId
         };
         fetch(url, {
             method: 'POST',

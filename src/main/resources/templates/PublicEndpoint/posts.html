@@ -1,94 +1,96 @@
 {#include base}
-    {#title}Posts{#if topicTitle} – {topicTitle}{/if}{/title}
-    {#body}
-        <div class="header">
-            <div>
-                {#if topicTitle}
-                    <h1 class="mt-4"><span>Topic[</span>{topicTitle}<span>]</span></h1>
-                {#else}
-                    <h1 class="mt-4">Alle Posts</h1>
-                {/if}
-                <p><a href="/ui/topics">[Browse Topics]</a></p>
+{#title}Posts{#if topicTitle} – {topicTitle}{/if}{/title}
+{#body}
+<div class="header">
+    <div>
+        {#if topicTitle}
+        <h1 class="mt-4"><span>Topic[</span>{topicTitle}<span>]</span></h1>
+        {#else}
+        <h1 class="mt-4">Alle Posts</h1>
+        {/if}
+        <p><a href="/ui/topics">[Browse Topics]</a></p>
 
-            </div>
-            <div>
-                {#if isLoggedIn}
-                    Logged in as: {username}
-                    <button class="btn btn-light" onclick="logout()">Logout</button>
-                {#else}
-                    <button class="btn btn-primary" onclick="login()">Login</button>
-                    <button class="btn btn-secondary" onclick="register()">Register</button>
-                {/if}
-            </div>
-        </div>
-        <div style="display: flex;justify-content: space-between;" class="mb-2">
-        <div class="sort-selector" style="display: flex">
-            {#if topicTitle}
-                <p><a href="/ui/posts?topic={topicTitle}&sortBy=VOTES&orderBy=DESC">Popular</a></p>
-                <p style="margin-left: 4px; margin-right: 4px;"> | </p>
-                <p><a href="/ui/posts?topic={topicTitle}&sortBy=DATE&orderBy=DESC">New</a></p>
+    </div>
+    <div>
+        {#if isLoggedIn}
+        Logged in as: {username}
+        <button class="btn btn-light" onclick="logout()">Logout</button>
+        {#else}
+        <button class="btn btn-primary" onclick="login()">Login</button>
+        <button class="btn btn-secondary" onclick="register()">Register</button>
+        {/if}
+    </div>
+</div>
+<div style="display: flex;justify-content: space-between;" class="mb-2">
+    <div class="sort-selector" style="display: flex">
+        {#if topicTitle}
+        <p><a href="/ui/posts?topic={topicTitle}&sortBy=VOTES&orderBy=DESC">Popular</a></p>
+        <p style="margin-left: 4px; margin-right: 4px;"> | </p>
+        <p><a href="/ui/posts?topic={topicTitle}&sortBy=DATE&orderBy=DESC">New</a></p>
+        {#else}
+        <p><a href="/ui/posts?sortBy=VOTES&orderBy=DESC">Popular</a></p>
+        <p style="margin-left: 4px; margin-right: 4px;"> | </p>
+        <p><a href="/ui/posts?sortBy=DATE&orderBy=DESC">New</a></p>
+        {/if}
+
+    </div>
+    <div>
+        <button class="btn btn-primary" onclick="createPost()">Create Post</button>
+    </div>
+</div>
+{#for entry in allPosts}
+<div class="content-box">
+    {#if isLoggedIn}
+    <div style="margin-right: 4px;">
+        {#if entry.loggedInUserVote(username)}
+        <a href="#" onclick="deleteVote('{entry.loggedInUserVote(username).id}')">X</a>
+        {#else}
+        <p style="margin: 0; color: darkgrey"></p>
+        {/if}
+    </div>
+    <div class="vote-container">
+
+        <div class="vote">
+            {#if entry.loggedInUserCanUpvote(username)}
+            <a href="#" onclick="vote('{entry.id}','UP')">«</a>
             {#else}
-                <p><a href="/ui/posts?sortBy=VOTES&orderBy=DESC">Popular</a></p>
-                <p style="margin-left: 4px; margin-right: 4px;"> | </p>
-                <p><a href="/ui/posts?sortBy=DATE&orderBy=DESC">New</a></p>
+            <p style="margin: 0; color: darkgrey">«</p>
             {/if}
-
         </div>
-            <div>
-                <button class="btn btn-primary" onclick="createPost()">Create Post</button>
-            </div>
-        </div>
-        {#for entry in allPosts}
-            <div class="content-box">
-            {#if isLoggedIn}
-                <div style="margin-right: 4px;">
-                    {#if entry.loggedInUserVote(username)}
-                        <a href="#" onclick="deleteVote('{entry.loggedInUserVote(username).id}')">X</a>
-                    {#else}
-                        <p style="margin: 0; color: darkgrey"></p>
-                    {/if}
-                </div>
-                <div class="vote-container">
+        <div>{entry.totalVotes}</div>
 
-                <div class="vote">
-                    {#if entry.loggedInUserCanUpvote(username)}
-                        <a href="#" onclick="vote('{entry.id}','UP')">«</a>
-                    {#else}
-                        <p style="margin: 0; color: darkgrey">«</p>
-                    {/if}
-                </div>
-                <div>{entry.totalVotes}</div>
-
-                <div class="vote">
-                {#if entry.loggedInUserCanDownvote(username)}
-                    <a href="#" onclick="vote('{entry.id}','DOWN')">»</a>
-                {#else}
-                    <p style="margin: 0; color: darkgrey">»</p>
-                {/if}
-                </div>
-                </div>
-                {#else}
-                    <div style="margin-right: 10px">{entry.totalVotes}</div>
+        <div class="vote">
+            {#if entry.loggedInUserCanDownvote(username)}
+            <a href="#" onclick="vote('{entry.id}','DOWN')">»</a>
+            {#else}
+            <p style="margin: 0; color: darkgrey">»</p>
             {/if}
+        </div>
+    </div>
+    {#else}
+    <div style="margin-right: 10px">{entry.totalVotes}</div>
+    {/if}
 
-            <div style="display: flex; justify-content: space-between;width: 100%; align-items: center;">
-            <div>
-                <h5 style="cursor: pointer" onclick="window.open('/ui/posts/{entry.id}', '_self')" class="title-info">{entry.title}</h5>
+    <div style="display: flex; justify-content: space-between;width: 100%; align-items: center;">
+        <div>
+            <h5 style="cursor: pointer" onclick="window.open('/ui/posts/{entry.id}', '_self')" class="title-info">
+                {entry.title}</h5>
 
-                <span class="sub-info">{entry.parsedCreatedAtDate} |
-            by <strong>{entry.user.name}</strong> |
-            <a href="/ui/posts?topic={entry.topic.title}">{entry.topic.title}</a> |
-            {entry.commentCount} comments |
-            <a href="/ui/posts/{entry.id}">read</a>
-        </span>
-            </div>
-            <div>
-            {#if username == entry.user.name}<button class="btn btn-outline-danger" onclick="deletePost('{entry.id}')">X</button>{/if}
-            </div>
-            </div>
-            </div>
-            {/}
-    {/body}
+            <span class="sub-info">{entry.parsedCreatedAtDate} |
+                by <strong>{entry.user.name}</strong> |
+                <a href="/ui/posts?topic={entry.topic.title}">{entry.topic.title}</a> |
+                {entry.commentCount} comments |
+                <a href="/ui/posts/{entry.id}">read</a>
+            </span>
+        </div>
+        <div>
+            {#if username == entry.user.name}<button class="btn btn-outline-danger"
+                onclick="deletePost('{entry.id}')">X</button>{/if}
+        </div>
+    </div>
+</div>
+{/}
+{/body}
 {/include}
 
 
