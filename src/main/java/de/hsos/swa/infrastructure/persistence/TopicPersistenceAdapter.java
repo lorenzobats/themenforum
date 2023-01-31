@@ -46,6 +46,11 @@ public class TopicPersistenceAdapter implements TopicRepository {
         }
     }
 
+    @Override
+    public Result<Topic> updateTopic(Topic topic) {
+        return null; // TODO: implementieren
+    }
+
     // READ
     @Override
     public Result<List<TopicInputPortDto>> getAllTopicsWithPostCount() {
