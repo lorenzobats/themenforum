@@ -1,6 +1,5 @@
 package de.hsos.swa.actors.ui;
 
-import de.hsos.swa.actors.ui.dto.out.CommentWithDepth;
 import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
 import de.hsos.swa.domain.entity.*;
 import de.hsos.swa.domain.vo.VoteType;
