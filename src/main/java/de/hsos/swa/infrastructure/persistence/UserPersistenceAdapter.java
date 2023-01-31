@@ -6,6 +6,7 @@ import com.blazebit.persistence.view.EntityViewManager;
 import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.domain.entity.User;
+import de.hsos.swa.infrastructure.persistence.model.TopicPersistenceModel;
 import de.hsos.swa.infrastructure.persistence.model.UserPersistenceModel;
 import org.jboss.logging.Logger;
 
@@ -74,17 +75,6 @@ public class UserPersistenceAdapter implements UserRepository {
                 .createNamedQuery("UserPersistenceModel.findById", UserPersistenceModel.class)
                 .setParameter("id", userId);
         return getUserRepositoryResult(query);
-    }
-
-    @Override
-    public RepositoryResult<Boolean> existsUserWithName(String username) {
-        try {
-            UserPersistenceModel user = entityManager.find(UserPersistenceModel.class, username);
-            return RepositoryResult.ok(user == null);
-        } catch (IllegalArgumentException e) {
-            log.error(e);
-            return RepositoryResult.error();
-        }
     }
 
     // UPDATE

@@ -1,47 +1,47 @@
 package de.hsos.swa.application.output.repository;
 
 public class RepositoryResult<T> {
-    public enum RepositoryStatus {
+    public enum Status {
         OK,
         ENTITY_NOT_FOUND,
         ENTITY_NOT_PERSISTED,
         ERROR
     }
 
-    public final RepositoryStatus status;
+    public final Status status;
     public final T data;
 
 
-    private RepositoryResult(RepositoryStatus status, T data) {
+    private RepositoryResult(Status status, T data) {
         this.status = status;
         this.data = data;
     }
 
     public static <T> RepositoryResult<T> ok(T data) {
-        return new RepositoryResult<T>(RepositoryStatus.OK, data);
+        return new RepositoryResult<T>(Status.OK, data);
     }
 
     public static <T> RepositoryResult<T> error() {
-        return new RepositoryResult<T>(RepositoryStatus.ERROR, (T) null);
+        return new RepositoryResult<T>(Status.ERROR, (T) null);
     }
 
     public static <T> RepositoryResult<T> notFound() {
-        return new RepositoryResult<T>(RepositoryStatus.ENTITY_NOT_FOUND, (T) null);
+        return new RepositoryResult<T>(Status.ENTITY_NOT_FOUND, (T) null);
     }
 
     public static <T> RepositoryResult<T> notPersisted() {
-        return new RepositoryResult<T>(RepositoryStatus.ENTITY_NOT_PERSISTED, (T) null);
+        return new RepositoryResult<T>(Status.ENTITY_NOT_PERSISTED, (T) null);
     }
 
     public boolean ok(){
-        return status.equals(RepositoryStatus.OK);
+        return status.equals(Status.OK);
     }
 
     public boolean badResult(){
         return !this.ok();
     }
 
-    public RepositoryStatus status(){
+    public Status status(){
         return this.status;
     }
     public T get(){

@@ -15,8 +15,6 @@ public interface UserRepository {
 
     RepositoryResult<User> getUserByName(String username);
 
-    RepositoryResult<Boolean> existsUserWithName(String username);
-
     // UPDATE
     RepositoryResult<User> updateUser(User user);
 }

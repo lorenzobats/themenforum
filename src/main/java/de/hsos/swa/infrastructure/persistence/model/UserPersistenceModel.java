@@ -13,7 +13,7 @@ public class UserPersistenceModel {
     @Id
     UUID id;
 
-    @Column(name = "user_name")
+    @Column(name = "user_name", unique = true)
     String name;
 
     public UserPersistenceModel() {

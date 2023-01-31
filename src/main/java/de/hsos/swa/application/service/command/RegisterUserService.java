@@ -34,15 +34,10 @@ public class RegisterUserService implements RegisterUserUseCase {
     @Override
     // TODO:
     public Result<User> registerUser(RegisterUserCommand request) {
-        log.debug(">>>" + "startRegisterUser");
-        RepositoryResult<Boolean> existsUserWithNameResult = this.userRepository.existsUserWithName(request.username());
+        RepositoryResult<User> existingUserResult = this.userRepository.getUserByName(request.username());
 
-        if (existsUserWithNameResult.badResult()) {
+        if (!existingUserResult.status.equals(RepositoryResult.Status.ENTITY_NOT_FOUND)) {
             return Result.error("Registration failed");
-        }
-
-        if (existsUserWithNameResult.get()) {
-            return Result.error("Username already taken");
         }
 
         User user = UserFactory.createUser(request.username());
@@ -51,7 +46,6 @@ public class RegisterUserService implements RegisterUserUseCase {
                 request.password(),
                 "member",
                 user.getId());
-        log.debug(">>>" + user.getId());
         AuthorizationResult<Void> createUserAuthResponse = this.authorizationGateway.createUserAuth(createUserAuthRequest);
 
 

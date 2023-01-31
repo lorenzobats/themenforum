@@ -21,6 +21,7 @@ public class UserAuthEntity {
     UUID id;
 
     @Username
+    @Column(unique = true)
     String username;
 
     @Password
