@@ -1,4 +1,4 @@
-package de.hsos.swa.infrastructure.auth;
+package de.hsos.swa.infrastructure.authorization;
 
 import de.hsos.swa.application.output.auth.getUserAuthRole.GetUserAuthRoleOutputPort;
 import de.hsos.swa.application.util.Result;
@@ -40,6 +40,10 @@ public class UserAuthAdapter implements
             log.error("Customer Auth Entity could not be created", e);
             return Result.error("Customer Auth Entity could not be created");
         }
+    }
+
+    public Result<String> isAuthenticated(String username){
+        return Result.error("");
     }
 
     @Override

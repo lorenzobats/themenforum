@@ -1,4 +1,4 @@
-package de.hsos.swa.infrastructure.auth;
+package de.hsos.swa.infrastructure.authorization;
 
 import javax.persistence.*;
 
@@ -14,6 +14,7 @@ import java.util.UUID;
 @Table(name = "auth_user_table")        // TODO Anders Schema
 @UserDefinition
 @NamedQuery(name = "UserAuthEntity.findRoleByUserId", query = "SELECT role FROM UserAuthEntity WHERE userId = :userId")
+@NamedQuery(name = "UserAuthEntity.findRoleByUserName", query = "SELECT role FROM UserAuthEntity WHERE userId = :userId")
 public class UserAuthEntity {
     @Id
     @GeneratedValue()

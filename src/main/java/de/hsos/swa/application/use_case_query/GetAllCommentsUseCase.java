@@ -2,6 +2,7 @@ package de.hsos.swa.application.use_case_query;
 
 import de.hsos.swa.application.input.GetAllCommentsInputPort;
 import de.hsos.swa.application.output.repository.CommentRepository;
+import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Comment;
 
@@ -18,10 +19,11 @@ public class GetAllCommentsUseCase implements GetAllCommentsInputPort {
 
     @Override
     public Result<List<Comment>> getAllComments(boolean includeReplies) {
-        Result<List<Comment>> commentsResult = commentRepository.getAllComments(includeReplies);
-        if (commentsResult.isSuccessful()) {
-            return Result.success(commentsResult.getData());
+        RepositoryResult<List<Comment>> commentsResult = commentRepository.getAllComments(includeReplies);
+        if (commentsResult.ok()) {
+            return Result.success(commentsResult.get());
         }
+
         return Result.error("Cannot find Comments");
     }
 }

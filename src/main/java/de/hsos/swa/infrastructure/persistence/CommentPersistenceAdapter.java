@@ -4,7 +4,7 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViewSetting;
-import de.hsos.swa.application.util.Result;
+import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.output.repository.CommentRepository;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.infrastructure.persistence.view.CommentPersistenceView;
@@ -34,56 +34,56 @@ public class CommentPersistenceAdapter implements CommentRepository {
     Logger log;
 
     @Override
-    public Result<Comment> getCommentById(UUID commentId, boolean includeReplies) {
+    public RepositoryResult<Comment> getCommentById(UUID commentId, boolean includeReplies) {
         try {
             CriteriaBuilder<CommentPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, CommentPersistenceModel.class);
             criteriaBuilder.where("id").eq(commentId);
             if (!includeReplies) {
                 CriteriaBuilder<CommentPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(CommentPersistenceView.class), criteriaBuilder);
                 CommentPersistenceView comment = criteriaBuilderView.getSingleResult();
-                return Result.success(CommentPersistenceView.toDomainEntity(comment));
+                return RepositoryResult.ok(CommentPersistenceView.toDomainEntity(comment));
             } else {
                 CommentPersistenceModel comment = criteriaBuilder.getSingleResult();
-                return Result.success(CommentPersistenceModel.Converter.toDomainEntity(comment));
+                return RepositoryResult.ok(CommentPersistenceModel.Converter.toDomainEntity(comment));
             }
         } catch (NoResultException e) {
             log.error("getCommentById: No Comments Found", e);
-            return Result.error("getCommentById: No Comments Found");
+            return RepositoryResult.notFound();
         } catch (PersistenceException e) {
             log.error("getCommentById Persistence Failed", e);
-            return Result.error("getCommentById Persistence Failed");
+            return RepositoryResult.error();
         } catch (Exception e) {
             log.error("getCommentById Error", e);
-            return Result.error("getCommentById Error");
+            return RepositoryResult.error();
         }
     }
 
     @Override
-    public Result<List<Comment>> getAllComments(boolean includeReplies) {
+    public RepositoryResult<List<Comment>> getAllComments(boolean includeReplies) {
         try {
             CriteriaBuilder<CommentPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, CommentPersistenceModel.class);
-            return getCommentResultList(includeReplies, criteriaBuilder);
+            return RepositorygetCommentResultList(includeReplies, criteriaBuilder);
         } catch (NoResultException e) {
-            return Result.error("getAllFilteredComments Persistence Failed Not Found");
+            return RepositoryResult.notFound();
         } catch (PersistenceException e) {
-            log.error("getAllFilteredComments Persistence Failed", e);
-            return Result.error("getAllFilteredComments Persistence Failed");
+            log.error("getAllComments Persistence Failed", e);
+            return RepositoryResult.error();
         } catch (Exception e) {
-            log.error("getAllFilteredComments Error", e);
-            return Result.error("getAllFilteredComments Error");
+            log.error("getAllComments Error", e);
+            return RepositoryResult.error();
         }
     }
 
     // HILFSMETHODEN
-    private Result<List<Comment>> getCommentResultList(boolean includeComments, CriteriaBuilder<CommentPersistenceModel> criteriaBuilder) {
+    private RepositoryResult<List<Comment>> RepositorygetCommentResultList(boolean includeComments, CriteriaBuilder<CommentPersistenceModel> criteriaBuilder) {
         if (!includeComments) {
             List<CommentPersistenceView> commentList;
             CriteriaBuilder<CommentPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(CommentPersistenceView.class), criteriaBuilder);
             commentList = criteriaBuilderView.getResultList();
-            return Result.success(commentList.stream().map(CommentPersistenceView::toDomainEntity).toList());
+            return RepositoryResult.ok(commentList.stream().map(CommentPersistenceView::toDomainEntity).toList());
         }
         List<CommentPersistenceModel> commentList;
         commentList = criteriaBuilder.getResultList();
-        return Result.success(commentList.stream().map(CommentPersistenceModel.Converter::toDomainEntity).toList());
+        return RepositoryResult.ok(commentList.stream().map(CommentPersistenceModel.Converter::toDomainEntity).toList());
     }
 }
