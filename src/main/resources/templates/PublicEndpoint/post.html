@@ -317,7 +317,7 @@
     }
 
     function deleteComment(entityId) {
-        let url = '/ui/comments/' + entityId;
+        let url = '/api/v1/comments/' + entityId;
         fetch(url, {
             method: 'DELETE',
             mode: 'cors',

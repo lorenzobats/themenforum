@@ -130,8 +130,7 @@ public class PublicEndpoint {
     @GET
     @Path("/register")
     public TemplateInstance register() {
-        // TODO Registrieren
-        return Templates.login();
+        return Templates.register();
     }
 
     // TOPICS
