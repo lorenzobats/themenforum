@@ -2,6 +2,7 @@ package de.hsos.swa.application.use_case_command;
 
 import de.hsos.swa.application.input.CreateTopicInputPort;
 import de.hsos.swa.application.input.dto.in.CreateTopicInputPortRequest;
+import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.util.Result;
@@ -45,11 +46,11 @@ public class CreateTopicUseCase implements CreateTopicInputPort {
      */
     @Override
     public Result<Topic> createTopic(CreateTopicInputPortRequest request) {
-        Result<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
-        if(!getUserByNameResponse.isSuccessful()) {
+        RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
+        if(getUserByNameResponse.badResult()) {
             return Result.error("Cannot find user " + request.username());
         }
-        User user = getUserByNameResponse.getData();
+        User user = getUserByNameResponse.get();
 
         Topic topic = TopicFactory.createTopic(request.title(), request.description(), user);
 

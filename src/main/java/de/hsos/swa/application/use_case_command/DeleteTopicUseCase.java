@@ -3,6 +3,7 @@ package de.hsos.swa.application.use_case_command;
 import de.hsos.swa.application.input.DeleteTopicInputPort;
 import de.hsos.swa.application.input.dto.in.DeleteTopicInputPortRequest;
 import de.hsos.swa.application.output.auth.getUserAuthRole.GetUserAuthRoleOutputPort;
+import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.util.Result;
@@ -47,11 +48,11 @@ public class DeleteTopicUseCase implements DeleteTopicInputPort {
      */
     @Override
     public Result<Topic> deleteTopic(DeleteTopicInputPortRequest request) {
-        Result<User> userResult = this.userRepository.getUserByName(request.username());
-        if (!userResult.isSuccessful()) {
+        RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
+        if (userResult.badResult()) {
             return Result.error("Cannot find user " + request.username());
         }
-        User user = userResult.getData();
+        User user = userResult.get();
 
         Result<String> roleResult = this.userAuthRoleOutputPort.getUserAuthRole(user.getId());
         if (!roleResult.isSuccessful()) {

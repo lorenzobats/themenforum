@@ -6,6 +6,7 @@ import de.hsos.swa.application.input.dto.in.CommentPostInputPortRequest;
 import de.hsos.swa.application.input.dto.in.DeleteCommentInputPortRequest;
 import de.hsos.swa.application.output.auth.getUserAuthRole.GetUserAuthRoleOutputPort;
 import de.hsos.swa.application.output.repository.PostRepository;
+import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Comment;
@@ -64,11 +65,11 @@ public class DeleteCommentUseCase implements DeleteCommentInputPort {
         }
         Comment comment = optionalComment.get();
 
-        Result<User> userResult = this.userRepository.getUserByName(request.username());
-        if (!userResult.isSuccessful()) {
+        RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
+        if (userResult.badResult()) {
             return Result.error("Cannot find user " + request.username());
         }
-        User user = userResult.getData();
+        User user = userResult.get();
 
         Result<String> roleResult = this.userAuthRoleOutputPort.getUserAuthRole(user.getId());
         if (!roleResult.isSuccessful()) {

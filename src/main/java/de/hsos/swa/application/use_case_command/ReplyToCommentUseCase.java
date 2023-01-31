@@ -2,6 +2,7 @@ package de.hsos.swa.application.use_case_command;
 
 import de.hsos.swa.application.input.ReplyToCommentInputPort;
 import de.hsos.swa.application.input.dto.in.ReplyToCommentInputPortRequest;
+import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.util.Result;
@@ -29,12 +30,12 @@ public class ReplyToCommentUseCase implements ReplyToCommentInputPort {
 
     @Override
     public Result<Comment> replyToComment(ReplyToCommentInputPortRequest request) {
-        Result<User> getUserResponse = this.userRepository.getUserByName(request.username());
-        if (!getUserResponse.isSuccessful()) {
+        RepositoryResult<User> getUserResponse = this.userRepository.getUserByName(request.username());
+        if (getUserResponse.badResult()) {
             return Result.error("User does not exist");
         }
 
-        User user = getUserResponse.getData();
+        User user = getUserResponse.get();
 
         Result<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(request.commentId()));
         if (!postResult.isSuccessful()) {

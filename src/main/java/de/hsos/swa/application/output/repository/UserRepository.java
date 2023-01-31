@@ -1,24 +1,21 @@
 package de.hsos.swa.application.output.repository;
 
-import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.User;
+
+import java.util.List;
 
 public interface UserRepository {
     // CREATE
-    Result<User> saveUser(User user);
-
+    RepositoryResult<User> saveUser(User user);
 
     // READ
-    // TODO: getAllUsers
-    Result<User> getUserById(String userId);
+    RepositoryResult<List<User>> getAllUsers();
+    RepositoryResult<User> getUserById(String userId);
 
-    Result<User> getUserByName(String username);
+    RepositoryResult<User> getUserByName(String username);
 
-    Result<Boolean> isUserNameAvailable(String username);
+    RepositoryResult<Boolean> existsUserWithName(String username);
 
     // UPDATE
-    Result<User> updateUser(User user);
-
-    // DELETE
-    // TODO DeleteUser
+    RepositoryResult<User> updateUser(User user);
 }

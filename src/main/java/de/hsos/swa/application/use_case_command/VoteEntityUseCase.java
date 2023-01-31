@@ -3,6 +3,7 @@ package de.hsos.swa.application.use_case_command;
 import de.hsos.swa.application.input.VoteEntityInputPort;
 import de.hsos.swa.application.input.dto.in.VoteEntityInputPortRequest;
 import de.hsos.swa.application.output.repository.PostRepository;
+import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Comment;
@@ -33,11 +34,11 @@ public class VoteEntityUseCase implements VoteEntityInputPort {
 
     @Override
     public Result<Vote> vote(VoteEntityInputPortRequest request) {
-        Result<User> userResult = this.userRepository.getUserByName(request.username());
-        if (!userResult.isSuccessful()) {
+        RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
+        if (userResult.badResult()) {
             return Result.error("Cannot retrieve User");
         }
-        User user = userResult.getData();
+        User user = userResult.get();
 
 
         Result<Post> postResult = new Result<>();

@@ -4,6 +4,7 @@ import de.hsos.swa.application.input.CommentPostInputPort;
 import de.hsos.swa.application.input.CreateTopicInputPort;
 import de.hsos.swa.application.input.dto.in.CommentPostInputPortRequest;
 import de.hsos.swa.application.input.dto.in.CreateTopicInputPortRequest;
+import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.PostRepository;
@@ -47,11 +48,11 @@ public class CommentPostUseCase implements CommentPostInputPort {
      */
     @Override
     public Result<Comment> commentPost(CommentPostInputPortRequest request) {
-        Result<User> userResult = this.userRepository.getUserByName(request.username());
-        if (!userResult.isSuccessful()) {
+        RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
+        if (userResult.badResult()) {
             return Result.error("Cannot find user " + request.username());
         }
-        User user = userResult.getData();
+        User user = userResult.get();
 
 
         Result<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.postId()), true);

@@ -39,15 +39,15 @@ public class DeleteVoteUseCase implements DeleteVoteInputPort {
 
     @Override
     public Result<Vote> deleteVote(DeleteVoteInputPortRequest request) {
-        Result<User> userResult = this.userRepository.getUserByName(request.username());
-        if (!userResult.isSuccessful()) {
+        RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
+        if (userResult.badResult()) {
             return Result.error("Cannot retrieve User");
         }
-        User user = userResult.getData();
+        User user = userResult.get();
 
 
         RepositoryResult<VotePersistenceDto> voteResult = this.voteRepository.getVoteById(UUID.fromString(request.vote()));
-        if (voteResult.bad()) {
+        if (voteResult.badResult()) {
             return Result.error("Cannot find Vote");
         }
         VotePersistenceDto vote = voteResult.get();

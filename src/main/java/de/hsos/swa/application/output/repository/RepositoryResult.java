@@ -1,7 +1,5 @@
 package de.hsos.swa.application.output.repository;
 
-import de.hsos.swa.application.util.Result;
-
 public class RepositoryResult<T> {
     public enum RepositoryStatus {
         OK,
@@ -39,7 +37,7 @@ public class RepositoryResult<T> {
         return status.equals(RepositoryStatus.OK);
     }
 
-    public boolean bad(){
+    public boolean badResult(){
         return !this.ok();
     }
 

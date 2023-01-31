@@ -3,6 +3,7 @@ package de.hsos.swa.application.use_case_command;
 import de.hsos.swa.application.input.DeleteUserInputPort;
 import de.hsos.swa.application.input.dto.in.DeleteUserInputPortRequest;
 import de.hsos.swa.application.output.auth.getUserAuthRole.GetUserAuthRoleOutputPort;
+import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.util.Result;
@@ -28,11 +29,11 @@ public class DeleteUserUseCase implements DeleteUserInputPort {
      */
     @Override
     public Result<User> deleteUser(DeleteUserInputPortRequest request) {
-        Result<User> requestingUserResult = this.userRepository.getUserByName(request.username());
-        if (!requestingUserResult.isSuccessful()) {
+        RepositoryResult<User> requestingUserResult = this.userRepository.getUserByName(request.username());
+        if (requestingUserResult.badResult()) {
             return Result.error("Cannot find user " + request.username());
         }
-        User requestingUser = requestingUserResult.getData();
+        User requestingUser = requestingUserResult.get();
 
         Result<String> roleResult = this.userAuthRoleOutputPort.getUserAuthRole(requestingUser.getId());
         if (!roleResult.isSuccessful()) {
@@ -44,17 +45,18 @@ public class DeleteUserUseCase implements DeleteUserInputPort {
             return Result.error("Not allowed to disable user");
         }
 
-        Result<User> userResult = this.userRepository.getUserById(request.userId());
-        if (!userResult.isSuccessful()) {
+        RepositoryResult<User> userResult = this.userRepository.getUserById(request.userId());
+        if (userResult.badResult()) {
             return Result.error("Cannot find userId " + request.userId());
         }
-        User user = userResult.getData();
+        User user = userResult.get();
 
+        // TODO Methode Delete
         user.setName("DELETED");
         // Todo. Auth Set Role "disabled"
 
-        Result<User> updateUserResult = this.userRepository.updateUser(user);
-        if (!updateUserResult.isSuccessful()) {
+        RepositoryResult<User> updateUserResult = this.userRepository.updateUser(user);
+        if (updateUserResult.badResult()) {
             return Result.error("Cannot update post ");
         }
         return Result.success(user);

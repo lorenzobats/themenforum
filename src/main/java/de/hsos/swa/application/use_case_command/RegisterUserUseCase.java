@@ -2,6 +2,7 @@ package de.hsos.swa.application.use_case_command;
 
 import de.hsos.swa.application.input.dto.in.RegisterUserInputPortRequest;
 import de.hsos.swa.application.input.RegisterUserInputPort;
+import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.auth.createUserAuth.CreateUserAuthOutputPortRequest;
 import de.hsos.swa.application.output.auth.createUserAuth.CreateUserAuthOutputPort;
@@ -10,7 +11,6 @@ import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.domain.factory.UserFactory;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -27,18 +27,17 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
 
     @Override
     public Result<User> registerUser(RegisterUserInputPortRequest request) {
-        Result<Boolean> checkUsernameAvailabilityResponse = this.userRepository.isUserNameAvailable(request.username());
+        RepositoryResult<Boolean> existsUserWithNameResult = this.userRepository.existsUserWithName(request.username());
 
-        if (!checkUsernameAvailabilityResponse.isSuccessful()) {
+        if (existsUserWithNameResult.badResult()) {
             return Result.error("Registration failed");
         }
 
-        if (!checkUsernameAvailabilityResponse.getData()) {
+        if (existsUserWithNameResult.get()) {
             return Result.error("Username already taken");
         }
 
         User user = UserFactory.createUser(request.username());
-
         CreateUserAuthOutputPortRequest createUserAuthRequest = new CreateUserAuthOutputPortRequest(
                 request.username(),
                 request.password(),
@@ -47,11 +46,9 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
         Result<CreateUserAuthOutputPortResponse> createUserAuthResponse = this.createUserAuthOutputPort.createUserAuth(createUserAuthRequest);
 
 
-        // 2.B > PERSISTENCE > User Persistieren
-        Result<User> createUserResponse = this.userRepository.saveUser(user);
+        RepositoryResult<User> createUserResponse = this.userRepository.saveUser(user);
 
-        if (!createUserResponse.isSuccessful()) {
-            // TODO: UserAuth wieder löschen falls was schief gegangen ist bei Persistierung.
+        if (!createUserResponse.ok()) {
             return Result.error("Registration failed");
         }
 
@@ -59,7 +56,7 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
             return Result.error("Authentication failed");
         }
 
-        return Result.success(createUserResponse.getData());
+        return Result.success(createUserResponse.get());
 
     }
 

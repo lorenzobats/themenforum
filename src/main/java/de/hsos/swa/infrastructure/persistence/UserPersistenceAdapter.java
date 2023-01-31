@@ -1,17 +1,20 @@
 package de.hsos.swa.infrastructure.persistence;
 
-import de.hsos.swa.application.util.Result;
+import com.blazebit.persistence.CriteriaBuilder;
+import com.blazebit.persistence.CriteriaBuilderFactory;
+import com.blazebit.persistence.view.EntityViewManager;
+import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
+import de.hsos.swa.application.util.Result;
+import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
+import de.hsos.swa.infrastructure.persistence.model.PostPersistenceModel;
 import de.hsos.swa.infrastructure.persistence.model.UserPersistenceModel;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.TransactionRequiredException;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -23,73 +26,95 @@ public class UserPersistenceAdapter implements UserRepository {
     EntityManager entityManager;
 
     @Inject
+    CriteriaBuilderFactory criteriaBuilderFactory;
+
+    @Inject
     Logger log;
 
+    // CREATE
     @Override
-    public Result<User> saveUser(User user) {
+    public RepositoryResult<User> saveUser(User user) {
         UserPersistenceModel userPersistenceModel = UserPersistenceModel.Converter.toPersistenceModel(user);
         try {
             entityManager.persist(userPersistenceModel);
-            return Result.success(UserPersistenceModel.Converter.toDomainEntity(userPersistenceModel));
-        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            log.error("User could not be created", e);
-            return Result.error("User could not be created");
+            return RepositoryResult.ok(UserPersistenceModel.Converter.toDomainEntity(userPersistenceModel));
+        } catch (EntityExistsException e) {
+            return RepositoryResult.notPersisted();
+        } catch (IllegalArgumentException | TransactionRequiredException e) {
+            log.error(e);
+            return RepositoryResult.error();
+        }
+    }
+
+    // READ
+    @Override
+    public RepositoryResult<List<User>> getAllUsers() {
+        try {
+            CriteriaBuilder<UserPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, UserPersistenceModel.class);
+            List<UserPersistenceModel> postList;
+            postList = criteriaBuilder.getResultList();
+            return RepositoryResult.ok(postList.stream().map(UserPersistenceModel.Converter::toDomainEntity).toList());
+        } catch (NoResultException e) {
+            return RepositoryResult.notFound();
+        } catch (PersistenceException e) {
+            log.error(e);
+            return RepositoryResult.error();
         }
     }
 
     @Override
-    public Result<User> updateUser(User user) {
+    public RepositoryResult<User> getUserByName(String username) {
+        TypedQuery<UserPersistenceModel> query = entityManager
+                .createNamedQuery("UserPersistenceModel.findByUsername", UserPersistenceModel.class)
+                .setParameter("username", username);
+        return getUserRepositoryResult(query);
+    }
+
+    @Override
+    public RepositoryResult<User> getUserById(String userId) {
+        TypedQuery<UserPersistenceModel> query = entityManager
+                .createNamedQuery("UserPersistenceModel.findById", UserPersistenceModel.class)
+                .setParameter("id", userId);
+        return getUserRepositoryResult(query);
+    }
+
+    @Override
+    public RepositoryResult<Boolean> existsUserWithName(String username) {
+        try {
+            UserPersistenceModel user = entityManager.find(UserPersistenceModel.class, username);
+            return RepositoryResult.ok(user == null);
+        } catch (IllegalArgumentException e) {
+            log.error(e);
+            return RepositoryResult.error();
+        }
+    }
+
+    // UPDATE
+    @Override
+    public RepositoryResult<User> updateUser(User user) {
         UserPersistenceModel userPersistenceModel = UserPersistenceModel.Converter.toPersistenceModel(user);
         try {
             entityManager.merge(userPersistenceModel);
-            return Result.success(UserPersistenceModel.Converter.toDomainEntity(userPersistenceModel));
-        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            log.error("UpdatePost User", e);
-            return Result.error("Could not persist User");
+            return RepositoryResult.ok(UserPersistenceModel.Converter.toDomainEntity(userPersistenceModel));
+        } catch (NoResultException e) {
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException | TransactionRequiredException e) {
+            log.error(e);
+            return RepositoryResult.error();
         }
     }
 
 
-    @Override
-    public Result<User> getUserByName(String username) {
-        TypedQuery<UserPersistenceModel> query = entityManager.createNamedQuery("UserPersistenceModel.findByUsername", UserPersistenceModel.class);
-        query.setParameter("username", username);
+    // HILFSMETHODEN
+    private RepositoryResult<User> getUserRepositoryResult(TypedQuery<UserPersistenceModel> query) {
         try {
-            List<UserPersistenceModel> userList = query.getResultList();
-            if(userList.isEmpty()){
-                return Result.error("");
-            }
-            return Result.success(UserPersistenceModel.Converter.toDomainEntity(userList.get(0)));
-        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            log.error("GetUserByName Error", e);
-            return Result.error("GetUserByName Error");
-        }
-    }
-
-    @Override
-    public Result<User> getUserById(String userId) {
-        TypedQuery<UserPersistenceModel> query = entityManager.createNamedQuery("UserPersistenceModel.findById", UserPersistenceModel.class);
-        query.setParameter("id", userId);
-        UserPersistenceModel user;
-        try {
-            user = query.getSingleResult();
-            return Result.success(UserPersistenceModel.Converter.toDomainEntity(user));
-        } catch (Exception e) {
-            log.error("GetUserById Error", e);
-            return Result.error("GetUserById Error");
-        }
-    }
-
-    @Override
-    public Result<Boolean> isUserNameAvailable(String username) {
-        try {
-            List<UserPersistenceModel> userList = entityManager.createNamedQuery("UserPersistenceModel.findByUsername", UserPersistenceModel.class)
-                    .setParameter("username", username)
-                    .getResultList();
-            return Result.success(userList.isEmpty());
-        } catch (Exception e) {
-            log.error("GetUserById Error", e);
-            return Result.error("GetUserById Error");
+            UserPersistenceModel user = query.getSingleResult();
+            return RepositoryResult.ok(UserPersistenceModel.Converter.toDomainEntity(user));
+        } catch (NoResultException e) {
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException e) {
+            log.error(e);
+            return RepositoryResult.error();
         }
     }
 }

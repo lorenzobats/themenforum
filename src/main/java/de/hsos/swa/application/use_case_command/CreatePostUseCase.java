@@ -4,6 +4,7 @@ import de.hsos.swa.application.input.CreatePostInputPort;
 import de.hsos.swa.application.input.CreateTopicInputPort;
 import de.hsos.swa.application.input.dto.in.CreatePostInputPortRequest;
 import de.hsos.swa.application.input.dto.in.CreateTopicInputPortRequest;
+import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.PostRepository;
@@ -48,11 +49,11 @@ public class CreatePostUseCase implements CreatePostInputPort {
      */
     @Override
     public Result<Post> createPost(CreatePostInputPortRequest request) {
-        Result<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
-        if(!getUserByNameResponse.isSuccessful()) {
+        RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
+        if(getUserByNameResponse.badResult()) {
             return Result.error("Cannot find user " + request.username());
         }
-        User user = getUserByNameResponse.getData();
+        User user = getUserByNameResponse.get();
 
 
         Result<Topic> getTopicByIdResponse = this.topicRepository.getTopicById(request.topicId());

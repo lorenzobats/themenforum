@@ -1,4 +1,4 @@
-package de.hsos.swa.application.use_case_command;
+package de.hsos.swa.application.use_case_query;
 
 import de.hsos.swa.application.input.SearchTopicsInputPort;
 import de.hsos.swa.application.input.dto.in.SearchTopicsInputPortRequest;
