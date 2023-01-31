@@ -39,6 +39,10 @@ public class RepositoryResult<T> {
         return status.equals(RepositoryStatus.OK);
     }
 
+    public boolean bad(){
+        return !this.ok();
+    }
+
     public RepositoryStatus status(){
         return this.status;
     }

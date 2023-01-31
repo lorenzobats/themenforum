@@ -4,6 +4,7 @@ import de.hsos.swa.application.input.DeleteVoteInputPort;
 import de.hsos.swa.application.input.dto.in.DeleteVoteInputPortRequest;
 import de.hsos.swa.application.output.dto.VotePersistenceDto;
 import de.hsos.swa.application.output.repository.PostRepository;
+import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.VoteRepository;
 import de.hsos.swa.application.util.Result;
@@ -45,11 +46,11 @@ public class DeleteVoteUseCase implements DeleteVoteInputPort {
         User user = userResult.getData();
 
 
-        Result<VotePersistenceDto> voteResult = this.voteRepository.getVoteById(UUID.fromString(request.vote()));
-        if (!voteResult.isSuccessful()) {
+        RepositoryResult<VotePersistenceDto> voteResult = this.voteRepository.getVoteById(UUID.fromString(request.vote()));
+        if (voteResult.bad()) {
             return Result.error("Cannot find Vote");
         }
-        VotePersistenceDto vote = voteResult.getData();
+        VotePersistenceDto vote = voteResult.get();
 
         Result<Post> postResult = new Result<>();
         Optional<Vote> optionalVote = Optional.empty();

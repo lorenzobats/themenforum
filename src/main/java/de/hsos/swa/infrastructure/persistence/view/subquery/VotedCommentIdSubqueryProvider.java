@@ -3,7 +3,6 @@ package de.hsos.swa.infrastructure.persistence.view.subquery;
 import com.blazebit.persistence.SubqueryInitiator;
 import com.blazebit.persistence.view.SubqueryProvider;
 import de.hsos.swa.infrastructure.persistence.model.CommentPersistenceModel;
-import de.hsos.swa.infrastructure.persistence.model.PostPersistenceModel;
 
 public class VotedCommentIdSubqueryProvider implements SubqueryProvider {
 

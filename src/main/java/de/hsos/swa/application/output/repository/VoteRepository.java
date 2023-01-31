@@ -7,6 +7,6 @@ import java.util.UUID;
 
 public interface VoteRepository {
     // READ
-    Result<VotePersistenceDto> getVoteById(UUID voteId);
+    RepositoryResult<VotePersistenceDto> getVoteById(UUID voteId);
     // TODO: GetALlVotes
 }

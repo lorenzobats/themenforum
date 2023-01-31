@@ -32,9 +32,10 @@ public record VotePersistenceView(
         return new Vote(view.id, UserPersistenceView.toDomainEntity(view.user), view.voteType, view.createdAt);
     }
 
-    public static VotePersistenceDto toApplicationDTO(VotePersistenceView view) {
-        if (view.votedCommentId != null)
+    public static VotePersistenceDto toApplicationDto(VotePersistenceView view) {
+        if (view.votedCommentId != null){
             return new VotePersistenceDto(VotePersistenceView.toDomainEntity(view), VotedEntityType.COMMENT, view.votedCommentId);
+        }
         return new VotePersistenceDto(VotePersistenceView.toDomainEntity(view), VotedEntityType.POST, view.votedPostId);
     }
 }

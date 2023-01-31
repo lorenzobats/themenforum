@@ -9,11 +9,8 @@ import java.util.UUID;
 public class Vote {
 
     private UUID id;
-
     private User user;
-
     private VoteType voteType;
-
     private LocalDateTime createdAt;
 
     public Vote(User user, VoteType voteType) {
@@ -45,6 +42,7 @@ public class Vote {
     public VoteType getVoteType() {
         return voteType;
     }
+
 
     public void setVoteType(VoteType voteType) {
         this.voteType = voteType;
