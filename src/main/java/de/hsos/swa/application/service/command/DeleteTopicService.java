@@ -3,11 +3,11 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.DeleteTopicUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteTopicCommand;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
@@ -51,7 +51,7 @@ public class DeleteTopicService implements DeleteTopicUseCase {
      */
     @Override
     public Result<Topic> deleteTopic(DeleteTopicCommand request) {
-        RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.badResult()) {
             return Result.error("Cannot find user " + request.username());
         }
@@ -67,11 +67,11 @@ public class DeleteTopicService implements DeleteTopicUseCase {
             return Result.error("Not allowed to delete post");
         }
 
-        Result<Topic> deleteTopicResult = this.topicRepository.deleteTopic(UUID.fromString(request.id()));
-        if (!deleteTopicResult.isSuccessful()) {
+        RepositoryResult<Topic> deleteTopicResult = this.topicRepository.deleteTopic(UUID.fromString(request.id()));
+        if (deleteTopicResult.badResult()) {
             return Result.error("Cannot delete topic");
         }
 
-        return Result.success(deleteTopicResult.getData());
+        return Result.success(deleteTopicResult.get());
     }
 }

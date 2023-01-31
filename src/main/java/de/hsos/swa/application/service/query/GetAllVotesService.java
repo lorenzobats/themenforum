@@ -2,11 +2,10 @@ package de.hsos.swa.application.service.query;
 
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.GetAllVotesUseCase;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.input.dto.out.VoteInputPortDto;
 import de.hsos.swa.application.output.repository.dto.in.VoteQueryDto;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.output.repository.VoteRepository;
-import de.hsos.swa.application.input.dto.out.Result;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -24,7 +23,7 @@ public class GetAllVotesService implements GetAllVotesUseCase {
 
     @Override
     public Result<List<VoteInputPortDto>> getAllVotes(SecurityContext securityContext) {
-        RepositoryResult<List<VoteQueryDto>> votesResult = voteRepository.getAllVotes();
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<List<VoteQueryDto>> votesResult = voteRepository.getAllVotes();
 
         if (votesResult.badResult()) {
             return Result.error("Cannot find Posts");

@@ -5,8 +5,8 @@ import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViewSetting;
 import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
-import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.output.repository.TopicRepository;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.infrastructure.persistence.model.TopicPersistenceModel;
 import de.hsos.swa.infrastructure.persistence.view.TopicPersistenceView;
@@ -19,6 +19,10 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * TODO: Java Docs
+ * TODO: Update Topic implementieren
+ */
 @RequestScoped
 @Transactional(value = Transactional.TxType.MANDATORY)
 public class TopicPersistenceAdapter implements TopicRepository {
@@ -33,79 +37,116 @@ public class TopicPersistenceAdapter implements TopicRepository {
     @Inject
     Logger log;
 
-    // CREATE
+    //------------------------------------------------------------------------------------------------------------------
+    // COMMANDS
     @Override
-    public Result<Topic> saveTopic(Topic topic) {
+    public RepositoryResult<Topic> saveTopic(Topic topic) {
         TopicPersistenceModel topicPersistenceModel = TopicPersistenceModel.Converter.toPersistenceModel(topic);
         try {
             entityManager.persist(topicPersistenceModel);
-            return Result.success(TopicPersistenceModel.Converter.toDomainEntity(topicPersistenceModel));
-        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            log.error("saveTopic Error", e);
-            return Result.error("saveTopic Error");
+            return RepositoryResult.ok(TopicPersistenceModel.Converter.toDomainEntity(topicPersistenceModel));
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
+        } catch (PersistenceException e) {
+            log.error(e);
+            return RepositoryResult.error();
         }
     }
 
     @Override
-    public Result<Topic> updateTopic(Topic topic) {
-        return null; // TODO: implementieren
-    }
-
-    // READ
-    @Override
-    public Result<List<TopicInputPortDto>> getAllTopicsWithPostCount() {
-        // TODO: Try Catch
-        CriteriaBuilder<TopicPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, TopicPersistenceModel.class);
-        List<TopicPersistenceView> postList;
-        CriteriaBuilder<TopicPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(TopicPersistenceView.class), criteriaBuilder);
-        postList = criteriaBuilderView.getResultList();
-        return Result.success(postList.stream().map(TopicPersistenceView::toOutputPortDto).toList());
-    }
-
-    @Override
-    public Result<Topic> getTopicById(UUID topicId) {
-        TypedQuery<TopicPersistenceModel> query = entityManager.createNamedQuery("TopicPersistenceModel.findById", TopicPersistenceModel.class);
-
-        query.setParameter("id", topicId);
-        TopicPersistenceModel topic;
+    public RepositoryResult<Topic> updateTopic(Topic topic) {
+        TopicPersistenceModel topicPersistenceModel = TopicPersistenceModel.Converter.toPersistenceModel(topic);
         try {
-            topic = query.getSingleResult();
-            return Result.success(TopicPersistenceModel.Converter.toDomainEntity(topic));
-        } catch (Exception e) {
-            log.error("GetTopicById Error", e);
-            return Result.error("GetTopicById Error");
+            entityManager.merge(topicPersistenceModel);
+            return RepositoryResult.ok(TopicPersistenceModel.Converter.toDomainEntity(topicPersistenceModel));
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
+        } catch (PersistenceException e) {
+            log.error(e);
+            return RepositoryResult.error();
         }
     }
 
     @Override
-    public Result<List<TopicInputPortDto>> searchTopic(String searchString) {
-        // TODO: Try Catch
-        CriteriaBuilder<TopicPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, TopicPersistenceModel.class);
-        criteriaBuilder
-                .whereOr()
-                .where("title").like().value("%" + searchString + "%").noEscape()
-                .where("description").like().value("%" + searchString + "%").noEscape()
-                .endOr();
-        CriteriaBuilder<TopicPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(TopicPersistenceView.class), criteriaBuilder);
-        List<TopicPersistenceView> postList = criteriaBuilderView.getResultList();
-        return Result.success(postList.stream().map(TopicPersistenceView::toOutputPortDto).toList());
-    }
-
-
-
-    // DELETE
-    @Override
-    public Result<Topic> deleteTopic(UUID topicId) {
+    public RepositoryResult<Topic> deleteTopic(UUID topicId) {
         try {
-            TopicPersistenceModel post = entityManager.find(TopicPersistenceModel.class, topicId);
-            if (post != null) {
-                entityManager.remove(post);
-                return Result.success(TopicPersistenceModel.Converter.toDomainEntity(post));
+            TopicPersistenceModel topic = entityManager.find(TopicPersistenceModel.class, topicId);
+            if (topic != null) {
+                entityManager.remove(topic);
+                return RepositoryResult.ok(TopicPersistenceModel.Converter.toDomainEntity(topic));
             }
-            return Result.error("");
-        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            log.error("Delete Error", e);
-            return Result.error("Delete Error");
+            return RepositoryResult.notFound();
+        } catch (NoResultException e) {
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
+        } catch (PersistenceException e) {
+            log.error(e);
+            return RepositoryResult.error();
+        }
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    // QUERIES
+    @Override
+    public RepositoryResult<List<TopicInputPortDto>> getAllTopics() {
+        try {
+            CriteriaBuilder<TopicPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, TopicPersistenceModel.class);
+            CriteriaBuilder<TopicPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(TopicPersistenceView.class), criteriaBuilder);
+            List<TopicPersistenceView> postList = criteriaBuilderView.getResultList();
+            return RepositoryResult.ok(postList.stream().map(TopicPersistenceView::toOutputPortDto).toList());
+        } catch (NoResultException e) {
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
+        } catch (PersistenceException e) {
+            log.error(e);
+            return RepositoryResult.error();
+        }
+    }
+
+    @Override
+    public RepositoryResult<Topic> getTopicById(UUID topicId) {
+        try {
+            CriteriaBuilder<TopicPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, TopicPersistenceModel.class);
+            criteriaBuilder.where("id").eq(topicId);
+            TopicPersistenceModel post = criteriaBuilder.getSingleResult();
+            return RepositoryResult.ok(TopicPersistenceModel.Converter.toDomainEntity(post));
+        } catch (NoResultException e) {
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
+        } catch (PersistenceException e) {
+            log.error(e);
+            return RepositoryResult.error();
+        }
+    }
+
+    @Override
+    public RepositoryResult<List<TopicInputPortDto>> searchTopic(String searchString) {
+        try {
+            CriteriaBuilder<TopicPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, TopicPersistenceModel.class);
+            criteriaBuilder
+                    .whereOr()
+                    .where("title").like().value("%" + searchString + "%").noEscape()
+                    .where("description").like().value("%" + searchString + "%").noEscape()
+                    .endOr();
+            CriteriaBuilder<TopicPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(TopicPersistenceView.class), criteriaBuilder);
+            List<TopicPersistenceView> postList = criteriaBuilderView.getResultList();
+            return RepositoryResult.ok(postList.stream().map(TopicPersistenceView::toOutputPortDto).toList());
+        } catch (NoResultException e) {
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
+        } catch (PersistenceException e) {
+            log.error(e);
+            return RepositoryResult.error();
         }
     }
 }

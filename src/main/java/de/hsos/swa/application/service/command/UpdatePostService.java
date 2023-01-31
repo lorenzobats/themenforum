@@ -15,6 +15,7 @@ import javax.transaction.Transactional;
 public class UpdatePostService implements UpdatePostUseCase {
     @Override
     public Result<Post> updatePost(UpdatePostCommand request) {
+        // TODO: Implementieren
         return null;
     }
 }

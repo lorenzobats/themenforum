@@ -3,11 +3,10 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.dto.in.RegisterUserCommand;
 import de.hsos.swa.application.input.RegisterUserUseCase;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.auth.dto.out.SaveAuthUserCommand;
-import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.domain.factory.UserFactory;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
@@ -34,9 +33,9 @@ public class RegisterUserService implements RegisterUserUseCase {
     @Override
     // TODO:
     public Result<User> registerUser(RegisterUserCommand request) {
-        RepositoryResult<User> existingUserResult = this.userRepository.getUserByName(request.username());
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> existingUserResult = this.userRepository.getUserByName(request.username());
 
-        if (!existingUserResult.status.equals(RepositoryResult.Status.ENTITY_NOT_FOUND)) {
+        if (!existingUserResult.status.equals(de.hsos.swa.application.output.repository.dto.out.RepositoryResult.Status.ENTITY_NOT_FOUND)) {
             return Result.error("Registration failed");
         }
 
@@ -49,7 +48,7 @@ public class RegisterUserService implements RegisterUserUseCase {
         AuthorizationResult<Void> createUserAuthResponse = this.authorizationGateway.createUserAuth(createUserAuthRequest);
 
 
-        RepositoryResult<User> createUserResponse = this.userRepository.saveUser(user);
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> createUserResponse = this.userRepository.saveUser(user);
 
         if (!createUserResponse.ok()) {
             return Result.error("Registration failed");

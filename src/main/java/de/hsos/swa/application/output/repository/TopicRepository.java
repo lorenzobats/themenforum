@@ -1,7 +1,7 @@
 package de.hsos.swa.application.output.repository;
 
 import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.domain.entity.Topic;
 
 import java.util.List;
@@ -12,17 +12,15 @@ import java.util.UUID;
  */
 public interface TopicRepository {
 
+    //------------------------------------------------------------------------------------------------------------------
     // COMMANDS
-    Result<Topic> saveTopic(Topic topic);
-    // TODO: UPDATE TOPIC
-    Result<Topic> updateTopic(Topic topic);
+    RepositoryResult<Topic> saveTopic(Topic topic);
+    RepositoryResult<Topic> updateTopic(Topic topic);
+    RepositoryResult<Topic> deleteTopic(UUID topicId);
 
-    Result<Topic> deleteTopic(UUID topicId);
-
+    //------------------------------------------------------------------------------------------------------------------
     // QUERIES
-    Result<List<TopicInputPortDto>> getAllTopicsWithPostCount();
-
-    Result<List<TopicInputPortDto>> searchTopic(String searchString);
-
-    Result<Topic> getTopicById(UUID topicId);
+    RepositoryResult<List<TopicInputPortDto>> getAllTopics();
+    RepositoryResult<List<TopicInputPortDto>> searchTopic(String searchString);
+    RepositoryResult<Topic> getTopicById(UUID topicId);
 }

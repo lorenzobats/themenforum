@@ -33,6 +33,7 @@ public class VotePersistenceAdapter implements VoteRepository {
     @Inject
     Logger log;
 
+    //------------------------------------------------------------------------------------------------------------------
     // QUERIES
     @Override
     public RepositoryResult<VoteQueryDto> getVoteById(UUID voteId) {

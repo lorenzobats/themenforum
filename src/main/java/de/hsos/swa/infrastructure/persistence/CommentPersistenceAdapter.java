@@ -33,7 +33,8 @@ public class CommentPersistenceAdapter implements CommentRepository {
     @Inject
     Logger log;
 
-    // READ
+    //------------------------------------------------------------------------------------------------------------------
+    // QUERIES
     @Override
     public RepositoryResult<Comment> getCommentById(UUID commentId, boolean includeReplies) {
         try {
@@ -75,7 +76,8 @@ public class CommentPersistenceAdapter implements CommentRepository {
         }
     }
 
-    // HILFSMETHODEN
+    //------------------------------------------------------------------------------------------------------------------
+    // UTILITY METHODS
     private RepositoryResult<List<Comment>> getCommentResultList(boolean includeComments, CriteriaBuilder<CommentPersistenceModel> criteriaBuilder) {
         if (!includeComments) {
             List<CommentPersistenceView> commentList;

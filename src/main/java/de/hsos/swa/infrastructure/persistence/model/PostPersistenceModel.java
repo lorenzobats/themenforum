@@ -8,8 +8,6 @@ import java.util.*;
 
 @Entity(name = "Post")
 @Table(name = "post_table")
-@NamedQuery(name = "PostPersistenceModel.findAll", query = "SELECT p FROM Post p")
-@NamedQuery(name = "PostPersistenceModel.findById", query = "SELECT p FROM Post p WHERE p.id = :id")
 public class PostPersistenceModel {
     @Id
     UUID id;

@@ -2,9 +2,10 @@ package de.hsos.swa.application.service.query;
 
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.GetAllTopicsUseCase;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
 import de.hsos.swa.application.output.repository.TopicRepository;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -21,11 +22,11 @@ public class GetAllTopicsService implements GetAllTopicsUseCase {
 
     @Override
     public Result<List<TopicInputPortDto>> getAllTopics() {
-        Result<List<TopicInputPortDto>> topicsResult = topicRepository.getAllTopicsWithPostCount();
-        if (!topicsResult.isSuccessful()) {
+        RepositoryResult<List<TopicInputPortDto>> topicsResult = topicRepository.getAllTopics();
+        if (topicsResult.badResult()) {
             return Result.error("Could not get Topics");
         }
 
-        return Result.success(topicsResult.getData());
+        return Result.success(topicsResult.get());
     }
 }

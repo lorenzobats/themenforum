@@ -3,10 +3,10 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.CommentPostUseCase;
 import de.hsos.swa.application.input.dto.in.CommentPostCommand;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.PostRepository;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
@@ -47,24 +47,23 @@ public class CommentPostService implements CommentPostUseCase {
      */
     @Override
     public Result<Comment> commentPost(CommentPostCommand request) {
-        RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.badResult()) {
             return Result.error("Cannot find user " + request.username());
         }
         User user = userResult.get();
 
-
-        Result<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.postId()), true);
-        if (!postResult.isSuccessful()) {
+        RepositoryResult<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.postId()), true);
+        if (postResult.badResult()) {
             return Result.error("Cannot find post " + request.postId());
         }
-        Post post = postResult.getData();
+        Post post = postResult.get();
 
         Comment comment = CommentFactory.createComment(request.commentText(), user);
         post.addComment(comment);
 
-        Result<Post> updatePostResult = this.postRepository.updatePost(post);
-        if (!updatePostResult.isSuccessful()) {
+        RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(post);
+        if (updatePostResult.badResult()) {
             return Result.error("Cannot update post " + request.postId());
         }
         return Result.success(comment);

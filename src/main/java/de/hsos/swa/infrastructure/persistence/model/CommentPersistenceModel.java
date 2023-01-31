@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 @Entity(name = "Comment")
 @Table(name = "comment_table")
-@NamedQuery(name = "CommentPersistenceModel.findById", query = "SELECT c FROM Comment c WHERE c.id = :id")
 public class CommentPersistenceModel {
     @Id
     UUID id;

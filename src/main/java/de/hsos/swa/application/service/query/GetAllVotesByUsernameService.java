@@ -3,11 +3,10 @@ package de.hsos.swa.application.service.query;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.GetAllVotesByUsernameUseCase;
 import de.hsos.swa.application.input.dto.in.GetAllVotesByUsernameQuery;
+import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.input.dto.out.VoteInputPortDto;
 import de.hsos.swa.application.output.repository.dto.in.VoteQueryDto;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.output.repository.VoteRepository;
-import de.hsos.swa.application.input.dto.out.Result;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
@@ -29,7 +28,7 @@ public class GetAllVotesByUsernameService implements GetAllVotesByUsernameUseCas
     @Override
     public Result<List<VoteInputPortDto>> getAllVotesByUsername(GetAllVotesByUsernameQuery request, SecurityContext securityContext) {
         log.debug(">>>P" + securityContext.getUserPrincipal().getName());
-        RepositoryResult<List<VoteQueryDto>> votesResult = voteRepository.getAllVotesByUser(request.username());
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<List<VoteQueryDto>> votesResult = voteRepository.getAllVotesByUser(request.username());
 
         if (votesResult.badResult()) {
             return Result.error("Cannot find Posts");

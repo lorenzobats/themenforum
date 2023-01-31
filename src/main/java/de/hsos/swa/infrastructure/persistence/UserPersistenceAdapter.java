@@ -5,6 +5,7 @@ import com.blazebit.persistence.CriteriaBuilderFactory;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.domain.entity.User;
+import de.hsos.swa.infrastructure.persistence.model.PostPersistenceModel;
 import de.hsos.swa.infrastructure.persistence.model.UserPersistenceModel;
 import org.jboss.logging.Logger;
 
@@ -30,6 +31,7 @@ public class UserPersistenceAdapter implements UserRepository {
 
 
 
+    //------------------------------------------------------------------------------------------------------------------
     // COMMANDS
     @Override
     public RepositoryResult<User> saveUser(User user) {
@@ -45,8 +47,41 @@ public class UserPersistenceAdapter implements UserRepository {
         }
     }
 
+    @Override
+    public RepositoryResult<User> updateUser(User user) {
+        UserPersistenceModel userPersistenceModel = UserPersistenceModel.Converter.toPersistenceModel(user);
+        try {
+            entityManager.merge(userPersistenceModel);
+            return RepositoryResult.ok(UserPersistenceModel.Converter.toDomainEntity(userPersistenceModel));
+        } catch (NoResultException e) {
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException | TransactionRequiredException e) {
+            log.error(e);
+            return RepositoryResult.error();
+        }
+    }
 
+    @Override
+    public RepositoryResult<User> deleteUser(UUID userId) {
+        try {
+            UserPersistenceModel user = entityManager.find(UserPersistenceModel.class, userId);
+            if (user != null) {
+                entityManager.remove(user);
+                return RepositoryResult.ok(UserPersistenceModel.Converter.toDomainEntity(user));
+            }
+            return RepositoryResult.notFound();
+        } catch (NoResultException e) {
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
+        } catch (PersistenceException e) {
+            log.error(e);
+            return RepositoryResult.error();
+        }
+    }
 
+    //------------------------------------------------------------------------------------------------------------------
     // QUERIES
     @Override
     public RepositoryResult<List<User>> getAllUsers() {
@@ -57,6 +92,9 @@ public class UserPersistenceAdapter implements UserRepository {
             return RepositoryResult.ok(postList.stream().map(UserPersistenceModel.Converter::toDomainEntity).toList());
         } catch (NoResultException e) {
             return RepositoryResult.notFound();
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
         } catch (PersistenceException e) {
             log.error(e);
             return RepositoryResult.error();
@@ -77,22 +115,6 @@ public class UserPersistenceAdapter implements UserRepository {
         return getUserRepositoryResult(criteriaBuilder);
     }
 
-    // UPDATE
-    @Override
-    public RepositoryResult<User> updateUser(User user) {
-        UserPersistenceModel userPersistenceModel = UserPersistenceModel.Converter.toPersistenceModel(user);
-        try {
-            entityManager.merge(userPersistenceModel);
-            return RepositoryResult.ok(UserPersistenceModel.Converter.toDomainEntity(userPersistenceModel));
-        } catch (NoResultException e) {
-            return RepositoryResult.notFound();
-        } catch (IllegalArgumentException | TransactionRequiredException e) {
-            log.error(e);
-            return RepositoryResult.error();
-        }
-    }
-
-
     // HILFSMETHODEN
     private RepositoryResult<User> getUserRepositoryResult(CriteriaBuilder<UserPersistenceModel> criteriaBuilder) {
         try {
@@ -101,6 +123,9 @@ public class UserPersistenceAdapter implements UserRepository {
         } catch (NoResultException e) {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
+        } catch (PersistenceException e) {
             log.error(e);
             return RepositoryResult.error();
         }
