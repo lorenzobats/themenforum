@@ -8,7 +8,7 @@ import de.hsos.swa.actors.ui.validation.UIValidationResult;
 import de.hsos.swa.actors.ui.validation.UIValidationService;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
-import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
+import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
 import de.hsos.swa.application.use_case_query.OrderParams;
 import de.hsos.swa.application.use_case_query.PostFilterParams;
 import de.hsos.swa.application.use_case_query.SortingParams;
@@ -96,7 +96,7 @@ public class PublicEndpoint {
         public static native TemplateInstance register();
 
         // TOPICS
-        public static native TemplateInstance topics(List<TopicWithPostCountDto> allTopics, boolean isLoggedIn, String username);
+        public static native TemplateInstance topics(List<TopicInputPortDto> allTopics, boolean isLoggedIn, String username);
 
         public static native TemplateInstance createTopic(String username);
 
@@ -106,7 +106,7 @@ public class PublicEndpoint {
 
         public static native TemplateInstance post(Post post, boolean isLoggedIn, String username);
 
-        public static native TemplateInstance createPost(List<TopicWithPostCountDto> allTopics, String username);
+        public static native TemplateInstance createPost(List<TopicInputPortDto> allTopics, String username);
 
 
         // COMMENT
@@ -149,10 +149,10 @@ public class PublicEndpoint {
             isLoggedIn = true;
         }
         if(searchString != null){
-            Result<List<TopicWithPostCountDto>> searchedTopics = searchTopicsInputPort.searchTopics(new SearchTopicsInputPortRequest(searchString));
+            Result<List<TopicInputPortDto>> searchedTopics = searchTopicsInputPort.searchTopics(new SearchTopicsInputPortRequest(searchString));
             return Templates.topics(searchedTopics.getData(), isLoggedIn, username);
         }
-        Result<List<TopicWithPostCountDto>> allTopics = getAllTopicsWithPostCountInputPort.getAllTopics();
+        Result<List<TopicInputPortDto>> allTopics = getAllTopicsWithPostCountInputPort.getAllTopics();
         return Templates.topics(allTopics.getData(), isLoggedIn, username);
     }
 
@@ -165,7 +165,7 @@ public class PublicEndpoint {
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
         }
-        Result<List<TopicWithPostCountDto>> allTopics = getAllTopicsWithPostCountInputPort.getAllTopics();
+        Result<List<TopicInputPortDto>> allTopics = getAllTopicsWithPostCountInputPort.getAllTopics();
         return Templates.createTopic(username);
     }
 
@@ -238,7 +238,7 @@ public class PublicEndpoint {
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
         }
-        Result<List<TopicWithPostCountDto>> allTopics = getAllTopicsWithPostCountInputPort.getAllTopics();
+        Result<List<TopicInputPortDto>> allTopics = getAllTopicsWithPostCountInputPort.getAllTopics();
         return Templates.createPost(allTopics.getData(), username);
     }
 

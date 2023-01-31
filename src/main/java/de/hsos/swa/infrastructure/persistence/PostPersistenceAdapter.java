@@ -18,6 +18,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.*;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -116,7 +117,6 @@ public class PostPersistenceAdapter implements PostRepository {
     @Override
     public Result<Post> getPostByCommentId(UUID commentId) {
         try {
-
             // Rekursive CTE zur Suche des zur übergebenen commentID zugehörigen Kommentars auf erster Ebene
             CriteriaBuilder<UUID> subquery = criteriaBuilderFactory.create(entityManager, UUID.class)
                     .withRecursive(CommentCTE.class)
@@ -153,6 +153,7 @@ public class PostPersistenceAdapter implements PostRepository {
         }
 
     }
+
 
     @Override
     public Result<Post> deletePost(UUID postId) {

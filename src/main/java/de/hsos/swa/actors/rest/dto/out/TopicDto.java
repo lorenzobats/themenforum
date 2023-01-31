@@ -1,5 +1,5 @@
 package de.hsos.swa.actors.rest.dto.out;
-import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
+import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
 import de.hsos.swa.domain.entity.Topic;
 
 import java.time.LocalDateTime;
@@ -36,7 +36,7 @@ public class TopicDto {
             return new TopicDto(topic.getId().toString(), topic.getTitle(), topic.getDescription(), topic.getCreatedAt(), topic.getOwner().getName());
         }
 
-        public static TopicDto fromInputPortDto(TopicWithPostCountDto dto) {
+        public static TopicDto fromInputPortDto(TopicInputPortDto dto) {
             return new TopicDto(dto.topic.getId().toString(), dto.topic.getTitle(), dto.topic.getDescription(), dto.topic.getCreatedAt(), dto.topic.getOwner().getName(), dto.numberOfPosts);
         }
     }

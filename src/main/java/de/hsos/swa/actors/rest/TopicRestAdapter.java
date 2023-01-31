@@ -6,7 +6,7 @@ import de.hsos.swa.actors.rest.validation.TopicValidationService;
 import de.hsos.swa.actors.rest.validation.ValidationResult;
 import de.hsos.swa.application.input.dto.in.DeleteTopicInputPortRequest;
 import de.hsos.swa.application.input.dto.in.SearchTopicsInputPortRequest;
-import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
+import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.CreateTopicInputPortRequest;
@@ -52,7 +52,7 @@ public class TopicRestAdapter {
     public Response getAllTopics(@QueryParam("search") String searchString) {
         try {
 
-            Result<List<TopicWithPostCountDto>> topicsResult;
+            Result<List<TopicInputPortDto>> topicsResult;
             if (searchString != null)
                 topicsResult = this.searchTopicsInputPort.searchTopics(new SearchTopicsInputPortRequest(searchString));
             else topicsResult = this.getAllTopicsWithPostCountInputPort.getAllTopics();

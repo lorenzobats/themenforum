@@ -5,8 +5,8 @@ import de.hsos.swa.domain.vo.VotedEntityType;
 
 import java.util.UUID;
 
-public record VotePersistenceDto(
+public record VoteOutputPortDto(
     Vote vote,
     VotedEntityType votedEntityType,
     UUID votedEntityId
-) { }
+) {}

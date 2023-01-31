@@ -1,6 +1,6 @@
 package de.hsos.swa.application.output.repository;
 
-import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
+import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Topic;
 
@@ -13,9 +13,9 @@ public interface TopicRepository {
     Result<Topic> saveTopic(Topic topic);
 
     // READ
-    Result<List<TopicWithPostCountDto>> getAllTopicsWithPostCount();
+    Result<List<TopicInputPortDto>> getAllTopicsWithPostCount();
 
-    Result<List<TopicWithPostCountDto>> searchTopic(String searchString);
+    Result<List<TopicInputPortDto>> searchTopic(String searchString);
 
     Result<Topic> getTopicById(UUID topicId);
 

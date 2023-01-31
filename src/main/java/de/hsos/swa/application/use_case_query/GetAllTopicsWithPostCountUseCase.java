@@ -1,7 +1,7 @@
 package de.hsos.swa.application.use_case_query;
 
 import de.hsos.swa.application.input.GetAllTopicsWithPostCountInputPort;
-import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
+import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.util.Result;
 
@@ -18,8 +18,8 @@ public class GetAllTopicsWithPostCountUseCase implements GetAllTopicsWithPostCou
     TopicRepository topicRepository;
 
     @Override
-    public Result<List<TopicWithPostCountDto>> getAllTopics() {
-        Result<List<TopicWithPostCountDto>> topicsResult = topicRepository.getAllTopicsWithPostCount();
+    public Result<List<TopicInputPortDto>> getAllTopics() {
+        Result<List<TopicInputPortDto>> topicsResult = topicRepository.getAllTopicsWithPostCount();
         if (!topicsResult.isSuccessful()) {
             return Result.error("Could not get Topics");
         }

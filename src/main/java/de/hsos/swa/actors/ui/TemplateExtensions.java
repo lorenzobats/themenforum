@@ -1,7 +1,7 @@
 package de.hsos.swa.actors.ui;
 
 import de.hsos.swa.actors.ui.dto.out.CommentWithDepth;
-import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
+import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
 import de.hsos.swa.domain.entity.*;
 import de.hsos.swa.domain.vo.VoteType;
 import io.quarkus.qute.TemplateExtension;
@@ -26,7 +26,7 @@ public class TemplateExtensions {
         return topic.getCreatedAt().format(formatter);
     }
 
-    public static String parsedCreatedAtDate(TopicWithPostCountDto topic) {
+    public static String parsedCreatedAtDate(TopicInputPortDto topic) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
         return topic.topic.getCreatedAt().format(formatter);
     }

@@ -1,11 +1,16 @@
 package de.hsos.swa.actors.rest;
 import de.hsos.swa.actors.rest.dto.in.VoteEntityRestAdapterRequest;
+import de.hsos.swa.actors.rest.dto.out.VoteDto;
 import de.hsos.swa.actors.rest.validation.ValidationResult;
 import de.hsos.swa.actors.rest.validation.VoteValidationService;
 import de.hsos.swa.application.input.DeleteVoteInputPort;
+import de.hsos.swa.application.input.GetAllVotesInputPort;
+import de.hsos.swa.application.input.GetAllVotesByUsernameInputPort;
 import de.hsos.swa.application.input.VoteEntityInputPort;
 import de.hsos.swa.application.input.dto.in.DeleteVoteInputPortRequest;
+import de.hsos.swa.application.input.dto.in.GetAllVotesByUsernameInputPortRequest;
 import de.hsos.swa.application.input.dto.in.VoteEntityInputPortRequest;
+import de.hsos.swa.application.input.dto.out.VoteInputPortDto;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.domain.entity.Vote;
 
@@ -20,6 +25,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.List;
 
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,9 +41,34 @@ public class VoteRestAdapter {
     DeleteVoteInputPort deleteVoteInputPort;
 
     @Inject
+    GetAllVotesByUsernameInputPort getAllVotesByUsernameInputPort;
+
+    @Inject
+    GetAllVotesInputPort getAllVotesInputPort;
+
+    @Inject
     VoteValidationService voteValidationService;
 
 
+    @GET
+    @RolesAllowed({"admin", "member"})
+    public Response getAllVotes(@QueryParam("username") String username, @Context SecurityContext securityContext) {
+        try {
+            Result<List<VoteInputPortDto>> votesResult;
+            if(username != null)
+                votesResult = this.getAllVotesByUsernameInputPort.getAllVotesByUsername(new GetAllVotesByUsernameInputPortRequest(username), securityContext);
+            else votesResult = this.getAllVotesInputPort.getAllVotes(securityContext);
+
+            if (votesResult.isSuccessful()) {
+                List<VoteDto> votesResponse = votesResult.getData().stream().map(VoteDto::fromInputPortDto).toList();
+                return Response.status(Response.Status.OK).entity(votesResponse).build();
+            }
+
+            return Response.status(Response.Status.NOT_FOUND).entity(votesResult.getMessage()).build();
+        } catch (ConstraintViolationException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+        }
+    }
 
     @POST
     public Response vote(@NotNull VoteEntityRestAdapterRequest request, @Context SecurityContext securityContext) {

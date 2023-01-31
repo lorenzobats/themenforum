@@ -76,6 +76,10 @@ public class CommentPersistenceModel {
         this.votes = votes;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
     public static class Converter {
         public static Comment toDomainEntity(CommentPersistenceModel commentPersistenceModel) {
             User user = UserPersistenceModel.Converter.toDomainEntity(commentPersistenceModel.userPersistenceModel);

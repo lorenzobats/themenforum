@@ -1,12 +1,14 @@
 package de.hsos.swa.application.output.repository;
 
-import de.hsos.swa.application.output.dto.VotePersistenceDto;
-import de.hsos.swa.application.util.Result;
+import de.hsos.swa.application.output.dto.VoteOutputPortDto;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface VoteRepository {
     // READ
-    RepositoryResult<VotePersistenceDto> getVoteById(UUID voteId);
-    // TODO: GetALlVotes
+    RepositoryResult<VoteOutputPortDto> getVoteById(UUID voteId);
+    RepositoryResult<List<VoteOutputPortDto>> getAllVotesByUser(String username);
+
+    RepositoryResult<List<VoteOutputPortDto>> getAllVotes();
 }

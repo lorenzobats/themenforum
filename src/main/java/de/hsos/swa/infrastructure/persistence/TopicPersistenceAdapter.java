@@ -4,7 +4,7 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViewSetting;
-import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
+import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
 import de.hsos.swa.application.util.Result;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.domain.entity.Topic;
@@ -48,7 +48,7 @@ public class TopicPersistenceAdapter implements TopicRepository {
 
     // READ
     @Override
-    public Result<List<TopicWithPostCountDto>> getAllTopicsWithPostCount() {
+    public Result<List<TopicInputPortDto>> getAllTopicsWithPostCount() {
         // TODO: Try Catch
         CriteriaBuilder<TopicPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, TopicPersistenceModel.class);
         List<TopicPersistenceView> postList;
@@ -58,7 +58,7 @@ public class TopicPersistenceAdapter implements TopicRepository {
     }
 
     @Override
-    public Result<List<TopicWithPostCountDto>> searchTopic(String searchString) {
+    public Result<List<TopicInputPortDto>> searchTopic(String searchString) {
         // TODO: Try Catch
         CriteriaBuilder<TopicPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, TopicPersistenceModel.class);
         criteriaBuilder

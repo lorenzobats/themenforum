@@ -5,6 +5,8 @@ import de.hsos.swa.actors.rest.dto.out.PostDto;
 import de.hsos.swa.actors.rest.validation.ValidationResult;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
+import de.hsos.swa.application.output.repository.PostRepository;
+import de.hsos.swa.application.output.repository.VoteRepository;
 import de.hsos.swa.application.use_case_query.OrderParams;
 import de.hsos.swa.application.use_case_query.PostFilterParams;
 import de.hsos.swa.application.use_case_query.SortingParams;
@@ -30,10 +32,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
@@ -57,6 +56,9 @@ public class PostRestAdapter {
     @Inject
     PostValidationService validationService;
 
+
+    @Inject
+    VoteRepository voteRepository;
 
     @Inject
     Logger log;
@@ -104,10 +106,11 @@ public class PostRestAdapter {
     }
 
 
+
+
     @GET
     @Path("{id}")
-    public Response getPostById(
-            @PathParam("id") String id,
+    public Response getPostById(@PathParam("id") String id,
             @DefaultValue("true") @QueryParam("includeComments") boolean includeComments,
             @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
             @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy) {
@@ -119,7 +122,7 @@ public class PostRestAdapter {
                 PostDto response = PostDto.Converter.fromDomainEntity(postResult.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
-            
+
             return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(postResult.getMessage())).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();

@@ -4,7 +4,7 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViewSetting;
-import de.hsos.swa.application.output.dto.VotePersistenceDto;
+import de.hsos.swa.application.output.dto.VoteOutputPortDto;
 import de.hsos.swa.application.output.repository.RepositoryResult;
 import de.hsos.swa.application.output.repository.VoteRepository;
 import de.hsos.swa.infrastructure.persistence.model.VotePersistenceModel;
@@ -13,10 +13,9 @@ import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.TransactionRequiredException;
+import javax.persistence.*;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.UUID;
 
 @RequestScoped
@@ -36,7 +35,7 @@ public class VotePersistenceAdapter implements VoteRepository {
 
 
     @Override
-    public RepositoryResult<VotePersistenceDto> getVoteById(UUID voteId) {
+    public RepositoryResult<VoteOutputPortDto> getVoteById(UUID voteId) {
         try {
             CriteriaBuilder<VotePersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, VotePersistenceModel.class);
             criteriaBuilder.where("id").eq(voteId);
@@ -52,4 +51,39 @@ public class VotePersistenceAdapter implements VoteRepository {
             return RepositoryResult.error();
         }
     }
+
+    @Override
+    public RepositoryResult<List<VoteOutputPortDto>> getAllVotesByUser(String username) {
+        try {
+            CriteriaBuilder<VotePersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, VotePersistenceModel.class);
+            criteriaBuilder.where("userPersistenceModel.name").eq(username);
+            CriteriaBuilder<VotePersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(VotePersistenceView.class), criteriaBuilder);
+            List<VotePersistenceView> votes = criteriaBuilderView.getResultList();
+
+            return RepositoryResult.ok(votes.stream().map(VotePersistenceView::toApplicationDto).toList());
+        } catch (NoResultException e) {
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException | TransactionRequiredException e) {
+            log.error(e);
+            return RepositoryResult.error();
+        }
+    }
+
+    @Override
+    public RepositoryResult<List<VoteOutputPortDto>> getAllVotes() {
+        try {
+            CriteriaBuilder<VotePersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, VotePersistenceModel.class);
+            CriteriaBuilder<VotePersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(VotePersistenceView.class), criteriaBuilder);
+            List<VotePersistenceView> votes = criteriaBuilderView.getResultList();
+
+            return RepositoryResult.ok(votes.stream().map(VotePersistenceView::toApplicationDto).toList());
+        } catch (NoResultException e) {
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException | TransactionRequiredException e) {
+            log.error(e);
+            return RepositoryResult.error();
+        }
+    }
+
+
 }
