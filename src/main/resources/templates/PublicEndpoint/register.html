@@ -48,14 +48,14 @@
             body: JSON.stringify(data)
         }).then(response => {
             if (response.ok) {
-                login(username, password)
+                login()
             }
         }).catch(error => {
                 console.error(error);
         });
     }
 
-    function login(username, password) {
+    function login() {
 
         document.querySelector("form").action = "j_security_check";
         document.querySelector("form").method = "post";
