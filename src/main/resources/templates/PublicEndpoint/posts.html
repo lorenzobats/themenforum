@@ -96,7 +96,12 @@
 
 <script>
     function vote(postId, voteType) {
-        let url = '/ui/posts/' + postId + '/vote';
+        let url = '/api/v1/votes/';
+        let data = {
+            voteType: voteType,
+            entityType: "POST",
+            entityId: postId
+        };
         fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -107,10 +112,16 @@
             },
             redirect: 'follow',
             referrerPolicy: 'no-referrer',
-            body: JSON.stringify(voteType),
+            body: JSON.stringify(data),
         })
-            .then(() => {
-                location.reload();
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    response.text().then(errorMessage => {
+                        //console.log(errorMessage);
+                    });
+                }
             })
             .catch(error => {
                 console.error(error);
