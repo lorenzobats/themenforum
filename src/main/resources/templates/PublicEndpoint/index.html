@@ -1,0 +1,51 @@
+{#include base}
+    {#title}Home {/title}
+    {#body}
+        <div class="header">
+            <div>
+
+                <h1 class="mt-4">Welcome to re-DDD-it.com</h1>
+                <a href="/ui/topics">[Browse Topics]</a>
+                <a href="/ui/posts">[Browse Posts]</a>
+                {#if isAdmin }
+                <a href="/ui/users">[Browse Users]</a>
+                <a href="/ui/votes">[Browse Votes]</a>
+                {/if}
+            </div>
+        <div class="login-buttons">
+        {#if isLoggedIn}
+            <a href="/ui/me">[{username}s content]</a>
+            <button class="btn btn-light" onclick="logout()">Logout</button>
+        {#else}
+            <button class="btn btn-primary" onclick="login()">Login</button>
+            <button class="btn btn-secondary" onclick="register()">Register</button>
+        {/if}
+        </div>
+        </div>
+
+
+
+
+        <img src="https://www.fabrizioduroni.it/static/4352831c9a246ee5d5a4638caae846c9/0fdf4/meaningful-names.jpg" style="width: 300px; margin-top: 50px">
+
+        </div>
+        <div></div>
+    {/body}
+{/include}
+<script>
+    function logout() {
+        document.cookie = "quarkus-credential=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "quarkus-redirect-location=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        location.reload();
+    }
+
+    function login() {
+        document.cookie = "quarkus-redirect-location=" + window.location;
+        window.open("/ui/login", "_self")
+    }
+
+    function register() {
+        window.open('/ui/register', '_blank');
+    }
+
+</script>

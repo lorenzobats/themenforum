@@ -1,16 +1,15 @@
 package de.hsos.swa.actors.ui;
 
 import de.hsos.swa.application.input.*;
-import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
-import de.hsos.swa.application.input.dto.in.GetPostByIdQuery;
-import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
+import de.hsos.swa.application.input.dto.in.*;
+import de.hsos.swa.application.input.dto.out.CommentInputPortDto;
 import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
+import de.hsos.swa.application.input.dto.out.VoteInputPortDto;
 import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
 import de.hsos.swa.application.service.query.params.SortingParams;
-import de.hsos.swa.domain.entity.Comment;
-import de.hsos.swa.domain.entity.Post;
+import de.hsos.swa.domain.entity.*;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 import org.jboss.logging.Logger;
@@ -24,6 +23,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +45,22 @@ public class PublicEndpoint {
     GetAllTopicsUseCase getAllTopicsUseCase;
 
     @Inject
+    GetAllCommentsUseCase getAllCommentsUseCase;
+
+    @Inject
     SearchTopicsUseCase searchTopicsUseCase;
+
+    @Inject
+    GetAllVotesByUsernameUseCase getAllVotesByUsernameUseCase;
+
+    @Inject
+    GetAllVotesUseCase getAllVotesUseCase;
+
+    @Inject
+    GetAllUsersUseCase getAllUsersUseCase;
+
+    @Inject
+    GetUserByNameUseCase getUserByNameUseCase;
 
     @Inject
     Logger log;
@@ -53,10 +68,23 @@ public class PublicEndpoint {
     @CheckedTemplate
     public static class Templates {
 
+        // INDEX
+        public static native TemplateInstance index(boolean isLoggedIn, String username, boolean isAdmin);
+
         // AUTH
         public static native TemplateInstance login();
 
         public static native TemplateInstance register();
+
+        // USER-PROFILE
+        public static native TemplateInstance profile(
+                List<TopicInputPortDto> topics,
+                List<Post> posts,
+                List<Comment> comments,
+                List<VoteInputPortDto> votes,
+                String username,
+                String selection);
+
 
         // TOPICS
         public static native TemplateInstance topics(List<TopicInputPortDto> allTopics, boolean isLoggedIn, String username);
@@ -71,29 +99,96 @@ public class PublicEndpoint {
 
         public static native TemplateInstance createPost(List<TopicInputPortDto> allTopics, String username);
 
+        // USERS
+        public static native TemplateInstance users(List<User> users, String username);
 
-        // COMMENT
-        public static native TemplateInstance comment(Comment comment, boolean isLoggedIn, String username);
+        // VOTES
+        public static native TemplateInstance votes(List<VoteInputPortDto> votes, String username);
+
+        // ERROR
+        public static native TemplateInstance error();
     }
 
 
+    // INDEX
     @GET
-    // TODO: Index
-    public TemplateInstance index() {
-        return Templates.login();
+    @PermitAll
+    public TemplateInstance index(@Context SecurityContext securityContext) {
+        String username = "";
+        boolean isLoggedIn = false;
+        boolean isAdmin = false;
+        if (securityContext.getUserPrincipal() != null) {
+            isLoggedIn = true;
+            username = securityContext.getUserPrincipal().getName();
+            if(securityContext.isUserInRole("admin"))
+                isAdmin = true;
+        }
+        return Templates.index(isLoggedIn, username, isAdmin);
     }
 
     // AUTH
     @GET
     @Path("/login")
+    @Produces(MediaType.TEXT_HTML)
+    @PermitAll
     public TemplateInstance login() {
         return Templates.login();
     }
 
     @GET
     @Path("/register")
+    @Produces(MediaType.TEXT_HTML)
+    @PermitAll
     public TemplateInstance register() {
         return Templates.register();
+    }
+
+
+    // USER-PROFILE
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    @Path("/me")
+    @RolesAllowed("member")
+    public TemplateInstance profile(@Context SecurityContext securityContext, @DefaultValue("topics") @QueryParam("active") String selection) {
+        String username = "";
+        if (securityContext.getUserPrincipal() != null) {
+            username = securityContext.getUserPrincipal().getName();
+        }
+
+        Result<List<TopicInputPortDto>> topics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(username));
+        Result<List<Post>> posts = Result.success(new ArrayList<>()); // TODO: Get Topics By User (via FilteredTopicsUsecase mit include Comments=false
+        Result<List<Comment>> comments = Result.success(new ArrayList<>()); // TODO: Get Comments By UsergetAllCommentsUseCase.getAllComments(false);
+        Result<List<VoteInputPortDto>> votes = getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext);
+
+        return Templates.profile(topics.getData(), posts.getData(), comments.getData(), votes.getData(), username, selection);
+    }
+
+    // USERS
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    @Path("/users")
+    @RolesAllowed({"admin", "member"})
+    public TemplateInstance users(@Context SecurityContext securityContext) {
+        String username = "";
+        if (securityContext.getUserPrincipal() != null) {
+            username = securityContext.getUserPrincipal().getName();
+        }
+        Result<List<User>> allUsers = getAllUsersUseCase.getAllUsers(securityContext);
+        return Templates.users(allUsers.getData(), username);
+    }
+
+    // VOTES
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    @Path("/votes")
+    @RolesAllowed({"admin"})
+    public TemplateInstance votes(@Context SecurityContext securityContext) {
+        String username = "";
+        if (securityContext.getUserPrincipal() != null) {
+            username = securityContext.getUserPrincipal().getName();
+        }
+        Result<List<VoteInputPortDto>> allVotes = getAllVotesUseCase.getAllVotes(securityContext);
+        return Templates.votes(allVotes.getData(), username);
     }
 
     // TOPICS

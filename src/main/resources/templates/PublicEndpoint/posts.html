@@ -8,10 +8,11 @@
         {#else}
         <h1 class="mt-4">Alle Posts</h1>
         {/if}
-        <p><a href="/ui/topics">[Browse Topics]</a></p>
+
+        <p><a href="/ui/">[< Home]</a><a href="/ui/topics">[Browse Topics]</a></p>
 
     </div>
-    <div>
+    <div class="login-buttons">
         {#if isLoggedIn}
         Logged in as: {username}
         <button class="btn btn-light" onclick="logout()">Logout</button>
@@ -148,7 +149,7 @@
     }
 
     function deletePost(postId) {
-        let url = '/ui/posts/' + postId;
+        let url = '/api/v1/posts/' + postId;
         fetch(url, {
             method: 'DELETE',
             mode: 'cors',

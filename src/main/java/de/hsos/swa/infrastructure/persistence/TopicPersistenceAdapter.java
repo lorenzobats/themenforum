@@ -135,6 +135,7 @@ public class TopicPersistenceAdapter implements TopicRepository {
                     .whereOr()
                     .where("title").like().value("%" + searchString + "%").noEscape()
                     .where("description").like().value("%" + searchString + "%").noEscape()
+                    .where("userPersistenceModel.name").eq().value(searchString) // TODO: Test, klappt mit username?
                     .endOr();
             CriteriaBuilder<TopicPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(TopicPersistenceView.class), criteriaBuilder);
             List<TopicPersistenceView> postList = criteriaBuilderView.getResultList();

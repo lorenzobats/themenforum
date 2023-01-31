@@ -13,9 +13,15 @@ body {
 
 .header {
     display: flex;
-    align-items: center;
+    align-items: self-start;
     justify-content: space-between;
+    margin-top: 20px;
 }
+
+.login-button {
+    margin-top: 20px;
+}
+
 
 .title-info {
     font-family: "BioRhyme", monospace;

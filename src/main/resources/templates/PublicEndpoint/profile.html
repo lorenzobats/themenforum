@@ -1,0 +1,76 @@
+{#include base}
+{#title}{username} {/title}
+{#body}
+<div class="header">
+    <div>
+        <h1 class="mt-4">My Profile</h1>
+        <p><a href="/ui/topics">[Browse Topics]</a></p>
+        <p><a href="/ui/posts">[Browse Posts]</a></p>
+    </div>
+    <div class="login-buttons">
+        Logged in as: {username}
+        <button class="btn btn-secondary" onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<div style="display: flex;justify-content: space-between;" class="mb-2">
+    <div>
+        <button class="btn btn-primary" onclick="createTopic()">Create Topic</button>
+    </div>
+</div>
+
+    {#for entry in topics}
+        <h2>TOPICS</h2>
+        <div class="content-box">
+        <div>
+        <h5 style="cursor: pointer" onclick="window.open('/ui/posts?topic={entry.topic.title}', '_self')" class="title-info">{entry.topic.id}</h5>
+        </div>
+        </div>
+        {/}
+    <h2>POSTS</h2>
+    {#for entry in posts}
+        <div class="content-box">
+        <div>
+        <h5 style="cursor: pointer" onclick="window.open('/ui/posts/{entry.id}', '_self')" class="title-info">{entry.id}</h5>
+        </div>
+        </div>
+        {/}
+    <h2>COMMENTS</h2>
+    {#for entry in comments}
+        <div class="content-box">
+        <div>
+        <h5 style="cursor: pointer" onclick="window.open('/ui/posts/?comment={entry.id}#{entry.id}', '_self')" class="title-info">{entry.id}</h5>
+        </div>
+        </div>
+        {/}
+    <h2>VOTES</h2>
+    {#for entry in votes}
+        <div class="content-box">
+        <div>
+        {#if entry.votedEntityType == 'POST'}
+            <h5 style="cursor: pointer" onclick="window.open('/ui/posts/{entry.votedEntityId}', '_self')" class="title-info">{entry.votedEntityId}</h5>
+        {#else if entry.votedEntityType == 'COMMENT'}
+            <h5 style="cursor: pointer" onclick="window.open('/ui/posts/comment/{entry.votedEntityId}#{entry.votedEntityId}', '_self')" class="title-info">{entry.votedEntityId}</h5>
+            {/if}
+        </div>
+        </div>
+        {/}
+
+{/body}
+{/include}
+<script>
+
+    window.onload = function () {
+        let searchParam = new URL(window.location.href).searchParams.get("active");
+        if (searchParam) {
+            // TODO: Tab Funktionalität einbauen
+            document.getElementById("search").value = searchParam;
+        }
+    };
+
+    function logout() {
+        document.cookie = "quarkus-credential=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "quarkus-redirect-location=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        location.reload();
+    }
+</script>
