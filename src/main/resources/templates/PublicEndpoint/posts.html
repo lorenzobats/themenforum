@@ -148,7 +148,7 @@
     }
 
     function deletePost(postId) {
-        let url = '/ui/posts/' + postId;
+        let url = '/api/v1/posts/' + postId;
         fetch(url, {
             method: 'DELETE',
             mode: 'cors',
