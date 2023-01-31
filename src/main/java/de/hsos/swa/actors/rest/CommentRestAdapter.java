@@ -98,7 +98,7 @@ public class CommentRestAdapter {
     @Timed(name = "postCommentTimer", description = "Misst, wie lange es dauert ein Kommentar zu einem Post zu erstellen")
     public Response commentPost(
             @RequestBody(
-                    description = "Post to create",
+                    description = "Comment to create",
                     required = true,
                     content = @Content(schema = @Schema(implementation = CommentPostRequestBody.class))
             ) CommentPostRequestBody request, @Context SecurityContext securityContext) {
