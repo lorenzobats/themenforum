@@ -52,8 +52,11 @@
 <span class="sub-info">{post.parsedCreatedAtDate} |
     by <strong>{post.user.name}</strong> |
     <a href="/ui/posts?topic={post.topic.title}">{post.topic.title}</a> |
-    {post.commentCount} comments
-    {#if ! isLoggedIn} | voting: {post.totalVotes}{/if}</span>
+    {post.commentCount} comments |
+    {#if ! isLoggedIn} | voting: {post.totalVotes}{/if}
+    {#if username == post.user.name}
+        <a style="cursor: pointer" class="text-danger" onclick="deletePost('{post.id}')">delete</a>
+    {/if}</span>
 <div class="post-content" style="margin-top: 20px;">
     <p>{post.content}</p>
 </div>
@@ -117,7 +120,7 @@
                 {#if isLoggedIn} | <a href="#{comment.object.id}" id="{comment.object.id}-toggle-btn"
                     onClick="toggleReply('{comment.object.id}')">
                     reply</a>{/if}
-                {#if username == comment.object.user.name} | <a style="color: red" href="#{comment.object.id}"
+                {#if username == comment.object.user.name} | <a class="text-danger" href="#{comment.object.id}"
                     id="{comment.object.id}-delete-btn" onClick="deleteComment('{comment.object.id}')">
                     delete</a>{/if}
 
@@ -332,6 +335,37 @@
             .then(response => {
                 if (response.ok) {
                     location.reload();
+                } else {
+                    response.text().then(errorMessage => {
+                        //console.log(errorMessage);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
+    function deletePost(postId) {
+        let url = '/api/v1/posts/' + postId;
+        fetch(url, {
+            method: 'DELETE',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+        })
+            .then(response => {
+                if (response.ok) {
+                    if ('referrer' in document) {
+                        window.location = document.referrer;
+                    } else {
+                        window.history.back();
+                    }
                 } else {
                     response.text().then(errorMessage => {
                         //console.log(errorMessage);

@@ -85,8 +85,9 @@
             </span>
         </div>
         <div>
-            {#if username == entry.user.name}<button class="btn btn-outline-danger"
-                onclick="deletePost('{entry.id}')">X</button>{/if}
+            {#if username == entry.user.name}
+                <button class="btn btn-outline-danger"onclick="deletePost('{entry.id}')">X</button>
+            {/if}
         </div>
     </div>
 </div>
