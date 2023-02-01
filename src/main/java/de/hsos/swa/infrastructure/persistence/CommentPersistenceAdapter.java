@@ -82,7 +82,7 @@ public class CommentPersistenceAdapter implements CommentRepository {
     public RepositoryResult<List<Comment>> getCommentsByUser(String username) {
         try {
             CriteriaBuilder<CommentPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, CommentPersistenceModel.class);
-            criteriaBuilder.where("userPersistenceModel.name").eq(username);
+            criteriaBuilder.where("userPersistenceModel.name").eq(username).where("active").eq(true);
             return getCommentResultList(false, criteriaBuilder);
         } catch (NoResultException e) {
             return RepositoryResult.notFound();

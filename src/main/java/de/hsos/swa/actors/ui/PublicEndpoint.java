@@ -1,13 +1,21 @@
 package de.hsos.swa.actors.ui;
 import de.hsos.swa.application.input.GetAllVotesByUsernameUseCase;
+import de.hsos.swa.application.input.GetCommentsByUserUseCase;
+import de.hsos.swa.application.input.GetFilteredPostsUseCase;
 import de.hsos.swa.application.input.SearchTopicsUseCase;
 import de.hsos.swa.application.input.dto.in.GetAllVotesByUsernameQuery;
+import de.hsos.swa.application.input.dto.in.GetCommentsByUserQuery;
+import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
 import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
 import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
 import de.hsos.swa.application.input.dto.out.VoteInputPortDto;
+import de.hsos.swa.application.service.query.params.OrderParams;
+import de.hsos.swa.application.service.query.params.PostFilterParams;
+import de.hsos.swa.application.service.query.params.SortingParams;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
+import io.cucumber.java.sl.In;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 
@@ -19,11 +27,13 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 //TODO Error Templates erstellen
-@Path("/ui/")
+@Path("/ui")
 @PermitAll
 public class PublicEndpoint {
 
@@ -32,6 +42,12 @@ public class PublicEndpoint {
 
     @Inject
     GetAllVotesByUsernameUseCase getAllVotesByUsernameUseCase;
+
+    @Inject
+    GetCommentsByUserUseCase getCommentsByUserUseCase;
+
+    @Inject
+    GetFilteredPostsUseCase getFilteredPostsUseCase;
 
     @CheckedTemplate
     public static class Templates {
@@ -88,16 +104,20 @@ public class PublicEndpoint {
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Path("/me")
-    @RolesAllowed("{member, admin}")
+    @PermitAll
     public TemplateInstance profile(@Context SecurityContext securityContext, @DefaultValue("topics") @QueryParam("active") String selection) {
         String username = "";
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
         }
 
+        Map<PostFilterParams, Object> filterParams = new HashMap<>();
+        if (username != null)
+            filterParams.put(PostFilterParams.USERNAME, username);
+
         Result<List<TopicInputPortDto>> topics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(username));
-        Result<List<Post>> posts = Result.success(new ArrayList<>()); // TODO: Get Topics By User (via FilteredTopicsUsecase mit include Comments=false
-        Result<List<Comment>> comments = Result.success(new ArrayList<>()); // TODO: Get Comments By UsergetAllCommentsUseCase.getAllComments(false);
+        Result<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostQuery(filterParams, false, SortingParams.DATE, OrderParams.DESC));
+        Result<List<Comment>> comments = getCommentsByUserUseCase.getCommentsByUser(new GetCommentsByUserQuery(username));
         Result<List<VoteInputPortDto>> votes = getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext);
 
         return Templates.profile(topics.getData(), posts.getData(), comments.getData(), votes.getData(), username, selection);
