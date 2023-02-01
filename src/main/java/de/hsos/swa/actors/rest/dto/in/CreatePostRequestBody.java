@@ -8,7 +8,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
-@Schema(name = "PostCreationDTO")
+@Schema(name = "PostCreationDto")
 public class CreatePostRequestBody implements ValidatedRequestBody {
 
     @NotBlank(message = "title is empty")

@@ -4,7 +4,7 @@ import de.hsos.swa.actors.rest.dto.in.validation.ValidatedRequestBody;
 import de.hsos.swa.application.input.dto.in.CommentPostCommand;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
-@Schema(name = "CommentCreationDTO")
+@Schema(name = "CommentCreationDto")
 public class CommentPostRequestBody implements ValidatedRequestBody {
 
     public String postId;

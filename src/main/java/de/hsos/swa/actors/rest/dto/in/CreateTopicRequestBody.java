@@ -6,7 +6,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
 
-@Schema(name = "TopicCreationDTO")
+@Schema(name = "TopicCreationDto")
 public class CreateTopicRequestBody implements ValidatedRequestBody {
 
     @NotBlank(message = "title is empty")

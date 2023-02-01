@@ -9,7 +9,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import javax.validation.constraints.NotNull;
 
 
-@Schema(name = "VoteCreationDTO")
+@Schema(name = "VoteCreationDto")
 public class VoteEntityRequestBody implements ValidatedRequestBody {
 
     @NotNull(message = "voteType is empty")

@@ -2,6 +2,7 @@ package de.hsos.swa.actors.rest;
 
 import de.hsos.swa.actors.rest.dto.in.CreateTopicRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
+import de.hsos.swa.actors.rest.dto.out.PostDto;
 import de.hsos.swa.actors.rest.dto.out.TopicDto;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
 import de.hsos.swa.application.annotations.Adapter;
@@ -13,9 +14,13 @@ import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.CreateTopicCommand;
 import de.hsos.swa.application.input.dto.in.GetTopicByIdQuery;
 import de.hsos.swa.domain.entity.Topic;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -55,6 +60,11 @@ public class TopicsRessource {
     ValidationService validationService;
 
     @GET
+    @Operation(summary = "Holt alle Topics")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "TopicDto", implementation = TopicDto.class)))
+    })
     public Response getAllTopics(@QueryParam("search") String searchString) {
         try {
 
@@ -75,6 +85,11 @@ public class TopicsRessource {
 
     @GET
     @Path("{id}")
+    @Operation(summary = "Holt das Topic mit der übergebenen ID")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(name = "TopicDto", implementation = TopicDto.class)))
+    })
     public Response getTopicById(@PathParam("id") String id) {
         try {
             GetTopicByIdQuery query = new GetTopicByIdQuery(id);
@@ -93,6 +108,11 @@ public class TopicsRessource {
 
     @POST
     @RolesAllowed({"member","admin"})
+    @Operation(summary = "Erstellt ein neues Topic")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(name = "TopicDto", implementation = TopicDto.class)))
+    })
     public Response createTopic(
             @RequestBody(
                     description = "Topic to create",
@@ -107,8 +127,7 @@ public class TopicsRessource {
 
             if (topicResult.isSuccessful()) {
                 TopicDto topicResponse = TopicDto.Converter.fromDomainEntity(topicResult.getData());
-                // TODO: Neben Body auch Uri Builder nutzen um RessourceLink im Header zurückzugeben (Gilt für alle POST/UPDATE)
-                return Response.status(Response.Status.CREATED).entity(topicResponse).build();
+                return Response.status(Response.Status.OK).entity(topicResponse).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).entity(topicResult.getMessage()).build();
         } catch (ConstraintViolationException e) {
@@ -119,6 +138,11 @@ public class TopicsRessource {
     @DELETE
     @Path("/{id}")
     @RolesAllowed({"admin"})
+    @Operation(summary = "Löscht das Topic mit der übergebenen ID")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(name = "TopicDto", implementation = TopicDto.class)))
+    })
     public Response deleteTopic(@PathParam("id") String id, @Context SecurityContext securityContext) {
         try {
             String username = securityContext.getUserPrincipal().getName();

@@ -1,12 +1,18 @@
 package de.hsos.swa.actors.rest;
 
 import de.hsos.swa.actors.rest.dto.in.CreatePostRequestBody;
+import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.PostDto;
-import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
 import de.hsos.swa.application.annotations.Adapter;
-import de.hsos.swa.application.input.*;
-import de.hsos.swa.application.input.dto.in.*;
+import de.hsos.swa.application.input.CreatePostUseCase;
+import de.hsos.swa.application.input.DeletePostUseCase;
+import de.hsos.swa.application.input.GetFilteredPostsUseCase;
+import de.hsos.swa.application.input.GetPostByIdUseCase;
+import de.hsos.swa.application.input.dto.in.CreatePostCommand;
+import de.hsos.swa.application.input.dto.in.DeletePostCommand;
+import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
+import de.hsos.swa.application.input.dto.in.GetPostByIdQuery;
 import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.output.repository.VoteRepository;
 import de.hsos.swa.application.service.query.params.OrderParams;
@@ -14,9 +20,12 @@ import de.hsos.swa.application.service.query.params.PostFilterParams;
 import de.hsos.swa.application.service.query.params.SortingParams;
 import de.hsos.swa.domain.entity.Post;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.jboss.logging.Logger;
 
 import javax.annotation.security.RolesAllowed;
@@ -33,7 +42,10 @@ import javax.ws.rs.core.SecurityContext;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
@@ -67,6 +79,10 @@ public class PostsRessource {
 
     @GET
     @Operation(summary = "Holt alle Posts, die den Queryparametern entsprechen")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "PostDto", implementation = PostDto.class)))
+    })
     public Response getPosts(@DefaultValue("true") @QueryParam("includeComments") Boolean includeComments,
                              @QueryParam("username") String username,
                              @QueryParam("userId") UUID userId,
@@ -108,14 +124,17 @@ public class PostsRessource {
     }
 
 
-
-
     @GET
     @Path("{id}")
+    @Operation(summary = "Holt den Post mit der übergebenen ID")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(name = "PostDto", implementation = PostDto.class)))
+    })
     public Response getPostById(@PathParam("id") String id,
-            @DefaultValue("true") @QueryParam("includeComments") boolean includeComments,
-            @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
-            @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy) {
+                                @DefaultValue("true") @QueryParam("includeComments") boolean includeComments,
+                                @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
+                                @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy) {
         try {
             GetPostByIdQuery query = new GetPostByIdQuery(id, includeComments, sortBy, orderBy);
             Result<Post> postResult = this.getPostByIdUseCase.getPostById(query);
@@ -133,6 +152,11 @@ public class PostsRessource {
 
     @POST
     @RolesAllowed({"member"})
+    @Operation(summary = "Erstellt einen neuen Post")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(name = "PostDto", implementation = PostDto.class)))
+    })
     public Response createPost(
             @NotNull @RequestBody(
                     description = "Post to create",
@@ -148,8 +172,7 @@ public class PostsRessource {
 
             if (postResult.isSuccessful()) {
                 PostDto postResponse = PostDto.Converter.fromDomainEntity(postResult.getData());
-                // TODO: URI.Create auslagern und Hilfsklasse schreiben?
-                return Response.status(Response.Status.CREATED).location(URI.create("/posts/" + postResponse.id)).entity(postResponse).build();
+                return Response.status(Response.Status.OK).entity(postResponse).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getMessage()).build();
         } catch (ConstraintViolationException e) {
@@ -160,6 +183,11 @@ public class PostsRessource {
     @DELETE
     @Path("/{id}")
     @RolesAllowed({"member", "admin"})
+    @Operation(summary = "Löscht den Post mit der übergebenen ID")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(name = "PostDto", implementation = PostDto.class)))
+    })
     public Response deletePost(@PathParam("id") String id, @Context SecurityContext securityContext) {
         try {
             String username = securityContext.getUserPrincipal().getName();

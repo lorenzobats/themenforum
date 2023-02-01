@@ -13,9 +13,12 @@ import de.hsos.swa.domain.entity.Comment;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -54,14 +57,17 @@ public class CommentsRessource {
     DeleteCommentUseCase deleteCommentUseCase;
 
 
-
     @Inject
     ValidationService validationService;
 
 
     @GET
     @Path("{id}")
-    @Operation(summary = "Holt ein Kommentar anhand der ID")
+    @Operation(summary = "Holt das Kommentar mit der übergebenen ID")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(name = "CommentDto", implementation = CommentDto.class)))
+    })
     @Counted(name = "getCommentById", description = "Wie oft eine Kommentar anahand ID gesucht wurde")
     @Timed(name = "getCommentByIdTimer", description = "Misst, wie lange es dauert ein Kommentar anhand ID zu suchen")
     public Response getCommentById(@PathParam("id") String id) {
@@ -81,6 +87,10 @@ public class CommentsRessource {
     @GET
     @RolesAllowed({"admin", "member"})
     @Operation(summary = "Holt alle Kommentare")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "CommentDto", implementation = CommentDto.class)))
+    })
     @Counted(name = "getAllComments", description = "Wie oft alle Kommentare abgerufen wurden")
     @Timed(name = "getAllCommentsTimer", description = "Misst, wie lange es dauert alle Kommentar abzurufen")
     public Response getAllComments(@DefaultValue("true") @QueryParam("includeReplies") Boolean includeReplies) {
@@ -100,6 +110,10 @@ public class CommentsRessource {
     @POST
     @RolesAllowed("member")
     @Operation(summary = "Erstellt ein neues Kommentar")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(name = "CommentDto", implementation = CommentDto.class)))
+    })
     @Counted(name = "postComment", description = "Wie oft ein Kommentar zu einem Post erstellt wurde")
     @Timed(name = "postCommentTimer", description = "Misst, wie lange es dauert ein Kommentar zu einem Post zu erstellen")
     public Response commentPost(
@@ -126,9 +140,19 @@ public class CommentsRessource {
     @POST
     @Path("/{id}")
     @Operation(summary = "Erstellt eine Antwort auf das Kommentar mit übergebener ID")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(name = "CommentDto", implementation = CommentDto.class)))
+    })
     @Counted(name = "replyToComment", description = "Wie oft ein Kommentar geantwortet wurde")
     @Timed(name = "replyToCommentTimer", description = "Misst, wie lange es dauert auf ein Kommentar zu antworten")
-    public Response replyToComment(@PathParam("id") String id, ReplyToCommentRequestBody request, @Context SecurityContext securityContext) {
+    public Response replyToComment(
+            @PathParam("id") String id,
+            @RequestBody(
+                    description = "Reply to create",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = ReplyToCommentRequestBody.class))
+            ) ReplyToCommentRequestBody request, @Context SecurityContext securityContext) {
         try {
             validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
@@ -147,6 +171,10 @@ public class CommentsRessource {
     @DELETE
     @Path("/{id}/")
     @RolesAllowed({"member", "admin"})
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "CommentDto", implementation = CommentDto.class)))
+    })
     @Operation(summary = "Löscht das Kommentar mit der übergebenen ID")
     public Response deleteComment(@PathParam("id") String id, @Context SecurityContext securityContext) {
         try {

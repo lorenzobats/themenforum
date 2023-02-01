@@ -3,6 +3,7 @@ package de.hsos.swa.actors.rest;
 
 import de.hsos.swa.actors.rest.dto.in.RegisterUserRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
+import de.hsos.swa.actors.rest.dto.out.TopicDto;
 import de.hsos.swa.actors.rest.dto.out.UserDto;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
 import de.hsos.swa.application.annotations.Adapter;
@@ -13,9 +14,12 @@ import de.hsos.swa.application.input.dto.in.GetUserByNameQuery;
 import de.hsos.swa.application.input.dto.in.RegisterUserCommand;
 import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.domain.entity.User;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -50,9 +54,9 @@ public class UsersRessource {
     ValidationService validationService;
 
 
-    @DELETE
-    // TODO: implementieren => nutze "GetAllUsersUseCase"
+    @GET
     @RolesAllowed({"admin"})
+    @Operation(summary = "Holt alle User")
     public Response getAllUsers(@Context SecurityContext securityContext) {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
@@ -60,6 +64,11 @@ public class UsersRessource {
     @GET
     @Path("{username}")
     @RolesAllowed({"admin"})
+    @Operation(summary = "Holt den User mit dem übergebenen Username")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(name = "UserDto", implementation = UserDto.class)))
+    })
     public Response getUserByName(@PathParam("username") String username, @Context SecurityContext securityContext) {
         try {
             Result<User> userResult = this.getUserByNameUseCase.getUserByName(new GetUserByNameQuery(username), securityContext);
@@ -75,6 +84,11 @@ public class UsersRessource {
 
     @POST
     @PermitAll
+    @Operation(summary = "Erstellt einen neuen User")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(name = "UserDto", implementation = UserDto.class)))
+    })
     public Response registerUser(
             @RequestBody(
                     description = "Post to create",
@@ -87,21 +101,11 @@ public class UsersRessource {
             Result<User> userResult = this.registerUserUseCase.registerUser(command);
             if (userResult.isSuccessful()) {
                 UserDto responseDto = UserDto.Converter.fromDomainEntity(userResult.getData());
-                return Response.status(Response.Status.CREATED).entity(responseDto).build();
+                return Response.status(Response.Status.OK).entity(responseDto).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(userResult.getMessage())).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
         }
-    }
-
-    // TODO: UpdateUser ???
-
-    @DELETE
-    // TODO: implementieren => nutze "DeleteUserUseCase"
-    @Path("/{id}/")
-    @RolesAllowed({"admin"})
-    public Response deleteComment(@PathParam("id") String id, @Context SecurityContext securityContext) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 }
