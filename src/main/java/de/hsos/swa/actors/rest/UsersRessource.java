@@ -5,6 +5,7 @@ import de.hsos.swa.actors.rest.dto.in.RegisterUserRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.UserDto;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
+import de.hsos.swa.application.annotations.Adapter;
 import de.hsos.swa.application.input.GetAllUsersUseCase;
 import de.hsos.swa.application.input.GetUserByNameUseCase;
 import de.hsos.swa.application.input.RegisterUserUseCase;
@@ -33,7 +34,8 @@ import javax.ws.rs.core.SecurityContext;
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("api/v1/users")
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
-public class UserRestAdapter {
+@Adapter
+public class UsersRessource {
 
     @Inject
     RegisterUserUseCase registerUserUseCase;

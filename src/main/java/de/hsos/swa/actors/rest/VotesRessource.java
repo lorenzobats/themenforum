@@ -3,6 +3,7 @@ import de.hsos.swa.actors.rest.dto.in.VoteEntityRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.VoteDto;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
+import de.hsos.swa.application.annotations.Adapter;
 import de.hsos.swa.application.input.DeleteVoteUseCase;
 import de.hsos.swa.application.input.GetAllVotesUseCase;
 import de.hsos.swa.application.input.GetAllVotesByUsernameUseCase;
@@ -32,7 +33,8 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("api/v1/votes")
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
-public class VoteRestAdapter {
+@Adapter
+public class VotesRessource {
 
     @Inject
     VoteEntityUseCase voteEntityUseCase;

@@ -5,6 +5,7 @@ import de.hsos.swa.actors.rest.dto.in.ReplyToCommentRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.CommentDto;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
+import de.hsos.swa.application.annotations.Adapter;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
 import de.hsos.swa.application.input.dto.out.Result;
@@ -32,7 +33,8 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("api/v1/comments")
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
-public class CommentRestAdapter {
+@Adapter
+public class CommentsRessource {
 
     // QUERIES
     @Inject

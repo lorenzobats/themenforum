@@ -4,6 +4,7 @@ import de.hsos.swa.actors.rest.dto.in.CreatePostRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.PostDto;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
+import de.hsos.swa.application.annotations.Adapter;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
 import de.hsos.swa.application.input.dto.out.Result;
@@ -38,8 +39,8 @@ import java.util.*;
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("api/v1/posts")
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
-
-public class PostRestAdapter {
+@Adapter
+public class PostsRessource {
     @Inject
     CreatePostUseCase createPostUseCase;
 

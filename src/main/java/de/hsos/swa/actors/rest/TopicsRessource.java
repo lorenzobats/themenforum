@@ -4,6 +4,7 @@ import de.hsos.swa.actors.rest.dto.in.CreateTopicRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.TopicDto;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
+import de.hsos.swa.application.annotations.Adapter;
 import de.hsos.swa.application.input.dto.in.DeleteTopicCommand;
 import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
 import de.hsos.swa.application.input.dto.out.Result;
@@ -33,7 +34,8 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("api/v1/topics")
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
-public class TopicRestAdapter {
+@Adapter
+public class TopicsRessource {
 
     // QUERIES
     @Inject
