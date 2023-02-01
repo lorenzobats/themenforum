@@ -61,7 +61,7 @@ public class CommentsRessource {
 
     @GET
     @Path("{id}")
-    @Operation(summary = "Holt ein comments anhand der ID")
+    @Operation(summary = "Holt ein Kommentar anhand der ID")
     @Counted(name = "getCommentById", description = "Wie oft eine Kommentar anahand ID gesucht wurde")
     @Timed(name = "getCommentByIdTimer", description = "Misst, wie lange es dauert ein Kommentar anhand ID zu suchen")
     public Response getCommentById(@PathParam("id") String id) {
@@ -80,7 +80,7 @@ public class CommentsRessource {
 
     @GET
     @RolesAllowed({"admin", "member"})
-    @Operation(summary = "Holt alle comments")
+    @Operation(summary = "Holt alle Kommentare")
     @Counted(name = "getAllComments", description = "Wie oft alle Kommentare abgerufen wurden")
     @Timed(name = "getAllCommentsTimer", description = "Misst, wie lange es dauert alle Kommentar abzurufen")
     public Response getAllComments(@DefaultValue("true") @QueryParam("includeReplies") Boolean includeReplies) {
@@ -99,7 +99,7 @@ public class CommentsRessource {
 
     @POST
     @RolesAllowed("member")
-    @Operation(summary = "Erstellt ein neues comments")
+    @Operation(summary = "Erstellt ein neues Kommentar")
     @Counted(name = "postComment", description = "Wie oft ein Kommentar zu einem Post erstellt wurde")
     @Timed(name = "postCommentTimer", description = "Misst, wie lange es dauert ein Kommentar zu einem Post zu erstellen")
     public Response commentPost(
@@ -125,6 +125,7 @@ public class CommentsRessource {
 
     @POST
     @Path("/{id}")
+    @Operation(summary = "Erstellt eine Antwort auf das Kommentar mit übergebener ID")
     @Counted(name = "replyToComment", description = "Wie oft ein Kommentar geantwortet wurde")
     @Timed(name = "replyToCommentTimer", description = "Misst, wie lange es dauert auf ein Kommentar zu antworten")
     public Response replyToComment(@PathParam("id") String id, ReplyToCommentRequestBody request, @Context SecurityContext securityContext) {
@@ -146,6 +147,7 @@ public class CommentsRessource {
     @DELETE
     @Path("/{id}/")
     @RolesAllowed({"member", "admin"})
+    @Operation(summary = "Löscht das Kommentar mit der übergebenen ID")
     public Response deleteComment(@PathParam("id") String id, @Context SecurityContext securityContext) {
         try {
             String username = securityContext.getUserPrincipal().getName();

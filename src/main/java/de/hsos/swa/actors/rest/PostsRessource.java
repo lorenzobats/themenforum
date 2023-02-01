@@ -13,6 +13,7 @@ import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
 import de.hsos.swa.application.service.query.params.SortingParams;
 import de.hsos.swa.domain.entity.Post;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
@@ -65,6 +66,7 @@ public class PostsRessource {
 
 
     @GET
+    @Operation(summary = "Holt alle Posts, die den Queryparametern entsprechen")
     public Response getPosts(@DefaultValue("true") @QueryParam("includeComments") Boolean includeComments,
                              @QueryParam("username") String username,
                              @QueryParam("userId") UUID userId,

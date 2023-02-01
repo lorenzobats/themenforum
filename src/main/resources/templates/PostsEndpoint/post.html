@@ -176,6 +176,12 @@
                 left: 0,
                 behavior: "smooth"
             });
+
+            setTimeout(function() {
+                target.style.boxShadow = "0 0 10px #6476bd";
+                target.style.borderColor = "#a6adc9"
+                target.style.transition = "background-color 0.5s ease, box-shadow 0.5s ease";
+            }, 250);
         }, 500);
     };
 
