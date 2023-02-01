@@ -2,14 +2,15 @@ package de.hsos.swa.actors.ui;
 
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
-import de.hsos.swa.application.input.dto.out.CommentInputPortDto;
 import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
 import de.hsos.swa.application.input.dto.out.VoteInputPortDto;
 import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
 import de.hsos.swa.application.service.query.params.SortingParams;
-import de.hsos.swa.domain.entity.*;
+import de.hsos.swa.domain.entity.Comment;
+import de.hsos.swa.domain.entity.Post;
+import de.hsos.swa.domain.entity.User;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 import org.jboss.logging.Logger;
@@ -61,6 +62,9 @@ public class PublicEndpoint {
 
     @Inject
     GetUserByNameUseCase getUserByNameUseCase;
+
+    @Inject
+    GetCommentsByUserUseCase getCommentsByUserUseCase;
 
     @Inject
     Logger log;
@@ -149,17 +153,31 @@ public class PublicEndpoint {
     @Produces(MediaType.TEXT_HTML)
     @Path("/me")
     @RolesAllowed("member")
-    public TemplateInstance profile(@Context SecurityContext securityContext, @DefaultValue("topics") @QueryParam("active") String selection) {
+    public TemplateInstance profile(
+            @Context SecurityContext securityContext,
+            @DefaultValue("topics") @QueryParam("active") String selection) {
         String username = "";
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
         }
 
+        Map<PostFilterParams, Object> filterParams = new HashMap<>();
+        if (username != null)
+            filterParams.put(PostFilterParams.USERNAME, username);
+
+        //Get topics by username
         Result<List<TopicInputPortDto>> topics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(username));
-        Result<List<Post>> posts = Result.success(new ArrayList<>()); // TODO: Get Topics By User (via FilteredTopicsUsecase mit include Comments=false
-        Result<List<Comment>> comments = Result.success(new ArrayList<>()); // TODO: Get Comments By UsergetAllCommentsUseCase.getAllComments(false);
+
+        //Get posts by username
+        Result<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostQuery(filterParams, true, SortingParams.DATE, OrderParams.DESC));
+
+        //Get Comments by username
+        Result<List<Comment>> comments = getCommentsByUserUseCase.getCommentsByUser(new GetCommentsByUserQuery(username));
+
+        //
         Result<List<VoteInputPortDto>> votes = getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext);
 
+        //
         return Templates.profile(topics.getData(), posts.getData(), comments.getData(), votes.getData(), username, selection);
     }
 
