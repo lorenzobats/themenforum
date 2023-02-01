@@ -1,6 +1,6 @@
-package de.hsos.swa.actors.ui;
+package de.hsos.swa.actors.ui.util;
 
-import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
+import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.domain.entity.*;
 import de.hsos.swa.domain.vo.VoteType;
 import io.quarkus.qute.TemplateExtension;
@@ -8,6 +8,7 @@ import io.quarkus.qute.TemplateExtension;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+// TODO: Unnötige Template Extensions aufräumen
 @TemplateExtension
 public class TemplateExtensions {
 
@@ -25,7 +26,7 @@ public class TemplateExtensions {
         return topic.getCreatedAt().format(formatter);
     }
 
-    public static String parsedCreatedAtDate(TopicInputPortDto topic) {
+    public static String parsedCreatedAtDate(TopicWithPostCountDto topic) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
         return topic.topic.getCreatedAt().format(formatter);
     }
@@ -44,7 +45,7 @@ public class TemplateExtensions {
         return null;
     }
 
-    public static Vote loggedInUserVote(CommentWithDepth comment, String username) {
+    public static Vote loggedInUserVote(CommentUIDto comment, String username) {
         for (Vote vote : comment.object().getVotes()) {
             if(vote.getUser().getName().equals(username)){
                 return vote;
@@ -61,7 +62,7 @@ public class TemplateExtensions {
 
     }
 
-    public static boolean loggedInUserCanDownvote(CommentWithDepth comment, String username) {
+    public static boolean loggedInUserCanDownvote(CommentUIDto comment, String username) {
         Vote vote = loggedInUserVote(comment, username);
         return !comment.object().getUser().getName().equals(username) &&
                 (vote == null || vote.getVoteType() != VoteType.DOWN);
@@ -74,26 +75,26 @@ public class TemplateExtensions {
                 (vote == null || vote.getVoteType() != VoteType.UP);
     }
 
-    public static boolean loggedInUserCanUpvote(CommentWithDepth comment, String username) {
+    public static boolean loggedInUserCanUpvote(CommentUIDto comment, String username) {
         Vote vote = loggedInUserVote(comment, username);
         return !comment.object().getUser().getName().equals(username) &&
                 (vote == null || vote.getVoteType() != VoteType.UP);
     }
 
-    public static List<CommentWithDepth> commentsFlatWithDepth(Post post) {
-        List<CommentWithDepth> flatComments = new ArrayList<>();
-        Stack<CommentWithDepth> stack = new Stack<>();
+    public static List<CommentUIDto> commentsFlatWithDepth(Post post) {
+        List<CommentUIDto> flatComments = new ArrayList<>();
+        Stack<CommentUIDto> stack = new Stack<>();
         for (Comment comment : post.getComments()) {
-            stack.push(new CommentWithDepth(comment, 0));
+            stack.push(new CommentUIDto(comment, 0));
         }
 
         while (!stack.isEmpty()) {
-            CommentWithDepth current = stack.pop();
+            CommentUIDto current = stack.pop();
             flatComments.add(current);
 
             if (current.object().getReplies() != null && !current.object().getReplies().isEmpty()) {
                 for (Comment reply : current.object().getReplies()) {
-                    stack.push(new CommentWithDepth(reply, current.depth() + 1));
+                    stack.push(new CommentUIDto(reply, current.depth() + 1));
                 }
             }
         }

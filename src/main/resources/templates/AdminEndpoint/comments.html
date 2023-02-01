@@ -1,0 +1,88 @@
+{#include base}
+    {#title}Admin – Manage Posts{/title}
+    {#body}
+        <div class="header">
+        <div>
+            <h1 class="mt-4">Manage [POSTS]</h1>
+            <a href="/ui/admin/topics">[Manage Topics]</a>
+            <a href="/ui/admin/posts">[Manage Posts]</a>
+            <a href="/ui/admin/comments">[Manage Comments]</a>
+            <a href="/ui/admin/votes">[Manage Votes]</a>
+            <a href="/ui/admin/users">[Manage Users]</a>
+        </div>
+        <div class="login-buttons">
+            <p href="/ui/me">logged in as {adminname}</p>
+            <button class="btn btn-secondary" onclick="logout()">Logout</button>
+        </div>
+        </div>
+        <div class="mt-5">
+        <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">content</th>
+            <th scope="col">created by</th>
+            <th scope="col">created at</th>
+            <th scope="col">active</th>
+            <th scope="col">view/delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        {#for entry in entries}
+            <tr>
+            <th scope="row">{entry.id}</th>
+            <td>{entry.text}</td>
+            <td>{entry.user.name}</td>
+            <td>{entry.parsedCreatedAtDate}</td>
+            <td>{entry.active}</td>
+            <td>
+            <button class="btn btn-secondary" onclick="openInNewTab('{entry.id}')">View</button>
+            <button class="btn btn-danger" onclick="deleteEntry('{entry.id}')">Delete</button>
+            </td>
+            <td></td>
+            </tr>
+            {/}
+        </tbody>
+        </table>
+        </div>
+    {/body}
+{/include}
+<script>
+    function logout() {
+        document.cookie = "quarkus-credential=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "quarkus-redirect-location=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        location.reload();
+    }
+
+
+    function openInNewTab(id) {
+        window.open('/ui/posts/comment/' + id + "#" + id, "_blank");
+    }
+
+    function deleteEntry(id) {
+        let url = '/api/v1/comments/' + id;
+        fetch(url, {
+            method: 'DELETE',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+        })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    response.text().then(errorMessage => {
+                        console.log(errorMessage);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+</script>

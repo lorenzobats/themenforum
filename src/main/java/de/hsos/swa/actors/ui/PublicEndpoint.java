@@ -8,25 +8,22 @@ import de.hsos.swa.application.input.dto.in.GetCommentsByUserQuery;
 import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
 import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
 import de.hsos.swa.application.input.dto.out.Result;
-import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
-import de.hsos.swa.application.input.dto.out.VoteInputPortDto;
+import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
+import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReferenceDto;
 import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
 import de.hsos.swa.application.service.query.params.SortingParams;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
-import io.cucumber.java.sl.In;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,10 +56,10 @@ public class PublicEndpoint {
         public static native TemplateInstance register();
 
         public static native TemplateInstance profile(
-                List<TopicInputPortDto> topics,
+                List<TopicWithPostCountDto> topics,
                 List<Post> posts,
                 List<Comment> comments,
-                List<VoteInputPortDto> votes,
+                List<VoteWithVotedEntityReferenceDto> votes,
                 String username,
                 String selection);
     }
@@ -115,13 +112,12 @@ public class PublicEndpoint {
         if (username != null)
             filterParams.put(PostFilterParams.USERNAME, username);
 
-        Result<List<TopicInputPortDto>> topics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(username));
+        Result<List<TopicWithPostCountDto>> topics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(username));
         Result<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostQuery(filterParams, false, SortingParams.DATE, OrderParams.DESC));
         Result<List<Comment>> comments = getCommentsByUserUseCase.getCommentsByUser(new GetCommentsByUserQuery(username));
 
-        Result<List<VoteInputPortDto>> votes = getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext);
+        Result<List<VoteWithVotedEntityReferenceDto>> votes = getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext);
 
         return Templates.profile(topics.getData(), posts.getData(), comments.getData(), votes.getData(), username, selection);
     }
-
 }

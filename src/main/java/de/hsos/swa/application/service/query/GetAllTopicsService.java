@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.query;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.GetAllTopicsUseCase;
 import de.hsos.swa.application.input.dto.out.Result;
-import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
+import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 
@@ -21,8 +21,8 @@ public class GetAllTopicsService implements GetAllTopicsUseCase {
     TopicRepository topicRepository;
 
     @Override
-    public Result<List<TopicInputPortDto>> getAllTopics() {
-        RepositoryResult<List<TopicInputPortDto>> topicsResult = topicRepository.getAllTopics();
+    public Result<List<TopicWithPostCountDto>> getAllTopics() {
+        RepositoryResult<List<TopicWithPostCountDto>> topicsResult = topicRepository.getAllTopics();
         if (topicsResult.badResult()) {
             return Result.error("Could not get Topics");
         }

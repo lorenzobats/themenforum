@@ -4,7 +4,7 @@ import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.GetAllVotesByUsernameUseCase;
 import de.hsos.swa.application.input.dto.in.GetAllVotesByUsernameQuery;
 import de.hsos.swa.application.input.dto.out.Result;
-import de.hsos.swa.application.input.dto.out.VoteInputPortDto;
+import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReferenceDto;
 import de.hsos.swa.application.output.repository.dto.in.VoteQueryDto;
 import de.hsos.swa.application.output.repository.VoteRepository;
 import org.jboss.logging.Logger;
@@ -26,7 +26,7 @@ public class GetAllVotesByUsernameService implements GetAllVotesByUsernameUseCas
     Logger log;
 
     @Override
-    public Result<List<VoteInputPortDto>> getAllVotesByUsername(GetAllVotesByUsernameQuery request, SecurityContext securityContext) {
+    public Result<List<VoteWithVotedEntityReferenceDto>> getAllVotesByUsername(GetAllVotesByUsernameQuery request, SecurityContext securityContext) {
         log.debug(">>>P" + securityContext.getUserPrincipal().getName());
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<List<VoteQueryDto>> votesResult = voteRepository.getAllVotesByUser(request.username());
 
@@ -34,7 +34,7 @@ public class GetAllVotesByUsernameService implements GetAllVotesByUsernameUseCas
             return Result.error("Cannot find Posts");
         }
 
-        List<VoteInputPortDto> userVotes = votesResult.get().stream().map(v -> new VoteInputPortDto(v.vote(), v.votedEntityType(), v.votedEntityId())).toList();
+        List<VoteWithVotedEntityReferenceDto> userVotes = votesResult.get().stream().map(v -> new VoteWithVotedEntityReferenceDto(v.vote(), v.votedEntityType(), v.votedEntityId())).toList();
 
         return Result.success(userVotes);
     }

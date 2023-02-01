@@ -5,12 +5,11 @@ import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
 import de.hsos.swa.application.input.dto.in.GetPostByCommentIdQuery;
 import de.hsos.swa.application.input.dto.in.GetPostByIdQuery;
 import de.hsos.swa.application.input.dto.out.Result;
-import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
+import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
 import de.hsos.swa.application.service.query.params.SortingParams;
 import de.hsos.swa.domain.entity.Post;
-import io.cucumber.java.sl.In;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 
@@ -48,7 +47,7 @@ public class PostsEndpoint {
 
         public static native TemplateInstance post(Post post, boolean isLoggedIn, String username);
 
-        public static native TemplateInstance createPost(List<TopicInputPortDto> allTopics, String username);
+        public static native TemplateInstance createPost(List<TopicWithPostCountDto> allTopics, String username);
     }
 
 
@@ -114,7 +113,7 @@ public class PostsEndpoint {
 
     @GET
     @Produces(MediaType.TEXT_HTML)
-    @Path("/comments/{id}")
+    @Path("/comment/{id}")
     @PermitAll
     public TemplateInstance postByCommentId(@PathParam("id") String id, @Context SecurityContext securityContext) {
         boolean isLoggedIn = false;
@@ -141,7 +140,7 @@ public class PostsEndpoint {
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
         }
-        Result<List<TopicInputPortDto>> allTopics = getAllTopicsUseCase.getAllTopics();
+        Result<List<TopicWithPostCountDto>> allTopics = getAllTopicsUseCase.getAllTopics();
         return Templates.createPost(allTopics.getData(), username);
     }
 

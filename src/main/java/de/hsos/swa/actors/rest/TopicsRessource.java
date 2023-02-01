@@ -8,7 +8,7 @@ import de.hsos.swa.application.annotations.Adapter;
 import de.hsos.swa.application.input.dto.in.DeleteTopicCommand;
 import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
 import de.hsos.swa.application.input.dto.out.Result;
-import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
+import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.CreateTopicCommand;
 import de.hsos.swa.application.input.dto.in.GetTopicByIdQuery;
@@ -58,7 +58,7 @@ public class TopicsRessource {
     public Response getAllTopics(@QueryParam("search") String searchString) {
         try {
 
-            Result<List<TopicInputPortDto>> topicsResult;
+            Result<List<TopicWithPostCountDto>> topicsResult;
             if (searchString != null)
                 topicsResult = this.searchTopicsUseCase.searchTopics(new SearchTopicsQuery(searchString));
             else topicsResult = this.getAllTopicsUseCase.getAllTopics();

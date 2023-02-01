@@ -2,20 +2,20 @@ package de.hsos.swa.actors.ui;
 
 
 import de.hsos.swa.application.annotations.Adapter;
-import de.hsos.swa.application.input.GetAllCommentsUseCase;
-import de.hsos.swa.application.input.GetAllTopicsUseCase;
-import de.hsos.swa.application.input.GetAllUsersUseCase;
-import de.hsos.swa.application.input.GetAllVotesUseCase;
+import de.hsos.swa.application.input.*;
+import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
 import de.hsos.swa.application.input.dto.out.Result;
-import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
-import de.hsos.swa.application.input.dto.out.VoteInputPortDto;
+import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
+import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReferenceDto;
+import de.hsos.swa.application.service.query.params.OrderParams;
+import de.hsos.swa.application.service.query.params.PostFilterParams;
+import de.hsos.swa.application.service.query.params.SortingParams;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 
-import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -24,22 +24,24 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@Path("/ui/admin") // TODO: nach Refactor via Admin laufen lassen
+@Path("/ui/admin")
 @RolesAllowed("admin")
 @Produces(MediaType.TEXT_HTML)
 @Adapter
 public class AdminEndpoint {
 
-    //@Inject
-    //GetAllTopicsUseCase getAllTopicsUseCase;
+    @Inject
+    GetAllTopicsUseCase getAllTopicsUseCase;
 
-    //@Inject   // TODO: GetAllPostsUseCase
-    //GetAllPostsUseCase getAllPostsUseCase;
+    @Inject
+    GetFilteredPostsUseCase getFilteredPostsUseCase;
 
-    //@Inject
-    //GetAllCommentsUseCase getAllCommentsUseCase;
+    @Inject
+    GetAllCommentsUseCase getAllCommentsUseCase;
 
     @Inject
     GetAllUsersUseCase getAllUsersUseCase;
@@ -49,10 +51,54 @@ public class AdminEndpoint {
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance users(List<User> users, String username);
-        public static native TemplateInstance votes(List<VoteInputPortDto> votes, String username);
+        public static native TemplateInstance index(String adminname);
+        public static native TemplateInstance topics(List<TopicWithPostCountDto> entries, String adminname);
+        public static native TemplateInstance posts(List<Post> entries, String adminname);
+        public static native TemplateInstance comments(List<Comment> entries, String adminname);
+        public static native TemplateInstance users(List<User> entries, String adminname);
+        public static native TemplateInstance votes(List<VoteWithVotedEntityReferenceDto> entries, String adminname);
     }
 
+
+
+    @GET
+    @RolesAllowed({"admin"})
+    public TemplateInstance index(@Context SecurityContext securityContext) {
+        String adminName = adminName(securityContext);
+        return Templates.index(adminName);
+    }
+    
+    
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    @Path("/topics")
+    @RolesAllowed({"admin"})
+    public TemplateInstance topics(@Context SecurityContext securityContext) {
+        String adminName = adminName(securityContext);
+        Result<List<TopicWithPostCountDto>> topics = getAllTopicsUseCase.getAllTopics();
+        return Templates.topics(topics.getData(), adminName);
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    @Path("/posts")
+    @RolesAllowed({"admin"})
+    public TemplateInstance posts(@Context SecurityContext securityContext) {
+        String adminName = adminName(securityContext);
+        Map<PostFilterParams, Object> filterParams = new HashMap<>();
+        Result<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostQuery(filterParams, false, SortingParams.DATE, OrderParams.DESC));
+        return Templates.posts(posts.getData(), adminName);
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    @Path("/comments")
+    @RolesAllowed({"admin"})
+    public TemplateInstance comments(@Context SecurityContext securityContext) {
+        String adminName = adminName(securityContext);
+        Result<List<Comment>> comments = getAllCommentsUseCase.getAllComments(false);
+        return Templates.comments(comments.getData(), adminName);
+    }
 
     // USERS
     @GET
@@ -60,12 +106,9 @@ public class AdminEndpoint {
     @Path("/users")
     @RolesAllowed({"admin"})
     public TemplateInstance users(@Context SecurityContext securityContext) {
-        String username = "";
-        if (securityContext.getUserPrincipal() != null) {
-            username = securityContext.getUserPrincipal().getName();
-        }
+        String adminName = adminName(securityContext);
         Result<List<User>> allUsers = getAllUsersUseCase.getAllUsers(securityContext);
-        return Templates.users(allUsers.getData(), username);
+        return Templates.users(allUsers.getData(), adminName);
     }
 
     // VOTES
@@ -74,11 +117,17 @@ public class AdminEndpoint {
     @Path("/votes")
     @RolesAllowed({"admin"})
     public TemplateInstance votes(@Context SecurityContext securityContext) {
-        String username = "";
+        String adminName = adminName(securityContext);
+        Result<List<VoteWithVotedEntityReferenceDto>> allVotes = getAllVotesUseCase.getAllVotes(securityContext);
+        return Templates.votes(allVotes.getData(), adminName);
+    }
+
+    // UTILITY METHOD
+    private static String adminName(SecurityContext securityContext) {
+        String adminName = "";
         if (securityContext.getUserPrincipal() != null) {
-            username = securityContext.getUserPrincipal().getName();
+            adminName = securityContext.getUserPrincipal().getName();
         }
-        Result<List<VoteInputPortDto>> allVotes = getAllVotesUseCase.getAllVotes(securityContext);
-        return Templates.votes(allVotes.getData(), username);
+        return adminName;
     }
 }

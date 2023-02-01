@@ -37,7 +37,7 @@
     {#for entry in comments}
         <div class="content-box">
         <div>
-        <h5 style="cursor: pointer" onclick="window.open('/ui/posts/comments/{entry.id}', '_self')" class="title-info">{entry.text}</h5>
+        <h5 style="cursor: pointer" onclick="window.open('/ui/posts/comment/{entry.id}#{entry.id}', '_self')" class="title-info">{entry.text}</h5>
         </div>
         </div>
         {/}

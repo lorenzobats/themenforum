@@ -1,8 +1,8 @@
-package de.hsos.swa.actors.ui;
+package de.hsos.swa.actors.ui.util;
 
 import de.hsos.swa.domain.entity.Comment;
 
-public record CommentWithDepth(
+public record CommentUIDto(
         Comment object,
         int depth
 ) { }

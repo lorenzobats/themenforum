@@ -4,7 +4,7 @@ import de.hsos.swa.application.input.GetAllTopicsUseCase;
 import de.hsos.swa.application.input.SearchTopicsUseCase;
 import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
 import de.hsos.swa.application.input.dto.out.Result;
-import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
+import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 
@@ -33,7 +33,7 @@ public class TopicsEndpoint {
     @CheckedTemplate
     public static class Templates {
 
-        public static native TemplateInstance topics(List<TopicInputPortDto> allTopics, boolean isLoggedIn, String username);
+        public static native TemplateInstance topics(List<TopicWithPostCountDto> allTopics, boolean isLoggedIn, String username);
         public static native TemplateInstance createTopic(String username);
     }
 
@@ -50,10 +50,10 @@ public class TopicsEndpoint {
             isLoggedIn = true;
         }
         if(searchString != null){
-            Result<List<TopicInputPortDto>> searchedTopics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(searchString));
+            Result<List<TopicWithPostCountDto>> searchedTopics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(searchString));
             return Templates.topics(searchedTopics.getData(), isLoggedIn, username);
         }
-        Result<List<TopicInputPortDto>> allTopics = getAllTopicsUseCase.getAllTopics();
+        Result<List<TopicWithPostCountDto>> allTopics = getAllTopicsUseCase.getAllTopics();
         return Templates.topics(allTopics.getData(), isLoggedIn, username);
     }
 
@@ -66,7 +66,7 @@ public class TopicsEndpoint {
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
         }
-        Result<List<TopicInputPortDto>> allTopics = getAllTopicsUseCase.getAllTopics();
+        Result<List<TopicWithPostCountDto>> allTopics = getAllTopicsUseCase.getAllTopics();
         return Templates.createTopic(username);
     }
 }

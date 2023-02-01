@@ -11,7 +11,7 @@ import de.hsos.swa.application.input.VoteEntityUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteVoteCommand;
 import de.hsos.swa.application.input.dto.in.GetAllVotesByUsernameQuery;
 import de.hsos.swa.application.input.dto.in.VoteEntityCommand;
-import de.hsos.swa.application.input.dto.out.VoteInputPortDto;
+import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReferenceDto;
 import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.domain.entity.Vote;
 
@@ -56,7 +56,7 @@ public class VotesRessource {
     @RolesAllowed({"admin", "member"})
     public Response getAllVotes(@QueryParam("username") String username, @Context SecurityContext securityContext) {
         try {
-            Result<List<VoteInputPortDto>> votesResult;
+            Result<List<VoteWithVotedEntityReferenceDto>> votesResult;
             if(username != null)
                 votesResult = this.getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext);
             else votesResult = this.getAllVotesUseCase.getAllVotes(securityContext);
