@@ -22,7 +22,7 @@ public interface PostRepository {
 
     //------------------------------------------------------------------------------------------------------------------
     // QUERIES
-    RepositoryResult<List<Post>> getAllFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments);
+    RepositoryResult<List<Post>> getFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments);
 
     RepositoryResult<List<Post>> getAllPosts(boolean includeComments);
 

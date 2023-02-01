@@ -112,7 +112,7 @@ public class PostPersistenceAdapter implements PostRepository {
     }
 
     @Override
-    public RepositoryResult<List<Post>> getAllFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments) {
+    public RepositoryResult<List<Post>> getFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments) {
         try {
             CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
 

@@ -14,4 +14,5 @@ public interface CommentRepository {
     // QUERIES
     RepositoryResult<List<Comment>> getAllComments(boolean includeReplies);
     RepositoryResult<Comment> getCommentById(UUID commentId, boolean includeReplies);
+    RepositoryResult<List<Comment>> getCommentsByUser(String username);
 }

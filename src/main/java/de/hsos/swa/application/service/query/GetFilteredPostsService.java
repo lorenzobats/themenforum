@@ -29,7 +29,7 @@ public class GetFilteredPostsService implements GetFilteredPostsUseCase {
 
     @Override
     public Result<List<Post>> getFilteredPosts(GetFilteredPostQuery request) {
-        RepositoryResult<List<Post>> postsResult = postRepository.getAllFilteredPosts(request.filterParams(), request.includeComments());
+        RepositoryResult<List<Post>> postsResult = postRepository.getFilteredPosts(request.filterParams(), request.includeComments());
 
         if (postsResult.ok()) {
             List<Post> sortedPosts = new ArrayList<>(postsResult.get());
