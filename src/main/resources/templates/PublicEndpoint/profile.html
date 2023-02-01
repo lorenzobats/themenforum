@@ -1,11 +1,10 @@
 {#include base}
-{#title}{username} {/title}
+{#title}{username}{/title}
 {#body}
 <div class="header">
     <div>
         <h1 class="mt-4">My Profile</h1>
-        <p><a href="/ui/topics">[Browse Topics]</a></p>
-        <p><a href="/ui/posts">[Browse Posts]</a></p>
+        <p><a href="/ui/topics">[Browse Topics]</a><a href="/ui/posts">[Browse Posts]</a></p>
     </div>
     <div class="login-buttons">
         Logged in as: {username}
@@ -18,32 +17,31 @@
         <button class="btn btn-primary" onclick="createTopic()">Create Topic</button>
     </div>
 </div>
-
+    <h2>Topics</h2>
     {#for entry in topics}
-        <h2>TOPICS</h2>
         <div class="content-box">
         <div>
-        <h5 style="cursor: pointer" onclick="window.open('/ui/posts?topic={entry.topic.title}', '_self')" class="title-info">{entry.topic.id}</h5>
+        <h5 style="cursor: pointer" onclick="window.open('/ui/posts?topic={entry.topic.title}', '_self')" class="title-info">{entry.topic.title}</h5>
         </div>
         </div>
         {/}
-    <h2>POSTS</h2>
+    <h2>Posts</h2>
     {#for entry in posts}
         <div class="content-box">
         <div>
-        <h5 style="cursor: pointer" onclick="window.open('/ui/posts/{entry.id}', '_self')" class="title-info">{entry.id}</h5>
+        <h5 style="cursor: pointer" onclick="window.open('/ui/posts/{entry.id}', '_self')" class="title-info">{entry.title}</h5>
         </div>
         </div>
         {/}
-    <h2>COMMENTS</h2>
+    <h2>Comments</h2>
     {#for entry in comments}
         <div class="content-box">
         <div>
-        <h5 style="cursor: pointer" onclick="window.open('/ui/posts/?comment={entry.id}#{entry.id}', '_self')" class="title-info">{entry.id}</h5>
+        <h5 style="cursor: pointer" onclick="window.open('/ui/posts/?comment={entry.id}#{entry.id}', '_self')" class="title-info">{entry.text}</h5>
         </div>
         </div>
         {/}
-    <h2>VOTES</h2>
+    <h2>Votes</h2>
     {#for entry in votes}
         <div class="content-box">
         <div>

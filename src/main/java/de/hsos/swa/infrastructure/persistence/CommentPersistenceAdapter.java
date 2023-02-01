@@ -7,8 +7,10 @@ import com.blazebit.persistence.view.EntityViewSetting;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.output.repository.CommentRepository;
 import de.hsos.swa.domain.entity.Comment;
+import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.infrastructure.persistence.view.CommentPersistenceView;
 import de.hsos.swa.infrastructure.persistence.model.CommentPersistenceModel;
+import io.quarkus.netty.runtime.NettyRecorder;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
@@ -76,10 +78,27 @@ public class CommentPersistenceAdapter implements CommentRepository {
         }
     }
 
+    @Override
+    public RepositoryResult<List<Comment>> getCommentsByUser(String username) {
+        try {
+            CriteriaBuilder<CommentPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, CommentPersistenceModel.class);
+            criteriaBuilder.where("userPersistenceModel.name").eq(username);
+            return getCommentResultList(false, criteriaBuilder);
+        } catch (NoResultException e) {
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.error();
+        } catch (PersistenceException e) {
+            log.error(e);
+            return RepositoryResult.error();
+        }
+    }
+
     //------------------------------------------------------------------------------------------------------------------
     // UTILITY METHODS
-    private RepositoryResult<List<Comment>> getCommentResultList(boolean includeComments, CriteriaBuilder<CommentPersistenceModel> criteriaBuilder) {
-        if (!includeComments) {
+    private RepositoryResult<List<Comment>> getCommentResultList(boolean includeReplies, CriteriaBuilder<CommentPersistenceModel> criteriaBuilder) {
+        if (!includeReplies) {
             List<CommentPersistenceView> commentList;
             CriteriaBuilder<CommentPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(CommentPersistenceView.class), criteriaBuilder);
             commentList = criteriaBuilderView.getResultList();
