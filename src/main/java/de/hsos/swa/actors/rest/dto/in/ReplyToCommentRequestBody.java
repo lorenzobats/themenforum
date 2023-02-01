@@ -6,7 +6,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
 
-@Schema(name = "ReplyTpCommentDTO")
+@Schema(name = "ReplyToCommentDTO")
 public class ReplyToCommentRequestBody implements ValidatedRequestBody {
 
     @NotBlank(message = "text is empty")

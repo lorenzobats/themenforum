@@ -163,6 +163,22 @@
 {/include}
 
 <script>
+    window.onload = function() {
+        var currentUrl = window.location.href;
+        var identifier = currentUrl.split("/posts/comment/")[1];
+
+        setTimeout(function() {
+            var target = document.getElementById(identifier);
+            if (!target) return;
+            var targetPos = target.getBoundingClientRect().top + window.scrollY;
+            window.scroll({
+                top: targetPos,
+                left: 0,
+                behavior: "smooth"
+            });
+        }, 500);
+    };
+
     function toggleReply(entityId) {
         document.getElementById(entityId + "-box").style.display = "block";
         document.getElementById(entityId + "-toggle-btn").style.display = "none";

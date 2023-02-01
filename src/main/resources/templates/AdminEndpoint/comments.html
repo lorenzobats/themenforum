@@ -36,8 +36,10 @@
             <td>{entry.parsedCreatedAtDate}</td>
             <td>{entry.active}</td>
             <td>
-            <button class="btn btn-secondary" onclick="openInNewTab('{entry.id}')">View</button>
-            <button class="btn btn-danger" onclick="deleteEntry('{entry.id}')">Delete</button>
+            <div style="display: flex">
+                <button class="btn btn-secondary" onclick="openInNewTab('{entry.id}')">View</button>
+                <button class="btn btn-danger ml-1" onclick="deleteEntry('{entry.id}')">Delete</button>
+            </div>
             </td>
             <td></td>
             </tr>
@@ -56,7 +58,7 @@
 
 
     function openInNewTab(id) {
-        window.open('/ui/posts/comment/' + id + "#" + id, "_blank");
+        window.open('/ui/posts/comment/' + id, "_blank");
     }
 
     function deleteEntry(id) {

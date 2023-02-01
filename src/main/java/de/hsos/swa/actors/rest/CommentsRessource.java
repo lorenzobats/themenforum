@@ -12,6 +12,7 @@ import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.domain.entity.Comment;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Timed;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
@@ -60,6 +61,7 @@ public class CommentsRessource {
 
     @GET
     @Path("{id}")
+    @Operation(summary = "Holt ein comments anhand der ID")
     @Counted(name = "getCommentById", description = "Wie oft eine Kommentar anahand ID gesucht wurde")
     @Timed(name = "getCommentByIdTimer", description = "Misst, wie lange es dauert ein Kommentar anhand ID zu suchen")
     public Response getCommentById(@PathParam("id") String id) {
@@ -78,6 +80,7 @@ public class CommentsRessource {
 
     @GET
     @RolesAllowed({"admin", "member"})
+    @Operation(summary = "Holt alle comments")
     @Counted(name = "getAllComments", description = "Wie oft alle Kommentare abgerufen wurden")
     @Timed(name = "getAllCommentsTimer", description = "Misst, wie lange es dauert alle Kommentar abzurufen")
     public Response getAllComments(@DefaultValue("true") @QueryParam("includeReplies") Boolean includeReplies) {
@@ -96,6 +99,7 @@ public class CommentsRessource {
 
     @POST
     @RolesAllowed("member")
+    @Operation(summary = "Erstellt ein neues comments")
     @Counted(name = "postComment", description = "Wie oft ein Kommentar zu einem Post erstellt wurde")
     @Timed(name = "postCommentTimer", description = "Misst, wie lange es dauert ein Kommentar zu einem Post zu erstellen")
     public Response commentPost(
