@@ -2,6 +2,7 @@ package de.hsos.swa.actors.ui;
 
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
+import de.hsos.swa.application.input.dto.in.GetPostByCommentIdQuery;
 import de.hsos.swa.application.input.dto.in.GetPostByIdQuery;
 import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.input.dto.out.TopicInputPortDto;
@@ -9,6 +10,7 @@ import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
 import de.hsos.swa.application.service.query.params.SortingParams;
 import de.hsos.swa.domain.entity.Post;
+import io.cucumber.java.sl.In;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 
@@ -35,6 +37,9 @@ public class PostsEndpoint {
 
     @Inject
     GetAllTopicsUseCase getAllTopicsUseCase;
+
+    @Inject
+    GetPostByCommentIdUseCase getPostByCommentIdUseCase;
 
     @CheckedTemplate
     public static class Templates {
@@ -109,6 +114,26 @@ public class PostsEndpoint {
 
     @GET
     @Produces(MediaType.TEXT_HTML)
+    @Path("/comments/{id}")
+    @PermitAll
+    public TemplateInstance postByCommentId(@PathParam("id") String id, @Context SecurityContext securityContext) {
+        boolean isLoggedIn = false;
+        String username = "";
+        if (securityContext.getUserPrincipal() != null) {
+            username = securityContext.getUserPrincipal().getName();
+            isLoggedIn = true;
+        }
+
+        Result<Post> postResult = getPostByCommentIdUseCase.getPostByCommentId(new GetPostByCommentIdQuery(id));
+
+        if (postResult.isSuccessful()) {
+            return Templates.post(postResult.getData(), isLoggedIn, username);
+        }
+        return Templates.post(null, isLoggedIn, username);  // TODO: Error laden
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
     @Path("/new")
     @RolesAllowed({"admin", "member"})
     public TemplateInstance createPost(@Context SecurityContext securityContext) {
@@ -119,4 +144,7 @@ public class PostsEndpoint {
         Result<List<TopicInputPortDto>> allTopics = getAllTopicsUseCase.getAllTopics();
         return Templates.createPost(allTopics.getData(), username);
     }
+
+
+
 }

@@ -129,7 +129,6 @@ public class PostsRessource {
         }
     }
 
-
     @POST
     @RolesAllowed({"member"})
     public Response createPost(
