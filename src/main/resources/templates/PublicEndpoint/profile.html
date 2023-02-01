@@ -11,42 +11,39 @@
         <button class="btn btn-secondary" onclick="logout()">Logout</button>
     </div>
 </div>
-
-<div style="display: flex;justify-content: space-between;" class="mb-2">
-    <div>
-        <button class="btn btn-primary" onclick="createTopic()">Create Topic</button>
-    </div>
-</div>
-    <h2>Topics</h2>
+    <h2 class="mt-2">My Topics</h2>
     {#if topics}
     {#for entry in topics}
         <div class="content-box">
         <div>
         <h5 style="cursor: pointer" onclick="window.open('/ui/posts?topic={entry.topic.title}', '_self')" class="title-info">{entry.topic.title}</h5>
+        <span>{entry.topic.parsedCreatedAtDate}</span>
         </div>
         </div>
         {/}
     {#else}
     <p>Du hast noch keine Topics veröffentlicht</p>
     {/if}
-    <h2>Posts</h2>
+    <h2>My Posts</h2>
     {#if posts}
     {#for entry in posts}
         <div class="content-box">
         <div>
         <h5 style="cursor: pointer" onclick="window.open('/ui/posts/{entry.id}', '_self')" class="title-info">{entry.title}</h5>
+        <span>{entry.parsedCreatedAtDate}</span>
         </div>
         </div>
         {/}
     {#else}
         <p>Du hast noch keine Posts veröffentlicht</p>
     {/if}
-    <h2>Comments</h2>
+    <h2>My Comments</h2>
     {#if comments}
     {#for entry in comments}
         <div class="content-box">
         <div>
         <h5 style="cursor: pointer" onclick="window.open('/ui/posts/comment/{entry.id}#{entry.id}', '_self')" class="title-info">{entry.text}</h5>
+        <span>{entry.parsedCreatedAtDate}</span>
         </div>
         </div>
         {/}
@@ -58,11 +55,13 @@
     {#for entry in votes}
         <div class="content-box">
         <div>
-        {#if entry.votedEntityType == 'POST'}
-            <h5 style="cursor: pointer" onclick="window.open('/ui/posts/{entry.votedEntityId}', '_self')" class="title-info">{entry.votedEntityId}</h5>
-        {#else if entry.votedEntityType == 'COMMENT'}
-            <h5 style="cursor: pointer" onclick="window.open('/ui/posts/comment/{entry.votedEntityId}#{entry.votedEntityId}', '_self')" class="title-info">{entry.votedEntityId}</h5>
-            {/if}
+        {#if entry.votedEntityString == 'POST'}
+            <h5 style="cursor: pointer" onclick="window.open('/ui/posts/{entry.votedEntityId}', '_self')" class="title-info">Post</h5>
+            <span>{entry.parsedCreatedAtDate}</span>
+        {#else if entry.votedEntityString == 'COMMENT'}
+            <h5 style="cursor: pointer" onclick="window.open('/ui/posts/comment/{entry.votedEntityId}#{entry.votedEntityId}', '_self')" class="title-info">Comment</h5>
+            <span>{entry.parsedCreatedAtDate}</span>
+        {/if}
         </div>
         </div>
         {/}
@@ -83,6 +82,10 @@
 
     function getPostByCommentId(commentId) {
         fetch('/')
+    }
+
+    function createTopic() {
+        window.open('/ui/topics/new', '_self');
     }
 
     function logout() {
