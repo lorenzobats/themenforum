@@ -18,6 +18,7 @@
     </div>
 </div>
     <h2>Topics</h2>
+    {#if topics}
     {#for entry in topics}
         <div class="content-box">
         <div>
@@ -25,7 +26,11 @@
         </div>
         </div>
         {/}
+    {#else}
+    <p>Du hast noch keine Topics veröffentlicht</p>
+    {/if}
     <h2>Posts</h2>
+    {#if posts}
     {#for entry in posts}
         <div class="content-box">
         <div>
@@ -33,7 +38,11 @@
         </div>
         </div>
         {/}
+    {#else}
+        <p>Du hast noch keine Posts veröffentlicht</p>
+    {/if}
     <h2>Comments</h2>
+    {#if comments}
     {#for entry in comments}
         <div class="content-box">
         <div>
@@ -41,7 +50,11 @@
         </div>
         </div>
         {/}
+    {#else}
+        <p>Du hast noch keine Kommentare geschrieben</p>
+    {/if}
     <h2>Votes</h2>
+    {#if votes}
     {#for entry in votes}
         <div class="content-box">
         <div>
@@ -53,7 +66,9 @@
         </div>
         </div>
         {/}
-
+    {#else}
+    <p>Du hast noch keine Inhalte bewertet</p>
+    {/if}
 {/body}
 {/include}
 <script>
