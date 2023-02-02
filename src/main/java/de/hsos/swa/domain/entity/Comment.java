@@ -32,6 +32,10 @@ public class Comment implements SortedEntity, VotedEntity {
 
     private List<Vote> votes = new ArrayList<>();
 
+    //------------------------------------------------------------------------------------------------------------------
+    // CONSTRUCTORS
+
+    // Für Factory
     public Comment(LocalDateTime createdAt, User user, String text) {
         this.id = UUID.randomUUID();
         this.createdAt = createdAt;
@@ -40,22 +44,7 @@ public class Comment implements SortedEntity, VotedEntity {
         this.active = true;
     }
 
-    public Comment(UUID id, LocalDateTime createdAt, User user, String text) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.user = user;
-        this.text = text;
-        this.active = true;
-    }
-
-    public Comment(LocalDateTime createdAt, User user, String text, boolean active) {
-        this.id = UUID.randomUUID();
-        this.createdAt = createdAt;
-        this.user = user;
-        this.text = text;
-        this.active = active;
-    }
-
+    // Für Persistence Adapter
     public Comment(UUID id, LocalDateTime createdAt, User user, String text, boolean active) {
         this.id = id;
         this.createdAt = createdAt;
@@ -64,11 +53,19 @@ public class Comment implements SortedEntity, VotedEntity {
         this.active = active;
     }
 
-    // GETTER
+
+    //------------------------------------------------------------------------------------------------------------------
+    // SIMPLE GETTER
+    public boolean isActive() {
+        return active;
+    }
     public UUID getId() {
         return id;
     }
 
+    public User getUser() {
+        return this.user;
+    }
 
     public String getText() {
         if (isActive()) {
@@ -89,38 +86,30 @@ public class Comment implements SortedEntity, VotedEntity {
         return createdAt;
     }
 
-    // SETTER
-    public void setText(String text) {
-        this.text = text;
+    public List<Vote> getVotes() {
+        return votes;
     }
 
 
-    // DELETION
-    public boolean isActive() {
-        return active;
-    }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // DELETE
     public void disable() {
         this.active = false;
     }
 
-    // COMMENTS
+
+    //------------------------------------------------------------------------------------------------------------------
+    // RELPLY
     public void addReply(Comment reply) {
         reply.parentComment = this;
         this.replies.add(reply);
     }
 
-    // VOTES
-    public List<Vote> getVotes() {
-        return votes;
-    }
-
-    public User getUser() {
-        return this.user;
-    }
-
+    //------------------------------------------------------------------------------------------------------------------
+    // VOTE
     @Override
-    public Optional<Vote> findVoteByUserId(UUID userId) {
+    public Optional<Vote> findVoteByUser(UUID userId) {
         for (Vote vote : this.votes) {
             if(vote.getUser().getId().equals(userId)){
                 return Optional.of(vote);
@@ -153,6 +142,16 @@ public class Comment implements SortedEntity, VotedEntity {
         return this.getUpvotes() - this.getDownvotes();
     }
 
+    public void addVote(Vote vote) {
+        this.votes.add(vote);
+    }
+
+    public void removeVote(Vote vote) {
+        this.votes.remove(vote);
+    }
+
+
+    //------------------------------------------------------------------------------------------------------------------
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -165,11 +164,7 @@ public class Comment implements SortedEntity, VotedEntity {
         return Objects.hash(getId());
     }
 
-    public void addVote(Vote vote) {
-        this.votes.add(vote);
-    }
-
-    public void removeVote(Vote vote) {
-        this.votes.remove(vote);
+    public boolean isRootComment() {
+        return this.parentComment == null;
     }
 }

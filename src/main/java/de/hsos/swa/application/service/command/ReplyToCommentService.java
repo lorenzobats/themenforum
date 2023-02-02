@@ -47,15 +47,14 @@ public class ReplyToCommentService implements ReplyToCommentUseCase {
 
         Comment reply = CommentFactory.createComment(request.commentText(), user);
 
-        if(!post.addReplyToComment(request.commentId(), reply)){
+        if(!post.addReplyToComment(UUID.fromString(request.commentId()), reply)){
             return Result.error("Comment is inactive");
         }
 
         RepositoryResult<Post> updatedPostResult = this.postRepository.updatePost(post);
 
         if (updatedPostResult.ok()) {
-            Optional<Comment> savedComment = updatedPostResult.get().findCommentById(reply.getId().toString());
-            return savedComment.map(Result::success).orElseGet(() -> Result.error("Reply not saved"));
+            return Result.success(reply);
         }
 
         return Result.error("Something went wrong ");

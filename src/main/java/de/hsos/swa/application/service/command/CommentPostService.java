@@ -60,7 +60,7 @@ public class CommentPostService implements CommentPostUseCase {
         Post post = postResult.get();
 
         Comment comment = CommentFactory.createComment(request.commentText(), user);
-        post.addComment(comment);
+        post.add(comment);
 
         RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(post);
         if (updatePostResult.badResult()) {

@@ -7,6 +7,7 @@ import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.service.query.params.OrderParams;
+import de.hsos.swa.application.service.query.params.SortingParams;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.service.SortByDate;
@@ -26,42 +27,19 @@ public class GetPostByIdService implements GetPostByIdUseCase {
     PostRepository postRepository;
 
     @Override
-    public Result<Post> getPostById(GetPostByIdQuery request) {
-        RepositoryResult<Post> postResult = postRepository.getPostById(UUID.fromString(request.id()), request.includeComments());
+    public Result<Post> getPostById(GetPostByIdQuery query) {
+        RepositoryResult<Post> postResult = postRepository.getPostById(UUID.fromString(query.id()), query.includeComments());
 
         if (postResult.ok()) {
-            List<Comment> sortedComments = new ArrayList<>(postResult.get().getComments());
+            Comparator<Comment> sortComparator = new SortByDate<>();    // Im Standard wird nach Date Sortiert
+            if(query.sortingParams() == SortingParams.VOTES) sortComparator = new SortByUpvotes<>();
+            boolean descending = query.orderParams() == OrderParams.DESC;
 
-            switch (request.sortingParams()) {
-                case VOTES -> {
-                    sortReplies(sortedComments, request.orderParams() != OrderParams.ASC, new SortByUpvotes<>());
-                }
-                case DATE -> {
-                    sortReplies(sortedComments, request.orderParams() != OrderParams.ASC, new SortByDate<>());
-                }
-                default -> throw new IllegalArgumentException("Cant sort comments");
-            }
-
-            postResult.get().setComments(sortedComments);
-
+            postResult.get().sortComments(descending, sortComparator);
             return Result.success(postResult.get());
         }
         return Result.error("Cannot find Post");
     }
 
-    private void sortReplies(List<Comment> comments, boolean reverse, Comparator<Comment> comparator) {
-        Queue<Comment> queue = new LinkedList<>(comments);
-        comments.sort(comparator);
-        if (reverse) {
-            Collections.reverse(comments);
-        }
-        while (!queue.isEmpty()) {
-            Comment comment = queue.remove();
-            comment.getReplies().sort(comparator);
-            if (reverse) {
-                Collections.reverse(comment.getReplies());
-            }
-            queue.addAll(comment.getReplies());
-        }
-    }
+
 }

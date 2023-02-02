@@ -17,7 +17,7 @@ public class VoteEntityService {
         }
 
         // Fall 1: Neuer Vote
-        Optional<Vote> optionalVote = entity.findVoteByUserId(user.getId());
+        Optional<Vote> optionalVote = entity.findVoteByUser(user.getId());
         if (optionalVote.isEmpty()) {
             Vote vote = new Vote(user, voteType);
             entity.addVote(vote);
@@ -35,7 +35,7 @@ public class VoteEntityService {
     }
 
     public Optional<Vote> deleteVote(VotedEntity entity, User user) {
-        Optional<Vote> optionalVote = entity.findVoteByUserId(user.getId());
+        Optional<Vote> optionalVote = entity.findVoteByUser(user.getId());
         if (optionalVote.isEmpty()) {
             return Optional.empty();
         }

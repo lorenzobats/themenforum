@@ -48,7 +48,7 @@ public class VoteEntityService implements VoteEntityUseCase {
             case COMMENT -> {
                 postResult = this.postRepository.getPostByCommentId(UUID.fromString(request.entityId()));
                 if (postResult.ok()) {
-                    Optional<Comment> optionalComment = postResult.get().findCommentById(request.entityId());
+                    Optional<Comment> optionalComment = postResult.get().findCommentById(UUID.fromString(request.entityId()));
                     if (optionalComment.isPresent()) {
                         optionalVote = this.voteEntityService.vote(optionalComment.get(), user, request.voteType());
                         if (optionalVote.isEmpty()) {

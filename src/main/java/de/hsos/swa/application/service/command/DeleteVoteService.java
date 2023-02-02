@@ -60,7 +60,7 @@ public class DeleteVoteService implements DeleteVoteUseCase {
             case COMMENT -> {
                 postResult = this.postRepository.getPostByCommentId(vote.votedEntityId());
                 if (postResult.ok()) {
-                    Optional<Comment> optionalComment = postResult.get().findCommentById(String.valueOf(vote.votedEntityId()));
+                    Optional<Comment> optionalComment = postResult.get().findCommentById(vote.votedEntityId());
                     if (optionalComment.isPresent()) {
                         optionalVote = this.voteEntityService.deleteVote(optionalComment.get(), user);
                     }

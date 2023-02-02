@@ -6,7 +6,7 @@ import java.util.UUID;
 public interface VotedEntity {
     User getUser();
 
-    Optional<Vote> findVoteByUserId(UUID userId);
+    Optional<Vote> findVoteByUser(UUID userId);
 
     void removeVote(Vote vote);
 
