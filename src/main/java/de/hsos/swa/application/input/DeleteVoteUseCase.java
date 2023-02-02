@@ -8,5 +8,5 @@ import de.hsos.swa.domain.entity.Vote;
 import javax.validation.Valid;
 @InputPort
 public interface DeleteVoteUseCase {
-    ApplicationResult<Vote> deleteVote(@Valid DeleteVoteCommand request);
+    ApplicationResult<Vote> deleteVote(@Valid DeleteVoteCommand request, String username);
 }

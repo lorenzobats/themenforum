@@ -3,6 +3,7 @@ package de.hsos.swa.actors.ui;
 
 import de.hsos.swa.application.annotations.Adapter;
 import de.hsos.swa.application.input.*;
+import de.hsos.swa.application.input.dto.in.GetAllCommentsQuery;
 import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
@@ -15,6 +16,7 @@ import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -64,6 +66,7 @@ public class AdminEndpoint {
 
     @GET
     @RolesAllowed({"admin"})
+    @Operation(hidden = true)
     public TemplateInstance index(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
         return Templates.index(adminName);
@@ -74,6 +77,7 @@ public class AdminEndpoint {
     @Produces(MediaType.TEXT_HTML)
     @Path("/topics")
     @RolesAllowed({"admin"})
+    @Operation(hidden = true)
     public TemplateInstance topics(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
         ApplicationResult<List<TopicWithPostCountDto>> topics = getAllTopicsUseCase.getAllTopics();
@@ -84,6 +88,7 @@ public class AdminEndpoint {
     @Produces(MediaType.TEXT_HTML)
     @Path("/posts")
     @RolesAllowed({"admin"})
+    @Operation(hidden = true)
     public TemplateInstance posts(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
         Map<PostFilterParams, Object> filterParams = new HashMap<>();
@@ -95,9 +100,11 @@ public class AdminEndpoint {
     @Produces(MediaType.TEXT_HTML)
     @Path("/comments")
     @RolesAllowed({"admin"})
+    @Operation(hidden = true)
     public TemplateInstance comments(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
-        ApplicationResult<List<Comment>> comments = getAllCommentsUseCase.getAllComments(false);
+        GetAllCommentsQuery query = new GetAllCommentsQuery(false);
+        ApplicationResult<List<Comment>> comments = getAllCommentsUseCase.getAllComments(query, adminName);
         return Templates.comments(comments.data(), adminName);
     }
 
@@ -106,6 +113,7 @@ public class AdminEndpoint {
     @Produces(MediaType.TEXT_HTML)
     @Path("/users")
     @RolesAllowed({"admin"})
+    @Operation(hidden = true)
     public TemplateInstance users(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
         ApplicationResult<List<User>> allUsers = getAllUsersUseCase.getAllUsers(securityContext);
@@ -117,6 +125,7 @@ public class AdminEndpoint {
     @Produces(MediaType.TEXT_HTML)
     @Path("/votes")
     @RolesAllowed({"admin"})
+    @Operation(hidden = true)
     public TemplateInstance votes(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
         ApplicationResult<List<VoteWithVotedEntityReferenceDto>> allVotes = getAllVotesUseCase.getAllVotes(securityContext);

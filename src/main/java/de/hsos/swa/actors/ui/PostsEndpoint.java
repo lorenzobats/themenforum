@@ -12,6 +12,7 @@ import de.hsos.swa.application.service.query.params.SortingParams;
 import de.hsos.swa.domain.entity.Post;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -55,6 +56,7 @@ public class PostsEndpoint {
     @GET
     @Produces(MediaType.TEXT_HTML)
     @PermitAll
+    @Operation(hidden = true)
     public TemplateInstance posts(
             @QueryParam("topic") String topic,
             @QueryParam("username") String username,
@@ -90,6 +92,7 @@ public class PostsEndpoint {
     @Produces(MediaType.TEXT_HTML)
     @Path("/{id}")
     @PermitAll
+    @Operation(hidden = true)
     public TemplateInstance post(
             @org.jboss.resteasy.annotations.jaxrs.PathParam("id") String id,
             @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
@@ -115,6 +118,7 @@ public class PostsEndpoint {
     @Produces(MediaType.TEXT_HTML)
     @Path("/comment/{id}")
     @PermitAll
+    @Operation(hidden = true)
     public TemplateInstance postByCommentId(@PathParam("id") String id, @Context SecurityContext securityContext) {
         boolean isLoggedIn = false;
         String username = "";
@@ -135,6 +139,7 @@ public class PostsEndpoint {
     @Produces(MediaType.TEXT_HTML)
     @Path("/new")
     @RolesAllowed({"admin", "member"})
+    @Operation(hidden = true)
     public TemplateInstance createPost(@Context SecurityContext securityContext) {
         String username = "";
         if (securityContext.getUserPrincipal() != null) {

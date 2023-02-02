@@ -6,7 +6,8 @@ import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.domain.entity.Comment;
 
 import javax.validation.Valid;
+
 @InputPort
 public interface DeleteCommentUseCase {
-    ApplicationResult<Comment> deleteComment(@Valid DeleteCommentCommand request);
+    ApplicationResult<Comment> deleteComment(@Valid DeleteCommentCommand request, String securityContext);
 }

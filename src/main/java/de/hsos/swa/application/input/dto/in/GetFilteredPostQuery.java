@@ -1,18 +1,21 @@
 package de.hsos.swa.application.input.dto.in;
 
 import de.hsos.swa.application.annotations.InputPortRequest;
+import de.hsos.swa.application.input.validation.constraints.ValidOrderParams;
+import de.hsos.swa.application.input.validation.constraints.ValidPostFilterParams;
+import de.hsos.swa.application.input.validation.constraints.ValidSortingParams;
 import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
 import de.hsos.swa.application.service.query.params.SortingParams;
 
+import javax.validation.constraints.NotNull;
 import java.util.Map;
-// Todo Validierung!
 @InputPortRequest
 public record GetFilteredPostQuery(
-        Map<PostFilterParams, Object> filterParams,
-        Boolean includeComments,
-        SortingParams sortingParams,
-        OrderParams orderParams) {
+        @ValidPostFilterParams Map<PostFilterParams, Object> filterParams,
+        @NotNull Boolean includeComments,
+        @ValidSortingParams SortingParams sortingParams,
+        @ValidOrderParams OrderParams orderParams) {
 
 
 

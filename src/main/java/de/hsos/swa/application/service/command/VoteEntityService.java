@@ -34,7 +34,7 @@ public class VoteEntityService implements VoteEntityUseCase {
 
 
     @Override
-    public ApplicationResult<Vote> vote(VoteEntityCommand request) {
+    public ApplicationResult<Vote> vote(VoteEntityCommand request, String username) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.error()) {
             return ApplicationResult.exception("Cannot retrieve User");

@@ -40,7 +40,7 @@ public class DeleteVoteService implements DeleteVoteUseCase {
     Logger log;
 
     @Override
-    public ApplicationResult<Vote> deleteVote(DeleteVoteCommand request) {
+    public ApplicationResult<Vote> deleteVote(DeleteVoteCommand request, String username) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.error()) {
             return ApplicationResult.exception("Cannot retrieve User");
@@ -48,7 +48,7 @@ public class DeleteVoteService implements DeleteVoteUseCase {
         User user = userResult.get();
 
 
-        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<VoteQueryDto> voteResult = this.voteRepository.getVoteById(UUID.fromString(request.vote()));
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<VoteQueryDto> voteResult = this.voteRepository.getVoteById(UUID.fromString(request.voteId()));
         if (voteResult.error()) {
             return ApplicationResult.exception("Cannot find Vote");
         }

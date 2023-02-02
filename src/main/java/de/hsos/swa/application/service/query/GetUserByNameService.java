@@ -11,7 +11,6 @@ import de.hsos.swa.domain.entity.User;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.ws.rs.core.SecurityContext;
 
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
@@ -22,7 +21,7 @@ public class GetUserByNameService implements GetUserByNameUseCase {
     UserRepository userRepository;
 
     @Override
-    public ApplicationResult<User> getUserByName(GetUserByNameQuery request, SecurityContext securityContext) {
+    public ApplicationResult<User> getUserByName(GetUserByNameQuery request, String securityContext) {
         // TODO: Security Context ( Nur Admin !)
         RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
 

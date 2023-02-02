@@ -1,17 +1,16 @@
 package de.hsos.swa.application.input.dto.in;
 
 import de.hsos.swa.application.annotations.InputPortRequest;
-import de.hsos.swa.domain.validation.constraints.ValidId;
-import de.hsos.swa.domain.validation.constraints.ValidUsername;
-
-import javax.validation.constraints.Size;
+import de.hsos.swa.application.input.validation.constraints.ValidCommentText;
+import de.hsos.swa.application.input.validation.constraints.ValidId;
+import de.hsos.swa.application.input.validation.constraints.ValidUsername;
 
 @InputPortRequest
 public record CommentPostCommand(
-        @ValidId(message = "Invalid 'postId'")
+        @ValidId
         String postId,
-        @ValidUsername(message = "Invalid 'username'")
+        @ValidUsername
         String username,
-        @Size(max = 250, message = "Text is limited to 250 Characters")
+        @ValidCommentText
         String commentText
 ){}

@@ -49,11 +49,13 @@ public class DeleteCommentService implements DeleteCommentUseCase {
 
     /**
      * Löscht (=deaktiviert) ein Kommentar auf Basis der übergebenen Informationen.
-     * @param request enthält Kommentar-ID und Nutzernamen der Lösch-Anfrage
+     *
+     * @param request         enthält Kommentar-ID und Nutzernamen der Lösch-Anfrage
+     * @param securityContext
      * @return ApplicationResult<Comment> enthält gelöschtes/deaktiviertes Kommentar bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Comment> deleteComment(DeleteCommentCommand request) {
+    public ApplicationResult<Comment> deleteComment(DeleteCommentCommand request, String securityContext) {
         RepositoryResult<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(request.commentId()));
         if (postResult.error()) {
             return ApplicationResult.exception("Cannot find post for comment " + request.commentId());

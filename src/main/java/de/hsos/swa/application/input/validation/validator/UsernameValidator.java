@@ -1,6 +1,6 @@
-package de.hsos.swa.domain.validation.validator;
+package de.hsos.swa.application.input.validation.validator;
 
-import de.hsos.swa.domain.validation.constraints.ValidUsername;
+import de.hsos.swa.application.input.validation.constraints.ValidUsername;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

@@ -25,6 +25,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -48,7 +49,6 @@ import java.util.UUID;
 // TODO: bei Delete NO_CONTENT falls Optional<Empty> siehe Topic
 // TODO: Rest Assured für diesen Enpunkt
 // TODO: Insomnia Collecion mit Tests für diesen ENpunkt
-// TODO: SecurityContext übergeben bei AuthentifizierungsMethoden
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -70,14 +70,18 @@ public class PostsRessource {
     @Inject
     ValidationService validationService;
 
+    //------------------------------------------------------------------------------------------------------------------
+    // GET
     @GET
     @PermitAll
-    @Operation(summary = "Holt alle Posts, die den Queryparametern entsprechen")
+    @Operation(summary = "getPosts", description = "Holt alle Posts, die den Query-Parametern entsprechen")
+    @Tag(name = "Posts", description = "Zugriff auf die Posts")
+    @Tag(name = "Posts", description = "Zugriff auf die Posts")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
                     content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "PostDto", implementation = PostDto.class)))
     })
-    public Response getPosts(@DefaultValue("true") @QueryParam("includeComments") Boolean includeComments,
+    public Response getPosts(@DefaultValue("true") @QueryParam("includeComments") boolean includeComments,
                              @QueryParam("username") String username,
                              @QueryParam("userId") UUID userId,
                              @QueryParam("dateFrom") LocalDateTime dateFrom,
@@ -111,7 +115,7 @@ public class PostsRessource {
 
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         }  catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -119,10 +123,10 @@ public class PostsRessource {
     @GET
     @Path("{id}")
     @PermitAll
-    @Operation(summary = "Holt den Post mit der übergebenen ID")
+    @Operation(summary = "getPostById", description = "Holt den Post mit der übergebenen ID")
+    @Tag(name = "Posts", description = "Zugriff auf die Posts")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Success",
-                    content = @Content(mediaType = "application/json", schema = @Schema(name = "PostDto", implementation = PostDto.class)))
+            @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(name = "PostDto", implementation = PostDto.class)))
     })
     public Response getPostById(@PathParam("id") String id,
                                 @DefaultValue("true") @QueryParam("includeComments") boolean includeComments,
@@ -139,16 +143,18 @@ public class PostsRessource {
 
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // POST
     @POST
     @RolesAllowed({"admin", "member"})
-    @Operation(summary = "Erstellt einen neuen Post")
+    @Operation(summary = "createPost", description = "Erstellt einen neuen Post")
+    @Tag(name = "Posts", description = "Zugriff auf die Posts")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Success",
-                    content = @Content(mediaType = "application/json", schema = @Schema(name = "PostDto", implementation = PostDto.class)))
+            @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(name = "PostDto", implementation = PostDto.class)))
     })
     public Response createPost(
             @NotNull @RequestBody(
@@ -161,31 +167,32 @@ public class PostsRessource {
             validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
             CreatePostCommand command = CreatePostRequestBody.Converter.toInputPortCommand(request, username);
-            ApplicationResult<Post> result = this.createPostUseCase.createPost(command);    // TODO + Security Context
-
+            ApplicationResult<Post> result = this.createPostUseCase.createPost(command, username);
             if (result.ok()) {
                 PostDto postResponse = PostDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(postResponse).build();
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // DELETE
     @DELETE
     @Path("/{id}")
     @RolesAllowed({"member", "admin"})
-    @Operation(summary = "Löscht den Post mit der übergebenen ID")
+    @Operation(summary = "deletePost", description = "Löscht den Post mit der übergebenen ID")
+    @Tag(name = "Posts", description = "Zugriff auf die Posts")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Success",
-                    content = @Content(mediaType = "application/json", schema = @Schema(name = "PostDto", implementation = PostDto.class)))
+            @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(name = "PostDto", implementation = PostDto.class)))
     })
     public Response deletePost(@PathParam("id") String id, @Context SecurityContext securityContext) {
         try {
             String username = securityContext.getUserPrincipal().getName();
             DeletePostCommand command = new DeletePostCommand(id, username);
-            ApplicationResult<Post> result = this.deletePostUseCase.deletePost(command);    // TODO + Security Context
+            ApplicationResult<Post> result = this.deletePostUseCase.deletePost(command, username);
 
             if (result.ok()) {
                 PostDto postDto = PostDto.Converter.fromDomainEntity(result.data());
@@ -193,7 +200,7 @@ public class PostsRessource {
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 }

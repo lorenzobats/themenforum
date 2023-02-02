@@ -48,11 +48,13 @@ public class DeletePostService implements DeletePostUseCase {
 
     /**
      * Löscht ein Post auf Basis der übergebenen Informationen.
-     * @param request enthält Post-ID und Nutzernamen der Lösch-Anfrage
+     *
+     * @param request         enthält Post-ID und Nutzernamen der Lösch-Anfrage
+     * @param securityContext
      * @return ApplicationResult<Post> enthält gelöschten Beitrag bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Post> deletePost(DeletePostCommand request) {
+    public ApplicationResult<Post> deletePost(DeletePostCommand request, String securityContext) {
         RepositoryResult<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.postId()), false);
         if (postResult.error()) {
             return ApplicationResult.exception("Cannot find post" + request.postId());

@@ -16,6 +16,7 @@ import de.hsos.swa.domain.factory.PostFactory;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+
 /**
  * Die UseCase Klasse CreatePostService implementiert das Interface
  * CreatePostUseCase der Boundary des Application Hexagons.
@@ -44,11 +45,13 @@ public class CreatePostService implements CreatePostUseCase {
 
     /**
      * Erstellt einen neuen Beitrag auf Basis der übergebenen Informationen.
-     * @param request enthält Titel, Inhalt und Themen-ID und Nutzernamen für den zu erstellenden Beitrag
+     *
+     * @param request         enthält Titel, Inhalt und Themen-ID und Nutzernamen für den zu erstellenden Beitrag
+     * @param securityContext
      * @return ApplicationResult<Post> enthält erstellten Beitrag bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Post> createPost(CreatePostCommand request) {
+    public ApplicationResult<Post> createPost(CreatePostCommand request, String securityContext) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
         if(getUserByNameResponse.error()) {
             return ApplicationResult.exception("Cannot find user " + request.username());

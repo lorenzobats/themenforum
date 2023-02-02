@@ -22,6 +22,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -39,7 +40,6 @@ import java.util.List;
 // TODO: bei Delete NO_CONTENT falls Optional<Empty> siehe Topic
 // TODO: Rest Assured für diesen Enpunkt
 // TODO: Insomnia Collecion mit Tests für diesen ENpunkt
-// TODO: SecurityContext übergeben bei AuthentifizierungsMethoden
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -67,19 +67,21 @@ public class VotesRessource {
     @Inject
     ValidationService voteValidationService;
 
-
+    //------------------------------------------------------------------------------------------------------------------
+    // GET
     @GET
     @RolesAllowed({"admin", "member"})
-    @Operation(summary = "Holt alle Votes")
+    @Operation(summary = "getAllVotes", description = "Holt alle Votes")
+    @Tag(name = "Votes", description = "Zugriff auf die Votes der Kommentare und Posts")
+    @Tag(name = "Users2", description = "Zugriff auf die Nutzer")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Success",
-                    content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "VoteDto", implementation = VoteDto.class)))
+            @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "VoteDto", implementation = VoteDto.class)))
     })
     public Response getAllVotes(@QueryParam("username") String username, @Context SecurityContext securityContext) {
         try {
             ApplicationResult<List<VoteWithVotedEntityReferenceDto>> result;
             if (username != null)
-                result = this.getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext);
+                result = this.getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext.getUserPrincipal().getName());
             else result = this.getAllVotesUseCase.getAllVotes(securityContext);
 
             if (result.ok()) {
@@ -89,16 +91,18 @@ public class VotesRessource {
 
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // POST
     @POST
     @RolesAllowed({"admin", "member"})
-    @Operation(summary = "Erstellt einen neuen Vote")
+    @Operation(summary = "vote", description = "Erstellt einen neuen Vote")
+    @Tag(name = "Votes", description = "Zugriff auf die Votes der Kommentare und Posts")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Success",
-                    content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "VoteDto", implementation = VoteDto.class)))
+            @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "VoteDto", implementation = VoteDto.class)))
     })
     public Response vote(@NotNull @RequestBody(
             description = "Vote to create",
@@ -109,7 +113,7 @@ public class VotesRessource {
             voteValidationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
             VoteEntityCommand command = VoteEntityRequestBody.Converter.toInputPortCommand(request, username);
-            ApplicationResult<Vote> result = this.voteEntityUseCase.vote(command);      // TODO: + security Context
+            ApplicationResult<Vote> result = this.voteEntityUseCase.vote(command, username);
 
             if (result.ok()) {
                 VoteDto voteDto = VoteDto.Converter.fromDomainEntity(result.data());
@@ -117,23 +121,25 @@ public class VotesRessource {
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // DELETE
     @DELETE
     @Path("/{id}")
     @RolesAllowed({"admin", "member"})
-    @Operation(summary = "Löscht den Vote mit der übergebenen ID")
+    @Operation(summary = "deleteVote", description = "Löscht den Vote mit der übergebenen ID")
+    @Tag(name = "Votes", description = "Zugriff auf die Votes der Kommentare und Posts")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Success",
-                    content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "VoteDto", implementation = VoteDto.class)))
+            @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "VoteDto", implementation = VoteDto.class)))
     })
     public Response deleteVote(@PathParam("id") String id, @Context SecurityContext securityContext) {
         try {
             String username = securityContext.getUserPrincipal().getName();
             DeleteVoteCommand command = new DeleteVoteCommand(id, username);
-            ApplicationResult<Vote> result = this.deleteVoteUseCase.deleteVote(command);    // TODO:  Security Context
+            ApplicationResult<Vote> result = this.deleteVoteUseCase.deleteVote(command, username);
 
             if (result.ok()) {
                 VoteDto voteDto = VoteDto.Converter.fromDomainEntity(result.data());
@@ -141,7 +147,7 @@ public class VotesRessource {
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 }

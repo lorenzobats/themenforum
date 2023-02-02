@@ -6,9 +6,8 @@ import de.hsos.swa.application.input.dto.in.GetUserByNameQuery;
 import de.hsos.swa.domain.entity.User;
 
 import javax.validation.Valid;
-import javax.ws.rs.core.SecurityContext;
 
 @InputPort
 public interface GetUserByNameUseCase {
-   ApplicationResult<User> getUserByName(@Valid GetUserByNameQuery request, SecurityContext securityContext);
+   ApplicationResult<User> getUserByName(@Valid GetUserByNameQuery request, String securityContext);
 }

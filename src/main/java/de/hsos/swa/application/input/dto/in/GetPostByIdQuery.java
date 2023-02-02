@@ -1,22 +1,18 @@
 package de.hsos.swa.application.input.dto.in;
 
 import de.hsos.swa.application.annotations.InputPortRequest;
-import de.hsos.swa.domain.validation.constraints.ValidId;
+import de.hsos.swa.application.input.validation.constraints.ValidId;
+import de.hsos.swa.application.input.validation.constraints.ValidOrderParams;
+import de.hsos.swa.application.input.validation.constraints.ValidSortingParams;
 import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.application.service.query.params.SortingParams;
 
+import javax.validation.constraints.NotNull;
+
 @InputPortRequest
 public record GetPostByIdQuery(
-        @ValidId        // TODO: Valid id wird nicht geprüft
-        String id,
-        boolean includeComments,
-        SortingParams sortingParams,
-        OrderParams orderParams
-) {
-    public GetPostByIdQuery(String id, boolean includeComments, SortingParams sortingParams, OrderParams orderParams) {
-        this.id = id;
-        this.includeComments = includeComments;
-        this.sortingParams = sortingParams;
-        this.orderParams = orderParams;
-    }
-}
+        @ValidId String id,
+        @NotNull boolean includeComments,
+        @ValidSortingParams SortingParams sortingParams,
+        @ValidOrderParams OrderParams orderParams
+) {}

@@ -29,7 +29,7 @@ public class ReplyToCommentService implements ReplyToCommentUseCase {
 
 
     @Override
-    public ApplicationResult<Comment> replyToComment(ReplyToCommentCommand request) {
+    public ApplicationResult<Comment> replyToComment(ReplyToCommentCommand request, String securityContext) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> getUserResponse = this.userRepository.getUserByName(request.username());
         if (getUserResponse.error()) {
             return ApplicationResult.exception("User does not exist");

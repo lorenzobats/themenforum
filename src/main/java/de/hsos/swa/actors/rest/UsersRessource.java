@@ -17,6 +17,8 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.hibernate.annotations.Filter;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -33,7 +35,6 @@ import javax.ws.rs.core.SecurityContext;
 // TODO: bei Delete NO_CONTENT falls Optional<Empty> siehe Topic
 // TODO: Rest Assured für diesen Enpunkt
 // TODO: Insomnia Collecion mit Tests für diesen ENpunkt
-// TODO: SecurityContext übergeben bei AuthentifizierungsMethoden
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -42,22 +43,26 @@ import javax.ws.rs.core.SecurityContext;
 @Adapter
 public class UsersRessource {
 
-    // QUERIES
-    @Inject
-    GetUserByNameUseCase getUserByNameUseCase;
 
     // COMMANDS
     @Inject
     RegisterUserUseCase registerUserUseCase;
 
+    // QUERIES
+    @Inject
+    GetUserByNameUseCase getUserByNameUseCase;
 
+    // BEAN VALIDATION
     @Inject
     ValidationService validationService;
 
-
+    //------------------------------------------------------------------------------------------------------------------
+    // GET
     @GET
     @RolesAllowed({"admin"})
-    @Operation(summary = "Holt alle User")
+    @Tag(name = "Users", description = "Zugriff auf die Nutzer")
+    @Filter(name = "testfilter")
+    @Operation(summary = "getAllUsers", description = "Holt alle User")
     public Response getAllUsers(@Context SecurityContext securityContext) {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
@@ -65,7 +70,8 @@ public class UsersRessource {
     @GET
     @Path("{username}")
     @RolesAllowed({"admin"})
-    @Operation(summary = "Holt den User mit dem übergebenen Username")
+    @Tag(name = "Users", description = "Zugriff auf die Nutzer")
+    @Operation(summary = "getUserByName", description = "Holt den User mit dem übergebenen Username")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
                     content = @Content(mediaType = "application/json", schema = @Schema(name = "UserDto", implementation = UserDto.class)))
@@ -73,27 +79,30 @@ public class UsersRessource {
     public Response getUserByName(@PathParam("username") String username, @Context SecurityContext securityContext) {
         try {
             GetUserByNameQuery query = new GetUserByNameQuery(username);
-            ApplicationResult<User> result = this.getUserByNameUseCase.getUserByName(query, securityContext);    // TODO: Security Context
+            ApplicationResult<User> result = this.getUserByNameUseCase.getUserByName(query, securityContext.getUserPrincipal().getName());
             if (result.ok()) {
                 UserDto responseDto = UserDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(responseDto).build();
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // POST
     @POST
     @PermitAll
-    @Operation(summary = "Erstellt einen neuen User")
+    @Operation(summary = "registerUser", description = "Registriert einen neuen User")
+    @Tag(name = "Registration", description = "Registration")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
                     content = @Content(mediaType = "application/json", schema = @Schema(name = "UserDto", implementation = UserDto.class)))
     })
     public Response registerUser(
             @RequestBody(
-                    description = "Post to create",
+                    description = "User to register",
                     required = true,
                     content = @Content(schema = @Schema(implementation = RegisterUserRequestBody.class))
             ) RegisterUserRequestBody request) {
@@ -107,7 +116,7 @@ public class UsersRessource {
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 }

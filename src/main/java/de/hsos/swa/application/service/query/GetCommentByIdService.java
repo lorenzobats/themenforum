@@ -23,7 +23,7 @@ public class GetCommentByIdService implements GetCommentByIdUseCase {
 
     @Override
     public ApplicationResult<Comment> getCommentById(GetCommentByIdQuery request) {
-        RepositoryResult<Comment> commentResult = commentRepository.getCommentById(UUID.fromString(request.id()), true);
+        RepositoryResult<Comment> commentResult = commentRepository.getCommentById(UUID.fromString(request.commentId()), true);
         if (commentResult.ok()) {
             return ApplicationResult.ok(commentResult.get());
         }

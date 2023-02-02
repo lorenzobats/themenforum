@@ -6,7 +6,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import javax.validation.constraints.NotEmpty;
 
-@Schema(name = "CommentCreationDto")
+@Schema(name = "CommentCreationDto", required = true)
 public class CommentPostRequestBody implements ValidatedRequestBody {
     @NotEmpty
     public String postId;

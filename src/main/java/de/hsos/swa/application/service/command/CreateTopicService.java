@@ -43,12 +43,15 @@ public class CreateTopicService implements CreateTopicUseCase {
 
     /**
      * Erstellt ein neues Thema auf Basis der übergebenen Informationen.
-     * @param request enthält Titel, Text und Nutzername für das zu erstellende Thema
+     *
+     * @param request         enthält Titel, Text und Nutzername für das zu erstellende Thema
+     * @param securityContext
      * @return ApplicationResult<Topic> enthält erstelltes Thema bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Topic> createTopic(CreateTopicCommand request) {
-        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
+    public ApplicationResult<Topic> createTopic(CreateTopicCommand request, String securityContext) {
+        // TODO: überprüfen, ob schon vorhanden
+        RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
         if(getUserByNameResponse.error()) {
             return ApplicationResult.exception("Cannot find user " + request.username());
         }

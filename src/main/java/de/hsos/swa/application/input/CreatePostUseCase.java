@@ -6,7 +6,8 @@ import de.hsos.swa.application.input.dto.in.CreatePostCommand;
 import de.hsos.swa.domain.entity.Post;
 
 import javax.validation.Valid;
+
 @InputPort
 public interface CreatePostUseCase {
-   ApplicationResult<Post> createPost(@Valid CreatePostCommand request);
+   ApplicationResult<Post> createPost(@Valid CreatePostCommand request, String securityContext);
 }

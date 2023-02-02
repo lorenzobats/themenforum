@@ -22,7 +22,7 @@ public class ErrorResponse {
         this.errors.add(new ErrorMessage(message, detail));
     }
 
-    public ErrorResponse(Set<? extends ConstraintViolation<?>> violations) {
+    private ErrorResponse(Set<? extends ConstraintViolation<?>> violations) {
         this.status = 400;
         this.timestamp = LocalDateTime.now().toString();
         violations.forEach(violation -> this.errors.add(
@@ -52,6 +52,10 @@ public class ErrorResponse {
             }
         }
         return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse("Invalid request", detailMessage, 400)).build();
+    }
+
+    public static Response asResponseFromConstraintViolation(Set<ConstraintViolation<?>> constraintViolations) {
+        return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(constraintViolations)).build();
     }
 }
 

@@ -17,6 +17,7 @@ import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
@@ -67,6 +68,7 @@ public class PublicEndpoint {
 
     @GET
     @PermitAll
+    @Operation(hidden = true)
     public TemplateInstance index(@Context SecurityContext securityContext) {
         String username = "";
         boolean isLoggedIn = false;
@@ -84,6 +86,7 @@ public class PublicEndpoint {
     @Path("/login")
     @Produces(MediaType.TEXT_HTML)
     @PermitAll
+    @Operation(hidden = true)
     public TemplateInstance login() {
         return Templates.login();
     }
@@ -92,6 +95,7 @@ public class PublicEndpoint {
     @Path("/register")
     @Produces(MediaType.TEXT_HTML)
     @PermitAll
+    @Operation(hidden = true)
     public TemplateInstance register() {
         return Templates.register();
     }
@@ -102,6 +106,7 @@ public class PublicEndpoint {
     @Produces(MediaType.TEXT_HTML)
     @Path("/me")
     @PermitAll
+    @Operation(hidden = true)
     public TemplateInstance profile(@Context SecurityContext securityContext, @DefaultValue("topics") @QueryParam("active") String selection) {
         String username = "";
         if (securityContext.getUserPrincipal() != null) {
@@ -115,8 +120,7 @@ public class PublicEndpoint {
         ApplicationResult<List<TopicWithPostCountDto>> topics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(username));
         ApplicationResult<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostQuery(filterParams, false, SortingParams.DATE, OrderParams.DESC));
         ApplicationResult<List<Comment>> comments = getCommentsByUserUseCase.getCommentsByUser(new GetCommentsByUserQuery(username));
-
-        ApplicationResult<List<VoteWithVotedEntityReferenceDto>> votes = getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext);
+        ApplicationResult<List<VoteWithVotedEntityReferenceDto>> votes = getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), username);
 
         return Templates.profile(topics.data(), posts.data(), comments.data(), votes.data(), username, selection);
     }

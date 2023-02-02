@@ -7,6 +7,7 @@ import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -39,6 +40,7 @@ public class TopicsEndpoint {
 
     @GET
     @Produces(MediaType.TEXT_HTML)
+    @Operation(hidden = true)
     public TemplateInstance topics(
             @Context SecurityContext securityContext,
             @QueryParam("search") String searchString
@@ -61,6 +63,7 @@ public class TopicsEndpoint {
     @Path("/new")
     @Produces(MediaType.TEXT_HTML)
     @RolesAllowed({"admin", "member"})
+    @Operation(hidden = true)
     public TemplateInstance createTopic(@Context SecurityContext securityContext) {
         String username = "";
         if (securityContext.getUserPrincipal() != null) {

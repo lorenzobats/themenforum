@@ -48,11 +48,12 @@ public class DeleteTopicService implements DeleteTopicUseCase {
     /**
      * Löscht ein Thema auf Basis der übergebenen Informationen.
      *
-     * @param request enthält Themen-ID und Nutzernamen der Lösch-Anfrage
+     * @param request         enthält Themen-ID und Nutzernamen der Lösch-Anfrage
+     * @param securityContext
      * @return ApplicationResult<Topic> enthält gelöschtes Thema bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Optional<Topic>> deleteTopic(DeleteTopicCommand request) {
+    public ApplicationResult<Optional<Topic>> deleteTopic(DeleteTopicCommand request, String securityContext) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.error()) {
             return ApplicationResult.noAuthorization("Cannot find user " + request.username());

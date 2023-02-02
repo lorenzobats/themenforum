@@ -7,7 +7,6 @@ import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.domain.entity.Topic;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import io.quarkiverse.cucumber.CucumberQuarkusTest;
 import org.junit.jupiter.api.Assertions;
 
 import javax.inject.Inject;
@@ -27,7 +26,7 @@ public class TopicCreate extends ApplicationTestData {
                 "Mein Thema",
                 "Meine Beschreibung",
                 "oschluet");
-        createTopicResult = this.createTopicUseCase.createTopic(createTopicCommand);
+        createTopicResult = this.createTopicUseCase.createTopic(createTopicCommand, "oschluet");
     }
 
     @Then("A new topic is created")

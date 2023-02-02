@@ -1,20 +1,17 @@
 package de.hsos.swa.application.input.dto.in;
 
 import de.hsos.swa.application.annotations.InputPortRequest;
-import de.hsos.swa.domain.validation.constraints.ValidUsername;
+import de.hsos.swa.application.input.validation.constraints.ValidId;
+import de.hsos.swa.application.input.validation.constraints.ValidPostContent;
+import de.hsos.swa.application.input.validation.constraints.ValidPostTitle;
+import de.hsos.swa.application.input.validation.constraints.ValidUsername;
 
-import javax.validation.Valid;
 import java.util.UUID;
 
 @InputPortRequest
 public record CreatePostCommand(
-        // TODO: Validation PostTitle (Length, Trailing Spaces)
-        @Valid
-        String title,
-
-        // TODO: Validation Content (Length, Trailing Spaces)
-        String content,
-        // TODO: String und @ValidId
-        @Valid UUID topicId,
+        @ValidPostTitle String title,
+        @ValidPostContent String content,
+        @ValidId UUID topicId,
         @ValidUsername String username
 ) {}

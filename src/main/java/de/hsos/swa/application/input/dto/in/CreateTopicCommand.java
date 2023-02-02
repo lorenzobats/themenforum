@@ -1,13 +1,13 @@
 package de.hsos.swa.application.input.dto.in;
 
 import de.hsos.swa.application.annotations.InputPortRequest;
-import de.hsos.swa.domain.validation.constraints.ValidUsername;
+import de.hsos.swa.application.input.validation.constraints.ValidTopicDescription;
+import de.hsos.swa.application.input.validation.constraints.ValidTopicTitle;
+import de.hsos.swa.application.input.validation.constraints.ValidUsername;
 
 @InputPortRequest
 public record CreateTopicCommand(
-        // TODO: Validation TopicTitle (Length, Trailing Spaces, Uinqueness!!!)
-        String title,
-        // TODO: Validation TopicDescription (Length, Trailing Spaces)
-        String description,
+        @ValidTopicTitle String title,
+        @ValidTopicDescription String description,
         @ValidUsername String username
 ) {}

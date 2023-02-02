@@ -6,7 +6,8 @@ import de.hsos.swa.application.input.dto.in.CreateTopicCommand;
 import de.hsos.swa.domain.entity.Topic;
 
 import javax.validation.Valid;
+
 @InputPort
 public interface CreateTopicUseCase {
-   ApplicationResult<Topic> createTopic(@Valid CreateTopicCommand request);
+   ApplicationResult<Topic> createTopic(@Valid CreateTopicCommand request, String securityContext);
 }

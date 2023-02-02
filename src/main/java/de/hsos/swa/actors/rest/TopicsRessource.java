@@ -20,6 +20,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -64,16 +65,18 @@ public class TopicsRessource {
     @Inject
     ValidationService validationService;
 
+    //------------------------------------------------------------------------------------------------------------------
+    // GET
     @GET
     @PermitAll
-    @Operation(summary = "Holt alle Topics")
+    @Tag(name = "Topics", description = "Zugriff auf die Themen")
+    @Operation(summary = "getAllTopics", description = "Holt alle Topics")
+    @Tag(name = "Topics", description = "Zugriff auf die Themen")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Success",
-                    content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "TopicDto", implementation = TopicDto.class)))
+            @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "TopicDto", implementation = TopicDto.class)))
     })
     public Response getAllTopics(@QueryParam("search") String searchString) {
         try {
-
             ApplicationResult<List<TopicWithPostCountDto>> result;
             if (searchString != null)
                 result = this.searchTopicsUseCase.searchTopics(new SearchTopicsQuery(searchString));
@@ -85,17 +88,17 @@ public class TopicsRessource {
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 
     @GET
     @Path("{id}")
     @PermitAll
-    @Operation(summary = "Holt das Topic mit der übergebenen ID")
+    @Tag(name = "Topics", description = "Zugriff auf die Themen")
+    @Operation(summary = "getTopicById", description = "Holt das Topic mit der übergebenen ID")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Success",
-                    content = @Content(mediaType = "application/json", schema = @Schema(name = "TopicDto", implementation = TopicDto.class)))
+            @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(name = "TopicDto", implementation = TopicDto.class)))
     })
     public Response getTopicById(@PathParam("id") String id) {
         try {
@@ -107,18 +110,18 @@ public class TopicsRessource {
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 
-
-
+    //------------------------------------------------------------------------------------------------------------------
+    // POST
     @POST
     @RolesAllowed({"member","admin"})
-    @Operation(summary = "Erstellt ein neues Topic")
+    @Tag(name = "Topics", description = "Zugriff auf die Themen")
+    @Operation(summary = "createTopic", description = "Erstellt ein neues Topic")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Success",
-                    content = @Content(mediaType = "application/json", schema = @Schema(name = "TopicDto", implementation = TopicDto.class)))
+            @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(name = "TopicDto", implementation = TopicDto.class)))
     })
     public Response createTopic(
             @RequestBody(
@@ -130,30 +133,32 @@ public class TopicsRessource {
             validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
             CreateTopicCommand command = CreateTopicRequestBody.Converter.toInputPortCommand(request, username);
-            ApplicationResult<Topic> result = this.createTopicUseCase.createTopic(command); // TODO + Security Context
+            ApplicationResult<Topic> result = this.createTopicUseCase.createTopic(command, username);
             if (result.ok()) {
                 TopicDto topicResponse = TopicDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(topicResponse).build();
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // DELETE
     @DELETE
     @Path("/{id}")
     @RolesAllowed({"admin"})
-    @Operation(summary = "Löscht das Topic mit der übergebenen ID")
+    @Tag(name = "Topics", description = "Zugriff auf die Themen")
+    @Operation(summary = "deleteTopic", description = "Löscht das Topic mit der übergebenen ID")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Success",
-                    content = @Content(mediaType = "application/json", schema = @Schema(name = "TopicDto", implementation = TopicDto.class)))
+            @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(name = "TopicDto", implementation = TopicDto.class)))
     })
     public Response deleteTopic(@PathParam("id") String id, @Context SecurityContext securityContext) {
         try {
             String username = securityContext.getUserPrincipal().getName();
             DeleteTopicCommand command = new DeleteTopicCommand(id, username);
-            ApplicationResult<Optional<Topic>> result = this.deleteTopicUseCase.deleteTopic(command);     // TODO + Security Context
+            ApplicationResult<Optional<Topic>> result = this.deleteTopicUseCase.deleteTopic(command, username);
 
             if (result.ok()) {
                 if(result.data().isPresent()){
@@ -164,8 +169,7 @@ public class TopicsRessource {
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            // TODO: 2. Statische methode
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 }

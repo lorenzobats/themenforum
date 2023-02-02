@@ -1,17 +1,17 @@
 package de.hsos.swa.application.input.dto.in;
 
 import de.hsos.swa.application.annotations.InputPortRequest;
-import de.hsos.swa.domain.validation.constraints.ValidId;
-import de.hsos.swa.domain.validation.constraints.ValidUsername;
+import de.hsos.swa.application.input.validation.constraints.ValidId;
+import de.hsos.swa.application.input.validation.constraints.ValidUsername;
 import de.hsos.swa.domain.vo.VotedEntityType;
 import de.hsos.swa.domain.vo.VoteType;
+
+import javax.validation.constraints.NotNull;
 
 @InputPortRequest
 public record VoteEntityCommand(
         @ValidId String entityId,
         @ValidUsername String username,
-
-        // TODO VoteType Validator
-        VoteType voteType,
-        VotedEntityType entityType
+        @NotNull VoteType voteType,
+        @NotNull VotedEntityType entityType
 ) { }

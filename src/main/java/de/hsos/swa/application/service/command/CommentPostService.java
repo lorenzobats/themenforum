@@ -42,11 +42,13 @@ public class CommentPostService implements CommentPostUseCase {
 
     /**
      * Fügt ein Kommentar zu einem bestehenden Beitrag hinzu auf Basis der übergebenen Informationen.
-     * @param request enthält Kommentartext, Beitrags-Id und Nutzernamen für das zu erstellende Kommentar
+     *
+     * @param request         enthält Kommentartext, Beitrags-Id und Nutzernamen für das zu erstellende Kommentar
+     * @param securityContext
      * @return ApplicationResult<Commentar> enthält erzeugtes Kommentar bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Comment> commentPost(CommentPostCommand request) {
+    public ApplicationResult<Comment> commentPost(CommentPostCommand request, String securityContext) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.error()) {
             return ApplicationResult.exception("Cannot find user " + request.username());

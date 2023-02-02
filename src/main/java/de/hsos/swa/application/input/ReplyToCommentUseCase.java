@@ -6,7 +6,8 @@ import de.hsos.swa.application.input.dto.in.ReplyToCommentCommand;
 import de.hsos.swa.domain.entity.Comment;
 
 import javax.validation.Valid;
+
 @InputPort
 public interface ReplyToCommentUseCase {
-    ApplicationResult<Comment> replyToComment(@Valid ReplyToCommentCommand request);
+    ApplicationResult<Comment> replyToComment(@Valid ReplyToCommentCommand request, String securityContext);
 }

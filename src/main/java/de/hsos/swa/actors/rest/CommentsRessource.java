@@ -17,6 +17,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -31,7 +32,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
-// TODO: getAllComments mit includeComments = false dann werden votes nicht berechnet
+// TODO: getAllComments mit includeReplies = false dann werden votes nicht berechnet
 // TODO: smallrye Metrics (auskommentiert, da teilweise gecrasht)
 // TODO: bei Delete NO_CONTENT falls Optional<Empty> siehe Topic
 // TODO: Rest Assured für diesen Enpunkt
@@ -65,16 +66,42 @@ public class CommentsRessource {
     ValidationService validationService;
 
 
+    //------------------------------------------------------------------------------------------------------------------
+    // GET
+    @GET
+    @Operation(summary = "getAllComments", description = "Ermöglicht für den Zugriff auf Alle Kommentare")
+    @RolesAllowed({"admin", "member"})
+    @Tag(name = "Comments", description = "Zugriff auf alle Kommentare für Admins")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "CommentDto", implementation = CommentDto.class)))
+    })
+    //@Counted(name = "getAllComments", description = "Wie oft alle Kommentare abgerufen wurden")
+    //@Timed(name = "getAllCommentsTimer", description = "Misst, wie lange es dauert alle Kommentar abzurufen")
+    public Response getAllComments(@DefaultValue("true") @QueryParam("includeReplies") boolean includeReplies, @Context SecurityContext securityContext) {
+        try {
+            GetAllCommentsQuery query = new GetAllCommentsQuery(includeReplies);
+            String username = securityContext.getUserPrincipal().getName();
+            ApplicationResult<List<Comment>> result = this.getAllCommentsUseCase.getAllComments(query, username);
+            if (result.ok()) {
+                List<CommentDto> commentsResponse = result.data().stream().map(CommentDto.Converter::fromDomainEntity).toList();
+                return Response.status(Response.Status.OK).entity(commentsResponse).build();
+            }
+            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+        } catch (ConstraintViolationException e) {
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+        }
+    }
+
     @GET
     @Path("{id}")
-    @Operation(summary = "Holt das Kommentar mit der übergebenen ID")
+    @PermitAll
+    @Operation(summary = "getCommentById", description = "Holt das Kommentar mit der übergebenen ID")
+    @Tag(name = "Comments", description = "Zugriff auf die Kommentare")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Success",
-                    content = @Content(mediaType = "application/json", schema = @Schema(name = "CommentDto", implementation = CommentDto.class)))
+            @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(name = "CommentDto", implementation = CommentDto.class)))
     })
     //@Counted(name = "getCommentById", description = "Wie oft eine Kommentar anahand ID gesucht wurde")
     //@Timed(name = "getCommentByIdTimer", description = "Misst, wie lange es dauert ein Kommentar anhand ID zu suchen")
-    @PermitAll
     public Response getCommentById(@PathParam("id") String id) {
         try {
             GetCommentByIdQuery query = new GetCommentByIdQuery(id);
@@ -85,38 +112,19 @@ public class CommentsRessource {
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 
-    @GET
-    @RolesAllowed({"admin", "member"})
-    @Operation(summary = "Holt alle Kommentare")
-    @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Success",
-                    content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "CommentDto", implementation = CommentDto.class)))
-    })
-    //@Counted(name = "getAllComments", description = "Wie oft alle Kommentare abgerufen wurden")
-    //@Timed(name = "getAllCommentsTimer", description = "Misst, wie lange es dauert alle Kommentar abzurufen")
-    public Response getAllComments(@DefaultValue("true") @QueryParam("includeReplies") Boolean includeReplies) {
-        try {
-            ApplicationResult<List<Comment>> result = this.getAllCommentsUseCase.getAllComments(includeReplies);        // TODO: RequestDTO SCHREIBEN? // TODO: Security Context
-            if (result.ok()) {
-                List<CommentDto> commentsResponse = result.data().stream().map(CommentDto.Converter::fromDomainEntity).toList();
-                return Response.status(Response.Status.OK).entity(commentsResponse).build();
-            }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
-        }
-    }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // POST
     @POST
     @RolesAllowed({"admin", "member"})
-    @Operation(summary = "Erstellt ein neues Kommentar")
+    @Operation(summary = "commentPost", description = "Erstellt ein neues Kommentar auf den Post mit der übergebenen ID")
+    @Tag(name = "Comments", description = "Zugriff auf die Kommentare")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Success",
-                    content = @Content(mediaType = "application/json", schema = @Schema(name = "CommentDto", implementation = CommentDto.class)))
+            @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(name = "CommentDto", implementation = CommentDto.class)))
     })
     //@Counted(name = "postComment", description = "Wie oft ein Kommentar zu einem Post erstellt wurde")
     //@Timed(name = "postCommentTimer", description = "Misst, wie lange es dauert ein Kommentar zu einem Post zu erstellen")
@@ -130,21 +138,22 @@ public class CommentsRessource {
             validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
             CommentPostCommand command = CommentPostRequestBody.Converter.toInputPortCommand(request, username);
-            ApplicationResult<Comment> result = this.commentPostUseCase.commentPost(command);   // TODO: + Security Context
+            ApplicationResult<Comment> result = this.commentPostUseCase.commentPost(command, username);
             if (result.ok()) {
                 CommentDto response = CommentDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 
     @POST
-    @RolesAllowed({"admin", "member"})
     @Path("/{id}")
-    @Operation(summary = "Erstellt eine Antwort auf das Kommentar mit übergebener ID")
+    @RolesAllowed({"admin", "member"})
+    @Operation(summary = "replyToComment", description = "Erstellt eine Antwort auf das Kommentar mit der übergebenen ID")
+    @Tag(name = "Comments", description = "Zugriff auf die Kommentare")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
                     content = @Content(mediaType = "application/json", schema = @Schema(name = "CommentDto", implementation = CommentDto.class)))
@@ -162,32 +171,35 @@ public class CommentsRessource {
             validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
             ReplyToCommentCommand command = ReplyToCommentRequestBody.Converter.toInputPortCommand(request, id, username);
-            ApplicationResult<Comment> result = this.replyToCommentUseCase.replyToComment(command);         // TODO + Security Context
+            ApplicationResult<Comment> result = this.replyToCommentUseCase.replyToComment(command, username);
             if (result.ok()) {
                 CommentDto response = CommentDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // DELETE
     @DELETE
     @Path("/{id}/")
     @RolesAllowed({"member", "admin"})
+    @Operation(summary = "deleteComment", description = "Löscht das Kommentar mit der übergebenen ID")
+    @Tag(name = "Comments", description = "Zugriff auf die Kommentare")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
                     content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "CommentDto", implementation = CommentDto.class)))
     })
-    @Operation(summary = "Löscht das Kommentar mit der übergebenen ID")
     //@Counted(name = "deleteToComment", description = "Wie oft ein Kommentar geloescht wurde")
     //@Timed(name = "deleteToCommentTimer", description = "Misst, wie lange es dauert einen Kommentar zu loeschen")
     public Response deleteComment(@PathParam("id") String id, @Context SecurityContext securityContext) {
         try {
             String username = securityContext.getUserPrincipal().getName();
             DeleteCommentCommand command = new DeleteCommentCommand(id, username);
-            ApplicationResult<Comment> result = this.deleteCommentUseCase.deleteComment(command);   // TODO: + Security Context
+            ApplicationResult<Comment> result = this.deleteCommentUseCase.deleteComment(command, username);
 
             if (result.ok()) {
                 CommentDto commentDto = CommentDto.Converter.fromDomainEntity(result.data());
@@ -195,7 +207,7 @@ public class CommentsRessource {
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
 }
