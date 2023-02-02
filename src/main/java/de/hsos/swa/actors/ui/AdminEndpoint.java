@@ -4,7 +4,7 @@ package de.hsos.swa.actors.ui;
 import de.hsos.swa.application.annotations.Adapter;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReferenceDto;
 import de.hsos.swa.application.service.query.params.OrderParams;
@@ -75,7 +75,7 @@ public class AdminEndpoint {
     @RolesAllowed({"admin"})
     public TemplateInstance topics(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
-        Result<List<TopicWithPostCountDto>> topics = getAllTopicsUseCase.getAllTopics();
+        ApplicationResult<List<TopicWithPostCountDto>> topics = getAllTopicsUseCase.getAllTopics();
         return Templates.topics(topics.getData(), adminName);
     }
 
@@ -86,7 +86,7 @@ public class AdminEndpoint {
     public TemplateInstance posts(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
         Map<PostFilterParams, Object> filterParams = new HashMap<>();
-        Result<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostQuery(filterParams, false, SortingParams.DATE, OrderParams.DESC));
+        ApplicationResult<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostQuery(filterParams, false, SortingParams.DATE, OrderParams.DESC));
         return Templates.posts(posts.getData(), adminName);
     }
 
@@ -96,7 +96,7 @@ public class AdminEndpoint {
     @RolesAllowed({"admin"})
     public TemplateInstance comments(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
-        Result<List<Comment>> comments = getAllCommentsUseCase.getAllComments(false);
+        ApplicationResult<List<Comment>> comments = getAllCommentsUseCase.getAllComments(false);
         return Templates.comments(comments.getData(), adminName);
     }
 
@@ -107,7 +107,7 @@ public class AdminEndpoint {
     @RolesAllowed({"admin"})
     public TemplateInstance users(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
-        Result<List<User>> allUsers = getAllUsersUseCase.getAllUsers(securityContext);
+        ApplicationResult<List<User>> allUsers = getAllUsersUseCase.getAllUsers(securityContext);
         return Templates.users(allUsers.getData(), adminName);
     }
 
@@ -118,7 +118,7 @@ public class AdminEndpoint {
     @RolesAllowed({"admin"})
     public TemplateInstance votes(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
-        Result<List<VoteWithVotedEntityReferenceDto>> allVotes = getAllVotesUseCase.getAllVotes(securityContext);
+        ApplicationResult<List<VoteWithVotedEntityReferenceDto>> allVotes = getAllVotesUseCase.getAllVotes(securityContext);
         return Templates.votes(allVotes.getData(), adminName);
     }
 

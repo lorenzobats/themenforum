@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.DeletePostUseCase;
 import de.hsos.swa.application.input.dto.in.DeletePostCommand;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
@@ -49,39 +49,39 @@ public class DeletePostService implements DeletePostUseCase {
     /**
      * Löscht ein Post auf Basis der übergebenen Informationen.
      * @param request enthält Post-ID und Nutzernamen der Lösch-Anfrage
-     * @return Result<Post> enthält gelöschten Beitrag bzw. Fehlermeldung bei Misserfolg
+     * @return ApplicationResult<Post> enthält gelöschten Beitrag bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public Result<Post> deletePost(DeletePostCommand request) {
+    public ApplicationResult<Post> deletePost(DeletePostCommand request) {
         RepositoryResult<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.postId()), false);
         if (postResult.badResult()) {
-            return Result.error("Cannot find post" + request.postId());
+            return ApplicationResult.error("Cannot find post" + request.postId());
         }
         Post post = postResult.get();
 
 
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.badResult()) {
-            return Result.error("Cannot find user " + request.username());
+            return ApplicationResult.error("Cannot find user " + request.username());
         }
         User user = userResult.get();
 
         AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(user.getId());
         if (roleResult.invalid()) {
-            return Result.error("Cannot find user role " + request.username());
+            return ApplicationResult.error("Cannot find user role " + request.username());
         }
         String role = roleResult.get();
 
 
         if(!post.getUser().getId().equals(user.getId()) && !role.equals("admin")){
-            return Result.error("Not allowed to delete post");
+            return ApplicationResult.error("Not allowed to delete post");
         }
 
         RepositoryResult<Post> deletePostResult = this.postRepository.deletePost(post.getId());
         if (deletePostResult.badResult()) {
-            return Result.error("Cannot delete post ");
+            return ApplicationResult.error("Cannot delete post ");
         }
 
-        return Result.success(deletePostResult.get());
+        return ApplicationResult.success(deletePostResult.get());
     }
 }

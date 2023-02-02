@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.DeleteTopicUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteTopicCommand;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
@@ -47,31 +47,31 @@ public class DeleteTopicService implements DeleteTopicUseCase {
     /**
      * Löscht ein Thema auf Basis der übergebenen Informationen.
      * @param request enthält Themen-ID und Nutzernamen der Lösch-Anfrage
-     * @return Result<Topic> enthält gelöschtes Thema bzw. Fehlermeldung bei Misserfolg
+     * @return ApplicationResult<Topic> enthält gelöschtes Thema bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public Result<Topic> deleteTopic(DeleteTopicCommand request) {
+    public ApplicationResult<Topic> deleteTopic(DeleteTopicCommand request) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.badResult()) {
-            return Result.error("Cannot find user " + request.username());
+            return ApplicationResult.error("Cannot find user " + request.username());
         }
         User user = userResult.get();
 
         AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(user.getId());
         if (roleResult.invalid()) {
-            return Result.error("Cannot find user role " + request.username());
+            return ApplicationResult.error("Cannot find user role " + request.username());
         }
         String role = roleResult.get();
 
         if(!role.equals("admin")){
-            return Result.error("Not allowed to delete post");
+            return ApplicationResult.error("Not allowed to delete post");
         }
 
         RepositoryResult<Topic> deleteTopicResult = this.topicRepository.deleteTopic(UUID.fromString(request.id()));
         if (deleteTopicResult.badResult()) {
-            return Result.error("Cannot delete topic");
+            return ApplicationResult.error("Cannot delete topic");
         }
 
-        return Result.success(deleteTopicResult.get());
+        return ApplicationResult.success(deleteTopicResult.get());
     }
 }

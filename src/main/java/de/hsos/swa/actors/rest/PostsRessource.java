@@ -13,7 +13,7 @@ import de.hsos.swa.application.input.dto.in.CreatePostCommand;
 import de.hsos.swa.application.input.dto.in.DeletePostCommand;
 import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
 import de.hsos.swa.application.input.dto.in.GetPostByIdQuery;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.VoteRepository;
 import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
@@ -39,7 +39,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
@@ -108,7 +107,7 @@ public class PostsRessource {
                 filterParams.put(PostFilterParams.TOPICID, topicId);
 
             GetFilteredPostQuery query = new GetFilteredPostQuery(filterParams, includeComments, sortBy, orderBy);
-            Result<List<Post>> postsResult = this.getFilteredPostsUseCase.getFilteredPosts(query);
+            ApplicationResult<List<Post>> postsResult = this.getFilteredPostsUseCase.getFilteredPosts(query);
 
             if (postsResult.isSuccessful()) {
                 List<PostDto> postsResponse = postsResult.getData().stream().map(PostDto.Converter::fromDomainEntity).toList();
@@ -137,7 +136,7 @@ public class PostsRessource {
                                 @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy) {
         try {
             GetPostByIdQuery query = new GetPostByIdQuery(id, includeComments, sortBy, orderBy);
-            Result<Post> postResult = this.getPostByIdUseCase.getPostById(query);
+            ApplicationResult<Post> postResult = this.getPostByIdUseCase.getPostById(query);
 
             if (postResult.isSuccessful()) {
                 PostDto response = PostDto.Converter.fromDomainEntity(postResult.getData());
@@ -168,7 +167,7 @@ public class PostsRessource {
             validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
             CreatePostCommand command = CreatePostRequestBody.Converter.toInputPortCommand(request, username);
-            Result<Post> postResult = this.createPostUseCase.createPost(command);
+            ApplicationResult<Post> postResult = this.createPostUseCase.createPost(command);
 
             if (postResult.isSuccessful()) {
                 PostDto postResponse = PostDto.Converter.fromDomainEntity(postResult.getData());
@@ -192,7 +191,7 @@ public class PostsRessource {
         try {
             String username = securityContext.getUserPrincipal().getName();
             DeletePostCommand command = new DeletePostCommand(id, username);
-            Result<Post> postResult = this.deletePostUseCase.deletePost(command);
+            ApplicationResult<Post> postResult = this.deletePostUseCase.deletePost(command);
 
             if (postResult.isSuccessful()) {
                 PostDto postDto = PostDto.Converter.fromDomainEntity(postResult.getData());

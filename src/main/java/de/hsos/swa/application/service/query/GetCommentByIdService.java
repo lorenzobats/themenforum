@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.query;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.GetCommentByIdUseCase;
 import de.hsos.swa.application.input.dto.in.GetCommentByIdQuery;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.CommentRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.domain.entity.Comment;
@@ -22,11 +22,11 @@ public class GetCommentByIdService implements GetCommentByIdUseCase {
     CommentRepository commentRepository;
 
     @Override
-    public Result<Comment> getCommentById(GetCommentByIdQuery request) {
+    public ApplicationResult<Comment> getCommentById(GetCommentByIdQuery request) {
         RepositoryResult<Comment> commentResult = commentRepository.getCommentById(UUID.fromString(request.id()), true);
         if (commentResult.ok()) {
-            return Result.success(commentResult.get());
+            return ApplicationResult.success(commentResult.get());
         }
-        return Result.error("Cannot find Comment");
+        return ApplicationResult.error("Cannot find Comment");
     }
 }

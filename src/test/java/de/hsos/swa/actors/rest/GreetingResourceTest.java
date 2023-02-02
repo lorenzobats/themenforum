@@ -1,4 +1,4 @@
-package de.hsos.swa;
+package de.hsos.swa.actors.rest;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;

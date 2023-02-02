@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.query;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.GetFilteredPostsUseCase;
 import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.service.query.params.OrderParams;
@@ -28,7 +28,7 @@ public class GetFilteredPostsService implements GetFilteredPostsUseCase {
     PostRepository postRepository;
 
     @Override
-    public Result<List<Post>> getFilteredPosts(GetFilteredPostQuery request) {
+    public ApplicationResult<List<Post>> getFilteredPosts(GetFilteredPostQuery request) {
         RepositoryResult<List<Post>> postsResult = postRepository.getFilteredPosts(request.filterParams(), request.includeComments());
 
         if (postsResult.ok()) {
@@ -43,10 +43,10 @@ public class GetFilteredPostsService implements GetFilteredPostsUseCase {
                 }
                 default -> throw new IllegalArgumentException("Cant sort posts");
             }
-            return Result.success(sortedPosts);
+            return ApplicationResult.success(sortedPosts);
         }
 
-        return Result.error("Cannot find Posts");
+        return ApplicationResult.error("Cannot find Posts");
     }
 
     private void sortPosts(List<Post> posts, boolean reversed, Comparator<Post> comparator) {

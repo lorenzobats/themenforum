@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.query;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.dto.in.GetUserByNameQuery;
 import de.hsos.swa.application.input.GetUserByNameUseCase;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.domain.entity.User;
@@ -22,14 +22,14 @@ public class GetUserByNameService implements GetUserByNameUseCase {
     UserRepository userRepository;
 
     @Override
-    public Result<User> getUserByName(GetUserByNameQuery request, SecurityContext securityContext) {
+    public ApplicationResult<User> getUserByName(GetUserByNameQuery request, SecurityContext securityContext) {
         // TODO: Security Context ( Nur Admin !)
         RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
 
         if(userResult.badResult()) {
-           return Result.error("Username not found");
+           return ApplicationResult.error("Username not found");
         }
 
-        return Result.success(userResult.get());
+        return ApplicationResult.success(userResult.get());
     }
 }

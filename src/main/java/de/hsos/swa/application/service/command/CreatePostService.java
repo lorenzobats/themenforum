@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.CreatePostUseCase;
 import de.hsos.swa.application.input.dto.in.CreatePostCommand;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.PostRepository;
@@ -45,20 +45,20 @@ public class CreatePostService implements CreatePostUseCase {
     /**
      * Erstellt einen neuen Beitrag auf Basis der übergebenen Informationen.
      * @param request enthält Titel, Inhalt und Themen-ID und Nutzernamen für den zu erstellenden Beitrag
-     * @return Result<Post> enthält erstellten Beitrag bzw. Fehlermeldung bei Misserfolg
+     * @return ApplicationResult<Post> enthält erstellten Beitrag bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public Result<Post> createPost(CreatePostCommand request) {
+    public ApplicationResult<Post> createPost(CreatePostCommand request) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
         if(getUserByNameResponse.badResult()) {
-            return Result.error("Cannot find user " + request.username());
+            return ApplicationResult.error("Cannot find user " + request.username());
         }
         User user = getUserByNameResponse.get();
 
 
         RepositoryResult<Topic> getTopicByIdResponse = this.topicRepository.getTopicById(request.topicId());
         if(getTopicByIdResponse.badResult()) {
-            return Result.error("Cannot find topic " + request.topicId());
+            return ApplicationResult.error("Cannot find topic " + request.topicId());
         }
         Topic topic = getTopicByIdResponse.get();
 
@@ -67,8 +67,8 @@ public class CreatePostService implements CreatePostUseCase {
 
         RepositoryResult<Post> savePostResult = this.postRepository.savePost(post);
         if (savePostResult.badResult()) {
-            return Result.error("Cannot save post ");
+            return ApplicationResult.error("Cannot save post ");
         }
-        return Result.success(savePostResult.get());
+        return ApplicationResult.success(savePostResult.get());
     }
 }

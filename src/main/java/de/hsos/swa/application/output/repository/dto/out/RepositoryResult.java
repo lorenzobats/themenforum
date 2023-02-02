@@ -8,8 +8,8 @@ public class RepositoryResult<T> {
         ERROR
     }
 
-    public final Status status;
-    public final T data;
+    private final Status status;
+    private final T data;
 
 
     public RepositoryResult() {

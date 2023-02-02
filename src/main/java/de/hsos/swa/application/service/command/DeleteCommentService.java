@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.DeleteCommentUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteCommentCommand;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
@@ -50,19 +50,19 @@ public class DeleteCommentService implements DeleteCommentUseCase {
     /**
      * Löscht (=deaktiviert) ein Kommentar auf Basis der übergebenen Informationen.
      * @param request enthält Kommentar-ID und Nutzernamen der Lösch-Anfrage
-     * @return Result<Comment> enthält gelöschtes/deaktiviertes Kommentar bzw. Fehlermeldung bei Misserfolg
+     * @return ApplicationResult<Comment> enthält gelöschtes/deaktiviertes Kommentar bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public Result<Comment> deleteComment(DeleteCommentCommand request) {
+    public ApplicationResult<Comment> deleteComment(DeleteCommentCommand request) {
         RepositoryResult<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(request.commentId()));
         if (postResult.badResult()) {
-            return Result.error("Cannot find post for comment " + request.commentId());
+            return ApplicationResult.error("Cannot find post for comment " + request.commentId());
         }
         Post post = postResult.get();
 
         Optional<Comment> optionalComment = post.findCommentById(UUID.fromString(request.commentId()));
         if(optionalComment.isEmpty()){
-            return Result.error("Cannot find comment " + request.commentId());
+            return ApplicationResult.error("Cannot find comment " + request.commentId());
         }
         Comment comment = optionalComment.get();
 
@@ -70,18 +70,18 @@ public class DeleteCommentService implements DeleteCommentUseCase {
         // TODO Auth Service. Kann dann ganz an den Afang und findCommentById muss auch nicht mehr verwendet werden
         RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.badResult()) {
-            return Result.error("Cannot find user " + request.username());
+            return ApplicationResult.error("Cannot find user " + request.username());
         }
         User user = userResult.get();
 
         AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(user.getId());
         if (roleResult.invalid()) {
-            return Result.error("Cannot find user role " + request.username());
+            return ApplicationResult.error("Cannot find user role " + request.username());
         }
         String role = roleResult.get();
 
         if(!comment.getUser().getId().equals(user.getId()) && !role.equals("admin")){
-            return Result.error("Not allowed to delete comment");
+            return ApplicationResult.error("Not allowed to delete comment");
         }
         // ENDE TODO AUTH SERVICE
 
@@ -90,8 +90,8 @@ public class DeleteCommentService implements DeleteCommentUseCase {
 
         RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(post);
         if (updatePostResult.badResult()) {
-            return Result.error("Cannot update post ");
+            return ApplicationResult.error("Cannot update post ");
         }
-        return Result.success(comment);
+        return ApplicationResult.success(comment);
     }
 }

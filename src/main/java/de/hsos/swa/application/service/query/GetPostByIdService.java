@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.query;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.GetPostByIdUseCase;
 import de.hsos.swa.application.input.dto.in.GetPostByIdQuery;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.service.query.params.OrderParams;
@@ -27,7 +27,7 @@ public class GetPostByIdService implements GetPostByIdUseCase {
     PostRepository postRepository;
 
     @Override
-    public Result<Post> getPostById(GetPostByIdQuery query) {
+    public ApplicationResult<Post> getPostById(GetPostByIdQuery query) {
         RepositoryResult<Post> postResult = postRepository.getPostById(UUID.fromString(query.id()), query.includeComments());
 
         if (postResult.ok()) {
@@ -36,9 +36,9 @@ public class GetPostByIdService implements GetPostByIdUseCase {
             boolean descending = query.orderParams() == OrderParams.DESC;
 
             postResult.get().sortComments(descending, sortComparator);
-            return Result.success(postResult.get());
+            return ApplicationResult.success(postResult.get());
         }
-        return Result.error("Cannot find Post");
+        return ApplicationResult.error("Cannot find Post");
     }
 
 

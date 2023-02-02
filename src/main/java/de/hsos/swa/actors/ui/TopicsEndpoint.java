@@ -3,7 +3,7 @@ package de.hsos.swa.actors.ui;
 import de.hsos.swa.application.input.GetAllTopicsUseCase;
 import de.hsos.swa.application.input.SearchTopicsUseCase;
 import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
@@ -50,10 +50,10 @@ public class TopicsEndpoint {
             isLoggedIn = true;
         }
         if(searchString != null){
-            Result<List<TopicWithPostCountDto>> searchedTopics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(searchString));
+            ApplicationResult<List<TopicWithPostCountDto>> searchedTopics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(searchString));
             return Templates.topics(searchedTopics.getData(), isLoggedIn, username);
         }
-        Result<List<TopicWithPostCountDto>> allTopics = getAllTopicsUseCase.getAllTopics();
+        ApplicationResult<List<TopicWithPostCountDto>> allTopics = getAllTopicsUseCase.getAllTopics();
         return Templates.topics(allTopics.getData(), isLoggedIn, username);
     }
 
@@ -66,7 +66,7 @@ public class TopicsEndpoint {
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
         }
-        Result<List<TopicWithPostCountDto>> allTopics = getAllTopicsUseCase.getAllTopics();
+        ApplicationResult<List<TopicWithPostCountDto>> allTopics = getAllTopicsUseCase.getAllTopics();
         return Templates.createTopic(username);
     }
 }

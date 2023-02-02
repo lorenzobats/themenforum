@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.CommentPostUseCase;
 import de.hsos.swa.application.input.dto.in.CommentPostCommand;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
@@ -43,19 +43,19 @@ public class CommentPostService implements CommentPostUseCase {
     /**
      * Fügt ein Kommentar zu einem bestehenden Beitrag hinzu auf Basis der übergebenen Informationen.
      * @param request enthält Kommentartext, Beitrags-Id und Nutzernamen für das zu erstellende Kommentar
-     * @return Result<Commentar> enthält erzeugtes Kommentar bzw. Fehlermeldung bei Misserfolg
+     * @return ApplicationResult<Commentar> enthält erzeugtes Kommentar bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public Result<Comment> commentPost(CommentPostCommand request) {
+    public ApplicationResult<Comment> commentPost(CommentPostCommand request) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.badResult()) {
-            return Result.error("Cannot find user " + request.username());
+            return ApplicationResult.error("Cannot find user " + request.username());
         }
         User user = userResult.get();
 
         RepositoryResult<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.postId()), true);
         if (postResult.badResult()) {
-            return Result.error("Cannot find post " + request.postId());
+            return ApplicationResult.error("Cannot find post " + request.postId());
         }
         Post post = postResult.get();
 
@@ -64,8 +64,8 @@ public class CommentPostService implements CommentPostUseCase {
 
         RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(post);
         if (updatePostResult.badResult()) {
-            return Result.error("Cannot update post " + request.postId());
+            return ApplicationResult.error("Cannot update post " + request.postId());
         }
-        return Result.success(comment);
+        return ApplicationResult.success(comment);
     }
 }

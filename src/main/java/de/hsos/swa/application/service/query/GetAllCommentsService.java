@@ -2,7 +2,7 @@ package de.hsos.swa.application.service.query;
 
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.GetAllCommentsUseCase;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.CommentRepository;
 import de.hsos.swa.domain.entity.Comment;
 
@@ -19,12 +19,12 @@ public class GetAllCommentsService implements GetAllCommentsUseCase {
     CommentRepository commentRepository;
 
     @Override
-    public Result<List<Comment>> getAllComments(boolean includeReplies) {
+    public ApplicationResult<List<Comment>> getAllComments(boolean includeReplies) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<List<Comment>> commentsResult = commentRepository.getAllComments(includeReplies);
         if (commentsResult.ok()) {
-            return Result.success(commentsResult.get());
+            return ApplicationResult.success(commentsResult.get());
         }
 
-        return Result.error("Cannot find Comments");
+        return ApplicationResult.error("Cannot find Comments");
     }
 }

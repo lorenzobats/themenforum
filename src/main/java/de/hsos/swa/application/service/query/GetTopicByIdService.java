@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.query;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.GetTopicByIdUseCase;
 import de.hsos.swa.application.input.dto.in.GetTopicByIdQuery;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.domain.entity.Topic;
@@ -22,11 +22,11 @@ public class GetTopicByIdService implements GetTopicByIdUseCase {
     TopicRepository topicRepository;
 
     @Override
-    public Result<Topic> getTopicById(GetTopicByIdQuery request) {
+    public ApplicationResult<Topic> getTopicById(GetTopicByIdQuery request) {
         RepositoryResult<Topic> topicResult = topicRepository.getTopicById(UUID.fromString(request.topicId()));
         if (topicResult.ok()) {
-            return Result.success(topicResult.get());
+            return ApplicationResult.success(topicResult.get());
         }
-        return Result.error("Cannot find Topic");
+        return ApplicationResult.error("Cannot find Topic");
     }
 }

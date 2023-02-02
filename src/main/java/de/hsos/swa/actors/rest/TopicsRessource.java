@@ -2,13 +2,12 @@ package de.hsos.swa.actors.rest;
 
 import de.hsos.swa.actors.rest.dto.in.CreateTopicRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
-import de.hsos.swa.actors.rest.dto.out.PostDto;
 import de.hsos.swa.actors.rest.dto.out.TopicDto;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
 import de.hsos.swa.application.annotations.Adapter;
 import de.hsos.swa.application.input.dto.in.DeleteTopicCommand;
 import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.CreateTopicCommand;
@@ -68,7 +67,7 @@ public class TopicsRessource {
     public Response getAllTopics(@QueryParam("search") String searchString) {
         try {
 
-            Result<List<TopicWithPostCountDto>> topicsResult;
+            ApplicationResult<List<TopicWithPostCountDto>> topicsResult;
             if (searchString != null)
                 topicsResult = this.searchTopicsUseCase.searchTopics(new SearchTopicsQuery(searchString));
             else topicsResult = this.getAllTopicsUseCase.getAllTopics();
@@ -93,7 +92,7 @@ public class TopicsRessource {
     public Response getTopicById(@PathParam("id") String id) {
         try {
             GetTopicByIdQuery query = new GetTopicByIdQuery(id);
-            Result<Topic> topicResult = this.getTopicByIdUseCase.getTopicById(query);
+            ApplicationResult<Topic> topicResult = this.getTopicByIdUseCase.getTopicById(query);
             if (topicResult.isSuccessful()) {
                 TopicDto response = TopicDto.Converter.fromDomainEntity(topicResult.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
@@ -123,7 +122,7 @@ public class TopicsRessource {
             validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
             CreateTopicCommand command = CreateTopicRequestBody.Converter.toInputPortCommand(request, username);
-            Result<Topic> topicResult = this.createTopicUseCase.createTopic(command);
+            ApplicationResult<Topic> topicResult = this.createTopicUseCase.createTopic(command);
 
             if (topicResult.isSuccessful()) {
                 TopicDto topicResponse = TopicDto.Converter.fromDomainEntity(topicResult.getData());
@@ -147,7 +146,7 @@ public class TopicsRessource {
         try {
             String username = securityContext.getUserPrincipal().getName();
             DeleteTopicCommand command = new DeleteTopicCommand(id, username);
-            Result<Topic> postResult = this.deleteTopicUseCase.deleteTopic(command);
+            ApplicationResult<Topic> postResult = this.deleteTopicUseCase.deleteTopic(command);
 
             if (postResult.isSuccessful()) {
                 TopicDto postDto = TopicDto.Converter.fromDomainEntity(postResult.getData());

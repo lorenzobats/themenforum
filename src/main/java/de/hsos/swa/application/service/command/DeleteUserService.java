@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.DeleteUserUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteUserCommand;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.domain.entity.User;
@@ -27,29 +27,29 @@ public class DeleteUserService implements DeleteUserUseCase {
     /**
      * Deaktiviert einen User auf Basis der übergebenen Informationen.
      * @param request enthält Themen-ID und Nutzernamen der Lösch-Anfrage
-     * @return Result<Topic> enthält gelöschtes Thema bzw. Fehlermeldung bei Misserfolg
+     * @return ApplicationResult<Topic> enthält gelöschtes Thema bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public Result<User> deleteUser(DeleteUserCommand request) {
+    public ApplicationResult<User> deleteUser(DeleteUserCommand request) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> requestingUserResult = this.userRepository.getUserByName(request.username());
         if (requestingUserResult.badResult()) {
-            return Result.error("Cannot find user " + request.username());
+            return ApplicationResult.error("Cannot find user " + request.username());
         }
         User requestingUser = requestingUserResult.get();
 
         AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(requestingUser.getId());
         if (roleResult.invalid()) {
-            return Result.error("Cannot find user role " + request.username());
+            return ApplicationResult.error("Cannot find user role " + request.username());
         }
         String role = roleResult.get();
 
         if(!role.equals("admin")){
-            return Result.error("Not allowed to disable user");
+            return ApplicationResult.error("Not allowed to disable user");
         }
 
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserById(UUID.fromString(request.userId()));
         if (userResult.badResult()) {
-            return Result.error("Cannot find userId " + request.userId());
+            return ApplicationResult.error("Cannot find userId " + request.userId());
         }
         User user = userResult.get();
 
@@ -59,8 +59,8 @@ public class DeleteUserService implements DeleteUserUseCase {
 
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> updateUserResult = this.userRepository.updateUser(user);
         if (updateUserResult.badResult()) {
-            return Result.error("Cannot update post ");
+            return ApplicationResult.error("Cannot update post ");
         }
-        return Result.success(user);
+        return ApplicationResult.success(user);
     }
 }

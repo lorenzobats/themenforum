@@ -3,7 +3,6 @@ package de.hsos.swa.actors.rest;
 
 import de.hsos.swa.actors.rest.dto.in.RegisterUserRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
-import de.hsos.swa.actors.rest.dto.out.TopicDto;
 import de.hsos.swa.actors.rest.dto.out.UserDto;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
 import de.hsos.swa.application.annotations.Adapter;
@@ -12,7 +11,7 @@ import de.hsos.swa.application.input.GetUserByNameUseCase;
 import de.hsos.swa.application.input.RegisterUserUseCase;
 import de.hsos.swa.application.input.dto.in.GetUserByNameQuery;
 import de.hsos.swa.application.input.dto.in.RegisterUserCommand;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.domain.entity.User;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -71,7 +70,7 @@ public class UsersRessource {
     })
     public Response getUserByName(@PathParam("username") String username, @Context SecurityContext securityContext) {
         try {
-            Result<User> userResult = this.getUserByNameUseCase.getUserByName(new GetUserByNameQuery(username), securityContext);
+            ApplicationResult<User> userResult = this.getUserByNameUseCase.getUserByName(new GetUserByNameQuery(username), securityContext);
             if (userResult.isSuccessful()) {
                 UserDto responseDto = UserDto.Converter.fromDomainEntity(userResult.getData());
                 return Response.status(Response.Status.OK).entity(responseDto).build();
@@ -98,7 +97,7 @@ public class UsersRessource {
         try {
             validationService.validate(request);
             RegisterUserCommand command = RegisterUserRequestBody.Converter.toInputPortCommand(request);
-            Result<User> userResult = this.registerUserUseCase.registerUser(command);
+            ApplicationResult<User> userResult = this.registerUserUseCase.registerUser(command);
             if (userResult.isSuccessful()) {
                 UserDto responseDto = UserDto.Converter.fromDomainEntity(userResult.getData());
                 return Response.status(Response.Status.OK).entity(responseDto).build();

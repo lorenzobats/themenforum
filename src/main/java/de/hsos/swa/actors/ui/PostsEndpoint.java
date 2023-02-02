@@ -4,7 +4,7 @@ import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
 import de.hsos.swa.application.input.dto.in.GetPostByCommentIdQuery;
 import de.hsos.swa.application.input.dto.in.GetPostByIdQuery;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
@@ -77,7 +77,7 @@ public class PostsEndpoint {
             filterParams.put(PostFilterParams.USERNAME, username);
 
         GetFilteredPostQuery request = new GetFilteredPostQuery(filterParams, true, sortBy, orderBy);
-        Result<List<Post>> filteredPosts = getFilteredPostsUseCase.getFilteredPosts(request);
+        ApplicationResult<List<Post>> filteredPosts = getFilteredPostsUseCase.getFilteredPosts(request);
 
         if (filterParams.containsKey(PostFilterParams.TOPIC)) {
             return Templates.posts(String.valueOf(filterParams.get(PostFilterParams.TOPIC)), filteredPosts.getData(), isLoggedIn, principalUsername);
@@ -103,7 +103,7 @@ public class PostsEndpoint {
         }
 
         GetPostByIdQuery request = new GetPostByIdQuery(id, true, sortBy, orderBy);
-        Result<Post> postResult = getPostByIdUseCase.getPostById(request);
+        ApplicationResult<Post> postResult = getPostByIdUseCase.getPostById(request);
 
         if (postResult.isSuccessful()) {
             return Templates.post(postResult.getData(), isLoggedIn, username);
@@ -123,7 +123,7 @@ public class PostsEndpoint {
             isLoggedIn = true;
         }
 
-        Result<Post> postResult = getPostByCommentIdUseCase.getPostByCommentId(new GetPostByCommentIdQuery(id));
+        ApplicationResult<Post> postResult = getPostByCommentIdUseCase.getPostByCommentId(new GetPostByCommentIdQuery(id));
 
         if (postResult.isSuccessful()) {
             return Templates.post(postResult.getData(), isLoggedIn, username);
@@ -140,7 +140,7 @@ public class PostsEndpoint {
         if (securityContext.getUserPrincipal() != null) {
             username = securityContext.getUserPrincipal().getName();
         }
-        Result<List<TopicWithPostCountDto>> allTopics = getAllTopicsUseCase.getAllTopics();
+        ApplicationResult<List<TopicWithPostCountDto>> allTopics = getAllTopicsUseCase.getAllTopics();
         return Templates.createPost(allTopics.getData(), username);
     }
 

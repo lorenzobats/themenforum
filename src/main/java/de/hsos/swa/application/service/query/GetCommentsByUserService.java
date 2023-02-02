@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.query;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.GetCommentsByUserUseCase;
 import de.hsos.swa.application.input.dto.in.GetCommentsByUserQuery;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.CommentRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.domain.entity.Comment;
@@ -22,12 +22,12 @@ public class GetCommentsByUserService implements GetCommentsByUserUseCase {
     CommentRepository commentRepository;
 
     @Override
-    public Result<List<Comment>> getCommentsByUser(GetCommentsByUserQuery request) {
+    public ApplicationResult<List<Comment>> getCommentsByUser(GetCommentsByUserQuery request) {
         RepositoryResult<List<Comment>> commentsResult = commentRepository.getCommentsByUser(request.username());
         if(commentsResult.ok()) {
-            return Result.success(commentsResult.get());
+            return ApplicationResult.success(commentsResult.get());
         }
 
-        return Result.error("Cannot find Comments");
+        return ApplicationResult.error("Cannot find Comments");
     }
 }

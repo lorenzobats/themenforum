@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.DeleteVoteUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteVoteCommand;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.dto.in.VoteQueryDto;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
@@ -40,17 +40,17 @@ public class DeleteVoteService implements DeleteVoteUseCase {
     Logger log;
 
     @Override
-    public Result<Vote> deleteVote(DeleteVoteCommand request) {
+    public ApplicationResult<Vote> deleteVote(DeleteVoteCommand request) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.badResult()) {
-            return Result.error("Cannot retrieve User");
+            return ApplicationResult.error("Cannot retrieve User");
         }
         User user = userResult.get();
 
 
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<VoteQueryDto> voteResult = this.voteRepository.getVoteById(UUID.fromString(request.vote()));
         if (voteResult.badResult()) {
-            return Result.error("Cannot find Vote");
+            return ApplicationResult.error("Cannot find Vote");
         }
         VoteQueryDto vote = voteResult.get();
 
@@ -75,15 +75,15 @@ public class DeleteVoteService implements DeleteVoteUseCase {
         }
 
         if (optionalVote.isEmpty()) {
-            return Result.error("Vote could not be deleted");
+            return ApplicationResult.error("Vote could not be deleted");
         }
 
         RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(postResult.get());
 
         if (updatePostResult.ok()) {
-            return Result.success(optionalVote.get());
+            return ApplicationResult.success(optionalVote.get());
         }
 
-        return Result.error("Something went wrong while deleting a Vote and updating the Post");
+        return ApplicationResult.error("Something went wrong while deleting a Vote and updating the Post");
     }
 }

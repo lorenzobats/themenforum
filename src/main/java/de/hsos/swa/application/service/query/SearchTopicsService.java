@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.query;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.SearchTopicsUseCase;
 import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
@@ -22,11 +22,11 @@ public class SearchTopicsService implements SearchTopicsUseCase {
     TopicRepository topicRepository;
 
     @Override
-    public Result<List<TopicWithPostCountDto>> searchTopics(SearchTopicsQuery request) {
+    public ApplicationResult<List<TopicWithPostCountDto>> searchTopics(SearchTopicsQuery request) {
         RepositoryResult<List<TopicWithPostCountDto>> topicsResult = topicRepository.searchTopic(request.searchString());
         if (topicsResult.badResult()) {
-            return Result.error("Could not find Topics like (" + request.searchString() +")");
+            return ApplicationResult.error("Could not find Topics like (" + request.searchString() +")");
         }
-        return Result.success(topicsResult.get());
+        return ApplicationResult.success(topicsResult.get());
     }
 }

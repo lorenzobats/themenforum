@@ -8,7 +8,7 @@ import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
 import de.hsos.swa.application.annotations.Adapter;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.domain.entity.Comment;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Timed;
@@ -73,7 +73,7 @@ public class CommentsRessource {
     public Response getCommentById(@PathParam("id") String id) {
         try {
             GetCommentByIdQuery query = new GetCommentByIdQuery(id);
-            Result<Comment> commentResult = this.getCommentByIdUseCase.getCommentById(query);
+            ApplicationResult<Comment> commentResult = this.getCommentByIdUseCase.getCommentById(query);
             if (commentResult.isSuccessful()) {
                 CommentDto response = CommentDto.Converter.fromDomainEntity(commentResult.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
@@ -96,7 +96,7 @@ public class CommentsRessource {
     public Response getAllComments(@DefaultValue("true") @QueryParam("includeReplies") Boolean includeReplies) {
         try {
             // TODO: Query (includeComments)
-            Result<List<Comment>> commentsResult = this.getAllCommentsUseCase.getAllComments(includeReplies);
+            ApplicationResult<List<Comment>> commentsResult = this.getAllCommentsUseCase.getAllComments(includeReplies);
             if (commentsResult.isSuccessful()) {
                 List<CommentDto> commentsResponse = commentsResult.getData().stream().map(CommentDto.Converter::fromDomainEntity).toList();
                 return Response.status(Response.Status.OK).entity(commentsResponse).build();
@@ -126,7 +126,7 @@ public class CommentsRessource {
             validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
             CommentPostCommand command = CommentPostRequestBody.Converter.toInputPortCommand(request, username);
-            Result<Comment> result = this.commentPostUseCase.commentPost(command);
+            ApplicationResult<Comment> result = this.commentPostUseCase.commentPost(command);
             if (result.isSuccessful()) {
                 CommentDto response = CommentDto.Converter.fromDomainEntity(result.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
@@ -157,7 +157,7 @@ public class CommentsRessource {
             validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
             ReplyToCommentCommand command = ReplyToCommentRequestBody.Converter.toInputPortCommand(request, id, username);
-            Result<Comment> result = this.replyToCommentUseCase.replyToComment(command);
+            ApplicationResult<Comment> result = this.replyToCommentUseCase.replyToComment(command);
             if (result.isSuccessful()) {
                 CommentDto response = CommentDto.Converter.fromDomainEntity(result.getData());
                 return Response.status(Response.Status.OK).entity(response).build();
@@ -180,7 +180,7 @@ public class CommentsRessource {
         try {
             String username = securityContext.getUserPrincipal().getName();
             DeleteCommentCommand command = new DeleteCommentCommand(id, username);
-            Result<Comment> commentResult = this.deleteCommentUseCase.deleteComment(command);
+            ApplicationResult<Comment> commentResult = this.deleteCommentUseCase.deleteComment(command);
 
             if (commentResult.isSuccessful()) {
                 CommentDto commentDto = CommentDto.Converter.fromDomainEntity(commentResult.getData());

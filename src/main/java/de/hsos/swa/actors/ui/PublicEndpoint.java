@@ -7,7 +7,7 @@ import de.hsos.swa.application.input.dto.in.GetAllVotesByUsernameQuery;
 import de.hsos.swa.application.input.dto.in.GetCommentsByUserQuery;
 import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
 import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReferenceDto;
 import de.hsos.swa.application.service.query.params.OrderParams;
@@ -112,11 +112,11 @@ public class PublicEndpoint {
         if (username != null)
             filterParams.put(PostFilterParams.USERNAME, username);
 
-        Result<List<TopicWithPostCountDto>> topics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(username));
-        Result<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostQuery(filterParams, false, SortingParams.DATE, OrderParams.DESC));
-        Result<List<Comment>> comments = getCommentsByUserUseCase.getCommentsByUser(new GetCommentsByUserQuery(username));
+        ApplicationResult<List<TopicWithPostCountDto>> topics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(username));
+        ApplicationResult<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostQuery(filterParams, false, SortingParams.DATE, OrderParams.DESC));
+        ApplicationResult<List<Comment>> comments = getCommentsByUserUseCase.getCommentsByUser(new GetCommentsByUserQuery(username));
 
-        Result<List<VoteWithVotedEntityReferenceDto>> votes = getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext);
+        ApplicationResult<List<VoteWithVotedEntityReferenceDto>> votes = getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext);
 
         return Templates.profile(topics.getData(), posts.getData(), comments.getData(), votes.getData(), username, selection);
     }

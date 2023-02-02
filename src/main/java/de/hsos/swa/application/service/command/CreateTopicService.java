@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.CreateTopicUseCase;
 import de.hsos.swa.application.input.dto.in.CreateTopicCommand;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
@@ -44,13 +44,13 @@ public class CreateTopicService implements CreateTopicUseCase {
     /**
      * Erstellt ein neues Thema auf Basis der übergebenen Informationen.
      * @param request enthält Titel, Text und Nutzername für das zu erstellende Thema
-     * @return Result<Topic> enthält erstelltes Thema bzw. Fehlermeldung bei Misserfolg
+     * @return ApplicationResult<Topic> enthält erstelltes Thema bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public Result<Topic> createTopic(CreateTopicCommand request) {
+    public ApplicationResult<Topic> createTopic(CreateTopicCommand request) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
         if(getUserByNameResponse.badResult()) {
-            return Result.error("Cannot find user " + request.username());
+            return ApplicationResult.error("Cannot find user " + request.username());
         }
         User user = getUserByNameResponse.get();
 
@@ -58,8 +58,8 @@ public class CreateTopicService implements CreateTopicUseCase {
 
         RepositoryResult<Topic> saveTopicResult = this.topicRepository.saveTopic(topic);
         if (saveTopicResult.badResult()) {
-            return Result.error("Cannot create topic ");
+            return ApplicationResult.error("Cannot create topic ");
         }
-        return Result.success(saveTopicResult.get());
+        return ApplicationResult.success(saveTopicResult.get());
     }
 }

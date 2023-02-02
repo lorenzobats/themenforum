@@ -1,9 +1,7 @@
 package de.hsos.swa.actors.rest;
 
-import de.hsos.swa.actors.rest.dto.in.RegisterUserRequestBody;
 import de.hsos.swa.actors.rest.dto.in.VoteEntityRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
-import de.hsos.swa.actors.rest.dto.out.UserDto;
 import de.hsos.swa.actors.rest.dto.out.VoteDto;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
 import de.hsos.swa.application.annotations.Adapter;
@@ -14,8 +12,8 @@ import de.hsos.swa.application.input.VoteEntityUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteVoteCommand;
 import de.hsos.swa.application.input.dto.in.GetAllVotesByUsernameQuery;
 import de.hsos.swa.application.input.dto.in.VoteEntityCommand;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReferenceDto;
-import de.hsos.swa.application.input.dto.out.Result;
 import de.hsos.swa.domain.entity.Vote;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -71,7 +69,7 @@ public class VotesRessource {
     })
     public Response getAllVotes(@QueryParam("username") String username, @Context SecurityContext securityContext) {
         try {
-            Result<List<VoteWithVotedEntityReferenceDto>> votesResult;
+            ApplicationResult<List<VoteWithVotedEntityReferenceDto>> votesResult;
             if (username != null)
                 votesResult = this.getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext);
             else votesResult = this.getAllVotesUseCase.getAllVotes(securityContext);
@@ -103,7 +101,7 @@ public class VotesRessource {
             String username = securityContext.getUserPrincipal().getName();
             VoteEntityCommand command = VoteEntityRequestBody.Converter.toInputPortCommand(request, username);
 
-            Result<Vote> voteResult = this.voteEntityUseCase.vote(command);
+            ApplicationResult<Vote> voteResult = this.voteEntityUseCase.vote(command);
 
             if (voteResult.isSuccessful()) {
                 VoteDto voteDto = VoteDto.Converter.fromDomainEntity(voteResult.getData());
@@ -127,7 +125,7 @@ public class VotesRessource {
         try {
             String username = securityContext.getUserPrincipal().getName();
 
-            Result<Vote> voteResult = this.deleteVoteUseCase.deleteVote(new DeleteVoteCommand(id, username));
+            ApplicationResult<Vote> voteResult = this.deleteVoteUseCase.deleteVote(new DeleteVoteCommand(id, username));
 
             if (voteResult.isSuccessful()) {
                 VoteDto voteDto = VoteDto.Converter.fromDomainEntity(voteResult.getData());

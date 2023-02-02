@@ -3,7 +3,7 @@ package de.hsos.swa.application.service.command;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.VoteEntityUseCase;
 import de.hsos.swa.application.input.dto.in.VoteEntityCommand;
-import de.hsos.swa.application.input.dto.out.Result;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
@@ -34,10 +34,10 @@ public class VoteEntityService implements VoteEntityUseCase {
 
 
     @Override
-    public Result<Vote> vote(VoteEntityCommand request) {
+    public ApplicationResult<Vote> vote(VoteEntityCommand request) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.badResult()) {
-            return Result.error("Cannot retrieve User");
+            return ApplicationResult.error("Cannot retrieve User");
         }
         User user = userResult.get();
 
@@ -52,7 +52,7 @@ public class VoteEntityService implements VoteEntityUseCase {
                     if (optionalComment.isPresent()) {
                         optionalVote = this.voteEntityService.vote(optionalComment.get(), user, request.voteType());
                         if (optionalVote.isEmpty()) {
-                            return Result.error("Comment could not be voted");
+                            return ApplicationResult.error("Comment could not be voted");
                         }
                     }
                 }
@@ -61,7 +61,7 @@ public class VoteEntityService implements VoteEntityUseCase {
                 postResult = this.postRepository.getPostById(UUID.fromString(request.entityId()),true);
                 optionalVote = this.voteEntityService.vote(postResult.get(), user, request.voteType());
                 if (optionalVote.isEmpty()) {
-                    return Result.error("Post could not be voted");
+                    return ApplicationResult.error("Post could not be voted");
                 }
             }
         }
@@ -70,9 +70,9 @@ public class VoteEntityService implements VoteEntityUseCase {
         RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(postResult.get());
 
         if (updatePostResult.ok() && optionalVote.isPresent()) {
-            return Result.success(optionalVote.get());
+            return ApplicationResult.success(optionalVote.get());
         }
 
-        return Result.error("Something went wrong while voting Entity");
+        return ApplicationResult.error("Something went wrong while voting Entity");
     }
 }
