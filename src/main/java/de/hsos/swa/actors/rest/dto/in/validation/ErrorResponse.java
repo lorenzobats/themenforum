@@ -30,7 +30,7 @@ public class ErrorResponse {
         ));
     }
 
-    public static Response asResponseFromAppplicationResult(ApplicationResult.Status status, String detailMessage) {
+    public static Response asResponseFromApplicationResult(ApplicationResult.Status status, String detailMessage) {
         switch (status) {
             case NOT_VALID -> {
                 return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse("Invalid request", detailMessage, 400)).build();

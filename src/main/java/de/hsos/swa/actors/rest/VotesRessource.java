@@ -87,7 +87,7 @@ public class VotesRessource {
                 return Response.status(Response.Status.OK).entity(votesResponse).build();
             }
 
-            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
+            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
@@ -115,7 +115,7 @@ public class VotesRessource {
                 VoteDto voteDto = VoteDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(voteDto).build();
             }
-            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
+            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
@@ -139,7 +139,7 @@ public class VotesRessource {
                 VoteDto voteDto = VoteDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(voteDto).build();
             }
-            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
+            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }

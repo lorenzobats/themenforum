@@ -38,6 +38,12 @@ public class GetPostByIdService implements GetPostByIdUseCase {
             postResult.get().sortComments(descending, sortComparator);
             return ApplicationResult.ok(postResult.get());
         }
+
+        switch (postResult.status()){
+            case ENTITY_NOT_FOUND -> {
+                return ApplicationResult.notFound(query.id() + "not found");
+            }
+        }
         return ApplicationResult.exception("Cannot find Post");
     }
 

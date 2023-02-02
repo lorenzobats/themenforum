@@ -109,7 +109,7 @@ public class PostsRessource {
                 return Response.status(Response.Status.OK).entity(postsResponse).build();
             }
 
-            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
+            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         }  catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
@@ -137,7 +137,7 @@ public class PostsRessource {
                 return Response.status(Response.Status.OK).entity(response).build();
             }
 
-            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
+            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
@@ -167,7 +167,7 @@ public class PostsRessource {
                 PostDto postResponse = PostDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(postResponse).build();
             }
-            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
+            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
@@ -191,7 +191,7 @@ public class PostsRessource {
                 PostDto postDto = PostDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(postDto).build();
             }
-            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
+            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }

@@ -7,7 +7,7 @@ import de.hsos.swa.application.service.query.params.SortingParams;
 
 @InputPortRequest
 public record GetPostByIdQuery(
-        @ValidId
+        @ValidId        // TODO: Valid id wird nicht geprüft
         String id,
         boolean includeComments,
         SortingParams sortingParams,

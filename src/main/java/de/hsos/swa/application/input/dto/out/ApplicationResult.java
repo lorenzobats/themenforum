@@ -49,6 +49,7 @@ public class ApplicationResult<T> {
         return new ApplicationResult<>(data);
     }
 
+    // TODO: error Messages übergeben
     public static <T> ApplicationResult<T> exception(String errorMessage) {
         return new ApplicationResult<T>(Status.EXCEPTION, errorMessage);
     }
@@ -61,7 +62,7 @@ public class ApplicationResult<T> {
     public static <T> ApplicationResult<T> noPermission(String errorMessage) {return new ApplicationResult<>(Status.NO_PERMISSION);}
     public static <T> ApplicationResult<T> notValid(String errorMessage) {return new ApplicationResult<>(Status.NOT_VALID);}
     public static <T> ApplicationResult<T> notFound(String errorMessage) {
-        return new ApplicationResult<>(Status.NOT_FOUND);
+        return new ApplicationResult<>(Status.NOT_FOUND, errorMessage);
     }
 
     public ApplicationResult<T> setData(T data){
