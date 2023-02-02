@@ -25,12 +25,12 @@ public class GetAllVotesService implements GetAllVotesUseCase {
     public ApplicationResult<List<VoteWithVotedEntityReferenceDto>> getAllVotes(SecurityContext securityContext) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<List<VoteQueryDto>> votesResult = voteRepository.getAllVotes();
 
-        if (votesResult.badResult()) {
-            return ApplicationResult.error("Cannot find Posts");
+        if (votesResult.error()) {
+            return ApplicationResult.exception("Cannot find Posts");
         }
 
         List<VoteWithVotedEntityReferenceDto> userVotes = votesResult.get().stream().map(v -> new VoteWithVotedEntityReferenceDto(v.vote(), v.votedEntityType(), v.votedEntityId())).toList();
 
-        return ApplicationResult.success(userVotes);
+        return ApplicationResult.ok(userVotes);
     }
 }

@@ -23,9 +23,9 @@ public class GetAllUsersService implements GetAllUsersUseCase {
     public ApplicationResult<List<User>> getAllUsers(SecurityContext securityContext) {
         // TODO: Security Context über auth service
         RepositoryResult<List<User>> userResult = this.userRepository.getAllUsers();
-        if(userResult.badResult()){
-            return ApplicationResult.error("Didnt find users");
+        if(userResult.error()){
+            return ApplicationResult.exception("Didnt find users");
         }
-        return ApplicationResult.success(userResult.get());
+        return ApplicationResult.ok(userResult.get());
     }
 }

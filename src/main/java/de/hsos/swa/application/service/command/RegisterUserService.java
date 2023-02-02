@@ -36,7 +36,7 @@ public class RegisterUserService implements RegisterUserUseCase {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> existingUserResult = this.userRepository.getUserByName(request.username());
 
         if (!existingUserResult.status().equals(de.hsos.swa.application.output.repository.dto.out.RepositoryResult.Status.ENTITY_NOT_FOUND)) {
-            return ApplicationResult.error("Registration failed");
+            return ApplicationResult.exception("Registration failed");
         }
 
         User user = UserFactory.createUser(request.username());
@@ -51,14 +51,14 @@ public class RegisterUserService implements RegisterUserUseCase {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> createUserResponse = this.userRepository.saveUser(user);
 
         if (!createUserResponse.ok()) {
-            return ApplicationResult.error("Registration failed");
+            return ApplicationResult.exception("Registration failed");
         }
 
-        if (createUserAuthResponse.invalid()) {
-            return ApplicationResult.error("Authentication failed");
+        if (createUserAuthResponse.error()) {
+            return ApplicationResult.exception("Authentication failed");
         }
 
-        return ApplicationResult.success(createUserResponse.get());
+        return ApplicationResult.ok(createUserResponse.get());
 
     }
 

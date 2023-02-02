@@ -1,20 +1,23 @@
 package de.hsos.swa.application.input.dto.out;
 
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.domain.entity.Topic;
 
 public class ApplicationResult<T> {
 
     public enum Status {
-        OK,
-        NOT_CREATED,
-        NOT_UPDATED,
-        NOT_FOUND,
-        NOT_AUTHORIZED,
-        EXCEPTION,
+        OK,                     // 200 (OK), 201 (CREATED)
+
+        NO_CONTENT,             // 204 (NO Content) -> bei DELETE
+        NOT_AUTHORIZED,         // 401 (Unauthorized)
+        NO_ACCESS,              // 403 (Forbidden)
+        NOT_FOUND,              // 404 (Not Found)
+        NOT_VALID,              // 400 (Bad Request)
+        NO_PERMISSION,          // 550 (Permission denied)
+        EXCEPTION,              // 500 (Internal Server Error)
     }
 
     private final Status status;
-    private final T data;
+    private T data;
     private String errorMessage = "";
 
     public ApplicationResult() {
@@ -38,46 +41,55 @@ public class ApplicationResult<T> {
         this.errorMessage = errorMessage;
     }
 
-    public static <T> ApplicationResult<T> success(T data) {
+    public static <T> ApplicationResult<T> ok(T data) {
         return new ApplicationResult<>(data);
     }
 
-    public static <T> ApplicationResult<T> error(String errorMessage) {
-        return new ApplicationResult<T>(Status.EXCEPTION, errorMessage);
+    public static <T> ApplicationResult<T> noContent(T data) {
+        return new ApplicationResult<>(data);
     }
 
-    public static <T> ApplicationResult<T> notFound() {
+    public static <T> ApplicationResult<T> exception(String errorMessage) {
+        return new ApplicationResult<T>(Status.EXCEPTION, errorMessage);
+    }
+    public static <T> ApplicationResult<T> noAuthorization(String errorMessage) {
+        return new ApplicationResult<>(Status.NOT_AUTHORIZED);
+    }
+    public static <T> ApplicationResult<T> noAccess(String errorMessage) {
+        return new ApplicationResult<>(Status.NO_ACCESS);
+    }
+    public static <T> ApplicationResult<T> noPermission(String errorMessage) {return new ApplicationResult<>(Status.NO_PERMISSION);}
+    public static <T> ApplicationResult<T> notValid(String errorMessage) {return new ApplicationResult<>(Status.NOT_VALID);}
+    public static <T> ApplicationResult<T> notFound(String errorMessage) {
         return new ApplicationResult<>(Status.NOT_FOUND);
     }
 
-    public T getData() {
+    public ApplicationResult<T> setData(T data){
+        this.data = data;
+        return this;
+    }
+
+    public ApplicationResult<T> setMessage(String errorMessage){
+        this.errorMessage = errorMessage;
+        return this;
+    }
+
+    public T data() {
         if (data != null) return data;
         else throw new RuntimeException("Error: No Data available");
     }
 
-    public boolean isSuccessful() {
+    public boolean ok() {
         return status.equals(Status.OK);
     }
 
-    public String getMessage() {
+    public String message() {
         return errorMessage;
     }
 
 
-    public boolean ok(){
-        return status.equals(Status.OK);
-    }
-
-    public boolean badResult(){
-        return !this.ok();
-    }
-
     public Status status(){
         return this.status;
     }
-    public T get(){
-        return this.data;
-    }
-
 
 }

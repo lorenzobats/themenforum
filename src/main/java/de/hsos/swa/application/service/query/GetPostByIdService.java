@@ -36,9 +36,9 @@ public class GetPostByIdService implements GetPostByIdUseCase {
             boolean descending = query.orderParams() == OrderParams.DESC;
 
             postResult.get().sortComments(descending, sortComparator);
-            return ApplicationResult.success(postResult.get());
+            return ApplicationResult.ok(postResult.get());
         }
-        return ApplicationResult.error("Cannot find Post");
+        return ApplicationResult.exception("Cannot find Post");
     }
 
 

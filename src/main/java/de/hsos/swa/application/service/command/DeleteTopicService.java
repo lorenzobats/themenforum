@@ -15,6 +15,7 @@ import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -46,32 +47,39 @@ public class DeleteTopicService implements DeleteTopicUseCase {
 
     /**
      * Löscht ein Thema auf Basis der übergebenen Informationen.
+     *
      * @param request enthält Themen-ID und Nutzernamen der Lösch-Anfrage
      * @return ApplicationResult<Topic> enthält gelöschtes Thema bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Topic> deleteTopic(DeleteTopicCommand request) {
+    public ApplicationResult<Optional<Topic>> deleteTopic(DeleteTopicCommand request) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
-        if (userResult.badResult()) {
-            return ApplicationResult.error("Cannot find user " + request.username());
+        if (userResult.error()) {
+            return ApplicationResult.noAuthorization("Cannot find user " + request.username());
         }
         User user = userResult.get();
 
         AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(user.getId());
-        if (roleResult.invalid()) {
-            return ApplicationResult.error("Cannot find user role " + request.username());
+        if (roleResult.error()) {
+            return ApplicationResult.noAuthorization("Cannot find user role " + request.username());
         }
         String role = roleResult.get();
 
         if(!role.equals("admin")){
-            return ApplicationResult.error("Not allowed to delete post");
+            return ApplicationResult.noPermission("Not allowed to delete post");
         }
 
         RepositoryResult<Topic> deleteTopicResult = this.topicRepository.deleteTopic(UUID.fromString(request.id()));
-        if (deleteTopicResult.badResult()) {
-            return ApplicationResult.error("Cannot delete topic");
+        if (deleteTopicResult.error()) {
+            switch (deleteTopicResult.status()){
+                case ENTITY_NOT_FOUND -> {
+                    return ApplicationResult.noContent(Optional.empty());
+                }
+                case EXCEPTION -> {
+                    return ApplicationResult.exception("Cannot delete topic");
+                }
+            }
         }
-
-        return ApplicationResult.success(deleteTopicResult.get());
+        return ApplicationResult.ok(Optional.of(deleteTopicResult.get()));
     }
 }

@@ -25,8 +25,8 @@ public class GetTopicByIdService implements GetTopicByIdUseCase {
     public ApplicationResult<Topic> getTopicById(GetTopicByIdQuery request) {
         RepositoryResult<Topic> topicResult = topicRepository.getTopicById(UUID.fromString(request.topicId()));
         if (topicResult.ok()) {
-            return ApplicationResult.success(topicResult.get());
+            return ApplicationResult.ok(topicResult.get());
         }
-        return ApplicationResult.error("Cannot find Topic");
+        return ApplicationResult.exception("Cannot find Topic");
     }
 }

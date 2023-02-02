@@ -42,15 +42,15 @@ public class DeleteVoteService implements DeleteVoteUseCase {
     @Override
     public ApplicationResult<Vote> deleteVote(DeleteVoteCommand request) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
-        if (userResult.badResult()) {
-            return ApplicationResult.error("Cannot retrieve User");
+        if (userResult.error()) {
+            return ApplicationResult.exception("Cannot retrieve User");
         }
         User user = userResult.get();
 
 
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<VoteQueryDto> voteResult = this.voteRepository.getVoteById(UUID.fromString(request.vote()));
-        if (voteResult.badResult()) {
-            return ApplicationResult.error("Cannot find Vote");
+        if (voteResult.error()) {
+            return ApplicationResult.exception("Cannot find Vote");
         }
         VoteQueryDto vote = voteResult.get();
 
@@ -75,15 +75,15 @@ public class DeleteVoteService implements DeleteVoteUseCase {
         }
 
         if (optionalVote.isEmpty()) {
-            return ApplicationResult.error("Vote could not be deleted");
+            return ApplicationResult.exception("Vote could not be deleted");
         }
 
         RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(postResult.get());
 
         if (updatePostResult.ok()) {
-            return ApplicationResult.success(optionalVote.get());
+            return ApplicationResult.ok(optionalVote.get());
         }
 
-        return ApplicationResult.error("Something went wrong while deleting a Vote and updating the Post");
+        return ApplicationResult.exception("Something went wrong while deleting a Vote and updating the Post");
     }
 }

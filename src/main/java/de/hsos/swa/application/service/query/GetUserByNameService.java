@@ -26,10 +26,10 @@ public class GetUserByNameService implements GetUserByNameUseCase {
         // TODO: Security Context ( Nur Admin !)
         RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
 
-        if(userResult.badResult()) {
-           return ApplicationResult.error("Username not found");
+        if(userResult.error()) {
+           return ApplicationResult.exception("Username not found");
         }
 
-        return ApplicationResult.success(userResult.get());
+        return ApplicationResult.ok(userResult.get());
     }
 }

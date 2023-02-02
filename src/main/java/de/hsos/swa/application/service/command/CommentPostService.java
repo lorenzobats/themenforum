@@ -48,14 +48,14 @@ public class CommentPostService implements CommentPostUseCase {
     @Override
     public ApplicationResult<Comment> commentPost(CommentPostCommand request) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
-        if (userResult.badResult()) {
-            return ApplicationResult.error("Cannot find user " + request.username());
+        if (userResult.error()) {
+            return ApplicationResult.exception("Cannot find user " + request.username());
         }
         User user = userResult.get();
 
         RepositoryResult<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.postId()), true);
-        if (postResult.badResult()) {
-            return ApplicationResult.error("Cannot find post " + request.postId());
+        if (postResult.error()) {
+            return ApplicationResult.exception("Cannot find post " + request.postId());
         }
         Post post = postResult.get();
 
@@ -63,9 +63,9 @@ public class CommentPostService implements CommentPostUseCase {
         post.add(comment);
 
         RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(post);
-        if (updatePostResult.badResult()) {
-            return ApplicationResult.error("Cannot update post " + request.postId());
+        if (updatePostResult.error()) {
+            return ApplicationResult.exception("Cannot update post " + request.postId());
         }
-        return ApplicationResult.success(comment);
+        return ApplicationResult.ok(comment);
     }
 }

@@ -50,15 +50,15 @@ public class CreatePostService implements CreatePostUseCase {
     @Override
     public ApplicationResult<Post> createPost(CreatePostCommand request) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
-        if(getUserByNameResponse.badResult()) {
-            return ApplicationResult.error("Cannot find user " + request.username());
+        if(getUserByNameResponse.error()) {
+            return ApplicationResult.exception("Cannot find user " + request.username());
         }
         User user = getUserByNameResponse.get();
 
 
         RepositoryResult<Topic> getTopicByIdResponse = this.topicRepository.getTopicById(request.topicId());
-        if(getTopicByIdResponse.badResult()) {
-            return ApplicationResult.error("Cannot find topic " + request.topicId());
+        if(getTopicByIdResponse.error()) {
+            return ApplicationResult.exception("Cannot find topic " + request.topicId());
         }
         Topic topic = getTopicByIdResponse.get();
 
@@ -66,9 +66,9 @@ public class CreatePostService implements CreatePostUseCase {
         Post post = PostFactory.createPost(request.title(), request.content(), topic, user);
 
         RepositoryResult<Post> savePostResult = this.postRepository.savePost(post);
-        if (savePostResult.badResult()) {
-            return ApplicationResult.error("Cannot save post ");
+        if (savePostResult.error()) {
+            return ApplicationResult.exception("Cannot save post ");
         }
-        return ApplicationResult.success(savePostResult.get());
+        return ApplicationResult.ok(savePostResult.get());
     }
 }

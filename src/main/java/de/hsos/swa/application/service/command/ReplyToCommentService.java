@@ -31,15 +31,15 @@ public class ReplyToCommentService implements ReplyToCommentUseCase {
     @Override
     public ApplicationResult<Comment> replyToComment(ReplyToCommentCommand request) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> getUserResponse = this.userRepository.getUserByName(request.username());
-        if (getUserResponse.badResult()) {
-            return ApplicationResult.error("User does not exist");
+        if (getUserResponse.error()) {
+            return ApplicationResult.exception("User does not exist");
         }
 
         User user = getUserResponse.get();
 
         RepositoryResult<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(request.commentId()));
-        if (postResult.badResult()) {
-            return ApplicationResult.error("");
+        if (postResult.error()) {
+            return ApplicationResult.exception("");
         }
 
         Post post = postResult.get();
@@ -47,15 +47,15 @@ public class ReplyToCommentService implements ReplyToCommentUseCase {
         Comment reply = CommentFactory.createComment(request.commentText(), user);
 
         if(!post.addReplyToComment(UUID.fromString(request.commentId()), reply)){
-            return ApplicationResult.error("Comment is inactive");
+            return ApplicationResult.exception("Comment is inactive");
         }
 
         RepositoryResult<Post> updatedPostResult = this.postRepository.updatePost(post);
 
         if (updatedPostResult.ok()) {
-            return ApplicationResult.success(reply);
+            return ApplicationResult.ok(reply);
         }
 
-        return ApplicationResult.error("Something went wrong ");
+        return ApplicationResult.exception("Something went wrong ");
     }
 }

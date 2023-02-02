@@ -1,7 +1,7 @@
 package de.hsos.swa.actors.rest;
 
 import de.hsos.swa.actors.rest.dto.in.CreatePostRequestBody;
-import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
+import de.hsos.swa.actors.rest.dto.in.validation.ErrorResponse;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.PostDto;
 import de.hsos.swa.application.annotations.Adapter;
@@ -14,7 +14,6 @@ import de.hsos.swa.application.input.dto.in.DeletePostCommand;
 import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
 import de.hsos.swa.application.input.dto.in.GetPostByIdQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
-import de.hsos.swa.application.output.repository.VoteRepository;
 import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
 import de.hsos.swa.application.service.query.params.SortingParams;
@@ -26,8 +25,8 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
-import org.jboss.logging.Logger;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -40,12 +39,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+// TODO: smallrye Metrics
+// TODO: bei Delete NO_CONTENT falls Optional<Empty> siehe Topic
+// TODO: Rest Assured für diesen Enpunkt
+// TODO: Insomnia Collecion mit Tests für diesen ENpunkt
+// TODO: SecurityContext übergeben bei AuthentifizierungsMethoden
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -53,30 +56,22 @@ import java.util.UUID;
 @Transactional(value = Transactional.TxType.REQUIRES_NEW)
 @Adapter
 public class PostsRessource {
-    @Inject
-    CreatePostUseCase createPostUseCase;
-
+    // QUERIES
     @Inject
     GetPostByIdUseCase getPostByIdUseCase;
-
     @Inject
     GetFilteredPostsUseCase getFilteredPostsUseCase;
 
+    // COMMANDS
+    @Inject
+    CreatePostUseCase createPostUseCase;
     @Inject
     DeletePostUseCase deletePostUseCase;
-
     @Inject
     ValidationService validationService;
 
-
-    @Inject
-    VoteRepository voteRepository;
-
-    @Inject
-    Logger log;
-
-
     @GET
+    @PermitAll
     @Operation(summary = "Holt alle Posts, die den Queryparametern entsprechen")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
@@ -107,24 +102,23 @@ public class PostsRessource {
                 filterParams.put(PostFilterParams.TOPICID, topicId);
 
             GetFilteredPostQuery query = new GetFilteredPostQuery(filterParams, includeComments, sortBy, orderBy);
-            ApplicationResult<List<Post>> postsResult = this.getFilteredPostsUseCase.getFilteredPosts(query);
+            ApplicationResult<List<Post>> result = this.getFilteredPostsUseCase.getFilteredPosts(query);
 
-            if (postsResult.isSuccessful()) {
-                List<PostDto> postsResponse = postsResult.getData().stream().map(PostDto.Converter::fromDomainEntity).toList();
+            if (result.ok()) {
+                List<PostDto> postsResponse = result.data().stream().map(PostDto.Converter::fromDomainEntity).toList();
                 return Response.status(Response.Status.OK).entity(postsResponse).build();
             }
 
-            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(postsResult.getMessage())).build();
-        } catch (DateTimeParseException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getMessage())).build();
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
+        }  catch (ConstraintViolationException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
     }
 
 
     @GET
     @Path("{id}")
+    @PermitAll
     @Operation(summary = "Holt den Post mit der übergebenen ID")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
@@ -136,21 +130,21 @@ public class PostsRessource {
                                 @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy) {
         try {
             GetPostByIdQuery query = new GetPostByIdQuery(id, includeComments, sortBy, orderBy);
-            ApplicationResult<Post> postResult = this.getPostByIdUseCase.getPostById(query);
+            ApplicationResult<Post> result = this.getPostByIdUseCase.getPostById(query);
 
-            if (postResult.isSuccessful()) {
-                PostDto response = PostDto.Converter.fromDomainEntity(postResult.getData());
+            if (result.ok()) {
+                PostDto response = PostDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
 
-            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(postResult.getMessage())).build();
+            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
     }
 
     @POST
-    @RolesAllowed({"member"})
+    @RolesAllowed({"admin", "member"})
     @Operation(summary = "Erstellt einen neuen Post")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
@@ -167,15 +161,15 @@ public class PostsRessource {
             validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
             CreatePostCommand command = CreatePostRequestBody.Converter.toInputPortCommand(request, username);
-            ApplicationResult<Post> postResult = this.createPostUseCase.createPost(command);
+            ApplicationResult<Post> result = this.createPostUseCase.createPost(command);    // TODO + Security Context
 
-            if (postResult.isSuccessful()) {
-                PostDto postResponse = PostDto.Converter.fromDomainEntity(postResult.getData());
+            if (result.ok()) {
+                PostDto postResponse = PostDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(postResponse).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getMessage()).build();
+            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
     }
 
@@ -191,15 +185,15 @@ public class PostsRessource {
         try {
             String username = securityContext.getUserPrincipal().getName();
             DeletePostCommand command = new DeletePostCommand(id, username);
-            ApplicationResult<Post> postResult = this.deletePostUseCase.deletePost(command);
+            ApplicationResult<Post> result = this.deletePostUseCase.deletePost(command);    // TODO + Security Context
 
-            if (postResult.isSuccessful()) {
-                PostDto postDto = PostDto.Converter.fromDomainEntity(postResult.getData());
+            if (result.ok()) {
+                PostDto postDto = PostDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(postDto).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getMessage()).build();
+            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
     }
 }

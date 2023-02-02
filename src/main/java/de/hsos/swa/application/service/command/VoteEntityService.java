@@ -36,8 +36,8 @@ public class VoteEntityService implements VoteEntityUseCase {
     @Override
     public ApplicationResult<Vote> vote(VoteEntityCommand request) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
-        if (userResult.badResult()) {
-            return ApplicationResult.error("Cannot retrieve User");
+        if (userResult.error()) {
+            return ApplicationResult.exception("Cannot retrieve User");
         }
         User user = userResult.get();
 
@@ -52,7 +52,7 @@ public class VoteEntityService implements VoteEntityUseCase {
                     if (optionalComment.isPresent()) {
                         optionalVote = this.voteEntityService.vote(optionalComment.get(), user, request.voteType());
                         if (optionalVote.isEmpty()) {
-                            return ApplicationResult.error("Comment could not be voted");
+                            return ApplicationResult.exception("Comment could not be voted");
                         }
                     }
                 }
@@ -61,7 +61,7 @@ public class VoteEntityService implements VoteEntityUseCase {
                 postResult = this.postRepository.getPostById(UUID.fromString(request.entityId()),true);
                 optionalVote = this.voteEntityService.vote(postResult.get(), user, request.voteType());
                 if (optionalVote.isEmpty()) {
-                    return ApplicationResult.error("Post could not be voted");
+                    return ApplicationResult.exception("Post could not be voted");
                 }
             }
         }
@@ -70,9 +70,9 @@ public class VoteEntityService implements VoteEntityUseCase {
         RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(postResult.get());
 
         if (updatePostResult.ok() && optionalVote.isPresent()) {
-            return ApplicationResult.success(optionalVote.get());
+            return ApplicationResult.ok(optionalVote.get());
         }
 
-        return ApplicationResult.error("Something went wrong while voting Entity");
+        return ApplicationResult.exception("Something went wrong while voting Entity");
     }
 }

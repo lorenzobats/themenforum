@@ -80,10 +80,10 @@ public class PostsEndpoint {
         ApplicationResult<List<Post>> filteredPosts = getFilteredPostsUseCase.getFilteredPosts(request);
 
         if (filterParams.containsKey(PostFilterParams.TOPIC)) {
-            return Templates.posts(String.valueOf(filterParams.get(PostFilterParams.TOPIC)), filteredPosts.getData(), isLoggedIn, principalUsername);
+            return Templates.posts(String.valueOf(filterParams.get(PostFilterParams.TOPIC)), filteredPosts.data(), isLoggedIn, principalUsername);
         }
 
-        return Templates.posts(null, filteredPosts.getData(), isLoggedIn, principalUsername);
+        return Templates.posts(null, filteredPosts.data(), isLoggedIn, principalUsername);
     }
 
     @GET
@@ -105,10 +105,10 @@ public class PostsEndpoint {
         GetPostByIdQuery request = new GetPostByIdQuery(id, true, sortBy, orderBy);
         ApplicationResult<Post> postResult = getPostByIdUseCase.getPostById(request);
 
-        if (postResult.isSuccessful()) {
-            return Templates.post(postResult.getData(), isLoggedIn, username);
+        if (postResult.ok()) {
+            return Templates.post(postResult.data(), isLoggedIn, username);
         }
-        return Templates.post(null, isLoggedIn, username);  // TODO: Error laden
+        return Templates.post(null, isLoggedIn, username);
     }
 
     @GET
@@ -125,10 +125,10 @@ public class PostsEndpoint {
 
         ApplicationResult<Post> postResult = getPostByCommentIdUseCase.getPostByCommentId(new GetPostByCommentIdQuery(id));
 
-        if (postResult.isSuccessful()) {
-            return Templates.post(postResult.getData(), isLoggedIn, username);
+        if (postResult.ok()) {
+            return Templates.post(postResult.data(), isLoggedIn, username);
         }
-        return Templates.post(null, isLoggedIn, username);  // TODO: Error laden
+        return Templates.post(null, isLoggedIn, username);
     }
 
     @GET
@@ -141,7 +141,7 @@ public class PostsEndpoint {
             username = securityContext.getUserPrincipal().getName();
         }
         ApplicationResult<List<TopicWithPostCountDto>> allTopics = getAllTopicsUseCase.getAllTopics();
-        return Templates.createPost(allTopics.getData(), username);
+        return Templates.createPost(allTopics.data(), username);
     }
 
 

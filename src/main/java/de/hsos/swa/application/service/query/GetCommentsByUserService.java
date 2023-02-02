@@ -25,9 +25,9 @@ public class GetCommentsByUserService implements GetCommentsByUserUseCase {
     public ApplicationResult<List<Comment>> getCommentsByUser(GetCommentsByUserQuery request) {
         RepositoryResult<List<Comment>> commentsResult = commentRepository.getCommentsByUser(request.username());
         if(commentsResult.ok()) {
-            return ApplicationResult.success(commentsResult.get());
+            return ApplicationResult.ok(commentsResult.get());
         }
 
-        return ApplicationResult.error("Cannot find Comments");
+        return ApplicationResult.exception("Cannot find Comments");
     }
 }

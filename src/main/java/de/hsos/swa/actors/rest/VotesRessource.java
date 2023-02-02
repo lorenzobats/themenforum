@@ -3,7 +3,7 @@ package de.hsos.swa.actors.rest;
 import de.hsos.swa.actors.rest.dto.in.VoteEntityRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.VoteDto;
-import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
+import de.hsos.swa.actors.rest.dto.in.validation.ErrorResponse;
 import de.hsos.swa.application.annotations.Adapter;
 import de.hsos.swa.application.input.DeleteVoteUseCase;
 import de.hsos.swa.application.input.GetAllVotesUseCase;
@@ -35,7 +35,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
-
+// TODO: smallrye Metrics
+// TODO: bei Delete NO_CONTENT falls Optional<Empty> siehe Topic
+// TODO: Rest Assured für diesen Enpunkt
+// TODO: Insomnia Collecion mit Tests für diesen ENpunkt
+// TODO: SecurityContext übergeben bei AuthentifizierungsMethoden
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -44,18 +48,22 @@ import java.util.List;
 @Adapter
 public class VotesRessource {
 
-    @Inject
-    VoteEntityUseCase voteEntityUseCase;
-
-    @Inject
-    DeleteVoteUseCase deleteVoteUseCase;
-
+    // QUERIES
     @Inject
     GetAllVotesByUsernameUseCase getAllVotesByUsernameUseCase;
 
     @Inject
     GetAllVotesUseCase getAllVotesUseCase;
 
+
+    // COMMANDS
+    @Inject
+    VoteEntityUseCase voteEntityUseCase;
+
+    @Inject
+    DeleteVoteUseCase deleteVoteUseCase;
+
+    // BEAN VALIDATION
     @Inject
     ValidationService voteValidationService;
 
@@ -69,23 +77,24 @@ public class VotesRessource {
     })
     public Response getAllVotes(@QueryParam("username") String username, @Context SecurityContext securityContext) {
         try {
-            ApplicationResult<List<VoteWithVotedEntityReferenceDto>> votesResult;
+            ApplicationResult<List<VoteWithVotedEntityReferenceDto>> result;
             if (username != null)
-                votesResult = this.getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext);
-            else votesResult = this.getAllVotesUseCase.getAllVotes(securityContext);
+                result = this.getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext);
+            else result = this.getAllVotesUseCase.getAllVotes(securityContext);
 
-            if (votesResult.isSuccessful()) {
-                List<VoteDto> votesResponse = votesResult.getData().stream().map(VoteDto.Converter::fromInputPortDto).toList();
+            if (result.ok()) {
+                List<VoteDto> votesResponse = result.data().stream().map(VoteDto.Converter::fromInputPortDto).toList();
                 return Response.status(Response.Status.OK).entity(votesResponse).build();
             }
 
-            return Response.status(Response.Status.NOT_FOUND).entity(votesResult.getMessage()).build();
+            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
     }
 
     @POST
+    @RolesAllowed({"admin", "member"})
     @Operation(summary = "Erstellt einen neuen Vote")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
@@ -100,22 +109,21 @@ public class VotesRessource {
             voteValidationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
             VoteEntityCommand command = VoteEntityRequestBody.Converter.toInputPortCommand(request, username);
+            ApplicationResult<Vote> result = this.voteEntityUseCase.vote(command);      // TODO: + security Context
 
-            ApplicationResult<Vote> voteResult = this.voteEntityUseCase.vote(command);
-
-            if (voteResult.isSuccessful()) {
-                VoteDto voteDto = VoteDto.Converter.fromDomainEntity(voteResult.getData());
+            if (result.ok()) {
+                VoteDto voteDto = VoteDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(voteDto).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity("postResult.getMessage()").build();
+            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
     }
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed("member")
+    @RolesAllowed({"admin", "member"})
     @Operation(summary = "Löscht den Vote mit der übergebenen ID")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
@@ -124,16 +132,16 @@ public class VotesRessource {
     public Response deleteVote(@PathParam("id") String id, @Context SecurityContext securityContext) {
         try {
             String username = securityContext.getUserPrincipal().getName();
+            DeleteVoteCommand command = new DeleteVoteCommand(id, username);
+            ApplicationResult<Vote> result = this.deleteVoteUseCase.deleteVote(command);    // TODO:  Security Context
 
-            ApplicationResult<Vote> voteResult = this.deleteVoteUseCase.deleteVote(new DeleteVoteCommand(id, username));
-
-            if (voteResult.isSuccessful()) {
-                VoteDto voteDto = VoteDto.Converter.fromDomainEntity(voteResult.getData());
+            if (result.ok()) {
+                VoteDto voteDto = VoteDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(voteDto).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(voteResult.getMessage()).build();
+            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
     }
 }

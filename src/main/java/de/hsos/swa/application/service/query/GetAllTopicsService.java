@@ -23,10 +23,10 @@ public class GetAllTopicsService implements GetAllTopicsUseCase {
     @Override
     public ApplicationResult<List<TopicWithPostCountDto>> getAllTopics() {
         RepositoryResult<List<TopicWithPostCountDto>> topicsResult = topicRepository.getAllTopics();
-        if (topicsResult.badResult()) {
-            return ApplicationResult.error("Could not get Topics");
+        if (topicsResult.error()) {
+            return ApplicationResult.exception("Could not get Topics");
         }
 
-        return ApplicationResult.success(topicsResult.get());
+        return ApplicationResult.ok(topicsResult.get());
     }
 }

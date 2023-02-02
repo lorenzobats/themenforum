@@ -43,10 +43,10 @@ public class GetFilteredPostsService implements GetFilteredPostsUseCase {
                 }
                 default -> throw new IllegalArgumentException("Cant sort posts");
             }
-            return ApplicationResult.success(sortedPosts);
+            return ApplicationResult.ok(sortedPosts);
         }
 
-        return ApplicationResult.error("Cannot find Posts");
+        return ApplicationResult.exception("Cannot find Posts");
     }
 
     private void sortPosts(List<Post> posts, boolean reversed, Comparator<Post> comparator) {

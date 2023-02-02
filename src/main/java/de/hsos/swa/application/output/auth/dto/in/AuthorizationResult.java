@@ -24,7 +24,7 @@ public class AuthorizationResult<T> {
         return new AuthorizationResult<T>(Status.OK, data);
     }
 
-    public static <T> AuthorizationResult<T> error() {
+    public static <T> AuthorizationResult<T> exception() {
         return new AuthorizationResult<T>(Status.ERROR, (T) null);
     }
 
@@ -40,7 +40,7 @@ public class AuthorizationResult<T> {
         return status.equals(Status.OK);
     }
 
-    public boolean invalid(){
+    public boolean error(){
         return !this.valid();
     }
 

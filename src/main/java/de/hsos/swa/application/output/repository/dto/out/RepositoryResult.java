@@ -5,44 +5,53 @@ public class RepositoryResult<T> {
         OK,
         ENTITY_NOT_FOUND,
         ENTITY_NOT_PERSISTED,
-        ERROR
+        EXCEPTION
     }
 
     private final Status status;
-    private final T data;
+    private T data;
 
 
     public RepositoryResult() {
-        this.status = Status.ERROR;
+        this.status = Status.EXCEPTION;
         this.data = null;
     }
 
-    private RepositoryResult(Status status, T data) {
-        this.status = status;
+    private RepositoryResult(T data) {
+        this.status = Status.OK;
         this.data = data;
+    }
+    private RepositoryResult(Status status) {
+        this.status = status;
+        this.data = null;
     }
 
     public static <T> RepositoryResult<T> ok(T data) {
-        return new RepositoryResult<T>(Status.OK, data);
+        return new RepositoryResult<T>(data);
     }
 
-    public static <T> RepositoryResult<T> error() {
-        return new RepositoryResult<T>(Status.ERROR, (T) null);
+    public static <T> RepositoryResult<T> exception() {
+        return new RepositoryResult<T>(Status.EXCEPTION);
     }
 
     public static <T> RepositoryResult<T> notFound() {
-        return new RepositoryResult<T>(Status.ENTITY_NOT_FOUND, (T) null);
+        return new RepositoryResult<T>(Status.ENTITY_NOT_FOUND);
     }
 
     public static <T> RepositoryResult<T> notPersisted() {
-        return new RepositoryResult<T>(Status.ENTITY_NOT_PERSISTED, (T) null);
+        return new RepositoryResult<T>(Status.ENTITY_NOT_PERSISTED);
+    }
+
+    public RepositoryResult<T> setData(T data){
+        this.data = data;
+        return this;
     }
 
     public boolean ok(){
         return status.equals(Status.OK);
     }
 
-    public boolean badResult(){
+    public boolean error(){
         return !this.ok();
     }
 

@@ -54,34 +54,34 @@ public class DeletePostService implements DeletePostUseCase {
     @Override
     public ApplicationResult<Post> deletePost(DeletePostCommand request) {
         RepositoryResult<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.postId()), false);
-        if (postResult.badResult()) {
-            return ApplicationResult.error("Cannot find post" + request.postId());
+        if (postResult.error()) {
+            return ApplicationResult.exception("Cannot find post" + request.postId());
         }
         Post post = postResult.get();
 
 
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
-        if (userResult.badResult()) {
-            return ApplicationResult.error("Cannot find user " + request.username());
+        if (userResult.error()) {
+            return ApplicationResult.exception("Cannot find user " + request.username());
         }
         User user = userResult.get();
 
         AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(user.getId());
-        if (roleResult.invalid()) {
-            return ApplicationResult.error("Cannot find user role " + request.username());
+        if (roleResult.error()) {
+            return ApplicationResult.exception("Cannot find user role " + request.username());
         }
         String role = roleResult.get();
 
 
         if(!post.getUser().getId().equals(user.getId()) && !role.equals("admin")){
-            return ApplicationResult.error("Not allowed to delete post");
+            return ApplicationResult.exception("Not allowed to delete post");
         }
 
         RepositoryResult<Post> deletePostResult = this.postRepository.deletePost(post.getId());
-        if (deletePostResult.badResult()) {
-            return ApplicationResult.error("Cannot delete post ");
+        if (deletePostResult.error()) {
+            return ApplicationResult.exception("Cannot delete post ");
         }
 
-        return ApplicationResult.success(deletePostResult.get());
+        return ApplicationResult.ok(deletePostResult.get());
     }
 }

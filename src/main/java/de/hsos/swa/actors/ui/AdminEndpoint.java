@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// TODO: users.html und votes.html fehlen noch
 @Path("/ui/admin")
 @RolesAllowed("admin")
 @Produces(MediaType.TEXT_HTML)
@@ -76,7 +77,7 @@ public class AdminEndpoint {
     public TemplateInstance topics(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
         ApplicationResult<List<TopicWithPostCountDto>> topics = getAllTopicsUseCase.getAllTopics();
-        return Templates.topics(topics.getData(), adminName);
+        return Templates.topics(topics.data(), adminName);
     }
 
     @GET
@@ -87,7 +88,7 @@ public class AdminEndpoint {
         String adminName = adminName(securityContext);
         Map<PostFilterParams, Object> filterParams = new HashMap<>();
         ApplicationResult<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostQuery(filterParams, false, SortingParams.DATE, OrderParams.DESC));
-        return Templates.posts(posts.getData(), adminName);
+        return Templates.posts(posts.data(), adminName);
     }
 
     @GET
@@ -97,7 +98,7 @@ public class AdminEndpoint {
     public TemplateInstance comments(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
         ApplicationResult<List<Comment>> comments = getAllCommentsUseCase.getAllComments(false);
-        return Templates.comments(comments.getData(), adminName);
+        return Templates.comments(comments.data(), adminName);
     }
 
     // USERS
@@ -108,7 +109,7 @@ public class AdminEndpoint {
     public TemplateInstance users(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
         ApplicationResult<List<User>> allUsers = getAllUsersUseCase.getAllUsers(securityContext);
-        return Templates.users(allUsers.getData(), adminName);
+        return Templates.users(allUsers.data(), adminName);
     }
 
     // VOTES
@@ -119,7 +120,7 @@ public class AdminEndpoint {
     public TemplateInstance votes(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
         ApplicationResult<List<VoteWithVotedEntityReferenceDto>> allVotes = getAllVotesUseCase.getAllVotes(securityContext);
-        return Templates.votes(allVotes.getData(), adminName);
+        return Templates.votes(allVotes.data(), adminName);
     }
 
     // UTILITY METHOD

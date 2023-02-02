@@ -32,24 +32,24 @@ public class DeleteUserService implements DeleteUserUseCase {
     @Override
     public ApplicationResult<User> deleteUser(DeleteUserCommand request) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> requestingUserResult = this.userRepository.getUserByName(request.username());
-        if (requestingUserResult.badResult()) {
-            return ApplicationResult.error("Cannot find user " + request.username());
+        if (requestingUserResult.error()) {
+            return ApplicationResult.exception("Cannot find user " + request.username());
         }
         User requestingUser = requestingUserResult.get();
 
         AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(requestingUser.getId());
-        if (roleResult.invalid()) {
-            return ApplicationResult.error("Cannot find user role " + request.username());
+        if (roleResult.error()) {
+            return ApplicationResult.exception("Cannot find user role " + request.username());
         }
         String role = roleResult.get();
 
         if(!role.equals("admin")){
-            return ApplicationResult.error("Not allowed to disable user");
+            return ApplicationResult.exception("Not allowed to disable user");
         }
 
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserById(UUID.fromString(request.userId()));
-        if (userResult.badResult()) {
-            return ApplicationResult.error("Cannot find userId " + request.userId());
+        if (userResult.error()) {
+            return ApplicationResult.exception("Cannot find userId " + request.userId());
         }
         User user = userResult.get();
 
@@ -58,9 +58,9 @@ public class DeleteUserService implements DeleteUserUseCase {
         // Todo. Auth Set Role "disabled"
 
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> updateUserResult = this.userRepository.updateUser(user);
-        if (updateUserResult.badResult()) {
-            return ApplicationResult.error("Cannot update post ");
+        if (updateUserResult.error()) {
+            return ApplicationResult.exception("Cannot update post ");
         }
-        return ApplicationResult.success(user);
+        return ApplicationResult.ok(user);
     }
 }

@@ -25,8 +25,8 @@ public class GetPostByCommentIdService implements GetPostByCommentIdUseCase {
     public ApplicationResult<Post> getPostByCommentId(GetPostByCommentIdQuery request) {
         RepositoryResult<Post> postResult = postRepository.getPostByCommentId(UUID.fromString(request.id()));
         if (postResult.ok()) {
-            return ApplicationResult.success(postResult.get());
+            return ApplicationResult.ok(postResult.get());
         }
-        return ApplicationResult.error("Cannot find Post");
+        return ApplicationResult.exception("Cannot find Post");
     }
 }

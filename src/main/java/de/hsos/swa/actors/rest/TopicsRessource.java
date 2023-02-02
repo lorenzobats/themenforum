@@ -3,7 +3,7 @@ package de.hsos.swa.actors.rest;
 import de.hsos.swa.actors.rest.dto.in.CreateTopicRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.TopicDto;
-import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
+import de.hsos.swa.actors.rest.dto.in.validation.ErrorResponse;
 import de.hsos.swa.application.annotations.Adapter;
 import de.hsos.swa.application.input.dto.in.DeleteTopicCommand;
 import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
@@ -21,6 +21,7 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -32,7 +33,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
-
+import java.util.Optional;
+// TODO: smallrye Metrics
+// TODO: Rest Assured für diesen Enpunkt
+// TODO: Insomnia Collecion mit Tests für diesen ENpunkt
+// TODO: SecurityContext übergeben bei AuthentifizierungsMethoden
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -55,10 +60,12 @@ public class TopicsRessource {
     @Inject
     DeleteTopicUseCase deleteTopicUseCase;
 
+    // BEAN VALIDATION
     @Inject
     ValidationService validationService;
 
     @GET
+    @PermitAll
     @Operation(summary = "Holt alle Topics")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
@@ -67,23 +74,24 @@ public class TopicsRessource {
     public Response getAllTopics(@QueryParam("search") String searchString) {
         try {
 
-            ApplicationResult<List<TopicWithPostCountDto>> topicsResult;
+            ApplicationResult<List<TopicWithPostCountDto>> result;
             if (searchString != null)
-                topicsResult = this.searchTopicsUseCase.searchTopics(new SearchTopicsQuery(searchString));
-            else topicsResult = this.getAllTopicsUseCase.getAllTopics();
+                result = this.searchTopicsUseCase.searchTopics(new SearchTopicsQuery(searchString));
+            else result = this.getAllTopicsUseCase.getAllTopics();
 
-            if (topicsResult.isSuccessful()) {
-                List<TopicDto> topicsResponse = topicsResult.getData().stream().map(TopicDto.Converter::fromInputPortDto).toList();
+            if (result.ok()) {
+                List<TopicDto> topicsResponse = result.data().stream().map(TopicDto.Converter::fromInputPortDto).toList();
                 return Response.status(Response.Status.OK).entity(topicsResponse).build();
             }
-            return Response.status(Response.Status.NOT_FOUND).entity(topicsResult.getMessage()).build();
+            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
     }
 
     @GET
     @Path("{id}")
+    @PermitAll
     @Operation(summary = "Holt das Topic mit der übergebenen ID")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
@@ -92,14 +100,14 @@ public class TopicsRessource {
     public Response getTopicById(@PathParam("id") String id) {
         try {
             GetTopicByIdQuery query = new GetTopicByIdQuery(id);
-            ApplicationResult<Topic> topicResult = this.getTopicByIdUseCase.getTopicById(query);
-            if (topicResult.isSuccessful()) {
-                TopicDto response = TopicDto.Converter.fromDomainEntity(topicResult.getData());
+            ApplicationResult<Topic> result = this.getTopicByIdUseCase.getTopicById(query);
+            if (result.ok()) {
+                TopicDto response = TopicDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
-            return Response.status(Response.Status.NOT_FOUND).entity(new ValidationResult(topicResult.getMessage())).build();
+            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
     }
 
@@ -122,15 +130,14 @@ public class TopicsRessource {
             validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
             CreateTopicCommand command = CreateTopicRequestBody.Converter.toInputPortCommand(request, username);
-            ApplicationResult<Topic> topicResult = this.createTopicUseCase.createTopic(command);
-
-            if (topicResult.isSuccessful()) {
-                TopicDto topicResponse = TopicDto.Converter.fromDomainEntity(topicResult.getData());
+            ApplicationResult<Topic> result = this.createTopicUseCase.createTopic(command); // TODO + Security Context
+            if (result.ok()) {
+                TopicDto topicResponse = TopicDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(topicResponse).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(topicResult.getMessage()).build();
+            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
     }
 
@@ -146,15 +153,18 @@ public class TopicsRessource {
         try {
             String username = securityContext.getUserPrincipal().getName();
             DeleteTopicCommand command = new DeleteTopicCommand(id, username);
-            ApplicationResult<Topic> postResult = this.deleteTopicUseCase.deleteTopic(command);
+            ApplicationResult<Optional<Topic>> result = this.deleteTopicUseCase.deleteTopic(command);     // TODO + Security Context
 
-            if (postResult.isSuccessful()) {
-                TopicDto postDto = TopicDto.Converter.fromDomainEntity(postResult.getData());
-                return Response.status(Response.Status.OK).entity(postDto).build();
+            if (result.ok()) {
+                if(result.data().isPresent()){
+                    TopicDto postDto = TopicDto.Converter.fromDomainEntity(result.data().get());
+                    return Response.status(Response.Status.OK).entity(postDto).build();
+                }
+                return Response.status(Response.Status.NO_CONTENT).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(postResult.getMessage()).build();
+            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
     }
 }

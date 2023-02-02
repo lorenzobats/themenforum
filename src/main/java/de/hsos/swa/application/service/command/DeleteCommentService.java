@@ -55,33 +55,33 @@ public class DeleteCommentService implements DeleteCommentUseCase {
     @Override
     public ApplicationResult<Comment> deleteComment(DeleteCommentCommand request) {
         RepositoryResult<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(request.commentId()));
-        if (postResult.badResult()) {
-            return ApplicationResult.error("Cannot find post for comment " + request.commentId());
+        if (postResult.error()) {
+            return ApplicationResult.exception("Cannot find post for comment " + request.commentId());
         }
         Post post = postResult.get();
 
         Optional<Comment> optionalComment = post.findCommentById(UUID.fromString(request.commentId()));
         if(optionalComment.isEmpty()){
-            return ApplicationResult.error("Cannot find comment " + request.commentId());
+            return ApplicationResult.exception("Cannot find comment " + request.commentId());
         }
         Comment comment = optionalComment.get();
 
 
         // TODO Auth Service. Kann dann ganz an den Afang und findCommentById muss auch nicht mehr verwendet werden
         RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
-        if (userResult.badResult()) {
-            return ApplicationResult.error("Cannot find user " + request.username());
+        if (userResult.error()) {
+            return ApplicationResult.exception("Cannot find user " + request.username());
         }
         User user = userResult.get();
 
         AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(user.getId());
-        if (roleResult.invalid()) {
-            return ApplicationResult.error("Cannot find user role " + request.username());
+        if (roleResult.error()) {
+            return ApplicationResult.exception("Cannot find user role " + request.username());
         }
         String role = roleResult.get();
 
         if(!comment.getUser().getId().equals(user.getId()) && !role.equals("admin")){
-            return ApplicationResult.error("Not allowed to delete comment");
+            return ApplicationResult.exception("Not allowed to delete comment");
         }
         // ENDE TODO AUTH SERVICE
 
@@ -89,9 +89,9 @@ public class DeleteCommentService implements DeleteCommentUseCase {
 
 
         RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(post);
-        if (updatePostResult.badResult()) {
-            return ApplicationResult.error("Cannot update post ");
+        if (updatePostResult.error()) {
+            return ApplicationResult.exception("Cannot update post ");
         }
-        return ApplicationResult.success(comment);
+        return ApplicationResult.ok(comment);
     }
 }

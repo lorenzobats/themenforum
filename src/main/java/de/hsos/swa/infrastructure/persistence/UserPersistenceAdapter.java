@@ -5,7 +5,6 @@ import com.blazebit.persistence.CriteriaBuilderFactory;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.domain.entity.User;
-import de.hsos.swa.infrastructure.persistence.model.PostPersistenceModel;
 import de.hsos.swa.infrastructure.persistence.model.UserPersistenceModel;
 import org.jboss.logging.Logger;
 
@@ -43,7 +42,7 @@ public class UserPersistenceAdapter implements UserRepository {
             return RepositoryResult.notPersisted();
         } catch (IllegalArgumentException | TransactionRequiredException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -57,7 +56,7 @@ public class UserPersistenceAdapter implements UserRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException | TransactionRequiredException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -74,10 +73,10 @@ public class UserPersistenceAdapter implements UserRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -94,10 +93,10 @@ public class UserPersistenceAdapter implements UserRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -124,10 +123,10 @@ public class UserPersistenceAdapter implements UserRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 

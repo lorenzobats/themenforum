@@ -47,10 +47,10 @@ public class TopicPersistenceAdapter implements TopicRepository {
             return RepositoryResult.ok(TopicPersistenceModel.Converter.toDomainEntity(topicPersistenceModel));
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -62,10 +62,10 @@ public class TopicPersistenceAdapter implements TopicRepository {
             return RepositoryResult.ok(TopicPersistenceModel.Converter.toDomainEntity(topicPersistenceModel));
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -82,10 +82,10 @@ public class TopicPersistenceAdapter implements TopicRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -102,10 +102,10 @@ public class TopicPersistenceAdapter implements TopicRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -120,10 +120,10 @@ public class TopicPersistenceAdapter implements TopicRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -144,10 +144,10 @@ public class TopicPersistenceAdapter implements TopicRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 }

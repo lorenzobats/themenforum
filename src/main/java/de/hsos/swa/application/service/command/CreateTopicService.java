@@ -49,17 +49,17 @@ public class CreateTopicService implements CreateTopicUseCase {
     @Override
     public ApplicationResult<Topic> createTopic(CreateTopicCommand request) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
-        if(getUserByNameResponse.badResult()) {
-            return ApplicationResult.error("Cannot find user " + request.username());
+        if(getUserByNameResponse.error()) {
+            return ApplicationResult.exception("Cannot find user " + request.username());
         }
         User user = getUserByNameResponse.get();
 
         Topic topic = TopicFactory.createTopic(request.title(), request.description(), user);
 
         RepositoryResult<Topic> saveTopicResult = this.topicRepository.saveTopic(topic);
-        if (saveTopicResult.badResult()) {
-            return ApplicationResult.error("Cannot create topic ");
+        if (saveTopicResult.error()) {
+            return ApplicationResult.exception("Cannot create topic ");
         }
-        return ApplicationResult.success(saveTopicResult.get());
+        return ApplicationResult.ok(saveTopicResult.get());
     }
 }

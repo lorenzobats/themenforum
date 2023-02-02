@@ -51,10 +51,10 @@ public class TopicsEndpoint {
         }
         if(searchString != null){
             ApplicationResult<List<TopicWithPostCountDto>> searchedTopics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(searchString));
-            return Templates.topics(searchedTopics.getData(), isLoggedIn, username);
+            return Templates.topics(searchedTopics.data(), isLoggedIn, username);
         }
         ApplicationResult<List<TopicWithPostCountDto>> allTopics = getAllTopicsUseCase.getAllTopics();
-        return Templates.topics(allTopics.getData(), isLoggedIn, username);
+        return Templates.topics(allTopics.data(), isLoggedIn, username);
     }
 
     @GET

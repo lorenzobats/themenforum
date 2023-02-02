@@ -50,10 +50,10 @@ public class PostPersistenceAdapter implements PostRepository {
             return RepositoryResult.ok(PostPersistenceModel.Converter.toDomainEntity(postPersistenceModel));
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -66,10 +66,10 @@ public class PostPersistenceAdapter implements PostRepository {
             return RepositoryResult.ok(PostPersistenceModel.Converter.toDomainEntity(postPersistenceModel));
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -86,10 +86,10 @@ public class PostPersistenceAdapter implements PostRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -104,10 +104,10 @@ public class PostPersistenceAdapter implements PostRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -140,10 +140,10 @@ public class PostPersistenceAdapter implements PostRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -164,10 +164,10 @@ public class PostPersistenceAdapter implements PostRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -202,10 +202,10 @@ public class PostPersistenceAdapter implements PostRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -226,10 +226,10 @@ public class PostPersistenceAdapter implements PostRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 }

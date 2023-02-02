@@ -47,7 +47,7 @@ public class VotePersistenceAdapter implements VoteRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException | TransactionRequiredException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -63,7 +63,7 @@ public class VotePersistenceAdapter implements VoteRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException | TransactionRequiredException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -78,7 +78,7 @@ public class VotePersistenceAdapter implements VoteRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException | TransactionRequiredException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 }

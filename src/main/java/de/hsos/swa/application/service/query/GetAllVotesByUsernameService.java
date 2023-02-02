@@ -30,12 +30,12 @@ public class GetAllVotesByUsernameService implements GetAllVotesByUsernameUseCas
         log.debug(">>>P" + securityContext.getUserPrincipal().getName());
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<List<VoteQueryDto>> votesResult = voteRepository.getAllVotesByUser(request.username());
 
-        if (votesResult.badResult()) {
-            return ApplicationResult.error("Cannot find Posts");
+        if (votesResult.error()) {
+            return ApplicationResult.exception("Cannot find Posts");
         }
 
         List<VoteWithVotedEntityReferenceDto> userVotes = votesResult.get().stream().map(v -> new VoteWithVotedEntityReferenceDto(v.vote(), v.votedEntityType(), v.votedEntityId())).toList();
 
-        return ApplicationResult.success(userVotes);
+        return ApplicationResult.ok(userVotes);
     }
 }

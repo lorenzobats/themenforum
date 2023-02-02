@@ -118,6 +118,6 @@ public class PublicEndpoint {
 
         ApplicationResult<List<VoteWithVotedEntityReferenceDto>> votes = getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext);
 
-        return Templates.profile(topics.getData(), posts.getData(), comments.getData(), votes.getData(), username, selection);
+        return Templates.profile(topics.data(), posts.data(), comments.data(), votes.data(), username, selection);
     }
 }

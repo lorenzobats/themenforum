@@ -22,9 +22,9 @@ public class GetAllCommentsService implements GetAllCommentsUseCase {
     public ApplicationResult<List<Comment>> getAllComments(boolean includeReplies) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<List<Comment>> commentsResult = commentRepository.getAllComments(includeReplies);
         if (commentsResult.ok()) {
-            return ApplicationResult.success(commentsResult.get());
+            return ApplicationResult.ok(commentsResult.get());
         }
 
-        return ApplicationResult.error("Cannot find Comments");
+        return ApplicationResult.exception("Cannot find Comments");
     }
 }

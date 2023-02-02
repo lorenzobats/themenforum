@@ -25,8 +25,8 @@ public class GetCommentByIdService implements GetCommentByIdUseCase {
     public ApplicationResult<Comment> getCommentById(GetCommentByIdQuery request) {
         RepositoryResult<Comment> commentResult = commentRepository.getCommentById(UUID.fromString(request.id()), true);
         if (commentResult.ok()) {
-            return ApplicationResult.success(commentResult.get());
+            return ApplicationResult.ok(commentResult.get());
         }
-        return ApplicationResult.error("Cannot find Comment");
+        return ApplicationResult.exception("Cannot find Comment");
     }
 }

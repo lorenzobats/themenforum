@@ -7,10 +7,8 @@ import com.blazebit.persistence.view.EntityViewSetting;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.output.repository.CommentRepository;
 import de.hsos.swa.domain.entity.Comment;
-import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.infrastructure.persistence.view.CommentPersistenceView;
 import de.hsos.swa.infrastructure.persistence.model.CommentPersistenceModel;
-import io.quarkus.netty.runtime.NettyRecorder;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
@@ -55,10 +53,10 @@ public class CommentPersistenceAdapter implements CommentRepository {
             return RepositoryResult.notFound();
         } catch (PersistenceException e) {
             log.error("getCommentById Persistence Failed", e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (Exception e) {
             log.error("getCommentById Error", e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -71,10 +69,10 @@ public class CommentPersistenceAdapter implements CommentRepository {
             return RepositoryResult.notFound();
         } catch (PersistenceException e) {
             log.error("getAllComments Persistence Failed", e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (Exception e) {
             log.error("getAllComments Error", e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 
@@ -88,10 +86,10 @@ public class CommentPersistenceAdapter implements CommentRepository {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException e) {
             log.warn(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         } catch (PersistenceException e) {
             log.error(e);
-            return RepositoryResult.error();
+            return RepositoryResult.exception();
         }
     }
 

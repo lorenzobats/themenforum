@@ -24,9 +24,9 @@ public class SearchTopicsService implements SearchTopicsUseCase {
     @Override
     public ApplicationResult<List<TopicWithPostCountDto>> searchTopics(SearchTopicsQuery request) {
         RepositoryResult<List<TopicWithPostCountDto>> topicsResult = topicRepository.searchTopic(request.searchString());
-        if (topicsResult.badResult()) {
-            return ApplicationResult.error("Could not find Topics like (" + request.searchString() +")");
+        if (topicsResult.error()) {
+            return ApplicationResult.exception("Could not find Topics like (" + request.searchString() +")");
         }
-        return ApplicationResult.success(topicsResult.get());
+        return ApplicationResult.ok(topicsResult.get());
     }
 }

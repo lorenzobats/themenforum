@@ -1,12 +1,10 @@
 package de.hsos.swa.actors.rest;
 
-
 import de.hsos.swa.actors.rest.dto.in.RegisterUserRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.UserDto;
-import de.hsos.swa.actors.rest.dto.in.validation.ValidationResult;
+import de.hsos.swa.actors.rest.dto.in.validation.ErrorResponse;
 import de.hsos.swa.application.annotations.Adapter;
-import de.hsos.swa.application.input.GetAllUsersUseCase;
 import de.hsos.swa.application.input.GetUserByNameUseCase;
 import de.hsos.swa.application.input.RegisterUserUseCase;
 import de.hsos.swa.application.input.dto.in.GetUserByNameQuery;
@@ -31,7 +29,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-
+// TODO: smallrye Metrics
+// TODO: bei Delete NO_CONTENT falls Optional<Empty> siehe Topic
+// TODO: Rest Assured für diesen Enpunkt
+// TODO: Insomnia Collecion mit Tests für diesen ENpunkt
+// TODO: SecurityContext übergeben bei AuthentifizierungsMethoden
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -40,14 +42,14 @@ import javax.ws.rs.core.SecurityContext;
 @Adapter
 public class UsersRessource {
 
-    @Inject
-    RegisterUserUseCase registerUserUseCase;
-
+    // QUERIES
     @Inject
     GetUserByNameUseCase getUserByNameUseCase;
 
+    // COMMANDS
     @Inject
-    GetAllUsersUseCase getAllUsersUseCase;
+    RegisterUserUseCase registerUserUseCase;
+
 
     @Inject
     ValidationService validationService;
@@ -70,14 +72,15 @@ public class UsersRessource {
     })
     public Response getUserByName(@PathParam("username") String username, @Context SecurityContext securityContext) {
         try {
-            ApplicationResult<User> userResult = this.getUserByNameUseCase.getUserByName(new GetUserByNameQuery(username), securityContext);
-            if (userResult.isSuccessful()) {
-                UserDto responseDto = UserDto.Converter.fromDomainEntity(userResult.getData());
+            GetUserByNameQuery query = new GetUserByNameQuery(username);
+            ApplicationResult<User> result = this.getUserByNameUseCase.getUserByName(query, securityContext);    // TODO: Security Context
+            if (result.ok()) {
+                UserDto responseDto = UserDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(responseDto).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(userResult.getMessage()).build();
+            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
     }
 
@@ -97,14 +100,14 @@ public class UsersRessource {
         try {
             validationService.validate(request);
             RegisterUserCommand command = RegisterUserRequestBody.Converter.toInputPortCommand(request);
-            ApplicationResult<User> userResult = this.registerUserUseCase.registerUser(command);
-            if (userResult.isSuccessful()) {
-                UserDto responseDto = UserDto.Converter.fromDomainEntity(userResult.getData());
+            ApplicationResult<User> result = this.registerUserUseCase.registerUser(command);
+            if (result.ok()) {
+                UserDto responseDto = UserDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(responseDto).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(userResult.getMessage())).build();
+            return ErrorResponse.asResponseFromAppplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ValidationResult(e.getConstraintViolations())).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getConstraintViolations())).build();
         }
     }
 }

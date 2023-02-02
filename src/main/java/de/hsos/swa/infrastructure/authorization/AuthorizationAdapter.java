@@ -35,12 +35,12 @@ public class AuthorizationAdapter implements
             return AuthorizationResult.ok();
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("Customer Auth Entity could not be created", e);
-            return AuthorizationResult.error();
+            return AuthorizationResult.exception();
         }
     }
 
     public AuthorizationResult<String> isAuthenticated(String username){
-        return AuthorizationResult.error();
+        return AuthorizationResult.exception();
     }
 
     @Override
@@ -52,7 +52,7 @@ public class AuthorizationAdapter implements
             return AuthorizationResult.ok(role);
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.error("getUserAuthRole Error", e);
-            return AuthorizationResult.error();
+            return AuthorizationResult.exception();
         }
     }
 }
