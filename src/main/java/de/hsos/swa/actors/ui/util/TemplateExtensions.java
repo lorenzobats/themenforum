@@ -51,6 +51,18 @@ public class TemplateExtensions {
         return null;
     }
 
+    public static int commentCount(Post post) {
+        Deque<Comment> stack = new ArrayDeque<>(post.getComments());
+        int count = 0;
+
+        while(!stack.isEmpty()) {
+            Comment comment = stack.pop();
+            count++;
+            stack.addAll(comment.getReplies());
+        }
+        return count;
+    }
+
     public static Vote loggedInUserVote(CommentUIDto comment, String username) {
         for (Vote vote : comment.object().getVotes()) {
             if(vote.getUser().getName().equals(username)){

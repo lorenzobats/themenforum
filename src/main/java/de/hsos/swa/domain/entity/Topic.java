@@ -6,8 +6,6 @@ import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 import java.util.*;
 
-// TODO: Validierung spezifischer (zB. Titellänge, Descriptionlänge, etc.)
-
 public class Topic {
     @Valid
     private UUID id;

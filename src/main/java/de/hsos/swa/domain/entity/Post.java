@@ -35,6 +35,10 @@ public class Post implements SortedEntity, VotedEntity {
     private List<Vote> votes = new ArrayList<>();
 
 
+    //------------------------------------------------------------------------------------------------------------------
+    // CONSTRUCTORS
+
+    // Für Persistence Adapter
     public Post(UUID id, String title, String content, LocalDateTime createdAt, Topic topic, User user) {
         this.id = id;
         this.title = title;
@@ -44,16 +48,7 @@ public class Post implements SortedEntity, VotedEntity {
         this.user = user;
     }
 
-    public Post(UUID id, String title, String content, LocalDateTime createdAt, Topic topic, User user, List<Comment> comments) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.createdAt = createdAt;
-        this.topic = topic;
-        this.user = user;
-        this.comments = comments;
-    }
-
+    // Für Factory
     public Post(String title, String content, LocalDateTime createdAt, Topic topic, User user) {
         this.id = UUID.randomUUID();
         this.title = title;
@@ -64,7 +59,8 @@ public class Post implements SortedEntity, VotedEntity {
     }
 
 
-    // GETTER
+    //------------------------------------------------------------------------------------------------------------------
+    // SIMPLE GETTER
     public UUID getId() {
         return id;
     }
@@ -97,20 +93,30 @@ public class Post implements SortedEntity, VotedEntity {
         return votes;
     }
 
-    // SETTER
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
+    //------------------------------------------------------------------------------------------------------------------
+    // COMMENT
+    public void sortComments(boolean inDescendingOrder, Comparator<Comment> sortingComparator) {
+        Queue<Comment> commentsQueue = new LinkedList<>(this.comments);
+        this.comments.sort(sortingComparator);
+        if (inDescendingOrder) {
+            Collections.reverse(this.comments);
+        }
+        while (!commentsQueue.isEmpty()) {
+            Comment comment = commentsQueue.remove();
+            comment.getReplies().sort(sortingComparator);
+            if (inDescendingOrder) {
+                Collections.reverse(comment.getReplies());
+            }
+            commentsQueue.addAll(comment.getReplies());
+        }
     }
 
-
-
-    // COMMENTS
-    public Optional<Comment> findCommentById(String commentId) {
+    public Optional<Comment> findCommentById(UUID commentId) {
         Deque<Comment> stack = new ArrayDeque<>(this.comments);
 
         while (!stack.isEmpty()) {
             Comment comment = stack.pop();
-            if (comment.getId().toString().equals(commentId)) {
+            if (comment.getId().equals(commentId)) {
                 return Optional.of(comment);
             }
             stack.addAll(comment.getReplies());
@@ -119,11 +125,18 @@ public class Post implements SortedEntity, VotedEntity {
         return Optional.empty();
     }
 
-    public void addComment(Comment comment) {
+    public void add(Comment comment) {
         this.comments.add(comment);
     }
+    public void delete(UUID commentId) {
+        Optional<Comment> optionalComment = this.findCommentById(commentId);
+        if(optionalComment.isPresent()){
+            Comment comment = optionalComment.get();
+            comment.disable();
+        }
+    }
 
-    public boolean addReplyToComment(String parentCommentId, Comment reply) {
+    public boolean addReplyToComment(UUID parentCommentId, Comment reply) {
         Optional<Comment> parentComment = findCommentById(parentCommentId);
         if (parentComment.isPresent() && parentComment.get().isActive()) {
             parentComment.get().addReply(reply);
@@ -132,20 +145,8 @@ public class Post implements SortedEntity, VotedEntity {
         return false;
     }
 
-    public int getCommentCount() {
-        Deque<Comment> stack = new ArrayDeque<>(this.comments);
-        int count = 0;
 
-        while(!stack.isEmpty()) {
-            Comment comment = stack.pop();
-            count++;
-            stack.addAll(comment.getReplies());
-        }
-        return count;
-    }
-
-
-
+    //------------------------------------------------------------------------------------------------------------------
     // VOTES
     public void addVote(Vote vote) {
         this.votes.add(vote);
@@ -155,7 +156,7 @@ public class Post implements SortedEntity, VotedEntity {
         this.votes.remove(vote);
     }
 
-    public Optional<Vote> findVoteByUserId(UUID userId) {
+    public Optional<Vote> findVoteByUser(UUID userId) {
         for (Vote vote : this.votes) {
             if(vote.getUser().getId().equals(userId)){
                 return Optional.of(vote);
@@ -188,6 +189,7 @@ public class Post implements SortedEntity, VotedEntity {
         return this.getUpvotes() - this.getDownvotes();
     }
 
+    //------------------------------------------------------------------------------------------------------------------
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -199,5 +201,6 @@ public class Post implements SortedEntity, VotedEntity {
     public int hashCode() {
         return Objects.hash(getId());
     }
+
 
 }

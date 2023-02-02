@@ -93,7 +93,7 @@ public class PostPersistenceModel {
                     topic,
                     user);
 
-            comments.forEach(post::addComment);
+            comments.forEach(post::add);
             votes.forEach(post::addVote);
 
             return post;
