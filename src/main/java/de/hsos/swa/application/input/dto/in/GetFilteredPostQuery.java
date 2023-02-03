@@ -10,6 +10,7 @@ import de.hsos.swa.application.service.query.params.SortingParams;
 
 import javax.validation.constraints.NotNull;
 import java.util.Map;
+
 @InputPortRequest
 public record GetFilteredPostQuery(
         @ValidPostFilterParams Map<PostFilterParams, Object> filterParams,
@@ -18,8 +19,6 @@ public record GetFilteredPostQuery(
         @ValidOrderParams OrderParams orderParams) {
 
 
-
-    //Eventuell overloaded Constructor ohne Sorting und Order
     public GetFilteredPostQuery(
             Map<PostFilterParams, Object> filterParams,
             Boolean includeComments,
@@ -29,19 +28,5 @@ public record GetFilteredPostQuery(
         this.includeComments = includeComments;
         this.sortingParams = sortingParams;
         this.orderParams = orderParams;
-        if (!this.validateMapTest()) {
-            // TODO: Custom Validator
-            throw new RuntimeException("InvalidFilterParams");
-        }
-    }
-
-    // TODO: Custom Validator
-    public boolean validateMapTest() {
-        for (Map.Entry<PostFilterParams, Object> filterParam : this.filterParams.entrySet()) {
-            if (!filterParam.getValue().getClass().equals(filterParam.getKey().getParamType())) {
-                return false;
-            }
-        }
-        return true;
     }
 }
