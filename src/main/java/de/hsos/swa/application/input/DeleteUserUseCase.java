@@ -8,5 +8,5 @@ import de.hsos.swa.domain.entity.User;
 import javax.validation.Valid;
 @InputPort
 public interface DeleteUserUseCase {
-    ApplicationResult<User> deleteUser(@Valid DeleteUserCommand command);
+    ApplicationResult<User> deleteUser(@Valid DeleteUserCommand command, String requestingUser);
 }
