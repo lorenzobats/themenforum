@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// TODO: users.html und votes.html fehlen noch
 @Path("/ui/admin")
 @RolesAllowed("admin")
 @Produces(MediaType.TEXT_HTML)

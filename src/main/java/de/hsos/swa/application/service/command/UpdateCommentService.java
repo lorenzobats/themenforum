@@ -15,7 +15,6 @@ import javax.transaction.Transactional;
 public class UpdateCommentService implements UpdateCommentUseCase {
     @Override
     public ApplicationResult<Comment> updateComment(UpdateCommentCommand request) {
-        // TODO: Implementieren
         return null;
     }
 }

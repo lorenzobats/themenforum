@@ -6,7 +6,7 @@ import de.hsos.swa.domain.entity.User;
 import java.util.List;
 import java.util.UUID;
 /**
- * TODO: JavaDocs
+ *
  */
 public interface UserRepository {
 

@@ -45,7 +45,6 @@ public class CreateTopicService implements CreateTopicUseCase {
      * Erstellt ein neues Thema auf Basis der übergebenen Informationen.
      *
      * @param command         enthält Titel, Text und Nutzername für das zu erstellende Thema
-     * @param requestingUser
      * @return ApplicationResult<Topic> enthält erstelltes Thema bzw. Fehlermeldung bei Misserfolg
      */
     @Override

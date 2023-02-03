@@ -3,7 +3,6 @@ package de.hsos.swa.application.service.query.params;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-// TODO: Wo ist diese Klasse angesiedelt (Domain, Application)?
 public enum PostFilterParams {
     USERNAME(String.class),
     USERID(UUID.class),

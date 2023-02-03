@@ -43,7 +43,7 @@ public class DeleteUserService implements DeleteUserUseCase {
         }
         User user = userResult.get();
 
-        // TODO Methode Delete = disabled wie bei Comment
+        // TODO Methode Delete = disabled wie bei Comment (isActive = false -> name == deleted -> getter fuer den name aendern)
         user.setName("DELETED");
 
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> updateUserResult = this.userRepository.updateUser(user);

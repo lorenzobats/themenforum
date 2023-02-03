@@ -28,9 +28,6 @@ public class GetFilteredPostsService implements GetFilteredPostsUseCase {
     @Inject
     PostRepository postRepository;
 
-    @Inject
-    AuthorizationGateway authorizationGateway;
-
     @Override
     public ApplicationResult<List<Post>> getFilteredPosts(GetFilteredPostQuery request) {
         RepositoryResult<List<Post>> postsResult = postRepository.getFilteredPosts(request.filterParams(), request.includeComments());

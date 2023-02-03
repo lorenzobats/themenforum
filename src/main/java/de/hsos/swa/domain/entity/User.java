@@ -31,7 +31,7 @@ public class User {
         return name;
     }
 
-    // TODO: Disable boolean wie
+    // TODO: Disable boolean wie -> isActive boolean
     public void setName(String name) {
         this.name = name;
     }

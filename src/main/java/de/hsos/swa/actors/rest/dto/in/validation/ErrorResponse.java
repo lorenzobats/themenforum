@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-// TODO: QUELLE https://www.baeldung.com/rest-api-error-handling-best-practices
+//QUELLE https://www.baeldung.com/rest-api-error-handling-best-practices
 public class ErrorResponse {
 
     public String timestamp;

@@ -75,7 +75,6 @@
     window.onload = function () {
         let searchParam = new URL(window.location.href).searchParams.get("active");
         if (searchParam) {
-            // TODO: Tab Funktionalität einbauen
             document.getElementById("search").value = searchParam;
         }
     };
@@ -91,6 +90,7 @@
     function logout() {
         document.cookie = "quarkus-credential=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         document.cookie = "quarkus-redirect-location=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        location.reload();
+        window.open('/ui/posts', '_self');
     }
+
 </script>

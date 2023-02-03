@@ -38,8 +38,6 @@ import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 import java.util.Optional;
 
-// TODO: smallrye Metrics
-// TODO: Rest Assured für diesen Enpunkt
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

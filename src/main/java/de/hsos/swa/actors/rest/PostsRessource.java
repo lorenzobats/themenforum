@@ -42,10 +42,6 @@ import javax.ws.rs.core.SecurityContext;
 import java.time.LocalDateTime;
 import java.util.*;
 
-// TODO: smallrye Metrics
-// TODO: bei Delete NO_CONTENT falls Optional<Empty> siehe Topic
-// TODO: Rest Assured für diesen Enpunkt
-// TODO: Insomnia Collecion mit Tests für diesen ENpunkt
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

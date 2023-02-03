@@ -9,7 +9,6 @@ import io.quarkus.qute.TemplateExtension;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-// TODO: Unnötige Template Extensions aufräumen
 @TemplateExtension
 public class TemplateExtensions {
 

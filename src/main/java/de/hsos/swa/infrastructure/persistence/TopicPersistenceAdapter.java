@@ -20,8 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * TODO: Java Docs
- * TODO: Update Topic implementieren
+ *
  */
 @RequestScoped
 @Transactional(value = Transactional.TxType.MANDATORY)
@@ -135,7 +134,7 @@ public class TopicPersistenceAdapter implements TopicRepository {
                     .whereOr()
                     .where("title").like().value("%" + searchString + "%").noEscape()
                     .where("description").like().value("%" + searchString + "%").noEscape()
-                    .where("userPersistenceModel.name").eq().value(searchString) // TODO: Test, klappt mit username?
+                    .where("userPersistenceModel.name").eq().value(searchString)
                     .endOr();
             CriteriaBuilder<TopicPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(TopicPersistenceView.class), criteriaBuilder);
             List<TopicPersistenceView> postList = criteriaBuilderView.getResultList();
