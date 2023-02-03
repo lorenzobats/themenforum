@@ -8,5 +8,5 @@ import de.hsos.swa.domain.entity.Post;
 import javax.validation.Valid;
 @InputPort
 public interface UpdatePostUseCase {
-   ApplicationResult<Post> updatePost(@Valid UpdatePostCommand request);
+   ApplicationResult<Post> updatePost(@Valid UpdatePostCommand request, String requestingUser);
 }

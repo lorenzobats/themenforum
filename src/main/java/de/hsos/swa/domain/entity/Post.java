@@ -145,6 +145,13 @@ public class Post implements SortedEntity, VotedEntity {
         return false;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     //------------------------------------------------------------------------------------------------------------------
     // VOTES

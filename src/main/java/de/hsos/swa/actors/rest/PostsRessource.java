@@ -1,18 +1,13 @@
 package de.hsos.swa.actors.rest;
 
 import de.hsos.swa.actors.rest.dto.in.CreatePostRequestBody;
+import de.hsos.swa.actors.rest.dto.in.UpdatePostRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ErrorResponse;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
 import de.hsos.swa.actors.rest.dto.out.PostDto;
 import de.hsos.swa.application.annotations.Adapter;
-import de.hsos.swa.application.input.CreatePostUseCase;
-import de.hsos.swa.application.input.DeletePostUseCase;
-import de.hsos.swa.application.input.GetFilteredPostsUseCase;
-import de.hsos.swa.application.input.GetPostByIdUseCase;
-import de.hsos.swa.application.input.dto.in.CreatePostCommand;
-import de.hsos.swa.application.input.dto.in.DeletePostCommand;
-import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
-import de.hsos.swa.application.input.dto.in.GetPostByIdQuery;
+import de.hsos.swa.application.input.*;
+import de.hsos.swa.application.input.dto.in.*;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
 import de.hsos.swa.domain.entity.Post;
@@ -53,9 +48,12 @@ public class PostsRessource {
     @Inject
     GetFilteredPostsUseCase getFilteredPostsUseCase;
 
+
     // COMMANDS
     @Inject
     CreatePostUseCase createPostUseCase;
+    @Inject
+    UpdatePostUseCase updatePostUseCase;
     @Inject
     DeletePostUseCase deletePostUseCase;
     @Inject
@@ -159,6 +157,37 @@ public class PostsRessource {
             String username = securityContext.getUserPrincipal().getName();
             CreatePostCommand command = CreatePostRequestBody.Converter.toInputPortCommand(request, username);
             ApplicationResult<Post> result = this.createPostUseCase.createPost(command, username);
+            if (result.ok()) {
+                PostDto postResponse = PostDto.Converter.fromDomainEntity(result.data());
+                return Response.status(Response.Status.OK).entity(postResponse).build();
+            }
+            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+        } catch (ConstraintViolationException e) {
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+        }
+    }
+
+    @PATCH
+    @Path("/{id}")
+    @RolesAllowed({"member", "admin"})
+    @Operation(summary = "updatePost", description = "Aktualisiert den Post mit der übergebenen ID")
+    @Tag(name = "Posts", description = "Zugriff auf die Posts")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(name = "PostDto", implementation = PostDto.class)))
+    })
+    public Response updatePost(
+            @NotNull @RequestBody(
+                    description = "Post to create",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = UpdatePostRequestBody.class)))
+            UpdatePostRequestBody request,
+            @PathParam("id") String postId,
+            @Context SecurityContext securityContext) {
+        try {
+            validationService.validate(request);
+            String username = securityContext.getUserPrincipal().getName();
+            UpdatePostCommand command = UpdatePostRequestBody.Converter.toInputPortCommand(request, postId);
+            ApplicationResult<Post> result = this.updatePostUseCase.updatePost(command, username);
             if (result.ok()) {
                 PostDto postResponse = PostDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(postResponse).build();

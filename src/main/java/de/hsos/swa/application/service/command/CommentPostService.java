@@ -49,7 +49,7 @@ public class CommentPostService implements CommentPostUseCase {
      */
     @Override
     public ApplicationResult<Comment> commentPost(CommentPostCommand command, String requestingUser) {
-        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(command.username());
+        RepositoryResult<User> userResult = this.userRepository.getUserByName(command.username());
         if (userResult.error()) {
             return ApplicationResult.exception("Cannot find user " + command.username());
         }
