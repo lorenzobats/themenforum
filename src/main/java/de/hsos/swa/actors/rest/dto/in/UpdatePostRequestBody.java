@@ -5,9 +5,6 @@ import de.hsos.swa.application.input.dto.in.UpdatePostCommand;
 import io.smallrye.common.constraint.Nullable;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
-
 
 @Schema(name = "UpdatePostDto", required = true)
 public class UpdatePostRequestBody implements ValidatedRequestBody {

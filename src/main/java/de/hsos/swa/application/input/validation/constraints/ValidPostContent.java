@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = PostContentValidator.class)
 public @interface ValidPostContent {
-    String message() default "Invalid Post Title";
+    String message() default "Invalid Post Content";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
