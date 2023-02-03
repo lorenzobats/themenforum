@@ -35,10 +35,6 @@ public class GetFilteredPostsService implements GetFilteredPostsUseCase {
 
     @Override
     public ApplicationResult<List<Post>> getFilteredPosts(GetFilteredPostQuery request) {
-        AuthorizationResult<Boolean> access = authorizationGateway.canReadComment("oschluet");
-        if(access.denied())
-            return AuthorizationResultMapper.handleRejection(access.status());
-
         RepositoryResult<List<Post>> postsResult = postRepository.getFilteredPosts(request.filterParams(), request.includeComments());
 
         if (postsResult.ok()) {
