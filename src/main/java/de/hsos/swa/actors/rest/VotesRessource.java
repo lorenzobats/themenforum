@@ -36,8 +36,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
+import java.util.Optional;
+
 // TODO: smallrye Metrics
-// TODO: bei Delete NO_CONTENT falls Optional<Empty> siehe Topic
 // TODO: Rest Assured für diesen Enpunkt
 // TODO: Insomnia Collecion mit Tests für diesen ENpunkt
 @RequestScoped
@@ -139,11 +140,15 @@ public class VotesRessource {
         try {
             String username = securityContext.getUserPrincipal().getName();
             DeleteVoteCommand command = new DeleteVoteCommand(id, username);
-            ApplicationResult<Vote> result = this.deleteVoteUseCase.deleteVote(command, username);
+            ApplicationResult<Optional<Vote>> result = this.deleteVoteUseCase.deleteVote(command, username);
 
             if (result.ok()) {
-                VoteDto voteDto = VoteDto.Converter.fromDomainEntity(result.data());
-                return Response.status(Response.Status.OK).entity(voteDto).build();
+                if (result.data().isPresent()) {
+
+                    VoteDto voteDto = VoteDto.Converter.fromDomainEntity(result.data().get());
+                    return Response.status(Response.Status.OK).entity(voteDto).build();
+                }
+                return Response.status(Response.Status.NO_CONTENT).build();
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {

@@ -53,7 +53,7 @@
     by <strong>{post.user.name}</strong> |
     <a href="/ui/posts?topic={post.topic.title}">{post.topic.title}</a> |
     {post.commentCount} comments |
-    {#if ! isLoggedIn} | voting: {post.totalVotes}{/if}
+    {#if ! isLoggedIn} voting: {post.totalVotes}{/if}
     {#if username == post.user.name}
         <a style="cursor: pointer" class="text-danger" onclick="deletePost('{post.id}')">delete</a>
     {/if}</span>

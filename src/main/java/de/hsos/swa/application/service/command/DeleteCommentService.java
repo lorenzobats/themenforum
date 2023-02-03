@@ -55,7 +55,7 @@ public class DeleteCommentService implements DeleteCommentUseCase {
      * @return ApplicationResult<Comment> enthält gelöschtes/deaktiviertes Kommentar bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Comment> deleteComment(DeleteCommentCommand request, String securityContext) {
+    public ApplicationResult<Optional<Comment>> deleteComment(DeleteCommentCommand request, String securityContext) {
         RepositoryResult<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(request.commentId()));
         if (postResult.error()) {
             return ApplicationResult.exception("Cannot find post for comment " + request.commentId());
@@ -63,8 +63,9 @@ public class DeleteCommentService implements DeleteCommentUseCase {
         Post post = postResult.get();
 
         Optional<Comment> optionalComment = post.findCommentById(UUID.fromString(request.commentId()));
-        if(optionalComment.isEmpty()){
-            return ApplicationResult.exception("Cannot find comment " + request.commentId());
+
+        if (optionalComment.isEmpty()) {
+            return ApplicationResult.noContent(Optional.empty());
         }
         Comment comment = optionalComment.get();
 
@@ -74,26 +75,29 @@ public class DeleteCommentService implements DeleteCommentUseCase {
         if (userResult.error()) {
             return ApplicationResult.exception("Cannot find user " + request.username());
         }
+
         User user = userResult.get();
 
         AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(user.getId());
         if (roleResult.denied()) {
             return ApplicationResult.exception("Cannot find user role " + request.username());
         }
+
         String role = roleResult.get();
 
-        if(!comment.getUser().getId().equals(user.getId()) && !role.equals("admin")){
+        if (!comment.getUser().getId().equals(user.getId()) && !role.equals("admin")) {
             return ApplicationResult.exception("Not allowed to delete comment");
         }
         // ENDE TODO AUTH SERVICE
 
         post.delete(comment.getId());
 
-
         RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(post);
+
         if (updatePostResult.error()) {
             return ApplicationResult.exception("Cannot update post ");
         }
-        return ApplicationResult.ok(comment);
+
+        return ApplicationResult.ok(Optional.of(comment));
     }
 }
