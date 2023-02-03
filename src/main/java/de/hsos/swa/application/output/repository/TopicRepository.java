@@ -23,4 +23,5 @@ public interface TopicRepository {
     RepositoryResult<List<TopicWithPostCountDto>> getAllTopics();
     RepositoryResult<List<TopicWithPostCountDto>> searchTopic(String searchString);
     RepositoryResult<Topic> getTopicById(UUID topicId);
+    RepositoryResult<Topic> getTopicByTitle(String title);
 }

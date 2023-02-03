@@ -9,6 +9,7 @@ import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.infrastructure.persistence.model.TopicPersistenceModel;
+import de.hsos.swa.infrastructure.persistence.model.UserPersistenceModel;
 import de.hsos.swa.infrastructure.persistence.view.TopicPersistenceView;
 import org.jboss.logging.Logger;
 
@@ -127,6 +128,24 @@ public class TopicPersistenceAdapter implements TopicRepository {
     }
 
     @Override
+    public RepositoryResult<Topic> getTopicByTitle(String title) {
+        CriteriaBuilder<TopicPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, TopicPersistenceModel.class);
+        criteriaBuilder.where("title").eq(title);
+        try {
+            TopicPersistenceModel topic = criteriaBuilder.getSingleResult();
+            return RepositoryResult.ok(TopicPersistenceModel.Converter.toDomainEntity(topic));
+        } catch (NoResultException e) {
+            return RepositoryResult.notFound();
+        } catch (IllegalArgumentException e) {
+            log.warn(e);
+            return RepositoryResult.exception();
+        } catch (PersistenceException e) {
+            log.error(e);
+            return RepositoryResult.exception();
+        }
+    }
+
+    @Override
     public RepositoryResult<List<TopicWithPostCountDto>> searchTopic(String searchString) {
         try {
             CriteriaBuilder<TopicPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, TopicPersistenceModel.class);
@@ -137,8 +156,8 @@ public class TopicPersistenceAdapter implements TopicRepository {
                     .where("userPersistenceModel.name").eq().value(searchString)
                     .endOr();
             CriteriaBuilder<TopicPersistenceView> criteriaBuilderView = entityViewManager.applySetting(EntityViewSetting.create(TopicPersistenceView.class), criteriaBuilder);
-            List<TopicPersistenceView> postList = criteriaBuilderView.getResultList();
-            return RepositoryResult.ok(postList.stream().map(TopicPersistenceView::toOutputPortDto).toList());
+            List<TopicPersistenceView> topicList = criteriaBuilderView.getResultList();
+            return RepositoryResult.ok(topicList.stream().map(TopicPersistenceView::toOutputPortDto).toList());
         } catch (NoResultException e) {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException e) {

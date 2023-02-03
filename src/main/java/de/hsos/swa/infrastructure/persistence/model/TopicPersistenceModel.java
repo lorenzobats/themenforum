@@ -16,11 +16,11 @@ public class TopicPersistenceModel {
     UUID id;
 
     @Basic
+    @Column(unique = true)
     String title;
 
     @Basic
     String description;
-
 
     @Basic
     LocalDateTime createdAt;

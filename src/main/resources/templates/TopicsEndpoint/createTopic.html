@@ -1,46 +1,50 @@
 {@de.hsos.swa.domain.entity.Post post}
 
 {#include base}
-{#title}New Topic{/title}
-{#body}
-<div class="header">
-    <div>
+    {#title}New Topic{/title}
+    {#body}
+        <div class="header">
+        <div>
 
-        <h1 class="mt-4">New Topic</h1>
-        <p><a href="/ui/topics">[Browse Topics]</a></p>
+            <h1 class="mt-4">New Topic</h1>
+            <p><a href="/ui/topics">[Browse Topics]</a></p>
 
-    </div>
-    <div class="login-buttons">
+        </div>
+        <div class="login-buttons">
         Logged in as: {username}
         <button class="btn btn-light" onclick="logout()">Logout</button>
-    </div>
-</div>
+        </div>
+        </div>
 
 
-<form onsubmit="createTopic();">
-    <div class="form-group">
-        <label><b>Title</b></label>
-        <input style="display: block; width: 100%" type="text" placeholder="Enter Title" id="topicTitle" name="title"
-            maxlength="100" minlength="1" required>
-    </div>
+        <form onsubmit="createTopic();">
+            <div class="form-group">
+                <label><b>Title</b></label>
+                <input style="display: block; width: 100%" type="text" placeholder="Enter Title" id="topicTitle"
+                       name="title"
+                       maxlength="100" minlength="1" required>
+            </div>
 
-    <div class="form-group mb-4">
-        <label><b>Description</b></label>
-        <textarea style="display: block; width: 100%" placeholder="Enter Description" id="topicDescription" name="text"
-            maxlength="250" minlength="1" required></textarea>
-    </div>
+            <div class="form-group mb-4">
+                <label><b>Description</b></label>
+                <textarea style="display: block; width: 100%" placeholder="Enter Description" id="topicDescription"
+                          name="text"
+                          maxlength="250" minlength="1" required></textarea>
+            </div>
 
-    <button type="submit" class="btn btn-primary">Create Topic</button>
-</form>
-<div id="error-box" class="alert alert-danger mt-4" style="display: none;"></div>
+            <button type="submit" class="btn btn-primary">Create Topic</button>
+        </form>
+        <div id="error-box" class="alert alert-danger mt-4" style="display: none;"></div>
 
 
-{/body}
+    {/body}
 {/include}
 
 <script>
 
-    onsubmit = (event) => { event.preventDefault() };
+    onsubmit = (event) => {
+        event.preventDefault()
+    };
 
     function createTopic() {
         let title = document.querySelector('#topicTitle').value;
@@ -76,7 +80,7 @@
                         let errorMessage = "<strong>Invalid Input:</strong><br>"
                         error.errors.forEach(err => {
 
-                            errorMessage += err.message + '<br>';
+                            errorMessage += err.detail + '<br>';
                         });
 
                         let errorBox = document.querySelector(`#error-box`);
@@ -84,10 +88,9 @@
                         errorBox.style.display = 'block';
                     });
                 }
-            })
-            .catch(error => {
-                console.error(error);
-            });
+            }).catch(error => {
+            console.error(error);
+        });
     }
 
     function logout() {
