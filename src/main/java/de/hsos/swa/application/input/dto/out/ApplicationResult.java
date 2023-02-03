@@ -41,29 +41,47 @@ public class ApplicationResult<T> {
         this.errorMessage = errorMessage;
     }
 
+    // 200
     public static <T> ApplicationResult<T> ok(T data) {
         return new ApplicationResult<>(data);
     }
-
     public static <T> ApplicationResult<T> noContent(T data) {
         return new ApplicationResult<>(data);
     }
 
-    // TODO: error Messages übergeben
-    public static <T> ApplicationResult<T> exception(String errorMessage) {
-        return new ApplicationResult<T>(Status.EXCEPTION, errorMessage);
+    // 400
+    public static <T> ApplicationResult<T> noAuthorization() {
+        return new ApplicationResult<>(Status.NOT_AUTHORIZED, "User cannot be authorized");
     }
     public static <T> ApplicationResult<T> noAuthorization(String errorMessage) {
-        return new ApplicationResult<>(Status.NOT_AUTHORIZED);
+        return new ApplicationResult<>(Status.NOT_AUTHORIZED, errorMessage);
+    }
+    public static <T> ApplicationResult<T> noAccess() {
+        return new ApplicationResult<>(Status.NO_ACCESS, "Access cannot be granted");
     }
     public static <T> ApplicationResult<T> noAccess(String errorMessage) {
-        return new ApplicationResult<>(Status.NO_ACCESS);
+        return new ApplicationResult<>(Status.NO_ACCESS, errorMessage);
     }
-    public static <T> ApplicationResult<T> noPermission(String errorMessage) {return new ApplicationResult<>(Status.NO_PERMISSION);}
-    public static <T> ApplicationResult<T> notValid(String errorMessage) {return new ApplicationResult<>(Status.NOT_VALID);}
+
+    public static <T> ApplicationResult<T> notValid() {return new ApplicationResult<>(Status.NOT_VALID, "The request is invalid");}
+    public static <T> ApplicationResult<T> notValid(String errorMessage) {return new ApplicationResult<>(Status.NOT_VALID, errorMessage);}
+    public static <T> ApplicationResult<T> notFound() {
+        return new ApplicationResult<>(Status.NOT_FOUND, "Requested ressource cannot be found");
+    }
     public static <T> ApplicationResult<T> notFound(String errorMessage) {
         return new ApplicationResult<>(Status.NOT_FOUND, errorMessage);
     }
+
+
+    // 500
+    public static <T> ApplicationResult<T> exception() {
+        return new ApplicationResult<T>(Status.EXCEPTION);
+    }
+    public static <T> ApplicationResult<T> exception(String errorMessage) {
+        return new ApplicationResult<T>(Status.EXCEPTION, errorMessage);
+    }
+    public static <T> ApplicationResult<T> noPermission() {return new ApplicationResult<>(Status.NO_PERMISSION, "No permission to perform this operation");}
+    public static <T> ApplicationResult<T> noPermission(String errorMessage) {return new ApplicationResult<>(Status.NO_PERMISSION, errorMessage);}
 
     public ApplicationResult<T> setData(T data){
         this.data = data;

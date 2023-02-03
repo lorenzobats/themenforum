@@ -1,4 +1,4 @@
-package de.hsos.swa.infrastructure.authorization;
+package de.hsos.swa.infrastructure.authorization.model;
 
 import javax.persistence.*;
 
@@ -11,11 +11,11 @@ import io.quarkus.security.jpa.Username;
 import java.util.UUID;
 
 @Entity
-@Table(name = "auth_user_table")        // TODO Anders Schema
+@Table(name = "user_table")
 @UserDefinition
-@NamedQuery(name = "UserAuthEntity.findRoleByUserId", query = "SELECT role FROM UserAuthEntity WHERE userId = :userId")
-@NamedQuery(name = "UserAuthEntity.findRoleByUserName", query = "SELECT role FROM UserAuthEntity WHERE userId = :userId")
-public class UserAuthEntity {
+@NamedQuery(name = "UserAuthEntity.findRoleByUserId", query = "SELECT role FROM AuthUser WHERE userId = :userId")
+@NamedQuery(name = "AuthUser.findRoleByUserName", query = "SELECT role FROM AuthUser WHERE userId = :userId")
+public class AuthUser {
     @Id
     @GeneratedValue()
     UUID id;
@@ -33,10 +33,14 @@ public class UserAuthEntity {
     @Column(name = "user_id")
     UUID userId;
 
-    public UserAuthEntity() {
+    public AuthUser() {
     }
 
-    public UserAuthEntity(String username, String password, String role, UUID userId) {
+    public String getUsername() {
+        return username;
+    }
+
+    public AuthUser(String username, String password, String role, UUID userId) {
         this.username = username;
         this.password = BcryptUtil.bcryptHash(password);
         this.role = role;

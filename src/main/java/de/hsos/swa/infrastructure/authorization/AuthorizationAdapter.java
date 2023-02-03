@@ -1,30 +1,49 @@
 package de.hsos.swa.infrastructure.authorization;
 
+
+import com.blazebit.persistence.CriteriaBuilder;
+import com.blazebit.persistence.CriteriaBuilderFactory;
+import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 import de.hsos.swa.application.output.auth.dto.out.SaveAuthUserCommand;
+import de.hsos.swa.infrastructure.authorization.model.AuthUser;
+import io.quarkus.hibernate.orm.PersistenceUnit;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.*;
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
 import java.util.UUID;
 
 @RequestScoped
 @Transactional(value = Transactional.TxType.MANDATORY)
-public class AuthorizationAdapter implements
-        AuthorizationGateway {
+public class AuthorizationAdapter implements AuthorizationGateway {
 
     @Inject
+    @PersistenceUnit("auth")
     EntityManager entityManager;
+
+    @Inject
+    CriteriaBuilderFactory criteriaBuilderFactory;
 
     @Inject
     Logger log;
 
     @Override
-    public AuthorizationResult<Void> createUserAuth(SaveAuthUserCommand outputPortRequest) {
-        UserAuthEntity authUserEntity = new UserAuthEntity(
+    public AuthorizationResult<Void> registerUser(SaveAuthUserCommand outputPortRequest) {
+        CriteriaBuilder<AuthUser> query = criteriaBuilderFactory.create(entityManager, AuthUser.class);
+        query.where("username").eq(outputPortRequest.getUsername());
+    // TODO: !!! funktioniert noch nicht
+        try{
+            if(query.getResultList().isEmpty()) return AuthorizationResult.notAuthenticated();
+        } catch (Exception e) {
+            return AuthorizationResult.exception();
+        }
+
+        AuthUser authUserEntity = new AuthUser(
                 outputPortRequest.getUsername(),
                 outputPortRequest.getPassword(),
                 outputPortRequest.getRole(),
@@ -33,15 +52,12 @@ public class AuthorizationAdapter implements
         try {
             entityManager.persist(authUserEntity);
             return AuthorizationResult.ok();
-        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            log.error("Customer Auth Entity could not be created", e);
+        } catch (ConstraintViolationException | PersistenceException | IllegalArgumentException e) {
+            // Falls Nutzername bereits vergeben
             return AuthorizationResult.exception();
         }
     }
 
-    public AuthorizationResult<String> isAuthenticated(String username){
-        return AuthorizationResult.exception();
-    }
 
     @Override
     public AuthorizationResult<String> getUserAuthRole(UUID userId) {
@@ -54,5 +70,10 @@ public class AuthorizationAdapter implements
             log.error("getUserAuthRole Error", e);
             return AuthorizationResult.exception();
         }
+    }
+
+    @Override
+    public AuthorizationResult<Boolean> canReadComment(String username) {
+        return AuthorizationResult.ok();
     }
 }

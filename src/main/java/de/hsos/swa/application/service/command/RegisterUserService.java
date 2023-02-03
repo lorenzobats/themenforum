@@ -7,6 +7,7 @@ import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.auth.dto.out.SaveAuthUserCommand;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.domain.factory.UserFactory;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
@@ -33,28 +34,23 @@ public class RegisterUserService implements RegisterUserUseCase {
     @Override
     // TODO:
     public ApplicationResult<User> registerUser(RegisterUserCommand request) {
-        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> existingUserResult = this.userRepository.getUserByName(request.username());
-
-        if (!existingUserResult.status().equals(de.hsos.swa.application.output.repository.dto.out.RepositoryResult.Status.ENTITY_NOT_FOUND)) {
-            return ApplicationResult.exception("Registration failed");
-        }
-
         User user = UserFactory.createUser(request.username());
         SaveAuthUserCommand createUserAuthRequest = new SaveAuthUserCommand(
                 request.username(),
                 request.password(),
                 "member",
                 user.getId());
-        AuthorizationResult<Void> createUserAuthResponse = this.authorizationGateway.createUserAuth(createUserAuthRequest);
 
+        AuthorizationResult<Void> registration = this.authorizationGateway.registerUser(createUserAuthRequest);
+        if(registration.denied()) return ApplicationResult.noAuthorization(createUserAuthRequest.getUsername() + " is not available");
 
-        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> createUserResponse = this.userRepository.saveUser(user);
+        RepositoryResult<User> createUserResponse = this.userRepository.saveUser(user);
 
         if (!createUserResponse.ok()) {
             return ApplicationResult.exception("Registration failed");
         }
 
-        if (createUserAuthResponse.error()) {
+        if (registration.denied()) {
             return ApplicationResult.exception("Authentication failed");
         }
 

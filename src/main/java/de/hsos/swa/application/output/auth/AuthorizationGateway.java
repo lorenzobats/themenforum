@@ -8,6 +8,8 @@ import java.util.UUID;
 
 @OutputPort
 public interface AuthorizationGateway {
-    AuthorizationResult<Void> createUserAuth(SaveAuthUserCommand outputPortRequest);
+    AuthorizationResult<Void> registerUser(SaveAuthUserCommand outputPortRequest);
     AuthorizationResult<String> getUserAuthRole(UUID userId);
+
+    AuthorizationResult<Boolean> canReadComment(String username);
 }

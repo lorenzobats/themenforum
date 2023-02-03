@@ -9,17 +9,6 @@ INSERT INTO user_table (id, user_name) VALUES ('9fe9d31c-71ac-45fc-b236-f8d53dfd
 INSERT INTO user_table (id, user_name) VALUES ('75588120-9b33-4484-acbc-cf902a9f9ac8', 'fwecher');
 INSERT INTO user_table (id, user_name) VALUES ('77cc0520-c6d0-4f06-964f-9af0834fc6db', 'gluehrs');
 
-INSERT INTO auth_user_table (id, password, role, user_id, username) VALUES ('6b05e5b1-1859-418f-97ba-dd5c8a4f02bf', '$2a$10$DwD7QAQ8xBxjG7B3A2I5s.bzU/1bt4YYvR91V1Ob33F4Olb.SnYwi', 'member', '78188b10-4733-4fca-8dfd-e07aee389383', 'oschluet');
-INSERT INTO auth_user_table (id, password, role, user_id, username) VALUES ('c91b0e85-abcb-48d4-b344-3229099c84ba', '$2a$10$HTWkZDXvW.laYCCBzWo7Qu1xZL2fKWe.EgEeGly9TCLUa0xzqPuS2', 'member', 'efac4cf6-4188-4a18-8489-4fc98f3633d6', 'lbattist');
-INSERT INTO auth_user_table (id, password, role, user_id, username) VALUES ('89445af1-beb3-43bf-a80a-ff17119ccbf7', '$2a$10$QLCuFmy3kh2stifgZnM9BOpADJ3KPx13xQ9I2O16iN3gxpQSzaoIe', 'admin', 'fafaaa75-64eb-4b5b-96f3-79721048b85f', 'admin');
-INSERT INTO auth_user_table (id, password, role, user_id, username) VALUES ('e9bd912c-07b4-490d-b2b4-35586b89d5f7', '$2a$10$lhn3XvixVCon5Rm3arJqAOZK/EP4WRWYOVchlCm0v6TAwWTNq882i', 'member', 'c8f79ffc-7ce0-4673-a22c-5cf210b83f13', 'afuchs');
-INSERT INTO auth_user_table (id, password, role, user_id, username) VALUES ('258c6eef-56ac-45db-a40f-b4c0a56305ac', '$2a$10$x1ICBN/pbZRIF7/XGnB8lOras.hg7iyElwvOkOdUa7RvdKaGAVlG6', 'member', '7adc0aa2-5532-4233-a8b4-2d0debd6a053', 'bdierken');
-INSERT INTO auth_user_table (id, password, role, user_id, username) VALUES ('93d404b4-6dfc-4597-9896-b7e36d574523', '$2a$10$asza7gMOtJ.rDAgQ4XwGPOEw2QYelbUYfC.AQQV0lNlsHvdccGZFa', 'member', '8be3a431-5b87-4223-ab76-bd3308da4cfd', 'ckaiser');
-INSERT INTO auth_user_table (id, password, role, user_id, username) VALUES ('ff0c3fed-dd6a-4737-96ef-d89a27348042', '$2a$10$kO1PXcFmP5o3JZ37j0O9h.IIEsZZsZRMpCNC3SRdLPn5L9nu85f3G', 'member', '6194c256-473d-4fe1-9841-41d999885a23', 'dbacher');
-INSERT INTO auth_user_table (id, password, role, user_id, username) VALUES ('ecec7edc-d9f2-4a5a-8968-75f5c024c916', '$2a$10$3PCL3NwPbAez2/WMqFK.Su6LeGEKyJ2ScI898t9pqQ0yY4YVA1R.K', 'member', '9fe9d31c-71ac-45fc-b236-f8d53dfd00bb', 'emammer');
-INSERT INTO auth_user_table (id, password, role, user_id, username) VALUES ('a1a7e8b8-6f68-47b0-804f-cef584854782', '$2a$10$AbH4TmXXU7U6c2TyXiz2d./8/5BqxkqAN2JYJozgBh9n3fW6sTTxK', 'member', '75588120-9b33-4484-acbc-cf902a9f9ac8', 'fwecher');
-INSERT INTO auth_user_table (id, password, role, user_id, username) VALUES ('fd14b0f7-e3ff-45d3-b64f-6b6fac2f5b98', '$2a$10$AWM.m7oJfQqFVaIGY3QTlev4747pIqTyb3zdbYQvkJ8989QIHwYcK', 'member', '77cc0520-c6d0-4f06-964f-9af0834fc6db', 'gluehrs');
-
 INSERT INTO topic_table (id, createdat, description, title, user_id) VALUES ('a70d18cf-7b53-43fe-86de-1277fa476864', '2023-01-21 20:49:37.855505', 'Deutschland das Autoland', 'Autos', '78188b10-4733-4fca-8dfd-e07aee389383');
 INSERT INTO topic_table (id, createdat, description, title, user_id) VALUES ('897efe45-a06f-4d3a-9579-5df3fc279beb', '2023-01-22 20:49:37.855505', 'Softwarearchitektur bestes Fach!', 'Softwarearchitektur', 'efac4cf6-4188-4a18-8489-4fc98f3633d6');
 INSERT INTO topic_table (id, createdat, description, title, user_id) VALUES ('5b541bd3-2a87-4cbc-ad95-ed9343831972','2023-01-22 21:45:37.855505', 'Alles rund um das Thema Sport', 'Sport', 'c8f79ffc-7ce0-4673-a22c-5cf210b83f13');
@@ -61,5 +50,5 @@ INSERT INTO vote_table(id, createdat, votetype, user_id) VALUES ('09f21fbb-1430-
 INSERT INTO post_vote(post_id, vote_id) VALUES ('55a7409f-c0eb-453e-b7ef-89f905963ce9', '09f21fbb-1130-446d-b3c2-44dd8a839c12');
 INSERT INTO post_vote(post_id, vote_id) VALUES ('4cfe8a99-f71a-476c-a2cb-dae7cb86872e', '09f21fbb-1230-446d-b3c2-44dd8a839c12');
 
-INSERT INTO comment_vote(post_id, vote_id) VALUES ('5c39bb7f-0ff4-4bff-a89f-03adc03bb72c', '09f21fbb-1330-446d-b3c2-44dd8a839c12');
-INSERT INTO comment_vote(post_id, vote_id) VALUES ('2c210dd8-ff07-4adb-ad4c-67625ae7c295', '09f21fbb-1430-446d-b3c2-44dd8a839c12');
+INSERT INTO comment_vote(comment_id, vote_id) VALUES ('5c39bb7f-0ff4-4bff-a89f-03adc03bb72c', '09f21fbb-1330-446d-b3c2-44dd8a839c12');
+INSERT INTO comment_vote(comment_id, vote_id) VALUES ('2c210dd8-ff07-4adb-ad4c-67625ae7c295', '09f21fbb-1430-446d-b3c2-44dd8a839c12');

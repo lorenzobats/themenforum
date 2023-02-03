@@ -41,7 +41,7 @@ public class CommentPersistenceModel {
             orphanRemoval = true)
     @JoinTable(
             name = "comment_vote",
-            joinColumns = @JoinColumn(name = "post_id"),
+            joinColumns = @JoinColumn(name = "comment_id"),
             inverseJoinColumns = @JoinColumn(name = "vote_id")
     )
     List<VotePersistenceModel> votes = new ArrayList<>();

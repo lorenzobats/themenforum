@@ -77,7 +77,7 @@ public class DeleteCommentService implements DeleteCommentUseCase {
         User user = userResult.get();
 
         AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(user.getId());
-        if (roleResult.error()) {
+        if (roleResult.denied()) {
             return ApplicationResult.exception("Cannot find user role " + request.username());
         }
         String role = roleResult.get();

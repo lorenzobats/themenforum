@@ -8,8 +8,8 @@ public class AuthorizationResult<T> {
         ERROR
     }
 
-    public final Status status;
-    public final T data;
+    private final Status status;
+    private final T data;
 
 
     private AuthorizationResult(Status status, T data) {
@@ -36,12 +36,12 @@ public class AuthorizationResult<T> {
         return new AuthorizationResult<T>(Status.ACCESS_DENIED, (T) null);
     }
 
-    public boolean valid(){
+    public boolean granted(){
         return status.equals(Status.OK);
     }
 
-    public boolean error(){
-        return !this.valid();
+    public boolean denied(){
+        return !this.granted();
     }
 
     public Status status(){

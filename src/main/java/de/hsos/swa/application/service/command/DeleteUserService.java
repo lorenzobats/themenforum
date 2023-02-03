@@ -38,7 +38,7 @@ public class DeleteUserService implements DeleteUserUseCase {
         User requestingUser = requestingUserResult.get();
 
         AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(requestingUser.getId());
-        if (roleResult.error()) {
+        if (roleResult.denied()) {
             return ApplicationResult.exception("Cannot find user role " + request.username());
         }
         String role = roleResult.get();

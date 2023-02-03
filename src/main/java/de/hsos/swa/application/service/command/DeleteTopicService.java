@@ -56,13 +56,13 @@ public class DeleteTopicService implements DeleteTopicUseCase {
     public ApplicationResult<Optional<Topic>> deleteTopic(DeleteTopicCommand request, String securityContext) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.error()) {
-            return ApplicationResult.noAuthorization("Cannot find user " + request.username());
+            return ApplicationResult.noAuthorization("Cannot find user" + request.username());
         }
         User user = userResult.get();
 
         AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(user.getId());
-        if (roleResult.error()) {
-            return ApplicationResult.noAuthorization("Cannot find user role " + request.username());
+        if (roleResult.denied()) {
+            return ApplicationResult.noAuthorization("");
         }
         String role = roleResult.get();
 
