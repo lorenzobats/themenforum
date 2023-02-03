@@ -8,6 +8,7 @@ import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.service.AuthorizationResultMapper;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
@@ -56,6 +57,7 @@ public class DeleteCommentService implements DeleteCommentUseCase {
      */
     @Override
     public ApplicationResult<Optional<Comment>> deleteComment(DeleteCommentCommand command, String requestingUser) {
+
         RepositoryResult<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(command.commentId()));
         if (postResult.error()) {
             return ApplicationResult.exception("Cannot find post for comment " + command.commentId());
@@ -69,31 +71,13 @@ public class DeleteCommentService implements DeleteCommentUseCase {
         }
         Comment comment = optionalComment.get();
 
-
-        // TODO Auth Service. Kann dann ganz an den Afang und findCommentById muss auch nicht mehr verwendet werden
-        RepositoryResult<User> userResult = this.userRepository.getUserByName(command.username());
-        if (userResult.error()) {
-            return ApplicationResult.exception("Cannot find user " + command.username());
-        }
-
-        User user = userResult.get();
-
-        AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(user.getId());
-        if (roleResult.denied()) {
-            return ApplicationResult.exception("Cannot find user role " + command.username());
-        }
-
-        String role = roleResult.get();
-
-        if (!comment.getUser().getId().equals(user.getId()) && !role.equals("admin")) {
-            return ApplicationResult.exception("Not allowed to delete comment");
-        }
-        // ENDE TODO AUTH SERVICE
+        AuthorizationResult<Boolean> permission = authorizationGateway.canDeleteComment(requestingUser, comment.getId());
+        if(permission.denied())
+            return AuthorizationResultMapper.handleRejection(permission.status());
 
         post.delete(comment.getId());
 
         RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(post);
-
         if (updatePostResult.error()) {
             return ApplicationResult.exception("Cannot update post ");
         }

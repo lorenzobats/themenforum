@@ -8,6 +8,7 @@ import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.service.AuthorizationResultMapper;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
@@ -60,15 +61,9 @@ public class DeleteTopicService implements DeleteTopicUseCase {
         }
         User user = userResult.get();
 
-        AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(user.getId());
-        if (roleResult.denied()) {
-            return ApplicationResult.noAuthorization("");
-        }
-        String role = roleResult.get();
-
-        if(!role.equals("admin")){
-            return ApplicationResult.noPermission("Not allowed to delete post");
-        }
+        AuthorizationResult<Boolean> permission = authorizationGateway.canDeleteTopic(requestingUser, UUID.fromString(command.id()));
+        if(permission.denied())
+            return AuthorizationResultMapper.handleRejection(permission.status());
 
         RepositoryResult<Topic> deleteTopicResult = this.topicRepository.deleteTopic(UUID.fromString(command.id()));
         if (deleteTopicResult.error()) {

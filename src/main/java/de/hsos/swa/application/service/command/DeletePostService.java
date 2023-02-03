@@ -8,6 +8,7 @@ import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.service.AuthorizationResultMapper;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
@@ -63,22 +64,10 @@ public class DeletePostService implements DeletePostUseCase {
         Post post = postResult.get();
 
 
-        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(command.username());
-        if (userResult.error()) {
-            return ApplicationResult.exception("Cannot find user " + command.username());
-        }
-        User user = userResult.get();
+        AuthorizationResult<Boolean> permission = authorizationGateway.canDeletePost(requestingUser, post.getId());
+        if(permission.denied())
+            return AuthorizationResultMapper.handleRejection(permission.status());
 
-        AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(user.getId());
-        if (roleResult.denied()) {
-            return ApplicationResult.exception("Cannot find user role " + command.username());
-        }
-        String role = roleResult.get();
-
-
-        if (!post.getUser().getId().equals(user.getId()) && !role.equals("admin")) {
-            return ApplicationResult.exception("Not allowed to delete post");
-        }
 
         RepositoryResult<Post> deletePostResult = this.postRepository.deletePost(post.getId());
         if (deletePostResult.error()) {

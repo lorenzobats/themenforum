@@ -4,11 +4,14 @@ import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.DeleteVoteUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteVoteCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
+import de.hsos.swa.application.output.auth.AuthorizationGateway;
+import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 import de.hsos.swa.application.output.repository.dto.in.VoteQueryDto;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.VoteRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.service.AuthorizationResultMapper;
 import de.hsos.swa.domain.entity.*;
 import de.hsos.swa.domain.service.VoteEntityService;
 import org.jboss.logging.Logger;
@@ -38,18 +41,23 @@ public class DeleteVoteService implements DeleteVoteUseCase {
     UserRepository userRepository;
 
     @Inject
-    Logger log;
+    AuthorizationGateway authorizationGateway;
 
     @Override
     public ApplicationResult<Optional<Vote>> deleteVote(DeleteVoteCommand command, String requestingUser) {
-        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(command.username());
+        AuthorizationResult<Boolean> permission = authorizationGateway.canDeleteVote(requestingUser, UUID.fromString(command.voteId()));
+        if(permission.denied())
+            return AuthorizationResultMapper.handleRejection(permission.status());
+
+
+        RepositoryResult<User> userResult = this.userRepository.getUserByName(command.username());
         if (userResult.error()) {
             return ApplicationResult.exception("Cannot retrieve User");
         }
         User user = userResult.get();
 
 
-        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<VoteQueryDto> voteResult = this.voteRepository.getVoteById(UUID.fromString(command.voteId()));
+        RepositoryResult<VoteQueryDto> voteResult = this.voteRepository.getVoteById(UUID.fromString(command.voteId()));
         if (voteResult.error()) {
             return ApplicationResult.exception("Cannot find Vote");
         }
