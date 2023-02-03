@@ -32,14 +32,15 @@ public class GetPostByIdService implements GetPostByIdUseCase {
 
         if (postResult.ok()) {
             Comparator<Comment> sortComparator = new SortByDate<>();    // Im Standard wird nach Date Sortiert
-            if(query.sortingParams() == SortingParams.VOTES) sortComparator = new SortByUpvotes<>();
-            boolean descending = query.orderParams() == OrderParams.DESC;
+            if (SortingParams.valueOf(query.sortingParams()) == SortingParams.VOTES)
+                sortComparator = new SortByUpvotes<>();
+            boolean descending = OrderParams.valueOf(query.orderParams()) == OrderParams.DESC;
 
             postResult.get().sortComments(descending, sortComparator);
             return ApplicationResult.ok(postResult.get());
         }
 
-        switch (postResult.status()){
+        switch (postResult.status()) {
             case ENTITY_NOT_FOUND -> {
                 return ApplicationResult.notFound(query.id() + "not found");
             }

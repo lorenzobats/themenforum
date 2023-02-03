@@ -92,7 +92,7 @@ public class AdminEndpoint {
     public TemplateInstance posts(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
         Map<PostFilterParams, Object> filterParams = new HashMap<>();
-        ApplicationResult<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostQuery(filterParams, false, SortingParams.DATE, OrderParams.DESC));
+        ApplicationResult<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostQuery(filterParams, false, "DATE", "DESC"));
         return Templates.posts(posts.data(), adminName);
     }
 

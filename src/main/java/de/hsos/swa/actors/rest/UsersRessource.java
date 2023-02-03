@@ -33,7 +33,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 // TODO: smallrye Metrics
 // TODO: Rest Assured für diesen Enpunkt
-// TODO: Insomnia Collecion mit Tests für diesen ENpunkt
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

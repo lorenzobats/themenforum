@@ -43,6 +43,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 // TODO: smallrye Metrics
+// TODO: bei Delete NO_CONTENT falls Optional<Empty> siehe Topic
 // TODO: Rest Assured für diesen Enpunkt
 // TODO: Insomnia Collecion mit Tests für diesen ENpunkt
 @RequestScoped
@@ -84,8 +85,8 @@ public class PostsRessource {
                              @QueryParam("dateTo") LocalDateTime dateTo,
                              @QueryParam("topic") String topic,
                              @QueryParam("topicId") UUID topicId,
-                             @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
-                             @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy) {
+                             @DefaultValue("VOTES") @QueryParam("sortBy") String sortBy,
+                             @DefaultValue("DESC") @QueryParam("orderBy") String orderBy) {
         try {
             Map<PostFilterParams, Object> filterParams = new HashMap<>();
             if (username != null)
@@ -126,8 +127,8 @@ public class PostsRessource {
     })
     public Response getPostById(@PathParam("id") String id,
                                 @DefaultValue("true") @QueryParam("includeComments") boolean includeComments,
-                                @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
-                                @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy) {
+                                @DefaultValue("VOTES") @QueryParam("sortBy") String sortBy,
+                                @DefaultValue("DESC") @QueryParam("orderBy") String orderBy) {
         try {
             GetPostByIdQuery query = new GetPostByIdQuery(id, includeComments, sortBy, orderBy);
             ApplicationResult<Post> result = this.getPostByIdUseCase.getPostById(query);

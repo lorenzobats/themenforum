@@ -10,6 +10,7 @@ import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.service.AuthorizationResultMapper;
 import de.hsos.swa.application.service.query.params.OrderParams;
+import de.hsos.swa.application.service.query.params.SortingParams;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.service.SortByDate;
 import de.hsos.swa.domain.service.SortByUpvotes;
@@ -40,12 +41,12 @@ public class GetFilteredPostsService implements GetFilteredPostsUseCase {
         if (postsResult.ok()) {
             List<Post> sortedPosts = new ArrayList<>(postsResult.get());
 
-            switch (request.sortingParams()) {
+            switch (SortingParams.valueOf(request.sortingParams())) {
                 case VOTES -> {
-                    sortPosts(sortedPosts, request.orderParams() == OrderParams.ASC, new SortByUpvotes<>());
+                    sortPosts(sortedPosts, OrderParams.valueOf(request.orderParams()) == OrderParams.ASC, new SortByUpvotes<>());
                 }
                 case DATE -> {
-                    sortPosts(sortedPosts, request.orderParams() == OrderParams.ASC, new SortByDate<>());
+                    sortPosts(sortedPosts, OrderParams.valueOf(request.orderParams()) == OrderParams.ASC, new SortByDate<>());
                 }
                 default -> throw new IllegalArgumentException("Cant sort posts");
             }

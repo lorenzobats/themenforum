@@ -60,8 +60,8 @@ public class PostsEndpoint {
     public TemplateInstance posts(
             @QueryParam("topic") String topic,
             @QueryParam("username") String username,
-            @DefaultValue("DATE") @QueryParam("sortBy") SortingParams sortBy,
-            @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy,
+            @DefaultValue("DATE") @QueryParam("sortBy") String sortBy,
+            @DefaultValue("DESC") @QueryParam("orderBy") String orderBy,
 
             @Context SecurityContext securityContext) {
         boolean isLoggedIn = false;
@@ -95,8 +95,8 @@ public class PostsEndpoint {
     @Operation(hidden = true)
     public TemplateInstance post(
             @org.jboss.resteasy.annotations.jaxrs.PathParam("id") String id,
-            @DefaultValue("VOTES") @QueryParam("sortBy") SortingParams sortBy,
-            @DefaultValue("DESC") @QueryParam("orderBy") OrderParams orderBy,
+            @DefaultValue("VOTES") @QueryParam("sortBy") String sortBy,
+            @DefaultValue("DESC") @QueryParam("orderBy") String orderBy,
             @Context SecurityContext securityContext) {
         boolean isLoggedIn = false;
         String username = "";
