@@ -1,26 +1,31 @@
 {#include base}
-{#title}Register {/title}
-{#body}
-<div class="header">
-    <div class="mb-4">
-        <h1 class="mt-4">Register</h1>
-    </div>
-</div>
-<form class="container">
-    <div class="form-group">
-        <label><b>Username</b></label>
-        <input id="username" type="text" placeholder="Enter Username" name="username" required>
-    </div>
-    <div class="form-group mb-4">
-        <label><b>Password</b></label>
-        <input id="password" type="password" placeholder="Enter Password" name="password" required>
-    </div>
-    <button type="submit" class="btn btn-primary" onclick="register()">Register</button>
-</form>
-{/body}
+    {#title}Register {/title}
+    {#body}
+        <div class="header">
+            <div class="mb-4">
+                <h1 class="mt-4">Register</h1>
+            </div>
+        </div>
+        <form class="container">
+            <div class="form-group">
+                <label><b>Username</b></label>
+                <input id="username" type="text" placeholder="Enter Username" name="username" required>
+            </div>
+            <div class="form-group mb-4">
+                <label><b>Password</b></label>
+                <input id="password" type="password" placeholder="Enter Password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary" onclick="register()">Register</button>
+        </form>
+
+        <div id="error-box" class="alert alert-danger mt-4" style="display: none;"></div>
+
+    {/body}
 {/include}
 <script>
-    onsubmit = (event) => { event.preventDefault() };
+    onsubmit = (event) => {
+        event.preventDefault()
+    };
 
 
     function register() {
@@ -49,9 +54,23 @@
         }).then(response => {
             if (response.ok) {
                 login()
+            } else {
+                response.json().then(error => {
+                    console.log(error);
+
+                    let errorMessage = "<strong>Invalid Input:</strong><br>"
+                    error.errors.forEach(err => {
+
+                        errorMessage += err.detail + '<br>';
+                    });
+
+                    let errorBox = document.querySelector(`#error-box`);
+                    errorBox.innerHTML = errorMessage;
+                    errorBox.style.display = 'block';
+                });
             }
         }).catch(error => {
-                console.error(error);
+            console.error(error);
         });
     }
 

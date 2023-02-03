@@ -36,7 +36,7 @@ public class AuthorizationAdapter implements AuthorizationGateway {
         query.where("username").eq(outputPortRequest.getUsername());
 
         try{
-            if(query.getResultList().isEmpty())
+            if(!query.getResultList().isEmpty())
                 // Für den Fall, dass der Nutzername belegt ist.
                 return AuthorizationResult.notAuthenticated();
         } catch (Exception e) {
