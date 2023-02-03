@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Optional;
 // TODO: smallrye Metrics
 // TODO: Rest Assured für diesen Enpunkt
-// TODO: Insomnia Collecion mit Tests für diesen ENpunkt
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

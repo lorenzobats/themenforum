@@ -28,21 +28,25 @@ public class GetPostByIdService implements GetPostByIdUseCase {
 
     @Override
     public ApplicationResult<Post> getPostById(GetPostByIdQuery query) {
-        RepositoryResult<Post> result = postRepository.getPostById(UUID.fromString(query.id()), query.includeComments());
+        RepositoryResult<Post> postResult = postRepository.getPostById(UUID.fromString(query.id()), query.includeComments());
 
-        if (result.error()) {
-            if (result.status() == RepositoryResult.Status.ENTITY_NOT_FOUND) {
-                return ApplicationResult.notFound("Cannot find post: " + query.id());
-            }
-            return ApplicationResult.exception();
+        if (postResult.ok()) {
+            Comparator<Comment> sortComparator = new SortByDate<>();    // Im Standard wird nach Date Sortiert
+            if (SortingParams.valueOf(query.sortingParams()) == SortingParams.VOTES)
+                sortComparator = new SortByUpvotes<>();
+            boolean descending = OrderParams.valueOf(query.orderParams()) == OrderParams.DESC;
+
+            postResult.get().sortComments(descending, sortComparator);
+            return ApplicationResult.ok(postResult.get());
         }
 
-        //
-        Comparator<Comment> sortComparator = new SortByDate<>();
-        if(query.sortingParams() == SortingParams.VOTES) sortComparator = new SortByUpvotes<>();
-        boolean descending = query.orderParams() == OrderParams.DESC;
-        result.get().sortComments(descending, sortComparator);
-
-        return ApplicationResult.ok(result.get());
+        switch (postResult.status()) {
+            case ENTITY_NOT_FOUND -> {
+                return ApplicationResult.notFound(query.id() + "not found");
+            }
+        }
+        return ApplicationResult.exception("Cannot find Post");
     }
+
+
 }

@@ -38,8 +38,6 @@ import java.util.Optional;
 // TODO: getAllComments mit includeReplies = false dann werden votes nicht berechnet
 // TODO: smallrye Metrics (auskommentiert, da teilweise gecrasht)
 // TODO: Rest Assured für diesen Enpunkt
-// TODO: Insomnia Collecion mit Tests für diesen ENpunkt
-// TODO: Alle Request Bodys sinnvoll mit Annotationen zur Validierung versehen (swagger)
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
