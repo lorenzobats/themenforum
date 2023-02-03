@@ -9,10 +9,10 @@ import javax.validation.constraints.NotBlank;
 @Schema(name = "TopicCreationDto")
 public class CreateTopicRequestBody implements ValidatedRequestBody {
 
-    @NotBlank(message = "title is empty")
+    @NotBlank(message = "title is blank")
     public String title;
 
-    @NotBlank(message = "description is empty")
+    @NotBlank(message = "description is blank")
     public String description;
 
     public CreateTopicRequestBody() {}

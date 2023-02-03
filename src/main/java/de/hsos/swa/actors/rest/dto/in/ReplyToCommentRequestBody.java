@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Schema(name = "CommentReplyDto")
 public class ReplyToCommentRequestBody implements ValidatedRequestBody {
 
-    @NotBlank(message = "text is empty")
+    @NotBlank(message = "text is blank")
     public String text;
 
     public ReplyToCommentRequestBody() {}

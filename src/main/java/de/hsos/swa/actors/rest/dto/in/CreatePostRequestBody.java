@@ -11,13 +11,13 @@ import java.util.UUID;
 @Schema(name = "PostCreationDto")
 public class CreatePostRequestBody implements ValidatedRequestBody {
 
-    @NotBlank(message = "title is empty")
+    @NotBlank(message = "title is blank")
     public String title;
 
-    @NotBlank(message = "content is empty")
+    @NotBlank(message = "content is blank")
     public String content;
 
-    @NotBlank(message = "topicId is empty")
+    @NotBlank(message = "topicId is blank")
     public String topicId;
 
     public CreatePostRequestBody() {}

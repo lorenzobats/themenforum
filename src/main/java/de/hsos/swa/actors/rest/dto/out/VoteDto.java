@@ -14,7 +14,6 @@ public class VoteDto {
     public VoteType voteType;
     public LocalDateTime createdAt;
 
-    //Addon
     public VotedEntityType votedEntityType;
     public UUID votedEntityId;
 

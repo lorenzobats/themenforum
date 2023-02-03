@@ -6,6 +6,7 @@ import de.hsos.swa.domain.vo.VoteType;
 import de.hsos.swa.domain.vo.VotedEntityType;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 
@@ -15,7 +16,7 @@ public class VoteEntityRequestBody implements ValidatedRequestBody {
     @NotNull(message = "voteType is empty")
     public VoteType voteType;
 
-    @NotNull(message = "entityId is empty")
+    @NotBlank(message = "entityId is blank")
     public String entityId;
 
     @NotNull(message = "entityType is empty")
