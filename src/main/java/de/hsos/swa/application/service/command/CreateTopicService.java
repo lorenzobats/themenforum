@@ -54,7 +54,7 @@ public class CreateTopicService implements CreateTopicUseCase {
         RepositoryResult<Topic> topicRepositoryResult = this.topicRepository.getTopicByTitle(command.title());
 
         if(topicRepositoryResult.ok())
-            if(topicRepositoryResult.get().getTitle().equals(command.title()))
+            if(topicRepositoryResult.get().getTitle().equalsIgnoreCase(command.title()))
                 return ApplicationResult.notValid(command.title() + " Topic already exists");
 
         RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(command.username());
