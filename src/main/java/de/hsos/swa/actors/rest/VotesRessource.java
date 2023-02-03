@@ -74,7 +74,6 @@ public class VotesRessource {
     @RolesAllowed({"admin", "member"})
     @Operation(summary = "getAllVotes", description = "Holt alle Votes")
     @Tag(name = "Votes", description = "Zugriff auf die Votes der Kommentare und Posts")
-    @Tag(name = "Users2", description = "Zugriff auf die Nutzer")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "VoteDto", implementation = VoteDto.class)))
     })
