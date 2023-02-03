@@ -7,7 +7,7 @@ import de.hsos.swa.application.input.dto.in.GetAllCommentsQuery;
 import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
-import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReferenceDto;
+import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReference;
 import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
 import de.hsos.swa.application.service.query.params.SortingParams;
@@ -59,7 +59,7 @@ public class AdminEndpoint {
         public static native TemplateInstance posts(List<Post> entries, String adminname);
         public static native TemplateInstance comments(List<Comment> entries, String adminname);
         public static native TemplateInstance users(List<User> entries, String adminname);
-        public static native TemplateInstance votes(List<VoteWithVotedEntityReferenceDto> entries, String adminname);
+        public static native TemplateInstance votes(List<VoteWithVotedEntityReference> entries, String adminname);
     }
 
 
@@ -104,7 +104,7 @@ public class AdminEndpoint {
     public TemplateInstance comments(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
         GetAllCommentsQuery query = new GetAllCommentsQuery(false);
-        ApplicationResult<List<Comment>> comments = getAllCommentsUseCase.getAllComments(query, adminName);
+        ApplicationResult<List<Comment>> comments = getAllCommentsUseCase.getAllComments(query);
         return Templates.comments(comments.data(), adminName);
     }
 
@@ -116,7 +116,7 @@ public class AdminEndpoint {
     @Operation(hidden = true)
     public TemplateInstance users(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
-        ApplicationResult<List<User>> allUsers = getAllUsersUseCase.getAllUsers(securityContext);
+        ApplicationResult<List<User>> allUsers = getAllUsersUseCase.getAllUsers(adminName);
         return Templates.users(allUsers.data(), adminName);
     }
 
@@ -128,7 +128,7 @@ public class AdminEndpoint {
     @Operation(hidden = true)
     public TemplateInstance votes(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
-        ApplicationResult<List<VoteWithVotedEntityReferenceDto>> allVotes = getAllVotesUseCase.getAllVotes(securityContext);
+        ApplicationResult<List<VoteWithVotedEntityReference>> allVotes = getAllVotesUseCase.getAllVotes(adminName);
         return Templates.votes(allVotes.data(), adminName);
     }
 

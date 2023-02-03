@@ -7,7 +7,6 @@ import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 import de.hsos.swa.application.output.auth.dto.out.SaveAuthUserCommand;
 import de.hsos.swa.infrastructure.authorization.model.AuthUser;
-import io.quarkus.hibernate.orm.PersistenceUnit;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
@@ -35,9 +34,11 @@ public class AuthorizationAdapter implements AuthorizationGateway {
     public AuthorizationResult<Void> registerUser(SaveAuthUserCommand outputPortRequest) {
         CriteriaBuilder<AuthUser> query = criteriaBuilderFactory.create(entityManager, AuthUser.class);
         query.where("username").eq(outputPortRequest.getUsername());
-    // TODO: !!! funktioniert noch nicht
+
         try{
-            if(query.getResultList().isEmpty()) return AuthorizationResult.notAuthenticated();
+            if(query.getResultList().isEmpty())
+                // Für den Fall, dass der Nutzername belegt ist.
+                return AuthorizationResult.notAuthenticated();
         } catch (Exception e) {
             return AuthorizationResult.exception();
         }
@@ -52,7 +53,6 @@ public class AuthorizationAdapter implements AuthorizationGateway {
             entityManager.persist(authUserEntity);
             return AuthorizationResult.ok();
         } catch (ConstraintViolationException | PersistenceException | IllegalArgumentException e) {
-            // Falls Nutzername bereits vergeben
             return AuthorizationResult.exception();
         }
     }
@@ -71,20 +71,8 @@ public class AuthorizationAdapter implements AuthorizationGateway {
         }
     }
 
-    private Optional<String> getUserRole(String username) {
-        Query query = entityManager.createNamedQuery("AuthUser.findRoleByUserName");
-        query.setParameter("username", username);
-        try {
-            String role = (String) query.getSingleResult();
-            return Optional.of(role);
-        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            log.warn(e);
-            return null;
-        }
-    }
-
     @Override
-    public AuthorizationResult<Boolean> canReadComment(String username) {
+    public AuthorizationResult<Boolean> canAccessVotes(String username) {
         Optional<String> role = this.getUserRole(username);
         if(role.isPresent()){
             if(role.get().equals("admin")){
@@ -93,4 +81,35 @@ public class AuthorizationAdapter implements AuthorizationGateway {
         }
         return AuthorizationResult.notAuthenticated();
     }
+
+    @Override
+    public AuthorizationResult<Boolean> canAccessUsers(String username) {
+        Optional<String> role = this.getUserRole(username);
+        if(role.isPresent()){
+            if(role.get().equals("admin")){
+                return AuthorizationResult.ok();
+            }
+        }
+        return AuthorizationResult.notAuthenticated();
+    }
+
+    @Override
+    public AuthorizationResult<Boolean> canAccessVotesBy(String username, String voteOwner) {
+        // TODO:
+        return AuthorizationResult.ok();
+    }
+
+    private Optional<String> getUserRole(String username) {
+        Query query = entityManager.createNamedQuery("AuthUser.findRoleByUserName");
+        query.setParameter("username", username);
+        try {
+            String role = (String) query.getSingleResult();
+            return Optional.of(role);
+        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
+            log.warn(e);
+            return Optional.empty();
+        }
+    }
+
+
 }

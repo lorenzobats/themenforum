@@ -10,5 +10,5 @@ import java.util.Optional;
 
 @InputPort
 public interface DeleteVoteUseCase {
-    ApplicationResult<Optional<Vote>> deleteVote(@Valid DeleteVoteCommand request, String username);
+    ApplicationResult<Optional<Vote>> deleteVote(@Valid DeleteVoteCommand command, String requestingUser);
 }

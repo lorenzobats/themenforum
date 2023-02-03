@@ -2,9 +2,11 @@ package de.hsos.swa.actors.rest;
 
 import de.hsos.swa.actors.rest.dto.in.RegisterUserRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
+import de.hsos.swa.actors.rest.dto.out.TopicDto;
 import de.hsos.swa.actors.rest.dto.out.UserDto;
 import de.hsos.swa.actors.rest.dto.in.validation.ErrorResponse;
 import de.hsos.swa.application.annotations.Adapter;
+import de.hsos.swa.application.input.GetAllUsersUseCase;
 import de.hsos.swa.application.input.GetUserByNameUseCase;
 import de.hsos.swa.application.input.RegisterUserUseCase;
 import de.hsos.swa.application.input.dto.in.GetUserByNameQuery;
@@ -31,6 +33,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.List;
+
 // TODO: smallrye Metrics
 // TODO: Rest Assured für diesen Enpunkt
 // TODO: Insomnia Collecion mit Tests für diesen ENpunkt
@@ -51,6 +55,9 @@ public class UsersRessource {
     @Inject
     GetUserByNameUseCase getUserByNameUseCase;
 
+    @Inject
+    GetAllUsersUseCase getAllUsersUseCase;
+
     // BEAN VALIDATION
     @Inject
     ValidationService validationService;
@@ -60,10 +67,22 @@ public class UsersRessource {
     @GET
     @RolesAllowed({"admin"})
     @Tag(name = "Users", description = "Zugriff auf die Nutzer")
-    @Filter(name = "testfilter")
     @Operation(summary = "getAllUsers", description = "Holt alle User")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(name = "UserDto", implementation = UserDto.class)))
+    })
     public Response getAllUsers(@Context SecurityContext securityContext) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        try {
+            ApplicationResult<List<User>> result = this.getAllUsersUseCase.getAllUsers(securityContext.getUserPrincipal().getName());
+            if (result.ok()) {
+                List<UserDto> topicsResponse = result.data().stream().map(UserDto.Converter::fromDomainEntity).toList();
+                return Response.status(Response.Status.OK).entity(topicsResponse).build();
+            }
+            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+        } catch (ConstraintViolationException e) {
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+        }
     }
 
     @GET

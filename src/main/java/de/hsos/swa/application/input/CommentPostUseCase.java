@@ -9,5 +9,5 @@ import javax.validation.Valid;
 
 @InputPort
 public interface CommentPostUseCase {
-   ApplicationResult<Comment> commentPost(@Valid CommentPostCommand request, String securityContext);
+   ApplicationResult<Comment> commentPost(@Valid CommentPostCommand command, String requestingUser);
 }

@@ -22,11 +22,11 @@ public class SearchTopicsService implements SearchTopicsUseCase {
     TopicRepository topicRepository;
 
     @Override
-    public ApplicationResult<List<TopicWithPostCountDto>> searchTopics(SearchTopicsQuery request) {
-        RepositoryResult<List<TopicWithPostCountDto>> topicsResult = topicRepository.searchTopic(request.searchString());
-        if (topicsResult.error()) {
-            return ApplicationResult.exception("Could not find Topics like (" + request.searchString() +")");
+    public ApplicationResult<List<TopicWithPostCountDto>> searchTopics(SearchTopicsQuery query) {
+        RepositoryResult<List<TopicWithPostCountDto>> result = topicRepository.searchTopic(query.searchString());
+        if (result.error()) {
+            return ApplicationResult.exception();
         }
-        return ApplicationResult.ok(topicsResult.get());
+        return ApplicationResult.ok(result.get());
     }
 }

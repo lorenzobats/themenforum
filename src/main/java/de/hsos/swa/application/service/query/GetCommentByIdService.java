@@ -22,11 +22,15 @@ public class GetCommentByIdService implements GetCommentByIdUseCase {
     CommentRepository commentRepository;
 
     @Override
-    public ApplicationResult<Comment> getCommentById(GetCommentByIdQuery request) {
-        RepositoryResult<Comment> commentResult = commentRepository.getCommentById(UUID.fromString(request.commentId()), true);
-        if (commentResult.ok()) {
-            return ApplicationResult.ok(commentResult.get());
+    public ApplicationResult<Comment> getCommentById(GetCommentByIdQuery query) {
+        RepositoryResult<Comment> result = commentRepository.getCommentById(UUID.fromString(query.commentId()), true);
+        if (result.error()) {
+            if (result.status() == RepositoryResult.Status.ENTITY_NOT_FOUND) {
+                return ApplicationResult.notFound("Cannot find aomment: " + query.commentId());
+            }
+            return ApplicationResult.exception();
         }
-        return ApplicationResult.exception("Cannot find Comment");
+
+        return ApplicationResult.ok(result.get());
     }
 }

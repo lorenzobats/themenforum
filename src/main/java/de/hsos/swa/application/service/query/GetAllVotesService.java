@@ -3,14 +3,17 @@ package de.hsos.swa.application.service.query;
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.GetAllVotesUseCase;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
-import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReferenceDto;
+import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReference;
+import de.hsos.swa.application.output.auth.AuthorizationGateway;
+import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 import de.hsos.swa.application.output.repository.dto.in.VoteQueryDto;
 import de.hsos.swa.application.output.repository.VoteRepository;
+import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.service.AuthorizationResultMapper;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
 @RequestScoped
@@ -21,16 +24,20 @@ public class GetAllVotesService implements GetAllVotesUseCase {
     @Inject
     VoteRepository voteRepository;
 
+    @Inject
+    AuthorizationGateway authorizationGateway;
+
     @Override
-    public ApplicationResult<List<VoteWithVotedEntityReferenceDto>> getAllVotes(SecurityContext securityContext) {
-        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<List<VoteQueryDto>> votesResult = voteRepository.getAllVotes();
+    public ApplicationResult<List<VoteWithVotedEntityReference>> getAllVotes(String requestingUser) {
+        AuthorizationResult<Boolean> access = authorizationGateway.canAccessVotes(requestingUser);
+        if(access.denied())
+            return AuthorizationResultMapper.handleRejection(access.status());
 
-        if (votesResult.error()) {
-            return ApplicationResult.exception("Cannot find Posts");
-        }
+        RepositoryResult<List<VoteQueryDto>> result = voteRepository.getAllVotes();
+        if (result.error())
+            return ApplicationResult.exception();
 
-        List<VoteWithVotedEntityReferenceDto> userVotes = votesResult.get().stream().map(v -> new VoteWithVotedEntityReferenceDto(v.vote(), v.votedEntityType(), v.votedEntityId())).toList();
-
+        List<VoteWithVotedEntityReference> userVotes = result.get().stream().map(v -> new VoteWithVotedEntityReference(v.vote(), v.votedEntityType(), v.votedEntityId())).toList();
         return ApplicationResult.ok(userVotes);
     }
 }

@@ -48,15 +48,15 @@ public class DeleteTopicService implements DeleteTopicUseCase {
     /**
      * Löscht ein Thema auf Basis der übergebenen Informationen.
      *
-     * @param request         enthält Themen-ID und Nutzernamen der Lösch-Anfrage
-     * @param securityContext
+     * @param command         enthält Themen-ID und Nutzernamen der Lösch-Anfrage
+     * @param requestingUser
      * @return ApplicationResult<Topic> enthält gelöschtes Thema bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Optional<Topic>> deleteTopic(DeleteTopicCommand request, String securityContext) {
-        RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
+    public ApplicationResult<Optional<Topic>> deleteTopic(DeleteTopicCommand command, String requestingUser) {
+        RepositoryResult<User> userResult = this.userRepository.getUserByName(command.username());
         if (userResult.error()) {
-            return ApplicationResult.noAuthorization("Cannot find user" + request.username());
+            return ApplicationResult.noAuthorization("Cannot find user" + command.username());
         }
         User user = userResult.get();
 
@@ -70,7 +70,7 @@ public class DeleteTopicService implements DeleteTopicUseCase {
             return ApplicationResult.noPermission("Not allowed to delete post");
         }
 
-        RepositoryResult<Topic> deleteTopicResult = this.topicRepository.deleteTopic(UUID.fromString(request.id()));
+        RepositoryResult<Topic> deleteTopicResult = this.topicRepository.deleteTopic(UUID.fromString(command.id()));
         if (deleteTopicResult.error()) {
             switch (deleteTopicResult.status()){
                 case ENTITY_NOT_FOUND -> {

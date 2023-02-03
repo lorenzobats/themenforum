@@ -10,5 +10,5 @@ import java.util.Optional;
 
 @InputPort
 public interface DeleteTopicUseCase {
-    ApplicationResult<Optional<Topic>> deleteTopic(@Valid DeleteTopicCommand request, String securityContext);
+    ApplicationResult<Optional<Topic>> deleteTopic(@Valid DeleteTopicCommand command, String requestingUser);
 }

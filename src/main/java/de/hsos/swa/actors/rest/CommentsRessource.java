@@ -71,18 +71,17 @@ public class CommentsRessource {
     // GET
     @GET
     @Operation(summary = "getAllComments", description = "Ermöglicht für den Zugriff auf Alle Kommentare")
-    @RolesAllowed({"admin", "member"})
+    @PermitAll
     @Tag(name = "Comments", description = "Zugriff auf alle Kommentare für Admins")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "CommentDto", implementation = CommentDto.class)))
     })
     @Counted(name = "getAllComments", description = "Wie oft alle Kommentare abgerufen wurden")
     @Timed(name = "getAllCommentsTimer", description = "Misst, wie lange es dauert alle Kommentar abzurufen")
-    public Response getAllComments(@DefaultValue("true") @QueryParam("includeReplies") boolean includeReplies, @Context SecurityContext securityContext) {
+    public Response getAllComments(@DefaultValue("true") @QueryParam("includeReplies") boolean includeReplies) {
         try {
             GetAllCommentsQuery query = new GetAllCommentsQuery(includeReplies);
-            String username = securityContext.getUserPrincipal().getName();
-            ApplicationResult<List<Comment>> result = this.getAllCommentsUseCase.getAllComments(query, username);
+            ApplicationResult<List<Comment>> result = this.getAllCommentsUseCase.getAllComments(query);
             if (result.ok()) {
                 List<CommentDto> commentsResponse = result.data().stream().map(CommentDto.Converter::fromDomainEntity).toList();
                 return Response.status(Response.Status.OK).entity(commentsResponse).build();

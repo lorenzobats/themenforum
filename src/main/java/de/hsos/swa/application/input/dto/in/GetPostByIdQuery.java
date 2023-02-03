@@ -13,6 +13,6 @@ import javax.validation.constraints.NotNull;
 public record GetPostByIdQuery(
         @ValidId String id,
         @NotNull boolean includeComments,
-        @ValidSortingParams SortingParams sortingParams,
-        @ValidOrderParams OrderParams orderParams
+        SortingParams sortingParams,
+        OrderParams orderParams
 ) {}

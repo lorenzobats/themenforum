@@ -9,5 +9,5 @@ import javax.validation.Valid;
 
 @InputPort
 public interface CreateTopicUseCase {
-   ApplicationResult<Topic> createTopic(@Valid CreateTopicCommand request, String securityContext);
+   ApplicationResult<Topic> createTopic(@Valid CreateTopicCommand command, String requestingUser);
 }

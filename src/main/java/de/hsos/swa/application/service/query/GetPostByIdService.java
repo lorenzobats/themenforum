@@ -28,24 +28,21 @@ public class GetPostByIdService implements GetPostByIdUseCase {
 
     @Override
     public ApplicationResult<Post> getPostById(GetPostByIdQuery query) {
-        RepositoryResult<Post> postResult = postRepository.getPostById(UUID.fromString(query.id()), query.includeComments());
+        RepositoryResult<Post> result = postRepository.getPostById(UUID.fromString(query.id()), query.includeComments());
 
-        if (postResult.ok()) {
-            Comparator<Comment> sortComparator = new SortByDate<>();    // Im Standard wird nach Date Sortiert
-            if(query.sortingParams() == SortingParams.VOTES) sortComparator = new SortByUpvotes<>();
-            boolean descending = query.orderParams() == OrderParams.DESC;
-
-            postResult.get().sortComments(descending, sortComparator);
-            return ApplicationResult.ok(postResult.get());
-        }
-
-        switch (postResult.status()){
-            case ENTITY_NOT_FOUND -> {
-                return ApplicationResult.notFound(query.id() + "not found");
+        if (result.error()) {
+            if (result.status() == RepositoryResult.Status.ENTITY_NOT_FOUND) {
+                return ApplicationResult.notFound("Cannot find post: " + query.id());
             }
+            return ApplicationResult.exception();
         }
-        return ApplicationResult.exception("Cannot find Post");
+
+        //
+        Comparator<Comment> sortComparator = new SortByDate<>();
+        if(query.sortingParams() == SortingParams.VOTES) sortComparator = new SortByUpvotes<>();
+        boolean descending = query.orderParams() == OrderParams.DESC;
+        result.get().sortComments(descending, sortComparator);
+
+        return ApplicationResult.ok(result.get());
     }
-
-
 }

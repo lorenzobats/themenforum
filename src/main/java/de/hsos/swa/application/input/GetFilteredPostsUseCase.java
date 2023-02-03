@@ -9,5 +9,5 @@ import javax.validation.Valid;
 import java.util.List;
 @InputPort
 public interface GetFilteredPostsUseCase {
-    ApplicationResult<List<Post>> getFilteredPosts(@Valid GetFilteredPostQuery request);
+    ApplicationResult<List<Post>> getFilteredPosts(@Valid GetFilteredPostQuery query);
 }

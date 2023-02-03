@@ -1,6 +1,6 @@
 package de.hsos.swa.actors.rest.dto.out;
 
-import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReferenceDto;
+import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReference;
 import de.hsos.swa.domain.entity.Vote;
 import de.hsos.swa.domain.vo.VoteType;
 import de.hsos.swa.domain.vo.VotedEntityType;
@@ -35,7 +35,7 @@ public class VoteDto {
     }
 
     public static class Converter {
-        public static VoteDto fromInputPortDto(VoteWithVotedEntityReferenceDto inputPortDto) {
+        public static VoteDto fromInputPortDto(VoteWithVotedEntityReference inputPortDto) {
             return new VoteDto(
                     inputPortDto.vote.getId().toString(),
                     inputPortDto.vote.getUser().getName(),

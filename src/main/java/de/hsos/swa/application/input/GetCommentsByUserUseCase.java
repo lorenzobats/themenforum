@@ -10,5 +10,5 @@ import java.util.List;
 
 @InputPort
 public interface GetCommentsByUserUseCase {
-    ApplicationResult<List<Comment>> getCommentsByUser(@Valid GetCommentsByUserQuery request);
+    ApplicationResult<List<Comment>> getCommentsByUser(@Valid GetCommentsByUserQuery query);
 }

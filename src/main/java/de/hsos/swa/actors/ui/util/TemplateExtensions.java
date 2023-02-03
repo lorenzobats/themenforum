@@ -1,7 +1,7 @@
 package de.hsos.swa.actors.ui.util;
 
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
-import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReferenceDto;
+import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReference;
 import de.hsos.swa.domain.entity.*;
 import de.hsos.swa.domain.vo.VoteType;
 import io.quarkus.qute.TemplateExtension;
@@ -37,7 +37,7 @@ public class TemplateExtensions {
         return comment.getCreatedAt().format(formatter);
     }
 
-    public static String parsedCreatedAtDate(VoteWithVotedEntityReferenceDto vote) {
+    public static String parsedCreatedAtDate(VoteWithVotedEntityReference vote) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
         return vote.vote.getCreatedAt().format(formatter);
     }
@@ -99,7 +99,7 @@ public class TemplateExtensions {
                 (vote == null || vote.getVoteType() != VoteType.UP);
     }
 
-    public static String votedEntityString(VoteWithVotedEntityReferenceDto vote) {
+    public static String votedEntityString(VoteWithVotedEntityReference vote) {
         return String.valueOf(vote.votedEntityType);
     }
 

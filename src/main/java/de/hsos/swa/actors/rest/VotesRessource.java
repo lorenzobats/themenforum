@@ -13,7 +13,7 @@ import de.hsos.swa.application.input.dto.in.DeleteVoteCommand;
 import de.hsos.swa.application.input.dto.in.GetAllVotesByUsernameQuery;
 import de.hsos.swa.application.input.dto.in.VoteEntityCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
-import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReferenceDto;
+import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReference;
 import de.hsos.swa.domain.entity.Vote;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -80,10 +80,10 @@ public class VotesRessource {
     })
     public Response getAllVotes(@QueryParam("username") String username, @Context SecurityContext securityContext) {
         try {
-            ApplicationResult<List<VoteWithVotedEntityReferenceDto>> result;
+            ApplicationResult<List<VoteWithVotedEntityReference>> result;
             if (username != null)
                 result = this.getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), securityContext.getUserPrincipal().getName());
-            else result = this.getAllVotesUseCase.getAllVotes(securityContext);
+            else result = this.getAllVotesUseCase.getAllVotes(securityContext.getUserPrincipal().getName());
 
             if (result.ok()) {
                 List<VoteDto> votesResponse = result.data().stream().map(VoteDto.Converter::fromInputPortDto).toList();

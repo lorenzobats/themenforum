@@ -22,11 +22,14 @@ public class GetPostByCommentIdService implements GetPostByCommentIdUseCase {
     PostRepository postRepository;
 
     @Override
-    public ApplicationResult<Post> getPostByCommentId(GetPostByCommentIdQuery request) {
-        RepositoryResult<Post> postResult = postRepository.getPostByCommentId(UUID.fromString(request.id()));
-        if (postResult.ok()) {
-            return ApplicationResult.ok(postResult.get());
+    public ApplicationResult<Post> getPostByCommentId(GetPostByCommentIdQuery query) {
+        RepositoryResult<Post> result = postRepository.getPostByCommentId(UUID.fromString(query.id()));
+        if (result.error()) {
+            if (result.status() == RepositoryResult.Status.ENTITY_NOT_FOUND) {
+                return ApplicationResult.notFound("Cannot find post for comment: " + query.id());
+            }
+            return ApplicationResult.exception();
         }
-        return ApplicationResult.exception("Cannot find Post");
+        return ApplicationResult.ok(result.get());
     }
 }

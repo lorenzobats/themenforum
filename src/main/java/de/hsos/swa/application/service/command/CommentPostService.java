@@ -43,30 +43,30 @@ public class CommentPostService implements CommentPostUseCase {
     /**
      * Fügt ein Kommentar zu einem bestehenden Beitrag hinzu auf Basis der übergebenen Informationen.
      *
-     * @param request         enthält Kommentartext, Beitrags-Id und Nutzernamen für das zu erstellende Kommentar
-     * @param securityContext
+     * @param command         enthält Kommentartext, Beitrags-Id und Nutzernamen für das zu erstellende Kommentar
+     * @param requestingUser
      * @return ApplicationResult<Commentar> enthält erzeugtes Kommentar bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Comment> commentPost(CommentPostCommand request, String securityContext) {
-        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
+    public ApplicationResult<Comment> commentPost(CommentPostCommand command, String requestingUser) {
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(command.username());
         if (userResult.error()) {
-            return ApplicationResult.exception("Cannot find user " + request.username());
+            return ApplicationResult.exception("Cannot find user " + command.username());
         }
         User user = userResult.get();
 
-        RepositoryResult<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.postId()), true);
+        RepositoryResult<Post> postResult = this.postRepository.getPostById(UUID.fromString(command.postId()), true);
         if (postResult.error()) {
-            return ApplicationResult.exception("Cannot find post " + request.postId());
+            return ApplicationResult.exception("Cannot find post " + command.postId());
         }
         Post post = postResult.get();
 
-        Comment comment = CommentFactory.createComment(request.commentText(), user);
+        Comment comment = CommentFactory.createComment(command.commentText(), user);
         post.add(comment);
 
         RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(post);
         if (updatePostResult.error()) {
-            return ApplicationResult.exception("Cannot update post " + request.postId());
+            return ApplicationResult.exception("Cannot update post " + command.postId());
         }
         return ApplicationResult.ok(comment);
     }

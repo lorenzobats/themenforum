@@ -4,11 +4,8 @@ import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.GetFilteredPostsUseCase;
 import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
-import de.hsos.swa.application.output.auth.AuthorizationGateway;
-import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
-import de.hsos.swa.application.service.AuthorizationResultMapper;
 import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.service.SortByDate;
@@ -30,38 +27,26 @@ public class GetFilteredPostsService implements GetFilteredPostsUseCase {
     @Inject
     PostRepository postRepository;
 
-    @Inject
-    AuthorizationGateway authorizationGateway;
-
     @Override
-    public ApplicationResult<List<Post>> getFilteredPosts(GetFilteredPostQuery request) {
-        AuthorizationResult<Boolean> access = authorizationGateway.canReadComment("oschluet");
-        if(access.denied())
-            return AuthorizationResultMapper.handleRejection(access.status());
+    public ApplicationResult<List<Post>> getFilteredPosts(GetFilteredPostQuery query) {
+        RepositoryResult<List<Post>> result = postRepository.getFilteredPosts(query.filterParams(), query.includeComments());
+        if(result.error())
+            return ApplicationResult.exception();
 
-        RepositoryResult<List<Post>> postsResult = postRepository.getFilteredPosts(request.filterParams(), request.includeComments());
 
-        if (postsResult.ok()) {
-            List<Post> sortedPosts = new ArrayList<>(postsResult.get());
-
-            switch (request.sortingParams()) {
-                case VOTES -> {
-                    sortPosts(sortedPosts, request.orderParams() == OrderParams.ASC, new SortByUpvotes<>());
+        List<Post> sortedPosts = new ArrayList<>(result.get());
+            switch (query.sortingParams()) {
+                case VOTES -> sortPosts(sortedPosts, query.orderParams() == OrderParams.ASC, new SortByUpvotes<>());
+                case DATE -> sortPosts(sortedPosts, query.orderParams() == OrderParams.ASC, new SortByDate<>());
+                default -> {
+                    return ApplicationResult.notValid("Invalid sorting param: " + query.sortingParams());
                 }
-                case DATE -> {
-                    sortPosts(sortedPosts, request.orderParams() == OrderParams.ASC, new SortByDate<>());
-                }
-                default -> throw new IllegalArgumentException("Cant sort posts");
             }
             return ApplicationResult.ok(sortedPosts);
-        }
-
-        return ApplicationResult.exception("Cannot find Posts");
     }
 
     private void sortPosts(List<Post> posts, boolean reversed, Comparator<Post> comparator) {
         posts.sort(comparator);
-
         if (reversed) {
             Collections.reverse(posts);
         }

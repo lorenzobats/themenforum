@@ -9,5 +9,5 @@ import javax.validation.Valid;
 
 @InputPort
 public interface GetUserByNameUseCase {
-   ApplicationResult<User> getUserByName(@Valid GetUserByNameQuery request, String securityContext);
+   ApplicationResult<User> getUserByName(@Valid GetUserByNameQuery query, String requestingUser);
 }

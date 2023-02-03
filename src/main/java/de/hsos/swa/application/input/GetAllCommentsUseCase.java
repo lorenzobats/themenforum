@@ -10,5 +10,5 @@ import javax.validation.Valid;
 import java.util.List;
 @InputPort
 public interface GetAllCommentsUseCase {
-    ApplicationResult<List<Comment>> getAllComments(@Valid GetAllCommentsQuery request, String securityContext);
+    ApplicationResult<List<Comment>> getAllComments(@Valid GetAllCommentsQuery query);
 }

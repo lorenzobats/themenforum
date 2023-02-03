@@ -9,5 +9,5 @@ import javax.validation.Valid;
 
 @InputPort
 public interface CreatePostUseCase {
-   ApplicationResult<Post> createPost(@Valid CreatePostCommand request, String securityContext);
+   ApplicationResult<Post> createPost(@Valid CreatePostCommand command, String requestingUser);
 }

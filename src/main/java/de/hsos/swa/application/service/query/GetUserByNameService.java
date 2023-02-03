@@ -4,8 +4,11 @@ import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.dto.in.GetUserByNameQuery;
 import de.hsos.swa.application.input.GetUserByNameUseCase;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
+import de.hsos.swa.application.output.auth.AuthorizationGateway;
+import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.service.AuthorizationResultMapper;
 import de.hsos.swa.domain.entity.User;
 
 import javax.enterprise.context.RequestScoped;
@@ -20,15 +23,22 @@ public class GetUserByNameService implements GetUserByNameUseCase {
     @Inject
     UserRepository userRepository;
 
+    @Inject
+    AuthorizationGateway authorizationGateway;
     @Override
-    public ApplicationResult<User> getUserByName(GetUserByNameQuery request, String securityContext) {
-        // TODO: Security Context ( Nur Admin !)
-        RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
+    public ApplicationResult<User> getUserByName(GetUserByNameQuery query, String requestingUser) {
+        AuthorizationResult<Boolean> access = authorizationGateway.canAccessUsers(requestingUser);
+        if(access.denied())
+            return AuthorizationResultMapper.handleRejection(access.status());
 
-        if(userResult.error()) {
-           return ApplicationResult.exception("Username not found");
+        RepositoryResult<User> result = this.userRepository.getUserByName(query.username());
+        if (result.error()) {
+            if (result.status() == RepositoryResult.Status.ENTITY_NOT_FOUND) {
+                return ApplicationResult.notFound("Cannot find user: " + query.username());
+            }
+            return ApplicationResult.exception();
         }
 
-        return ApplicationResult.ok(userResult.get());
+        return ApplicationResult.ok(result.get());
     }
 }

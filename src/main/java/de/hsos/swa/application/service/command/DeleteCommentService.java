@@ -50,19 +50,19 @@ public class DeleteCommentService implements DeleteCommentUseCase {
     /**
      * Löscht (=deaktiviert) ein Kommentar auf Basis der übergebenen Informationen.
      *
-     * @param request         enthält Kommentar-ID und Nutzernamen der Lösch-Anfrage
-     * @param securityContext
+     * @param command         enthält Kommentar-ID und Nutzernamen der Lösch-Anfrage
+     * @param requestingUser
      * @return ApplicationResult<Comment> enthält gelöschtes/deaktiviertes Kommentar bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Optional<Comment>> deleteComment(DeleteCommentCommand request, String securityContext) {
-        RepositoryResult<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(request.commentId()));
+    public ApplicationResult<Optional<Comment>> deleteComment(DeleteCommentCommand command, String requestingUser) {
+        RepositoryResult<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(command.commentId()));
         if (postResult.error()) {
-            return ApplicationResult.exception("Cannot find post for comment " + request.commentId());
+            return ApplicationResult.exception("Cannot find post for comment " + command.commentId());
         }
         Post post = postResult.get();
 
-        Optional<Comment> optionalComment = post.findCommentById(UUID.fromString(request.commentId()));
+        Optional<Comment> optionalComment = post.findCommentById(UUID.fromString(command.commentId()));
 
         if (optionalComment.isEmpty()) {
             return ApplicationResult.noContent(Optional.empty());
@@ -71,16 +71,16 @@ public class DeleteCommentService implements DeleteCommentUseCase {
 
 
         // TODO Auth Service. Kann dann ganz an den Afang und findCommentById muss auch nicht mehr verwendet werden
-        RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
+        RepositoryResult<User> userResult = this.userRepository.getUserByName(command.username());
         if (userResult.error()) {
-            return ApplicationResult.exception("Cannot find user " + request.username());
+            return ApplicationResult.exception("Cannot find user " + command.username());
         }
 
         User user = userResult.get();
 
         AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(user.getId());
         if (roleResult.denied()) {
-            return ApplicationResult.exception("Cannot find user role " + request.username());
+            return ApplicationResult.exception("Cannot find user role " + command.username());
         }
 
         String role = roleResult.get();

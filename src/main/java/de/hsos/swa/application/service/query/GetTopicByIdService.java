@@ -22,11 +22,14 @@ public class GetTopicByIdService implements GetTopicByIdUseCase {
     TopicRepository topicRepository;
 
     @Override
-    public ApplicationResult<Topic> getTopicById(GetTopicByIdQuery request) {
-        RepositoryResult<Topic> topicResult = topicRepository.getTopicById(UUID.fromString(request.topicId()));
-        if (topicResult.ok()) {
-            return ApplicationResult.ok(topicResult.get());
+    public ApplicationResult<Topic> getTopicById(GetTopicByIdQuery query) {
+        RepositoryResult<Topic> result = topicRepository.getTopicById(UUID.fromString(query.topicId()));
+        if (result.error()) {
+            if (result.status() == RepositoryResult.Status.ENTITY_NOT_FOUND) {
+                return ApplicationResult.notFound("Cannot find topic: " + query.topicId());
+            }
+            return ApplicationResult.exception();
         }
-        return ApplicationResult.exception("Cannot find Topic");
+        return ApplicationResult.ok(result.get());
     }
 }

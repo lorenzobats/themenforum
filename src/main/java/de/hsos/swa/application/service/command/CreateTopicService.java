@@ -44,20 +44,20 @@ public class CreateTopicService implements CreateTopicUseCase {
     /**
      * Erstellt ein neues Thema auf Basis der übergebenen Informationen.
      *
-     * @param request         enthält Titel, Text und Nutzername für das zu erstellende Thema
-     * @param securityContext
+     * @param command         enthält Titel, Text und Nutzername für das zu erstellende Thema
+     * @param requestingUser
      * @return ApplicationResult<Topic> enthält erstelltes Thema bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Topic> createTopic(CreateTopicCommand request, String securityContext) {
+    public ApplicationResult<Topic> createTopic(CreateTopicCommand command, String requestingUser) {
         // TODO: überprüfen, ob schon vorhanden
-        RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
+        RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(command.username());
         if(getUserByNameResponse.error()) {
-            return ApplicationResult.exception("Cannot find user " + request.username());
+            return ApplicationResult.exception("Cannot find user " + command.username());
         }
         User user = getUserByNameResponse.get();
 
-        Topic topic = TopicFactory.createTopic(request.title(), request.description(), user);
+        Topic topic = TopicFactory.createTopic(command.title(), command.description(), user);
 
         RepositoryResult<Topic> saveTopicResult = this.topicRepository.saveTopic(topic);
         if (saveTopicResult.error()) {

@@ -26,20 +26,20 @@ public class DeleteUserService implements DeleteUserUseCase {
 
     /**
      * Deaktiviert einen User auf Basis der übergebenen Informationen.
-     * @param request enthält Themen-ID und Nutzernamen der Lösch-Anfrage
+     * @param command enthält Themen-ID und Nutzernamen der Lösch-Anfrage
      * @return ApplicationResult<Topic> enthält gelöschtes Thema bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<User> deleteUser(DeleteUserCommand request) {
-        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> requestingUserResult = this.userRepository.getUserByName(request.username());
+    public ApplicationResult<User> deleteUser(DeleteUserCommand command) {
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> requestingUserResult = this.userRepository.getUserByName(command.username());
         if (requestingUserResult.error()) {
-            return ApplicationResult.exception("Cannot find user " + request.username());
+            return ApplicationResult.exception("Cannot find user " + command.username());
         }
         User requestingUser = requestingUserResult.get();
 
         AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(requestingUser.getId());
         if (roleResult.denied()) {
-            return ApplicationResult.exception("Cannot find user role " + request.username());
+            return ApplicationResult.exception("Cannot find user role " + command.username());
         }
         String role = roleResult.get();
 
@@ -47,9 +47,9 @@ public class DeleteUserService implements DeleteUserUseCase {
             return ApplicationResult.exception("Not allowed to disable user");
         }
 
-        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserById(UUID.fromString(request.userId()));
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserById(UUID.fromString(command.userId()));
         if (userResult.error()) {
-            return ApplicationResult.exception("Cannot find userId " + request.userId());
+            return ApplicationResult.exception("Cannot find userId " + command.userId());
         }
         User user = userResult.get();
 

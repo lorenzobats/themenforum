@@ -22,12 +22,11 @@ public class GetCommentsByUserService implements GetCommentsByUserUseCase {
     CommentRepository commentRepository;
 
     @Override
-    public ApplicationResult<List<Comment>> getCommentsByUser(GetCommentsByUserQuery request) {
-        RepositoryResult<List<Comment>> commentsResult = commentRepository.getCommentsByUser(request.username());
-        if(commentsResult.ok()) {
-            return ApplicationResult.ok(commentsResult.get());
-        }
+    public ApplicationResult<List<Comment>> getCommentsByUser(GetCommentsByUserQuery query) {
+        RepositoryResult<List<Comment>> result = commentRepository.getCommentsByUser(query.username());
+        if (result.error())
+            return ApplicationResult.exception();
 
-        return ApplicationResult.exception("Cannot find Comments");
+        return ApplicationResult.ok(result.get());
     }
 }

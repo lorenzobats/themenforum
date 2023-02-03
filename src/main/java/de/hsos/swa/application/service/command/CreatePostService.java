@@ -46,27 +46,27 @@ public class CreatePostService implements CreatePostUseCase {
     /**
      * Erstellt einen neuen Beitrag auf Basis der übergebenen Informationen.
      *
-     * @param request         enthält Titel, Inhalt und Themen-ID und Nutzernamen für den zu erstellenden Beitrag
-     * @param securityContext
+     * @param command         enthält Titel, Inhalt und Themen-ID und Nutzernamen für den zu erstellenden Beitrag
+     * @param requestingUser
      * @return ApplicationResult<Post> enthält erstellten Beitrag bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Post> createPost(CreatePostCommand request, String securityContext) {
-        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(request.username());
+    public ApplicationResult<Post> createPost(CreatePostCommand command, String requestingUser) {
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> getUserByNameResponse = this.userRepository.getUserByName(command.username());
         if(getUserByNameResponse.error()) {
-            return ApplicationResult.exception("Cannot find user " + request.username());
+            return ApplicationResult.exception("Cannot find user " + command.username());
         }
         User user = getUserByNameResponse.get();
 
 
-        RepositoryResult<Topic> getTopicByIdResponse = this.topicRepository.getTopicById(request.topicId());
+        RepositoryResult<Topic> getTopicByIdResponse = this.topicRepository.getTopicById(command.topicId());
         if(getTopicByIdResponse.error()) {
-            return ApplicationResult.exception("Cannot find topic " + request.topicId());
+            return ApplicationResult.exception("Cannot find topic " + command.topicId());
         }
         Topic topic = getTopicByIdResponse.get();
 
 
-        Post post = PostFactory.createPost(request.title(), request.content(), topic, user);
+        Post post = PostFactory.createPost(command.title(), command.content(), topic, user);
 
         RepositoryResult<Post> savePostResult = this.postRepository.savePost(post);
         if (savePostResult.error()) {

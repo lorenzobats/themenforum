@@ -10,5 +10,5 @@ import java.util.Optional;
 
 @InputPort
 public interface DeleteCommentUseCase {
-    ApplicationResult<Optional<Comment>> deleteComment(@Valid DeleteCommentCommand request, String securityContext);
+    ApplicationResult<Optional<Comment>> deleteComment(@Valid DeleteCommentCommand command, String requestingUser);
 }

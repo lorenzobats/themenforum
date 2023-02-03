@@ -8,5 +8,5 @@ import de.hsos.swa.domain.entity.Topic;
 import javax.validation.Valid;
 @InputPort
 public interface GetTopicByIdUseCase {
-    ApplicationResult<Topic> getTopicById(@Valid GetTopicByIdQuery request);
+    ApplicationResult<Topic> getTopicById(@Valid GetTopicByIdQuery query);
 }

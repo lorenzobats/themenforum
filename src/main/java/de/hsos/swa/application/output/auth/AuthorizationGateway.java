@@ -11,5 +11,9 @@ public interface AuthorizationGateway {
     AuthorizationResult<Void> registerUser(SaveAuthUserCommand outputPortRequest);
     AuthorizationResult<String> getUserAuthRole(UUID userId);
 
-    AuthorizationResult<Boolean> canReadComment(String username);
+
+
+    AuthorizationResult<Boolean> canAccessUsers(String username);
+    AuthorizationResult<Boolean> canAccessVotes(String username);
+    AuthorizationResult<Boolean> canAccessVotesBy(String username, String voteOwner);
 }

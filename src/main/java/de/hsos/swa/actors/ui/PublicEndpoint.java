@@ -9,7 +9,7 @@ import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
 import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
-import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReferenceDto;
+import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReference;
 import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
 import de.hsos.swa.application.service.query.params.SortingParams;
@@ -60,7 +60,7 @@ public class PublicEndpoint {
                 List<TopicWithPostCountDto> topics,
                 List<Post> posts,
                 List<Comment> comments,
-                List<VoteWithVotedEntityReferenceDto> votes,
+                List<VoteWithVotedEntityReference> votes,
                 String username,
                 String selection);
     }
@@ -120,7 +120,7 @@ public class PublicEndpoint {
         ApplicationResult<List<TopicWithPostCountDto>> topics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(username));
         ApplicationResult<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostQuery(filterParams, false, SortingParams.DATE, OrderParams.DESC));
         ApplicationResult<List<Comment>> comments = getCommentsByUserUseCase.getCommentsByUser(new GetCommentsByUserQuery(username));
-        ApplicationResult<List<VoteWithVotedEntityReferenceDto>> votes = getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), username);
+        ApplicationResult<List<VoteWithVotedEntityReference>> votes = getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), username);
 
         return Templates.profile(topics.data(), posts.data(), comments.data(), votes.data(), username, selection);
     }

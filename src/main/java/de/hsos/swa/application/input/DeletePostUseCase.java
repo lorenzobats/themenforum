@@ -10,5 +10,5 @@ import java.util.Optional;
 
 @InputPort
 public interface DeletePostUseCase {
-    ApplicationResult<Optional<Post>> deletePost(@Valid DeletePostCommand request, String securityContext);
+    ApplicationResult<Optional<Post>> deletePost(@Valid DeletePostCommand command, String requestingUser);
 }

@@ -50,28 +50,28 @@ public class DeletePostService implements DeletePostUseCase {
     /**
      * Löscht ein Post auf Basis der übergebenen Informationen.
      *
-     * @param request         enthält Post-ID und Nutzernamen der Lösch-Anfrage
-     * @param securityContext
+     * @param command         enthält Post-ID und Nutzernamen der Lösch-Anfrage
+     * @param requestingUser
      * @return ApplicationResult<Post> enthält gelöschten Beitrag bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Optional<Post>> deletePost(DeletePostCommand request, String securityContext) {
-        RepositoryResult<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.postId()), false);
+    public ApplicationResult<Optional<Post>> deletePost(DeletePostCommand command, String requestingUser) {
+        RepositoryResult<Post> postResult = this.postRepository.getPostById(UUID.fromString(command.postId()), false);
         if (postResult.error()) {
-            return ApplicationResult.exception("Cannot find post" + request.postId());
+            return ApplicationResult.exception("Cannot find post" + command.postId());
         }
         Post post = postResult.get();
 
 
-        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
+        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(command.username());
         if (userResult.error()) {
-            return ApplicationResult.exception("Cannot find user " + request.username());
+            return ApplicationResult.exception("Cannot find user " + command.username());
         }
         User user = userResult.get();
 
         AuthorizationResult<String> roleResult = this.authorizationGateway.getUserAuthRole(user.getId());
         if (roleResult.denied()) {
-            return ApplicationResult.exception("Cannot find user role " + request.username());
+            return ApplicationResult.exception("Cannot find user role " + command.username());
         }
         String role = roleResult.get();
 

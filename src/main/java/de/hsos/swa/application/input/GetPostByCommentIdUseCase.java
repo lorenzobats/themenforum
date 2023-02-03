@@ -8,5 +8,5 @@ import de.hsos.swa.domain.entity.Post;
 import javax.validation.Valid;
 @InputPort
 public interface GetPostByCommentIdUseCase {
-    ApplicationResult<Post> getPostByCommentId(@Valid GetPostByCommentIdQuery request);
+    ApplicationResult<Post> getPostByCommentId(@Valid GetPostByCommentIdQuery query);
 }

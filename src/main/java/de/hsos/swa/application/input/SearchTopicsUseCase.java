@@ -9,5 +9,5 @@ import javax.validation.Valid;
 import java.util.List;
 @InputPort
 public interface SearchTopicsUseCase {
-   ApplicationResult<List<TopicWithPostCountDto>> searchTopics(@Valid SearchTopicsQuery request);
+   ApplicationResult<List<TopicWithPostCountDto>> searchTopics(@Valid SearchTopicsQuery query);
 }
