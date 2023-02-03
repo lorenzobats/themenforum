@@ -15,6 +15,7 @@ import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -54,7 +55,7 @@ public class DeletePostService implements DeletePostUseCase {
      * @return ApplicationResult<Post> enthält gelöschten Beitrag bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Post> deletePost(DeletePostCommand request, String securityContext) {
+    public ApplicationResult<Optional<Post>> deletePost(DeletePostCommand request, String securityContext) {
         RepositoryResult<Post> postResult = this.postRepository.getPostById(UUID.fromString(request.postId()), false);
         if (postResult.error()) {
             return ApplicationResult.exception("Cannot find post" + request.postId());
@@ -75,15 +76,23 @@ public class DeletePostService implements DeletePostUseCase {
         String role = roleResult.get();
 
 
-        if(!post.getUser().getId().equals(user.getId()) && !role.equals("admin")){
+        if (!post.getUser().getId().equals(user.getId()) && !role.equals("admin")) {
             return ApplicationResult.exception("Not allowed to delete post");
         }
 
         RepositoryResult<Post> deletePostResult = this.postRepository.deletePost(post.getId());
         if (deletePostResult.error()) {
+            switch (deletePostResult.status()) {
+                case ENTITY_NOT_FOUND -> {
+                    return ApplicationResult.noContent(Optional.empty());
+                }
+                case EXCEPTION -> {
+                    return ApplicationResult.exception("Cannot delete post");
+                }
+            }
             return ApplicationResult.exception("Cannot delete post ");
         }
 
-        return ApplicationResult.ok(deletePostResult.get());
+        return ApplicationResult.ok(Optional.of(deletePostResult.get()));
     }
 }

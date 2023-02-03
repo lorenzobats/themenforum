@@ -6,8 +6,9 @@ import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.domain.entity.Post;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @InputPort
 public interface DeletePostUseCase {
-    ApplicationResult<Post> deletePost(@Valid DeletePostCommand request, String securityContext);
+    ApplicationResult<Optional<Post>> deletePost(@Valid DeletePostCommand request, String securityContext);
 }

@@ -54,7 +54,7 @@ public class DeleteTopicService implements DeleteTopicUseCase {
      */
     @Override
     public ApplicationResult<Optional<Topic>> deleteTopic(DeleteTopicCommand request, String securityContext) {
-        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
+        RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.error()) {
             return ApplicationResult.noAuthorization("Cannot find user" + request.username());
         }

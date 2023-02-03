@@ -40,13 +40,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 // TODO: smallrye Metrics
-// TODO: bei Delete NO_CONTENT falls Optional<Empty> siehe Topic
 // TODO: Rest Assured für diesen Enpunkt
 // TODO: Insomnia Collecion mit Tests für diesen ENpunkt
 @RequestScoped
@@ -114,7 +110,7 @@ public class PostsRessource {
             }
 
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
-        }  catch (ConstraintViolationException e) {
+        } catch (ConstraintViolationException e) {
             return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
         }
     }
@@ -192,11 +188,14 @@ public class PostsRessource {
         try {
             String username = securityContext.getUserPrincipal().getName();
             DeletePostCommand command = new DeletePostCommand(id, username);
-            ApplicationResult<Post> result = this.deletePostUseCase.deletePost(command, username);
+            ApplicationResult<Optional<Post>> result = this.deletePostUseCase.deletePost(command, username);
 
             if (result.ok()) {
-                PostDto postDto = PostDto.Converter.fromDomainEntity(result.data());
-                return Response.status(Response.Status.OK).entity(postDto).build();
+                if (result.data().isPresent()) {
+                    PostDto postDto = PostDto.Converter.fromDomainEntity(result.data().get());
+                    return Response.status(Response.Status.OK).entity(postDto).build();
+                }
+                return Response.status(Response.Status.NO_CONTENT).build();
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {

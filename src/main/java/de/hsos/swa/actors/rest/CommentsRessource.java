@@ -10,6 +10,8 @@ import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.*;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.domain.entity.Comment;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -31,13 +33,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
+import java.util.Optional;
 
 // TODO: getAllComments mit includeReplies = false dann werden votes nicht berechnet
 // TODO: smallrye Metrics (auskommentiert, da teilweise gecrasht)
-// TODO: bei Delete NO_CONTENT falls Optional<Empty> siehe Topic
 // TODO: Rest Assured für diesen Enpunkt
 // TODO: Insomnia Collecion mit Tests für diesen ENpunkt
-// TODO: SecurityContext übergeben bei AuthentifizierungsMethoden
 // TODO: Alle Request Bodys sinnvoll mit Annotationen zur Validierung versehen (swagger)
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
@@ -75,8 +76,8 @@ public class CommentsRessource {
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "CommentDto", implementation = CommentDto.class)))
     })
-    //@Counted(name = "getAllComments", description = "Wie oft alle Kommentare abgerufen wurden")
-    //@Timed(name = "getAllCommentsTimer", description = "Misst, wie lange es dauert alle Kommentar abzurufen")
+    @Counted(name = "getAllComments", description = "Wie oft alle Kommentare abgerufen wurden")
+    @Timed(name = "getAllCommentsTimer", description = "Misst, wie lange es dauert alle Kommentar abzurufen")
     public Response getAllComments(@DefaultValue("true") @QueryParam("includeReplies") boolean includeReplies, @Context SecurityContext securityContext) {
         try {
             GetAllCommentsQuery query = new GetAllCommentsQuery(includeReplies);
@@ -100,8 +101,8 @@ public class CommentsRessource {
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(name = "CommentDto", implementation = CommentDto.class)))
     })
-    //@Counted(name = "getCommentById", description = "Wie oft eine Kommentar anahand ID gesucht wurde")
-    //@Timed(name = "getCommentByIdTimer", description = "Misst, wie lange es dauert ein Kommentar anhand ID zu suchen")
+    @Counted(name = "getCommentById", description = "Wie oft eine Kommentar anahand ID gesucht wurde")
+    @Timed(name = "getCommentByIdTimer", description = "Misst, wie lange es dauert ein Kommentar anhand ID zu suchen")
     public Response getCommentById(@PathParam("id") String id) {
         try {
             GetCommentByIdQuery query = new GetCommentByIdQuery(id);
@@ -126,8 +127,8 @@ public class CommentsRessource {
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(name = "CommentDto", implementation = CommentDto.class)))
     })
-    //@Counted(name = "postComment", description = "Wie oft ein Kommentar zu einem Post erstellt wurde")
-    //@Timed(name = "postCommentTimer", description = "Misst, wie lange es dauert ein Kommentar zu einem Post zu erstellen")
+    @Counted(name = "postComment", description = "Wie oft ein Kommentar zu einem Post erstellt wurde")
+    @Timed(name = "postCommentTimer", description = "Misst, wie lange es dauert ein Kommentar zu einem Post zu erstellen")
     public Response commentPost(
             @RequestBody(
                     description = "Comment to create",
@@ -158,8 +159,8 @@ public class CommentsRessource {
             @APIResponse(responseCode = "200", description = "Success",
                     content = @Content(mediaType = "application/json", schema = @Schema(name = "CommentDto", implementation = CommentDto.class)))
     })
-    //@Counted(name = "replyToComment", description = "Wie oft ein Kommentar geantwortet wurde")
-    //@Timed(name = "replyToCommentTimer", description = "Misst, wie lange es dauert auf ein Kommentar zu antworten")
+    @Counted(name = "replyToComment", description = "Wie oft ein Kommentar geantwortet wurde")
+    @Timed(name = "replyToCommentTimer", description = "Misst, wie lange es dauert auf ein Kommentar zu antworten")
     public Response replyToComment(
             @PathParam("id") String id,
             @RequestBody(
@@ -193,17 +194,20 @@ public class CommentsRessource {
             @APIResponse(responseCode = "200", description = "Success",
                     content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, name = "CommentDto", implementation = CommentDto.class)))
     })
-    //@Counted(name = "deleteToComment", description = "Wie oft ein Kommentar geloescht wurde")
-    //@Timed(name = "deleteToCommentTimer", description = "Misst, wie lange es dauert einen Kommentar zu loeschen")
+    @Counted(name = "deleteToComment", description = "Wie oft ein Kommentar geloescht wurde")
+    @Timed(name = "deleteToCommentTimer", description = "Misst, wie lange es dauert einen Kommentar zu loeschen")
     public Response deleteComment(@PathParam("id") String id, @Context SecurityContext securityContext) {
         try {
             String username = securityContext.getUserPrincipal().getName();
             DeleteCommentCommand command = new DeleteCommentCommand(id, username);
-            ApplicationResult<Comment> result = this.deleteCommentUseCase.deleteComment(command, username);
+            ApplicationResult<Optional<Comment>> result = this.deleteCommentUseCase.deleteComment(command, username);
 
             if (result.ok()) {
-                CommentDto commentDto = CommentDto.Converter.fromDomainEntity(result.data());
-                return Response.status(Response.Status.OK).entity(commentDto).build();
+                if (result.data().isPresent()) {
+                    CommentDto commentDto = CommentDto.Converter.fromDomainEntity(result.data().get());
+                    return Response.status(Response.Status.OK).entity(commentDto).build();
+                }
+                return Response.status(Response.Status.NO_CONTENT).build();
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {

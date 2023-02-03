@@ -15,6 +15,7 @@ import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,7 +41,7 @@ public class DeleteVoteService implements DeleteVoteUseCase {
     Logger log;
 
     @Override
-    public ApplicationResult<Vote> deleteVote(DeleteVoteCommand request, String username) {
+    public ApplicationResult<Optional<Vote>> deleteVote(DeleteVoteCommand request, String username) {
         de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> userResult = this.userRepository.getUserByName(request.username());
         if (userResult.error()) {
             return ApplicationResult.exception("Cannot retrieve User");
@@ -75,15 +76,15 @@ public class DeleteVoteService implements DeleteVoteUseCase {
         }
 
         if (optionalVote.isEmpty()) {
-            return ApplicationResult.exception("Vote could not be deleted");
+            return ApplicationResult.noContent(Optional.empty());
         }
 
         RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(postResult.get());
 
-        if (updatePostResult.ok()) {
-            return ApplicationResult.ok(optionalVote.get());
+        if (updatePostResult.error()) {
+            return ApplicationResult.exception("Cannot update post ");
         }
 
-        return ApplicationResult.exception("Something went wrong while deleting a Vote and updating the Post");
+        return ApplicationResult.ok(optionalVote);
     }
 }

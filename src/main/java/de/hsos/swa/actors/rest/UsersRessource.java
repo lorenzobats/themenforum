@@ -32,7 +32,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 // TODO: smallrye Metrics
-// TODO: bei Delete NO_CONTENT falls Optional<Empty> siehe Topic
 // TODO: Rest Assured für diesen Enpunkt
 // TODO: Insomnia Collecion mit Tests für diesen ENpunkt
 @RequestScoped

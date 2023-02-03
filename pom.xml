@@ -110,12 +110,10 @@
       <version>${cucumber.version}</version>
       <scope>test</scope>
     </dependency>
-
-    <!-- TODO: Verursacht nicht nachvollziehbare Fehler -->
-<!--    <dependency>-->
-<!--      <groupId>io.quarkus</groupId>-->
-<!--      <artifactId>quarkus-smallrye-metrics</artifactId>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-metrics</artifactId>
+    </dependency>
     <dependency>
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
