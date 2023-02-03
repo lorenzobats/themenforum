@@ -3,7 +3,6 @@ package de.hsos.swa.infrastructure.authorization;
 
 import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
-import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 import de.hsos.swa.application.output.auth.dto.out.SaveAuthUserCommand;
@@ -16,6 +15,7 @@ import javax.inject.Inject;
 import javax.persistence.*;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequestScoped
@@ -23,7 +23,6 @@ import java.util.UUID;
 public class AuthorizationAdapter implements AuthorizationGateway {
 
     @Inject
-    @PersistenceUnit("auth")
     EntityManager entityManager;
 
     @Inject
@@ -61,7 +60,7 @@ public class AuthorizationAdapter implements AuthorizationGateway {
 
     @Override
     public AuthorizationResult<String> getUserAuthRole(UUID userId) {
-        Query query = entityManager.createNamedQuery("UserAuthEntity.findRoleByUserId");
+        Query query = entityManager.createNamedQuery("AuthUser.findRoleByUserId");
         query.setParameter("userId", userId);
         try {
             String role = (String) query.getSingleResult();
@@ -72,8 +71,26 @@ public class AuthorizationAdapter implements AuthorizationGateway {
         }
     }
 
+    private Optional<String> getUserRole(String username) {
+        Query query = entityManager.createNamedQuery("AuthUser.findRoleByUserName");
+        query.setParameter("username", username);
+        try {
+            String role = (String) query.getSingleResult();
+            return Optional.of(role);
+        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
+            log.warn(e);
+            return null;
+        }
+    }
+
     @Override
     public AuthorizationResult<Boolean> canReadComment(String username) {
-        return AuthorizationResult.ok();
+        Optional<String> role = this.getUserRole(username);
+        if(role.isPresent()){
+            if(role.get().equals("admin")){
+                return AuthorizationResult.ok();
+            }
+        }
+        return AuthorizationResult.notAuthenticated();
     }
 }

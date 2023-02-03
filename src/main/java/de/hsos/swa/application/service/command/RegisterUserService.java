@@ -32,7 +32,6 @@ public class RegisterUserService implements RegisterUserUseCase {
     Logger log;
 
     @Override
-    // TODO:
     public ApplicationResult<User> registerUser(RegisterUserCommand request) {
         User user = UserFactory.createUser(request.username());
         SaveAuthUserCommand createUserAuthRequest = new SaveAuthUserCommand(
@@ -42,20 +41,16 @@ public class RegisterUserService implements RegisterUserUseCase {
                 user.getId());
 
         AuthorizationResult<Void> registration = this.authorizationGateway.registerUser(createUserAuthRequest);
-        if(registration.denied()) return ApplicationResult.noAuthorization(createUserAuthRequest.getUsername() + " is not available");
+       if(registration.denied())
+           return ApplicationResult.notValid(createUserAuthRequest.getUsername() + " is not available as a Username");
 
-        RepositoryResult<User> createUserResponse = this.userRepository.saveUser(user);
 
-        if (!createUserResponse.ok()) {
+       RepositoryResult<User> createUserResponse = this.userRepository.saveUser(user);
+        if (createUserResponse.error())
             return ApplicationResult.exception("Registration failed");
-        }
 
-        if (registration.denied()) {
-            return ApplicationResult.exception("Authentication failed");
-        }
 
         return ApplicationResult.ok(createUserResponse.get());
-
     }
 
 }

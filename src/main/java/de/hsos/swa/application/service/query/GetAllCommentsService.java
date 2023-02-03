@@ -8,7 +8,7 @@ import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 import de.hsos.swa.application.output.repository.CommentRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
-import de.hsos.swa.application.service.ResultMapper;
+import de.hsos.swa.application.service.AuthorizationResultMapper;
 import de.hsos.swa.domain.entity.Comment;
 
 import javax.enterprise.context.RequestScoped;
@@ -22,7 +22,6 @@ import java.util.List;
 public class GetAllCommentsService implements GetAllCommentsUseCase {
     @Inject
     CommentRepository commentRepository;
-
     @Inject
     AuthorizationGateway authorizationGateway;
     
@@ -30,12 +29,12 @@ public class GetAllCommentsService implements GetAllCommentsUseCase {
     public ApplicationResult<List<Comment>> getAllComments(GetAllCommentsQuery request, String username) {
         AuthorizationResult<Boolean> access = authorizationGateway.canReadComment(username);
         if(access.denied())
-            return ResultMapper.handleRejection(access.status());
+            return AuthorizationResultMapper.handleRejection(access.status());
 
         RepositoryResult<List<Comment>> commentsResult = commentRepository.getAllComments(request.includeReplies());
-        if (commentsResult.ok())
-            return ApplicationResult.ok(commentsResult.get());
+        if (commentsResult.error())
+            return ApplicationResult.exception();
 
-        return ApplicationResult.exception();
+        return ApplicationResult.ok(commentsResult.get());
     }
 }

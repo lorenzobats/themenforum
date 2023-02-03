@@ -3,7 +3,7 @@ package de.hsos.swa.application.service;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 
-public class ResultMapper {
+public class AuthorizationResultMapper {
     public static <T> ApplicationResult<T> handleRejection(AuthorizationResult.Status status) {
         switch (status){
             case USER_NOT_AUTHENTICATED -> {

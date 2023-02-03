@@ -1,7 +1,6 @@
 package de.hsos.swa.infrastructure.authorization.model;
 
 import javax.persistence.*;
-
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.security.jpa.Password;
 import io.quarkus.security.jpa.Roles;
@@ -11,10 +10,10 @@ import io.quarkus.security.jpa.Username;
 import java.util.UUID;
 
 @Entity
-@Table(name = "user_table")
+@Table(name = "auth_user_table", schema = "auth")
 @UserDefinition
-@NamedQuery(name = "UserAuthEntity.findRoleByUserId", query = "SELECT role FROM AuthUser WHERE userId = :userId")
-@NamedQuery(name = "AuthUser.findRoleByUserName", query = "SELECT role FROM AuthUser WHERE userId = :userId")
+@NamedQuery(name = "AuthUser.findRoleByUserId", query = "SELECT role FROM AuthUser WHERE userId = :userId")
+@NamedQuery(name = "AuthUser.findRoleByUserName", query = "SELECT role FROM AuthUser WHERE username = :username")
 public class AuthUser {
     @Id
     @GeneratedValue()
