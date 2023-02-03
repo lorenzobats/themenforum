@@ -1,5 +1,6 @@
 package de.hsos.swa.actors.ui.util;
 
+import de.hsos.swa.actors.rest.dto.out.TopicDto;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReference;
 import de.hsos.swa.domain.entity.*;
@@ -28,7 +29,12 @@ public class TemplateExtensions {
 
     public static String parsedCreatedAtDate(TopicWithPostCountDto topic) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
-        return topic.topic.getCreatedAt().format(formatter);
+        return topic.topic.createdAt.format(formatter);
+    }
+
+    public static String parsedCreatedAtDate(TopicDto topic) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
+        return topic.createdAt.format(formatter);
     }
 
     public static String parsedCreatedAtDate(Comment comment) {

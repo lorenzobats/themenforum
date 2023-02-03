@@ -1,17 +1,21 @@
 package de.hsos.swa.actors.rest;
 
 import de.hsos.swa.actors.rest.dto.in.RegisterUserRequestBody;
-import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
-import de.hsos.swa.actors.rest.dto.out.TopicDto;
-import de.hsos.swa.actors.rest.dto.out.UserDto;
 import de.hsos.swa.actors.rest.dto.in.validation.ErrorResponse;
+import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
+import de.hsos.swa.actors.rest.dto.out.CommentDto;
+import de.hsos.swa.actors.rest.dto.out.UserDto;
 import de.hsos.swa.application.annotations.Adapter;
+import de.hsos.swa.application.input.DeleteUserUseCase;
 import de.hsos.swa.application.input.GetAllUsersUseCase;
 import de.hsos.swa.application.input.GetUserByNameUseCase;
 import de.hsos.swa.application.input.RegisterUserUseCase;
+import de.hsos.swa.application.input.dto.in.DeleteCommentCommand;
+import de.hsos.swa.application.input.dto.in.DeleteUserCommand;
 import de.hsos.swa.application.input.dto.in.GetUserByNameQuery;
 import de.hsos.swa.application.input.dto.in.RegisterUserCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
+import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.User;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -20,7 +24,6 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.hibernate.annotations.Filter;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -34,6 +37,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
+import java.util.Optional;
 
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
@@ -47,6 +51,9 @@ public class UsersRessource {
     // COMMANDS
     @Inject
     RegisterUserUseCase registerUserUseCase;
+
+    @Inject
+    DeleteUserUseCase deleteUserUseCase;
 
     // QUERIES
     @Inject
@@ -128,6 +135,34 @@ public class UsersRessource {
             if (result.ok()) {
                 UserDto responseDto = UserDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(responseDto).build();
+            }
+            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+        } catch (ConstraintViolationException e) {
+            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+        }
+    }
+
+    @DELETE
+    @Path("{id}")
+    @RolesAllowed("admin")
+    @Operation(summary = "deleteUser", description = "Löscht den User mit der übergebenen ID")
+    @Tag(name = "Users", description = "Zugriff auf die Nutzer")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(name = "UserDto", implementation = UserDto.class)))
+    })
+    public Response deleteUser(@PathParam("id") String userid, @Context SecurityContext securityContext) {
+        try {
+            String username = securityContext.getUserPrincipal().getName();
+            DeleteUserCommand command = new DeleteUserCommand(userid);
+            ApplicationResult<Optional<User>> result = this.deleteUserUseCase.deleteUser(command, username);
+
+            if (result.ok()) {
+                if (result.data().isPresent()) {
+                    UserDto userDto = UserDto.Converter.fromDomainEntity(result.data().get());
+                    return Response.status(Response.Status.OK).entity(userDto).build();
+                }
+                return Response.status(Response.Status.NO_CONTENT).build();
             }
             return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {

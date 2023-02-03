@@ -6,7 +6,9 @@ import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.domain.entity.User;
 
 import javax.validation.Valid;
+import java.util.Optional;
+
 @InputPort
 public interface DeleteUserUseCase {
-    ApplicationResult<User> deleteUser(@Valid DeleteUserCommand command, String requestingUser);
+    ApplicationResult<Optional<User>> deleteUser(@Valid DeleteUserCommand command, String requestingUser);
 }

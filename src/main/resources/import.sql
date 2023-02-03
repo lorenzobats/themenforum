@@ -1,13 +1,13 @@
-INSERT INTO user_table (id, user_name) VALUES ('78188b10-4733-4fca-8dfd-e07aee389383', 'oschluet');
-INSERT INTO user_table (id, user_name) VALUES ('efac4cf6-4188-4a18-8489-4fc98f3633d6', 'lbattist');
-INSERT INTO user_table (id, user_name) VALUES ('fafaaa75-64eb-4b5b-96f3-79721048b85f', 'admin');
-INSERT INTO user_table (id, user_name) VALUES ('c8f79ffc-7ce0-4673-a22c-5cf210b83f13', 'afuchs');
-INSERT INTO user_table (id, user_name) VALUES ('7adc0aa2-5532-4233-a8b4-2d0debd6a053', 'bdierken');
-INSERT INTO user_table (id, user_name) VALUES ('8be3a431-5b87-4223-ab76-bd3308da4cfd', 'ckaiser');
-INSERT INTO user_table (id, user_name) VALUES ('6194c256-473d-4fe1-9841-41d999885a23', 'dbacher');
-INSERT INTO user_table (id, user_name) VALUES ('9fe9d31c-71ac-45fc-b236-f8d53dfd00bb', 'emammer');
-INSERT INTO user_table (id, user_name) VALUES ('75588120-9b33-4484-acbc-cf902a9f9ac8', 'fwecher');
-INSERT INTO user_table (id, user_name) VALUES ('77cc0520-c6d0-4f06-964f-9af0834fc6db', 'gluehrs');
+INSERT INTO user_table (id, user_name, isactive) VALUES ('78188b10-4733-4fca-8dfd-e07aee389383', 'oschluet', true);
+INSERT INTO user_table (id, user_name, isactive) VALUES ('efac4cf6-4188-4a18-8489-4fc98f3633d6', 'lbattist', true);
+INSERT INTO user_table (id, user_name, isactive) VALUES ('fafaaa75-64eb-4b5b-96f3-79721048b85f', 'admin', true);
+INSERT INTO user_table (id, user_name, isactive) VALUES ('c8f79ffc-7ce0-4673-a22c-5cf210b83f13', 'afuchs', true);
+INSERT INTO user_table (id, user_name, isactive) VALUES ('7adc0aa2-5532-4233-a8b4-2d0debd6a053', 'bdierken', true);
+INSERT INTO user_table (id, user_name, isactive) VALUES ('8be3a431-5b87-4223-ab76-bd3308da4cfd', 'ckaiser', true);
+INSERT INTO user_table (id, user_name, isactive) VALUES ('6194c256-473d-4fe1-9841-41d999885a23', 'dbacher', true);
+INSERT INTO user_table (id, user_name, isactive) VALUES ('9fe9d31c-71ac-45fc-b236-f8d53dfd00bb', 'emammer', true);
+INSERT INTO user_table (id, user_name, isactive) VALUES ('75588120-9b33-4484-acbc-cf902a9f9ac8', 'fwecher', true);
+INSERT INTO user_table (id, user_name, isactive) VALUES ('77cc0520-c6d0-4f06-964f-9af0834fc6db', 'gluehrs', true);
 
 INSERT INTO auth.auth_user_table (id, password, role, user_id, username) VALUES ('6b05e5b1-1859-418f-97ba-dd5c8a4f02bf', '$2a$10$DwD7QAQ8xBxjG7B3A2I5s.bzU/1bt4YYvR91V1Ob33F4Olb.SnYwi', 'member', '78188b10-4733-4fca-8dfd-e07aee389383', 'oschluet');
 INSERT INTO auth.auth_user_table (id, password, role, user_id, username) VALUES ('c91b0e85-abcb-48d4-b344-3229099c84ba', '$2a$10$HTWkZDXvW.laYCCBzWo7Qu1xZL2fKWe.EgEeGly9TCLUa0xzqPuS2', 'member', 'efac4cf6-4188-4a18-8489-4fc98f3633d6', 'lbattist');

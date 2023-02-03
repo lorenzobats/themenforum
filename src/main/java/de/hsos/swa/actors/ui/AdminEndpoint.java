@@ -1,6 +1,7 @@
 package de.hsos.swa.actors.ui;
 
 
+import de.hsos.swa.actors.rest.dto.out.TopicDto;
 import de.hsos.swa.application.annotations.Adapter;
 import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.GetAllCommentsQuery;
@@ -54,7 +55,7 @@ public class AdminEndpoint {
     @CheckedTemplate
     public static class Templates {
         public static native TemplateInstance index(String adminname);
-        public static native TemplateInstance topics(List<TopicWithPostCountDto> entries, String adminname);
+        public static native TemplateInstance topics(List<TopicDto> entries, String adminname);
         public static native TemplateInstance posts(List<Post> entries, String adminname);
         public static native TemplateInstance comments(List<Comment> entries, String adminname);
         public static native TemplateInstance users(List<User> entries, String adminname);
@@ -80,7 +81,7 @@ public class AdminEndpoint {
     public TemplateInstance topics(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
         ApplicationResult<List<TopicWithPostCountDto>> topics = getAllTopicsUseCase.getAllTopics();
-        return Templates.topics(topics.data(), adminName);
+        return Templates.topics(topics.data().stream().map(TopicDto.Converter::fromInputPortDto).toList(), adminName);
     }
 
     @GET

@@ -29,13 +29,13 @@
             <tbody>
             {#for entry in entries}
                 <tr>
-                <th scope="row">{entry.topic.id}</th>
-                <td>{entry.topic.title}</td>
-                <td>{entry.topic.owner.name}</td>
-                <td>{entry.topic.parsedCreatedAtDate}</td>
+                <th scope="row">{entry.id}</th>
+                <td>{entry.title}</td>
+                <td>{entry.owner}</td>
+                <td>{entry.parsedCreatedAtDate}</td>
                 <td>
-                    <button class="btn btn-secondary" onclick="openInNewTab('{entry.topic.title}')">View</button>
-                    <button class="btn btn-danger" onclick="deleteEntry('{entry.topic.id}')">Delete</button>
+                    <button class="btn btn-secondary" onclick="openInNewTab('{entry.title}')">View</button>
+                    <button class="btn btn-danger" onclick="deleteEntry('{entry.id}')">Delete</button>
                 </td>
                 <td></td>
                 </tr>

@@ -28,7 +28,7 @@ public class Comment implements SortedEntity, VotedEntity {
     @NotNull
     private List<Comment> replies = new ArrayList<>();
 
-    private boolean active;
+    private boolean isActive;
 
     private List<Vote> votes = new ArrayList<>();
 
@@ -41,23 +41,23 @@ public class Comment implements SortedEntity, VotedEntity {
         this.createdAt = createdAt;
         this.user = user;
         this.text = text;
-        this.active = true;
+        this.isActive = true;
     }
 
     // Für Persistence Adapter
-    public Comment(UUID id, LocalDateTime createdAt, User user, String text, boolean active) {
+    public Comment(UUID id, LocalDateTime createdAt, User user, String text, boolean isActive) {
         this.id = id;
         this.createdAt = createdAt;
         this.user = user;
         this.text = text;
-        this.active = active;
+        this.isActive = isActive;
     }
 
 
     //------------------------------------------------------------------------------------------------------------------
     // SIMPLE GETTER
     public boolean isActive() {
-        return active;
+        return isActive;
     }
     public UUID getId() {
         return id;
@@ -95,7 +95,7 @@ public class Comment implements SortedEntity, VotedEntity {
     //------------------------------------------------------------------------------------------------------------------
     // DELETE
     public void disable() {
-        this.active = false;
+        this.isActive = false;
     }
 
 

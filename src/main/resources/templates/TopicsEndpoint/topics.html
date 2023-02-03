@@ -31,15 +31,15 @@
 {#for entry in allTopics}
 <div class="content-box">
     <div>
-        <h5 style="cursor: pointer" onclick="window.open('/ui/posts?topic={entry.topic.title}', '_self')"
-            class="title-info">{entry.topic.title}</h5>
-        <span class="sub-info">{entry.topic.description}</span><br>
+        <h5 style="cursor: pointer" onclick="window.open('/ui/posts?topic={entry.title}', '_self')"
+            class="title-info">{entry.title}</h5>
+        <span class="sub-info">{entry.description}</span><br>
         <span class="sub-info">
-            {entry.topic.parsedCreatedAtDate} |
-            by <strong>{entry.topic.owner.name}</strong> |
+            {entry.parsedCreatedAtDate} |
+            by <strong>{entry.owner}</strong> |
             {entry.numberOfPosts} posts |
         </span>
-        <a href="/ui/posts?topic={entry.topic.title}">goto</a>
+        <a href="/ui/posts?topic={entry.title}">goto</a>
     </div>
 </div>
 {/}

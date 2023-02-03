@@ -16,6 +16,7 @@ import de.hsos.swa.domain.factory.PostFactory;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.UUID;
 
 /**
  * Die UseCase Klasse CreatePostService implementiert das Interface
@@ -59,7 +60,7 @@ public class CreatePostService implements CreatePostUseCase {
         User user = getUserByNameResponse.get();
 
 
-        RepositoryResult<Topic> getTopicByIdResponse = this.topicRepository.getTopicById(command.topicId());
+        RepositoryResult<Topic> getTopicByIdResponse = this.topicRepository.getTopicById(UUID.fromString(command.topicId()));
         if(getTopicByIdResponse.error()) {
             return ApplicationResult.exception("Cannot find topic " + command.topicId());
         }

@@ -2,15 +2,21 @@ package de.hsos.swa.domain.entity;
 
 import de.hsos.swa.domain.vo.VoteType;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Vote {
-
+    @Valid
     private UUID id;
+    @Valid
     private User user;
+    @NotNull
     private VoteType voteType;
+    @PastOrPresent
     private LocalDateTime createdAt;
 
     public Vote(User user, VoteType voteType) {

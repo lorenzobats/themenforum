@@ -1,5 +1,6 @@
 package de.hsos.swa.actors.ui;
 
+import de.hsos.swa.actors.rest.dto.out.TopicDto;
 import de.hsos.swa.application.input.GetAllTopicsUseCase;
 import de.hsos.swa.application.input.SearchTopicsUseCase;
 import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
@@ -19,6 +20,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
+import java.util.ArrayList;
 import java.util.List;
 
 @Path("/ui/topics")
@@ -34,7 +36,8 @@ public class TopicsEndpoint {
     @CheckedTemplate
     public static class Templates {
 
-        public static native TemplateInstance topics(List<TopicWithPostCountDto> allTopics, boolean isLoggedIn, String username);
+        public static native TemplateInstance topics(List<TopicDto> allTopics, boolean isLoggedIn, String username);
+
         public static native TemplateInstance createTopic(String username);
     }
 
@@ -51,12 +54,16 @@ public class TopicsEndpoint {
             username = securityContext.getUserPrincipal().getName();
             isLoggedIn = true;
         }
-        if(searchString != null){
+        if (searchString != null) {
             ApplicationResult<List<TopicWithPostCountDto>> searchedTopics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(searchString));
-            return Templates.topics(searchedTopics.data(), isLoggedIn, username);
+            return Templates.topics(searchedTopics.data().stream().map(TopicDto.Converter::fromInputPortDto).toList(), isLoggedIn, username);
         }
         ApplicationResult<List<TopicWithPostCountDto>> allTopics = getAllTopicsUseCase.getAllTopics();
-        return Templates.topics(allTopics.data(), isLoggedIn, username);
+        List<TopicDto> topicDtos = new ArrayList<>();
+        if (allTopics.ok()) {
+            topicDtos = allTopics.data().stream().map(TopicDto.Converter::fromInputPortDto).toList();
+        }
+        return Templates.topics(topicDtos, isLoggedIn, username);
     }
 
     @GET

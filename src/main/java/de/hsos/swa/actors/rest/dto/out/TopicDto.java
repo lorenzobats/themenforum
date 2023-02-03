@@ -11,7 +11,7 @@ public class TopicDto {
 
     public LocalDateTime createdAt;
     public String owner;
-    public Long postCount;
+    public Long numberOfPosts;
 
 
     public TopicDto(String id, String title, String description, LocalDateTime createdAt, String owner) {
@@ -28,7 +28,7 @@ public class TopicDto {
         this.description = description;
         this.createdAt = createdAt;
         this.owner = owner;
-        this.postCount = postCount;
+        this.numberOfPosts = postCount;
     }
 
     public static class Converter {
@@ -37,7 +37,7 @@ public class TopicDto {
         }
 
         public static TopicDto fromInputPortDto(TopicWithPostCountDto dto) {
-            return new TopicDto(dto.topic.getId().toString(), dto.topic.getTitle(), dto.topic.getDescription(), dto.topic.getCreatedAt(), dto.topic.getOwner().getName(), dto.numberOfPosts);
+            return new TopicDto(dto.topic.id, dto.topic.title, dto.topic.description, dto.topic.createdAt, dto.topic.owner, dto.numberOfPosts);
         }
     }
 }

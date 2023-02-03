@@ -14,23 +14,27 @@ public class UserPersistenceModel {
     @Column(name = "user_name", unique = true)
     String name;
 
+
+    @Basic
+    boolean isActive;
+
     public UserPersistenceModel() {
     }
 
 
-    public UserPersistenceModel(UUID id, String name) {
+    public UserPersistenceModel(UUID id, String name, boolean isActive) {
         this.id = id;
         this.name = name;
+        this.isActive = isActive;
     }
 
     public static class Converter {
         public static User toDomainEntity(UserPersistenceModel persistenceModel) {
-            User user = new User(persistenceModel.id, persistenceModel.name);
-            return user;
+            return new User(persistenceModel.id, persistenceModel.name, persistenceModel.isActive);
         }
 
         public static UserPersistenceModel toPersistenceModel(User domainEntity) {
-            return new UserPersistenceModel(domainEntity.getId(), domainEntity.getName());
+            return new UserPersistenceModel(domainEntity.getId(), domainEntity.getUsername(), domainEntity.isActive());
         }
     }
 }

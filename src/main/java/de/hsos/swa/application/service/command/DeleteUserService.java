@@ -14,6 +14,7 @@ import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequestScoped
@@ -32,7 +33,7 @@ public class DeleteUserService implements DeleteUserUseCase {
      * @return ApplicationResult<Topic> enthält gelöschtes Thema bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<User> deleteUser(DeleteUserCommand command, String requestingUser) {
+    public ApplicationResult<Optional<User>> deleteUser(DeleteUserCommand command, String requestingUser) {
         AuthorizationResult<Boolean> permission = authorizationGateway.canDeleteUser(requestingUser, UUID.fromString(command.userId()));
         if(permission.denied())
             return AuthorizationResultMapper.handleRejection(permission.status());
@@ -43,13 +44,16 @@ public class DeleteUserService implements DeleteUserUseCase {
         }
         User user = userResult.get();
 
-        // TODO Methode Delete = disabled wie bei Comment (isActive = false -> name == deleted -> getter fuer den name aendern)
-        user.setName("DELETED");
-
-        de.hsos.swa.application.output.repository.dto.out.RepositoryResult<User> updateUserResult = this.userRepository.updateUser(user);
-        if (updateUserResult.error()) {
-            return ApplicationResult.exception("Cannot update post ");
+        if(!user.isActive()) {
+            return ApplicationResult.ok(Optional.empty());
         }
-        return ApplicationResult.ok(user);
+
+        user.disable();
+
+        RepositoryResult<User> updateUserResult = this.userRepository.updateUser(user);
+        if (updateUserResult.error()) {
+            return ApplicationResult.exception("Cannot update user");
+        }
+        return ApplicationResult.ok(Optional.of(user));
     }
 }

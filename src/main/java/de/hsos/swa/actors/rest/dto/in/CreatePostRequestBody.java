@@ -24,7 +24,7 @@ public class CreatePostRequestBody implements ValidatedRequestBody {
 
     public static class Converter {
         public static CreatePostCommand toInputPortCommand(CreatePostRequestBody adapterRequest, String username) {
-            return new @Valid CreatePostCommand(adapterRequest.title, adapterRequest.content, UUID.fromString(adapterRequest.topicId), username);
+            return new @Valid CreatePostCommand(adapterRequest.title, adapterRequest.content, adapterRequest.topicId, username);
         }
     }
 }
