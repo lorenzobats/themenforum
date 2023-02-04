@@ -58,7 +58,7 @@ public class ReplyToCommentService implements ReplyToCommentUseCase {
             return ApplicationResult.notValid("Cannot find user: " + requestingUser);
         User user = userResult.get();
 
-        RepositoryResult<Post> postResult = this.postRepository.getPostById(UUID.fromString(command.commentId()), true);
+        RepositoryResult<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(command.commentId()));
         if (postResult.error())
             return ApplicationResult.notValid("Cannot find post " + command.commentId());
         Post post = postResult.get();
