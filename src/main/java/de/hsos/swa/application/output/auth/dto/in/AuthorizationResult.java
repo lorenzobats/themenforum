@@ -5,6 +5,8 @@ public class AuthorizationResult<T> {
         OK,
         USER_NOT_AUTHENTICATED,
         ACCESS_DENIED,
+
+        NO_RESSOURCE,
         ERROR
     }
 
@@ -27,7 +29,9 @@ public class AuthorizationResult<T> {
     public static <T> AuthorizationResult<T> exception() {
         return new AuthorizationResult<T>(Status.ERROR, (T) null);
     }
-
+    public static <T> AuthorizationResult<T> noRessource() {
+        return new AuthorizationResult<T>(Status.NO_RESSOURCE, (T) null);
+    }
     public static <T> AuthorizationResult<T> notAuthenticated() {
         return new AuthorizationResult<T>(Status.USER_NOT_AUTHENTICATED, (T) null);
     }

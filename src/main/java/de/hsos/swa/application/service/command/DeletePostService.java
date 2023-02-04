@@ -10,6 +10,7 @@ import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.service.AuthorizationResultMapper;
 import de.hsos.swa.domain.entity.Post;
+import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 
@@ -27,19 +28,17 @@ import java.util.UUID;
  * @author Oliver Schlüter
  * @author Lorenzo Battiston
  * @version 1.0
- * @see DeletePostUseCase             Korrespondierende Input-Port für diesen Use Case
- * @see DeletePostCommand      Korrespondierende Request DTO für diesen Use Case
- * @see UserRepository                  Verwendeter Output-Port zum Laden des anfragenden Nutzers
- * @see PostRepository                  Verwendeter Output-Port zum Löschen des Beitrags
- * @see AuthorizationGateway       Verwendeter Output-Port zum Laden der Rolle des anfragenden Nutzers
+ * @see DeletePostUseCase               Korrespondierende Input-Port für diesen Use Case
+ * @see DeletePostCommand               Korrespondierende Request DTO für diesen Use Case
+ * @see PostRepository                  Output-Port zum Löschen des Beitrags
+ * @see AuthorizationGateway            Output-Port zur Zugriffskontrolle für Löschvorgang
  */
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 @ApplicationService
 public class DeletePostService implements DeletePostUseCase {
 
-    @Inject
-    UserRepository userRepository;
+
 
     @Inject
     PostRepository postRepository;
@@ -51,37 +50,24 @@ public class DeletePostService implements DeletePostUseCase {
     /**
      * Löscht ein Post auf Basis der übergebenen Informationen.
      *
-     * @param command         enthält Post-ID und Nutzernamen der Lösch-Anfrage
-     * @param requestingUser
+     * @param command           enthält ID des zu löschenden Posts
+     * @param requestingUser    enthält den Nutzernamen der Lösch-Anfrage
      * @return ApplicationResult<Post> enthält gelöschten Beitrag bzw. Fehlermeldung bei Misserfolg
      */
     @Override
     public ApplicationResult<Optional<Post>> deletePost(DeletePostCommand command, String requestingUser) {
-        RepositoryResult<Post> postResult = this.postRepository.getPostById(UUID.fromString(command.postId()), false);
-        if (postResult.error()) {
-            return ApplicationResult.exception("Cannot find post" + command.postId());
-        }
-        Post post = postResult.get();
-
-
-        AuthorizationResult<Boolean> permission = authorizationGateway.canDeletePost(requestingUser, post.getId());
+        AuthorizationResult<Boolean> permission = authorizationGateway.canDeletePost(requestingUser, UUID.fromString(command.postId()));
         if(permission.denied())
             return AuthorizationResultMapper.handleRejection(permission.status());
 
-
-        RepositoryResult<Post> deletePostResult = this.postRepository.deletePost(post.getId());
-        if (deletePostResult.error()) {
-            switch (deletePostResult.status()) {
-                case ENTITY_NOT_FOUND -> {
-                    return ApplicationResult.noContent(Optional.empty());
-                }
-                case EXCEPTION -> {
-                    return ApplicationResult.exception("Cannot delete post");
-                }
+        RepositoryResult<Post> result = this.postRepository.deletePost(UUID.fromString(command.postId()));
+        if (result.error()) {
+            if (result.status() == RepositoryResult.Status.ENTITY_NOT_FOUND) {
+                return ApplicationResult.noContent(Optional.empty());
             }
-            return ApplicationResult.exception("Cannot delete post ");
+            return ApplicationResult.exception("Cannot delete post");
         }
 
-        return ApplicationResult.ok(Optional.of(deletePostResult.get()));
+        return ApplicationResult.ok(Optional.of(result.get()));
     }
 }

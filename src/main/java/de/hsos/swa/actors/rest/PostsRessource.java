@@ -155,7 +155,7 @@ public class PostsRessource {
         try {
             validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
-            CreatePostCommand command = CreatePostRequestBody.Converter.toInputPortCommand(request, username);
+            CreatePostCommand command = CreatePostRequestBody.Converter.toInputPortCommand(request);
             ApplicationResult<Post> result = this.createPostUseCase.createPost(command, username);
             if (result.ok()) {
                 PostDto postResponse = PostDto.Converter.fromDomainEntity(result.data());

@@ -27,18 +27,15 @@ import java.util.UUID;
  * @author Oliver Schlüter
  * @author Lorenzo Battiston
  * @version 1.0
- * @see DeleteTopicUseCase            Korrespondierende Input-Port für diesen Use Case
- * @see DeleteTopicCommand     Korrespondierende Request DTO für diesen Use Case
- * @see UserRepository                  Verwendeter Output-Port zum Laden des anfragenden Nutzers
- * @see TopicRepository                 Verwendeter Output-Port zum Löschen des Themas
- * @see AuthorizationGateway       Verwendeter Output-Port zum Laden der Rolle des anfragenden Nutzers
+ * @see DeleteTopicUseCase              Korrespondierende Input-Port für diesen Use Case
+ * @see DeleteTopicCommand              Korrespondierende Request DTO für diesen Use Case
+ * @see TopicRepository                 Output-Port zum Löschen des Themas
+ * @see AuthorizationGateway            Output-Port zur Zugriffskontrolle für Löschvorgang
  */
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 @ApplicationService
 public class DeleteTopicService implements DeleteTopicUseCase {
-    @Inject
-    UserRepository userRepository;
 
     @Inject
     TopicRepository topicRepository;
@@ -49,33 +46,24 @@ public class DeleteTopicService implements DeleteTopicUseCase {
     /**
      * Löscht ein Thema auf Basis der übergebenen Informationen.
      *
-     * @param command         enthält Themen-ID und Nutzernamen der Lösch-Anfrage
-     * @param requestingUser
+     * @param command           enthält ID des zu löschenden Topics
+     * @param requestingUser    enthält den Nutzernamen der Lösch-Anfrage
      * @return ApplicationResult<Topic> enthält gelöschtes Thema bzw. Fehlermeldung bei Misserfolg
      */
     @Override
     public ApplicationResult<Optional<Topic>> deleteTopic(DeleteTopicCommand command, String requestingUser) {
-        RepositoryResult<User> userResult = this.userRepository.getUserByName(command.username());
-        if (userResult.error()) {
-            return ApplicationResult.noAuthorization("Cannot find user" + command.username());
-        }
-        User user = userResult.get();
-
         AuthorizationResult<Boolean> permission = authorizationGateway.canDeleteTopic(requestingUser, UUID.fromString(command.id()));
         if(permission.denied())
             return AuthorizationResultMapper.handleRejection(permission.status());
 
-        RepositoryResult<Topic> deleteTopicResult = this.topicRepository.deleteTopic(UUID.fromString(command.id()));
-        if (deleteTopicResult.error()) {
-            switch (deleteTopicResult.status()){
-                case ENTITY_NOT_FOUND -> {
-                    return ApplicationResult.noContent(Optional.empty());
-                }
-                case EXCEPTION -> {
-                    return ApplicationResult.exception("Cannot delete topic");
-                }
+        RepositoryResult<Topic> result = this.topicRepository.deleteTopic(UUID.fromString(command.id()));
+        if (result.error()) {
+            if (result.status() == RepositoryResult.Status.ENTITY_NOT_FOUND) {
+                return ApplicationResult.noContent(Optional.empty());
             }
+            return ApplicationResult.exception("Cannot delete post");
         }
-        return ApplicationResult.ok(Optional.of(deleteTopicResult.get()));
+
+        return ApplicationResult.ok(Optional.of(result.get()));
     }
 }

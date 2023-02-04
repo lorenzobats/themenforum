@@ -19,6 +19,7 @@ public class User {
     public User(String name) {
         this.id = UUID.randomUUID();
         this.name = name;
+        this.isActive = true;
     }
 
     public User(UUID id, String name) {

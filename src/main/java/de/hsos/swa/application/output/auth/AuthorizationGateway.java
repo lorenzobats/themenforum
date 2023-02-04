@@ -10,16 +10,24 @@ import java.util.UUID;
 public interface AuthorizationGateway {
     AuthorizationResult<Void> registerUser(SaveAuthUserCommand outputPortRequest);
 
-    AuthorizationResult<Boolean> canAccessUsers(String username);
-    AuthorizationResult<Boolean> canAccessVotes(String username);
-    AuthorizationResult<Boolean> canAccessVotesBy(String username, String voteOwner);
+    AuthorizationResult<Void> addOwnership(String owningUser, UUID ressourceId);
 
-    AuthorizationResult<Boolean> canDeleteComment(String requestingUser, UUID CommentId);
+    public AuthorizationResult<Void> removeOwnership(String owningUser, UUID ressourceId);
 
-    AuthorizationResult<Boolean> canDeletePost(String requestingUser, UUID PostId);
+    AuthorizationResult<Boolean> canAccessUsers(String accessingUser);
+    AuthorizationResult<Boolean> canAccessVotes(String accessingUser);
+    AuthorizationResult<Boolean> canAccessVotesBy(String accessingUser, String votesOwner);
 
-    AuthorizationResult<Boolean> canDeleteUser(String requestingUser, UUID UserId);
+    AuthorizationResult<Boolean> canDeleteComment(String accessingUser, UUID CommentId);
 
-    AuthorizationResult<Boolean> canDeleteVote(String requestingUser, UUID VoteId);
-    AuthorizationResult<Boolean> canDeleteTopic(String requestingUser, UUID TopicId);
+    AuthorizationResult<Boolean> canDeletePost(String accessingUser, UUID PostId);
+
+    AuthorizationResult<Boolean> canDeleteUser(String accessingUser, UUID UserId);
+
+    AuthorizationResult<Boolean> canDeleteVote(String accessingUser, UUID VoteId);
+    AuthorizationResult<Boolean> canDeleteTopic(String accessingUser, UUID TopicId);
+
+    //------------------------------------------------------------------------------------------------------------------
+    // UPDATE PERMISSION
+    AuthorizationResult<Boolean> canUpdatePost(String accessingUser, UUID commentId);
 }

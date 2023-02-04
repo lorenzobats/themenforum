@@ -8,6 +8,5 @@ import de.hsos.swa.application.input.validation.constraints.ValidUsername;
 @InputPortRequest
 public record CreateTopicCommand(
         @ValidTopicTitle String title,
-        @ValidTopicDescription String description,
-        @ValidUsername String username
+        @ValidTopicDescription String description
 ) {}

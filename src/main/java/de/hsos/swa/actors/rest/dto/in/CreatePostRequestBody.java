@@ -6,7 +6,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.UUID;
 
 @Schema(name = "PostCreationDto")
 public class CreatePostRequestBody implements ValidatedRequestBody {
@@ -23,8 +22,8 @@ public class CreatePostRequestBody implements ValidatedRequestBody {
     public CreatePostRequestBody() {}
 
     public static class Converter {
-        public static CreatePostCommand toInputPortCommand(CreatePostRequestBody adapterRequest, String username) {
-            return new @Valid CreatePostCommand(adapterRequest.title, adapterRequest.content, adapterRequest.topicId, username);
+        public static CreatePostCommand toInputPortCommand(CreatePostRequestBody adapterRequest) {
+            return new @Valid CreatePostCommand(adapterRequest.title, adapterRequest.content, adapterRequest.topicId);
         }
     }
 }

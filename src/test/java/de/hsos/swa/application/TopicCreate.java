@@ -24,8 +24,7 @@ public class TopicCreate extends ApplicationTestData {
     public void given() {
         CreateTopicCommand createTopicCommand = new CreateTopicCommand(
                 "Mein Thema",
-                "Meine Beschreibung",
-                "oschluet");
+                "Meine Beschreibung");
         createTopicResult = this.createTopicUseCase.createTopic(createTopicCommand, "oschluet");
     }
 

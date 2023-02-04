@@ -32,11 +32,26 @@ public class AuthUser {
     @Column(name = "user_id")
     UUID userId;
 
+    @Basic
+    boolean active = true;
+
     public AuthUser() {
     }
 
     public String getUsername() {
         return username;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void disable() {
+        this.active = false;
     }
 
     public AuthUser(String username, String password, String role, UUID userId) {

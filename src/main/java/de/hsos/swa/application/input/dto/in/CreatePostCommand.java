@@ -12,6 +12,5 @@ import java.util.UUID;
 public record CreatePostCommand(
         @ValidPostTitle String title,
         @ValidPostContent String content,
-        @ValidId String topicId,
-        @ValidUsername String username
+        @ValidId String topicId
 ) {}

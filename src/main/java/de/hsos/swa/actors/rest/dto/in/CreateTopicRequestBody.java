@@ -18,8 +18,8 @@ public class CreateTopicRequestBody implements ValidatedRequestBody {
     public CreateTopicRequestBody() {}
 
     public static class Converter {
-        public static CreateTopicCommand toInputPortCommand(CreateTopicRequestBody adapterRequest, String username) {
-            return new CreateTopicCommand(adapterRequest.title, adapterRequest.description, username);
+        public static CreateTopicCommand toInputPortCommand(CreateTopicRequestBody adapterRequest) {
+            return new CreateTopicCommand(adapterRequest.title, adapterRequest.description);
         }
     }
 }

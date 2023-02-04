@@ -129,7 +129,7 @@ public class TopicsRessource {
         try {
             validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
-            CreateTopicCommand command = CreateTopicRequestBody.Converter.toInputPortCommand(request, username);
+            CreateTopicCommand command = CreateTopicRequestBody.Converter.toInputPortCommand(request);
             ApplicationResult<Topic> result = this.createTopicUseCase.createTopic(command, username);
             if (result.ok()) {
                 TopicDto topicResponse = TopicDto.Converter.fromDomainEntity(result.data());

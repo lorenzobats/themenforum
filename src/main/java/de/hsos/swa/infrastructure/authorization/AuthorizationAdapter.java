@@ -7,6 +7,7 @@ import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 import de.hsos.swa.application.output.auth.dto.out.SaveAuthUserCommand;
 import de.hsos.swa.infrastructure.authorization.model.AuthUser;
+import de.hsos.swa.infrastructure.authorization.model.OwnerOf;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
@@ -56,76 +57,184 @@ public class AuthorizationAdapter implements AuthorizationGateway {
             return AuthorizationResult.exception();
         }
     }
+    public AuthorizationResult<Void> addOwnership(String owningUser, UUID ressourceId){
+        Optional<AuthUser> optionalAuthUser = this.loadUser(owningUser);
+        if(optionalAuthUser.isEmpty())
+            return AuthorizationResult.notAuthenticated();
 
-    @Override
-    public AuthorizationResult<Boolean> canAccessVotes(String username) {
-        Optional<String> role = this.getUserRole(username);
-        if(role.isPresent()){
-            if(role.get().equals("admin")){
-                return AuthorizationResult.ok();
-            }
+        AuthUser owner = optionalAuthUser.get();
+        if(!owner.isActive())
+            return AuthorizationResult.notAllowed();
+
+        try{
+            OwnerOf ownerOf = new OwnerOf(owner, ressourceId);
+            entityManager.persist(ownerOf);
+            return AuthorizationResult.ok();
+        } catch (PersistenceException e) {
+            return AuthorizationResult.exception();
         }
+    }
+    public AuthorizationResult<Void> removeOwnership(String owningUser, UUID ressourceId){
+        Optional<OwnerOf> optionalOwnerOf = this.loadOwnership(ressourceId);
+        if(optionalOwnerOf.isEmpty())
+            return AuthorizationResult.exception();
+
+        OwnerOf ownerOf = optionalOwnerOf.get();
+        try{
+            entityManager.remove(ownerOf);
+            return AuthorizationResult.ok();
+        } catch (PersistenceException e) {
+            log.debug(e);
+            return AuthorizationResult.exception();
+        }
+    }
+
+
+    //------------------------------------------------------------------------------------------------------------------
+    // READ ACCESS
+    @Override
+    public AuthorizationResult<Boolean> canAccessVotes(String accessingUser) {
+        // Admins dürfen alle Votes einsehen
+        if(isActiveAdmin(accessingUser))
+            return AuthorizationResult.ok();
+
         return AuthorizationResult.notAuthenticated();
     }
 
     @Override
-    public AuthorizationResult<Boolean> canAccessUsers(String username) {
-        Optional<String> role = this.getUserRole(username);
-        if(role.isPresent()){
-            if(role.get().equals("admin")){
-                return AuthorizationResult.ok();
-            }
-        }
+    public AuthorizationResult<Boolean> canAccessUsers(String accessingUser) {
+        // Admins dürfen alle User einsehen
+        if(isActiveAdmin(accessingUser))
+            return AuthorizationResult.ok();
+
         return AuthorizationResult.notAuthenticated();
     }
 
     @Override
-    public AuthorizationResult<Boolean> canAccessVotesBy(String username, String voteOwner) {
-        // TODO: Mit Owner List abgleichen
-        return AuthorizationResult.ok();
+    public AuthorizationResult<Boolean> canAccessVotesBy(String accessingUser, String votesOwner) {
+        // Admins dürfen alle Votes abrufen
+        if(isActiveAdmin(accessingUser))
+            return AuthorizationResult.ok();
+
+        // Member dürfen ihre eigenen Votes abrufen
+        if(accessingUser.equals(votesOwner))
+            return AuthorizationResult.ok();
+
+        return AuthorizationResult.notAuthenticated();
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // DELETE PERMISSION
     @Override
-    public AuthorizationResult<Boolean> canDeletePost(String requestingUser, UUID PostId) {
-        // TODO: Mit Owner List abgleichen
-        return AuthorizationResult.ok();
-    }
+    public AuthorizationResult<Boolean> canDeleteUser(String accessingUser, UUID userId) {
+        // Admins dürfen alle User löschen
+        if(isActiveAdmin(accessingUser))
+            return AuthorizationResult.ok();
 
+        return AuthorizationResult.notAuthenticated();
+    }
     @Override
-    public AuthorizationResult<Boolean> canDeleteUser(String requestingUser, UUID UserId) {
-        // TODO: Mit Owner List abgleichen
-        return AuthorizationResult.ok();
+    public AuthorizationResult<Boolean> canDeleteTopic(String accessingUser, UUID TopicId) {
+        // Admins dürfen alle Votes löschen
+        if(isActiveAdmin(accessingUser))
+            return AuthorizationResult.ok();
+        // Member dürfen keine Topics löschen
+        return AuthorizationResult.notAuthenticated();
     }
-
     @Override
-    public AuthorizationResult<Boolean> canDeleteComment(String requestingUser, UUID CommentId) {
-        // TODO: Mit Owner List abgleichen
-        return AuthorizationResult.ok();
-    }
+    public AuthorizationResult<Boolean> canDeletePost(String accessingUser, UUID postId) {
+        // Admins dürfen alle Posts löschen
+        if(isActiveAdmin(accessingUser))
+            return AuthorizationResult.ok();
+        // Member dürfen ihre eigenen Posts löschen
+        if(isActiveRessourceOwner(accessingUser, postId))
+            return AuthorizationResult.ok();
 
+        return AuthorizationResult.notAllowed();
+    }
     @Override
-    public AuthorizationResult<Boolean> canDeleteVote(String requestingUser, UUID VoteId) {
-        // TODO: Mit Owner List abgleichen
-        return AuthorizationResult.ok();
-    }
+    public AuthorizationResult<Boolean> canDeleteComment(String accessingUser, UUID commentId) {
+        // Admins dürfen alle Kommentare löschen
+        if(isActiveAdmin(accessingUser))
+            return AuthorizationResult.ok();
+        // Member dürfen ihre eigenen Kommentare löschen
+        if(isActiveRessourceOwner(accessingUser, commentId))
+            return AuthorizationResult.ok();
 
+        return AuthorizationResult.notAuthenticated();
+    }
     @Override
-    public AuthorizationResult<Boolean> canDeleteTopic(String requestingUser, UUID TopicId) {
-        // TODO: Mit Owner List abgleichen
-        return AuthorizationResult.ok();
+    public AuthorizationResult<Boolean> canDeleteVote(String accessingUser, UUID voteId) {
+        // Admins dürfen alle Votes löschen
+        if(isActiveAdmin(accessingUser))
+            return AuthorizationResult.ok();
+        // Member dürfen ihre eigenen Votes löschen
+        if(isActiveRessourceOwner(accessingUser, voteId))
+            return AuthorizationResult.ok();
+        return AuthorizationResult.notAuthenticated();
     }
 
-    private Optional<String> getUserRole(String username) {
-        Query query = entityManager.createNamedQuery("AuthUser.findRoleByUserName");
-        query.setParameter("username", username);
+
+    //------------------------------------------------------------------------------------------------------------------
+    // UPDATE PERMISSION
+    @Override
+    public AuthorizationResult<Boolean> canUpdatePost(String accessingUser, UUID commentId) {
+        // Admins dürfen alle Posts updaten
+        if(isActiveAdmin(accessingUser))
+            return AuthorizationResult.ok();
+        // Member dürfen ihre eigenen Posts updaten
+        if(isActiveRessourceOwner(accessingUser, commentId))
+            return AuthorizationResult.ok();
+
+        return AuthorizationResult.notAuthenticated();
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    // DELETE PERMISSION
+    private Optional<AuthUser> loadUser(String username) {
+        CriteriaBuilder<AuthUser> query = criteriaBuilderFactory.create(entityManager, AuthUser.class);
+        query.where("username").eq(username);
         try {
-            String role = (String) query.getSingleResult();
-            return Optional.of(role);
+            AuthUser user = query.getSingleResult();
+            return Optional.of(user);
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
             log.warn(e);
             return Optional.empty();
         }
     }
 
+    private Optional<OwnerOf> loadOwnership(UUID ressourceId) {
+        CriteriaBuilder<OwnerOf> query = criteriaBuilderFactory.create(entityManager, OwnerOf.class);
+        query.where("ressourceId").eq(ressourceId);
 
+        try {
+            OwnerOf ownerOf = query.getSingleResult();
+            return Optional.of(ownerOf);
+        } catch (IllegalArgumentException | PersistenceException e) {
+            log.warn(e);
+            return Optional.empty();
+        }
+    }
+
+    private boolean isActiveAdmin(String username) {
+        Optional<AuthUser> optionalAuthUser = this.loadUser(username);
+        if(optionalAuthUser.isPresent()) {
+            AuthUser user = optionalAuthUser.get();
+            return user.isActive() && user.getRole().equals("admin");
+        }
+        return false;
+    }
+
+    private boolean isActiveRessourceOwner(String accessingUser, UUID ressourceId) {
+        try {
+            CriteriaBuilder<OwnerOf> query = criteriaBuilderFactory.create(entityManager, OwnerOf.class);
+            query
+                    .where("owner.username").eq(accessingUser)
+                    .where("owner.active").eq(true)
+                    .where("ressourceId").eq(ressourceId);
+            return !query.getResultList().isEmpty();
+        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
+            return false;
+        }
+    }
 }
