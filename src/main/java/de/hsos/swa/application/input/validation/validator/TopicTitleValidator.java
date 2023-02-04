@@ -1,15 +1,16 @@
 package de.hsos.swa.application.input.validation.validator;
 
 import de.hsos.swa.application.input.validation.constraints.ValidPostTitle;
+import de.hsos.swa.application.input.validation.constraints.ValidTopicTitle;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class TopicTitleValidator implements ConstraintValidator<ValidPostTitle, String> {
+public class TopicTitleValidator implements ConstraintValidator<ValidTopicTitle, String> {
     private String message;
 
     @Override
-    public void initialize(ValidPostTitle annotation) {
+    public void initialize(ValidTopicTitle annotation) {
         message = annotation.message();
     }
 
