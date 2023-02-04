@@ -10,10 +10,11 @@ import java.util.UUID;
 @EntityView(UserPersistenceModel.class)
 public record UserPersistenceView(
         @IdMapping UUID id,
-        String name
+        String name,
+        boolean active
 ) {
     public static User toDomainEntity(UserPersistenceView view) {
-        return new User(view.id, view.name);
+        return new User(view.id, view.name, view.active);
     }
 };
 

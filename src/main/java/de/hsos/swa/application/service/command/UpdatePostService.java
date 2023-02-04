@@ -29,13 +29,21 @@ public class UpdatePostService implements UpdatePostUseCase {
     @Override
     public ApplicationResult<Post> updatePost(UpdatePostCommand command, String requestingUser) {
         RepositoryResult<User> userResult = this.userRepository.getUserByName(requestingUser);
+        //TODO Autorisierung des Nutzers
         if (userResult.error()) {
             return ApplicationResult.exception("Cannot find user " + requestingUser);
         }
 
         RepositoryResult<Post> postResult = this.postRepository.getPostById(UUID.fromString(command.postId()), true);
         if (postResult.error()) {
-            return ApplicationResult.exception("Cannot find post " + command.postId());
+            switch (postResult.status()) {
+                case ENTITY_NOT_FOUND -> {
+                    return ApplicationResult.notFound("Post not found " + command.postId());
+                }
+                case EXCEPTION -> {
+                    return ApplicationResult.exception();
+                }
+            }
         }
         Post post = postResult.get();
 
@@ -49,7 +57,7 @@ public class UpdatePostService implements UpdatePostUseCase {
 
         RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(post);
         if (updatePostResult.error()) {
-            return ApplicationResult.exception("Cannot update post " + command.postId());
+            return ApplicationResult.exception();
         }
 
         return ApplicationResult.ok(post);
