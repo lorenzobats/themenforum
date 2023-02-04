@@ -91,7 +91,7 @@
                         let errorMessage = "<strong>Invalid Input:</strong><br>"
                         error.errors.forEach(err => {
 
-                            errorMessage += err.message + '<br>';
+                            errorMessage += err.detail + '<br>';
                         });
 
                         let errorBox = document.querySelector(`#error-box`);

@@ -3,7 +3,7 @@
     {#body}
         <div class="header">
         <div>
-            <h1 class="mt-4">Manage [POSTS]</h1>
+            <h1 class="mt-4">Manage [Votes]</h1>
             <a href="/ui/admin/topics">[Manage Topics]</a>
             <a href="/ui/admin/posts">[Manage Posts]</a>
             <a href="/ui/admin/comments">[Manage Comments]</a>
@@ -15,10 +15,78 @@
             <button class="btn btn-secondary" onclick="logout()">Logout</button>
         </div>
         </div>
-        <div></div>
+        <div class="mt-5">
+        <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Type</th>
+            <th scope="col">by User</th>
+            <th scope="col">created At</th>
+            <th scope="col">view/delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        {#for entry in entries}
+            <tr>
+            <th scope="row">{entry.vote.id}</th>
+            <td>{entry.vote.voteType}</td>
+            <td>{entry.vote.user.username}</td>
+            <td>{entry.parsedCreatedAtDate}</td>
+            <td>
+
+            {#if entry.votedEntityString == 'POST'}
+                <button class="btn btn-secondary" onclick="openPostInNewTab('{entry.votedEntityId}')">View</button>
+                <button class="btn btn-danger" onclick="deleteVote('{entry.vote.id}')">Delete</button>
+            {#else if entry.votedEntityString == 'COMMENT'}
+                <button class="btn btn-secondary" onclick="openCommentInNewTab('{entry.votedEntityId}')">View</button>
+                <button class="btn btn-danger" onclick="deleteVote('{entry.vote.id}')">Delete</button>
+            {/if}
+            </td>
+            <td></td>
+            </tr>
+            {/}
+        </tbody>
+        </table>
+        </div>
     {/body}
 {/include}
 <script>
+    function openCommentInNewTab(id) {
+        window.open('/ui/posts/comment/' + id, "_blank");
+    }
+
+    function openPostInNewTab(id) {
+        window.open('/ui/posts/' + id, "_blank");
+    }
+
+    function deleteVote(id) {
+        let url = '/api/v1/votes/' + id;
+        fetch(url, {
+            method: 'DELETE',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+        })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    response.text().then(errorMessage => {
+                        console.log(errorMessage);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
     function logout() {
         document.cookie = "quarkus-credential=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         document.cookie = "quarkus-redirect-location=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";

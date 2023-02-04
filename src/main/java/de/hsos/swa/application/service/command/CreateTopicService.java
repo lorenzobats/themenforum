@@ -54,6 +54,7 @@ public class CreateTopicService implements CreateTopicUseCase {
         RepositoryResult<Topic> topicRepositoryResult = this.topicRepository.getTopicByTitle(command.title());
 
         if(topicRepositoryResult.ok())
+            //Funktioniert nur, wenn letter-casing in beiden Strings gleich ist, weil nur das passende Topic aus der DB geholt wird
             if(topicRepositoryResult.get().getTitle().equalsIgnoreCase(command.title()))
                 return ApplicationResult.notValid(command.title() + " Topic already exists");
 
