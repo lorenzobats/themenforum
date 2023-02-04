@@ -6,6 +6,5 @@ import de.hsos.swa.application.input.validation.constraints.ValidUsername;
 
 @InputPortRequest
 public record DeleteCommentCommand(
-        @ValidId String commentId,
-        @ValidUsername String username
+        @ValidId String commentId
 ) { }

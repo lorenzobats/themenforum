@@ -9,8 +9,6 @@ import de.hsos.swa.application.input.validation.constraints.ValidUsername;
 public record CommentPostCommand(
         @ValidId
         String postId,
-        @ValidUsername
-        String username,
         @ValidCommentText
         String commentText
 ){}

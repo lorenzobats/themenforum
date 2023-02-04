@@ -15,8 +15,8 @@ public class CommentPostRequestBody implements ValidatedRequestBody {
     public String text;
 
     public static class Converter {
-        public static CommentPostCommand toInputPortCommand(CommentPostRequestBody adapterRequest, String username) {
-            return new CommentPostCommand(adapterRequest.postId, username, adapterRequest.text);
+        public static CommentPostCommand toInputPortCommand(CommentPostRequestBody adapterRequest) {
+            return new CommentPostCommand(adapterRequest.postId, adapterRequest.text);
         }
     }
 }

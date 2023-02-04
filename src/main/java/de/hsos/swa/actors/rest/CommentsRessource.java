@@ -132,7 +132,7 @@ public class CommentsRessource {
         try {
             validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
-            CommentPostCommand command = CommentPostRequestBody.Converter.toInputPortCommand(request, username);
+            CommentPostCommand command = CommentPostRequestBody.Converter.toInputPortCommand(request);
             ApplicationResult<Comment> result = this.commentPostUseCase.commentPost(command, username);
             if (result.ok()) {
                 CommentDto response = CommentDto.Converter.fromDomainEntity(result.data());
@@ -165,7 +165,7 @@ public class CommentsRessource {
         try {
             validationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
-            ReplyToCommentCommand command = ReplyToCommentRequestBody.Converter.toInputPortCommand(request, id, username);
+            ReplyToCommentCommand command = ReplyToCommentRequestBody.Converter.toInputPortCommand(request, id);
             ApplicationResult<Comment> result = this.replyToCommentUseCase.replyToComment(command, username);
             if (result.ok()) {
                 CommentDto response = CommentDto.Converter.fromDomainEntity(result.data());
@@ -193,7 +193,7 @@ public class CommentsRessource {
     public Response deleteComment(@PathParam("id") String id, @Context SecurityContext securityContext) {
         try {
             String username = securityContext.getUserPrincipal().getName();
-            DeleteCommentCommand command = new DeleteCommentCommand(id, username);
+            DeleteCommentCommand command = new DeleteCommentCommand(id);
             ApplicationResult<Optional<Comment>> result = this.deleteCommentUseCase.deleteComment(command, username);
 
             if (result.ok()) {

@@ -37,9 +37,6 @@ import java.util.UUID;
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 @ApplicationService
 public class DeletePostService implements DeletePostUseCase {
-
-
-
     @Inject
     PostRepository postRepository;
 
@@ -56,6 +53,7 @@ public class DeletePostService implements DeletePostUseCase {
      */
     @Override
     public ApplicationResult<Optional<Post>> deletePost(DeletePostCommand command, String requestingUser) {
+        // TODO: Vorher abfragen ob vorhanden
         AuthorizationResult<Boolean> permission = authorizationGateway.canDeletePost(requestingUser, UUID.fromString(command.postId()));
         if(permission.denied())
             return AuthorizationResultMapper.handleRejection(permission.status());

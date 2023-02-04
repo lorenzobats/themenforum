@@ -4,6 +4,7 @@ import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.CommentPostUseCase;
 import de.hsos.swa.application.input.dto.in.CommentPostCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
+import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
@@ -25,10 +26,11 @@ import java.util.UUID;
  * @author Oliver Schlüter
  * @author Lorenzo Battiston
  * @version 1.0
- * @see CommentPostUseCase            Korrespondierende Input-Port für diesen Use Case
- * @see CommentPostCommand     Korrespondierende Request DTO für diesen Use Case
- * @see UserRepository                  Verwendeter Output-Port zum Laden des anfragenden Nutzers
- * @see PostRepository                  Verwendeter Output-Port zum Speichern des Posts nach Hinzufügen des Kommentars
+ * @see CommentPostUseCase              Korrespondierende Input-Port für diesen Use Case
+ * @see CommentPostCommand              Korrespondierende Request DTO für diesen Use Case
+ * @see UserRepository                  Output-Port zum Laden des anfragenden Nutzers
+ * @see PostRepository                  Output-Port zum Speichern des Posts nach Hinzufügen des Kommentars
+ * @see AuthorizationGateway            Output-Port zum Speichern des Kommentar-Inhabers für spätere Zugriffskontrolle
  */
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
@@ -40,34 +42,36 @@ public class CommentPostService implements CommentPostUseCase {
     @Inject
     PostRepository postRepository;
 
+    @Inject
+    AuthorizationGateway authorizationGateway;
+
     /**
      * Fügt ein Kommentar zu einem bestehenden Beitrag hinzu auf Basis der übergebenen Informationen.
      *
-     * @param command         enthält Kommentartext, Beitrags-Id und Nutzernamen für das zu erstellende Kommentar
-     * @param requestingUser
+     * @param command           enthält Kommentartext, Beitrags-Id für das zu erstellende Kommentar
+     * @param requestingUser    enthält den Nutzernamen des Erstellers
      * @return ApplicationResult<Commentar> enthält erzeugtes Kommentar bzw. Fehlermeldung bei Misserfolg
      */
     @Override
     public ApplicationResult<Comment> commentPost(CommentPostCommand command, String requestingUser) {
-        RepositoryResult<User> userResult = this.userRepository.getUserByName(command.username());
-        if (userResult.error()) {
-            return ApplicationResult.exception("Cannot find user " + command.username());
-        }
+        RepositoryResult<User> userResult = this.userRepository.getUserByName(requestingUser);
+        if (userResult.error())
+            return ApplicationResult.notValid("Cannot find user: " + requestingUser);
         User user = userResult.get();
 
         RepositoryResult<Post> postResult = this.postRepository.getPostById(UUID.fromString(command.postId()), true);
-        if (postResult.error()) {
-            return ApplicationResult.exception("Cannot find post " + command.postId());
-        }
+        if (postResult.error())
+            return ApplicationResult.notValid("Cannot find post " + command.postId());
         Post post = postResult.get();
 
         Comment comment = CommentFactory.createComment(command.commentText(), user);
         post.add(comment);
 
-        RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(post);
-        if (updatePostResult.error()) {
+        RepositoryResult<Post> updatedPostResult = this.postRepository.updatePost(post);
+        if (updatedPostResult.error()) {
             return ApplicationResult.exception("Cannot update post " + command.postId());
         }
+        authorizationGateway.addOwnership(requestingUser, comment.getId());
         return ApplicationResult.ok(comment);
     }
 }

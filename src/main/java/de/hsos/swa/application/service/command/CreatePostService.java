@@ -69,7 +69,6 @@ public class CreatePostService implements CreatePostUseCase {
             return ApplicationResult.notValid("Cannot find topic " + command.topicId());
         Topic topic = topicResult.get();
 
-
         Post post = PostFactory.createPost(command.title(), command.content(), topic, user);
         RepositoryResult<Post> useCaseResult = this.postRepository.savePost(post);
         if (useCaseResult.error())

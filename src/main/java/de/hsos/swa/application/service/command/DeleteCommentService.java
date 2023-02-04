@@ -28,19 +28,15 @@ import java.util.UUID;
  * @author Oliver Schlüter
  * @author Lorenzo Battiston
  * @version 1.0
- * @see DeleteCommentUseCase          Korrespondierende Input-Port für diesen Use Case
- * @see DeleteCommentCommand   Korrespondierende Request DTO für diesen Use Case
- * @see UserRepository                  Verwendeter Output-Port zum Laden des anfragenden Nutzers
+ * @see DeleteCommentUseCase            Korrespondierende Input-Port für diesen Use Case
+ * @see DeleteCommentCommand            Korrespondierende Request DTO für diesen Use Case
  * @see PostRepository                  Verwendeter Output-Port zum Speichern des Posts nach Hinzufügen des Kommentars
- * @see AuthorizationGateway       Verwendeter Output-Port zum Laden der Rolle des anfragenden Nutzers
+ * @see AuthorizationGateway            Output-Port zur Zugriffskontrolle für Löschvorgang
  */
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 @ApplicationService
 public class DeleteCommentService implements DeleteCommentUseCase {
-    @Inject
-    UserRepository userRepository;
-
     @Inject
     PostRepository postRepository;
 
@@ -51,36 +47,32 @@ public class DeleteCommentService implements DeleteCommentUseCase {
     /**
      * Löscht (=deaktiviert) ein Kommentar auf Basis der übergebenen Informationen.
      *
-     * @param command         enthält Kommentar-ID und Nutzernamen der Lösch-Anfrage
-     * @param requestingUser
+     * @param command           enthält ID des zu löschenden Kommentars
+     * @param requestingUser    enthält den Nutzernamen der Lösch-Anfrage
      * @return ApplicationResult<Comment> enthält gelöschtes/deaktiviertes Kommentar bzw. Fehlermeldung bei Misserfolg
      */
     @Override
     public ApplicationResult<Optional<Comment>> deleteComment(DeleteCommentCommand command, String requestingUser) {
-
-        RepositoryResult<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(command.commentId()));
-        if (postResult.error()) {
-            return ApplicationResult.exception("Cannot find post for comment " + command.commentId());
-        }
-        Post post = postResult.get();
-
-        Optional<Comment> optionalComment = post.findCommentById(UUID.fromString(command.commentId()));
-
-        if (optionalComment.isEmpty()) {
-            return ApplicationResult.noContent(Optional.empty());
-        }
-        Comment comment = optionalComment.get();
-
-        AuthorizationResult<Boolean> permission = authorizationGateway.canDeleteComment(requestingUser, comment.getId());
+        AuthorizationResult<Boolean> permission = authorizationGateway.canDeleteComment(requestingUser, UUID.fromString(command.commentId()));
         if(permission.denied())
             return AuthorizationResultMapper.handleRejection(permission.status());
 
+        RepositoryResult<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(command.commentId()));
+        if (postResult.error())
+            return ApplicationResult.exception("Cannot find post for comment " + command.commentId());
+        Post post = postResult.get();
+
+        // Bei erneutem Löschvorgang
+        Optional<Comment> optionalComment = post.findCommentById(UUID.fromString(command.commentId()));
+        if (optionalComment.isEmpty())
+            return ApplicationResult.noContent(Optional.empty());
+
+        Comment comment = optionalComment.get();
         post.delete(comment.getId());
 
         RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(post);
-        if (updatePostResult.error()) {
-            return ApplicationResult.exception("Cannot update post ");
-        }
+        if (updatePostResult.error())
+            return ApplicationResult.exception("Cannot update post");
 
         return ApplicationResult.ok(Optional.of(comment));
     }

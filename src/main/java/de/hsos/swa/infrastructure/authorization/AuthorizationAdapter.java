@@ -131,7 +131,7 @@ public class AuthorizationAdapter implements AuthorizationGateway {
         if(isActiveAdmin(accessingUser))
             return AuthorizationResult.ok();
 
-        return AuthorizationResult.notAuthenticated();
+        return AuthorizationResult.notAllowed();
     }
     @Override
     public AuthorizationResult<Boolean> canDeleteTopic(String accessingUser, UUID TopicId) {
@@ -139,7 +139,7 @@ public class AuthorizationAdapter implements AuthorizationGateway {
         if(isActiveAdmin(accessingUser))
             return AuthorizationResult.ok();
         // Member dürfen keine Topics löschen
-        return AuthorizationResult.notAuthenticated();
+        return AuthorizationResult.notAllowed();
     }
     @Override
     public AuthorizationResult<Boolean> canDeletePost(String accessingUser, UUID postId) {
@@ -161,7 +161,7 @@ public class AuthorizationAdapter implements AuthorizationGateway {
         if(isActiveRessourceOwner(accessingUser, commentId))
             return AuthorizationResult.ok();
 
-        return AuthorizationResult.notAuthenticated();
+        return AuthorizationResult.notAllowed();
     }
     @Override
     public AuthorizationResult<Boolean> canDeleteVote(String accessingUser, UUID voteId) {
