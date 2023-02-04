@@ -7,15 +7,22 @@ import javax.validation.ConstraintValidatorContext;
 
 public class PostContentValidator implements ConstraintValidator<ValidPostContent, String> {
     private String message;
+    private boolean nullable;
 
     @Override
     public void initialize(ValidPostContent annotation) {
+        message = annotation.message();
+        nullable = annotation.nullable();
     }
 
     @Override
     public boolean isValid(String content, ConstraintValidatorContext context) {
-        if (content == null)
+        if (content == null && nullable)
             return true;
+
+        if(content == null) {
+            return false;
+        }
 
         if (content.length() < 2 || content.length() > 250) {
             return constraintValidation(context, "Post content must be between 2 and 250 characters");

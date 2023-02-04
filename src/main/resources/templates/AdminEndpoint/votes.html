@@ -21,6 +21,7 @@
         <tr>
             <th scope="col">ID</th>
             <th scope="col">Type</th>
+            <th scope="col">Content Type</th>
             <th scope="col">by User</th>
             <th scope="col">created At</th>
             <th scope="col">view/delete</th>
@@ -31,6 +32,7 @@
             <tr>
             <th scope="row">{entry.vote.id}</th>
             <td>{entry.vote.voteType}</td>
+            <td>{entry.votedEntityString}</td>
             <td>{entry.vote.user.username}</td>
             <td>{entry.parsedCreatedAtDate}</td>
             <td>

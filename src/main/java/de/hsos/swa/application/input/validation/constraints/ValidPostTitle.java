@@ -16,4 +16,6 @@ public @interface ValidPostTitle {
     String message() default "Invalid Post Title";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
+
+    boolean nullable() default false;
 }

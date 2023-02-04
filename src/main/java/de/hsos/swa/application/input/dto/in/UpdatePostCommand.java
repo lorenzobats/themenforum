@@ -8,6 +8,6 @@ import de.hsos.swa.application.input.validation.constraints.ValidPostTitle;
 @InputPortRequest
 public record UpdatePostCommand(
         @ValidId String postId,
-        @ValidPostTitle String title,
-        @ValidPostContent String content
+        @ValidPostTitle(nullable = true) String title,
+        @ValidPostContent(nullable = true) String content
 ) {}

@@ -7,16 +7,22 @@ import javax.validation.ConstraintValidatorContext;
 
 public class PostTitleValidator implements ConstraintValidator<ValidPostTitle, String> {
     private String message;
+    private boolean nullable;
 
     @Override
     public void initialize(ValidPostTitle annotation) {
         message = annotation.message();
+        nullable = annotation.nullable();
     }
 
     @Override
     public boolean isValid(String title, ConstraintValidatorContext context) {
-        if (title == null)
+        if (title == null && nullable)
             return true;
+
+        if(title == null) {
+            return false;
+        }
 
         if(title.length() < 2 || title.length() > 40) {
             return constraintValidation(context, "Post Title must be between 2 and 40 characters");
