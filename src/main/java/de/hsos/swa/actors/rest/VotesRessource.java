@@ -135,7 +135,7 @@ public class VotesRessource {
     public Response deleteVote(@PathParam("id") String id, @Context SecurityContext securityContext) {
         try {
             String username = securityContext.getUserPrincipal().getName();
-            DeleteVoteCommand command = new DeleteVoteCommand(id, username);
+            DeleteVoteCommand command = new DeleteVoteCommand(id);
             ApplicationResult<Optional<Vote>> result = this.deleteVoteUseCase.deleteVote(command, username);
 
             if (result.ok()) {

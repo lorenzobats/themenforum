@@ -50,7 +50,7 @@ public class DeleteVoteService implements DeleteVoteUseCase {
             return AuthorizationResultMapper.handleRejection(permission.status());
 
 
-        RepositoryResult<User> userResult = this.userRepository.getUserByName(command.username());
+        RepositoryResult<User> userResult = this.userRepository.getUserByName(requestingUser);
         if (userResult.error()) {
             return ApplicationResult.exception("Cannot retrieve User");
         }
