@@ -41,7 +41,6 @@ public class CommentPostService implements CommentPostUseCase {
     UserRepository userRepository;
     @Inject
     PostRepository postRepository;
-
     @Inject
     AuthorizationGateway authorizationGateway;
 
@@ -71,8 +70,9 @@ public class CommentPostService implements CommentPostUseCase {
         if (updatedPostResult.error()) {
             return ApplicationResult.exception("Cannot update post " + command.postId());
         }
+
         if(authorizationGateway.addOwnership(requestingUser, comment.getId()).denied())
-            return ApplicationResult.exception("Cannot create comment");
+            return ApplicationResult.exception("Cannot create comment for post");
         return ApplicationResult.ok(comment);
     }
 }

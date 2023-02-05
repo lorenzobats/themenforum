@@ -1,15 +1,20 @@
 package de.hsos.swa.application.service.command;
 
 import de.hsos.swa.application.annotations.ApplicationService;
+import de.hsos.swa.application.input.DeleteVoteUseCase;
 import de.hsos.swa.application.input.DisableUserUseCase;
+import de.hsos.swa.application.input.dto.in.DeleteVoteCommand;
 import de.hsos.swa.application.input.dto.in.DisableUserCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
+import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
+import de.hsos.swa.application.output.repository.VoteRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.service.AuthorizationResultMapper;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
+import de.hsos.swa.domain.service.VoteService;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -17,6 +22,19 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Die UseCase Klasse DisableUserService implementiert das Interface
+ * DisableUserUseCase der Boundary des Application Hexagons.
+ * Es realisiert die Applikationslogik für das Deaktivieren eines Users durch einen Admin
+ *
+ * @author Oliver Schlüter
+ * @author Lorenzo Battiston
+ * @version 1.0
+ * @see DisableUserUseCase              Korrespondierende Input-Port für diesen Use Case
+ * @see DisableUserCommand              Korrespondierende Request DTO für diesen Use Case
+ * @see UserRepository                  Output-Port zum Finden und Updaten des Users
+ * @see AuthorizationGateway            Output-Port zum Deaktivieren des Users
+ */
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 @ApplicationService

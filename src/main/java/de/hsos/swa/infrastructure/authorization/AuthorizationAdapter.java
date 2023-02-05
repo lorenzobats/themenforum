@@ -1,6 +1,5 @@
 package de.hsos.swa.infrastructure.authorization;
 
-
 import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
@@ -208,7 +207,7 @@ public class AuthorizationAdapter implements AuthorizationGateway {
         if(isActiveRessourceOwner(accessingUser, commentId))
             return AuthorizationResult.ok();
 
-        return AuthorizationResult.notAuthenticated();
+        return AuthorizationResult.notAllowed();
     }
 
     //------------------------------------------------------------------------------------------------------------------

@@ -72,6 +72,7 @@ public class ReplyToCommentService implements ReplyToCommentUseCase {
         if (updatedPostResult.error()) {
             return ApplicationResult.exception("Cannot reply to comment");
         }
+
         if(authorizationGateway.addOwnership(requestingUser, reply.getId()).denied())
             return ApplicationResult.exception("Cannot reply to comment");
         return ApplicationResult.ok(reply);

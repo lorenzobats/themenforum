@@ -177,7 +177,7 @@ public class PostsRessource {
     })
     public Response updatePost(
             @NotNull @RequestBody(
-                    description = "Post to create",
+                    description = "Post to update",
                     required = true,
                     content = @Content(schema = @Schema(implementation = UpdatePostRequestBody.class)))
             UpdatePostRequestBody request,

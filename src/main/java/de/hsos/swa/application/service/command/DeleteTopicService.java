@@ -37,7 +37,6 @@ public class DeleteTopicService implements DeleteTopicUseCase {
 
     @Inject
     TopicRepository topicRepository;
-
     @Inject
     AuthorizationGateway authorizationGateway;
 
@@ -59,9 +58,8 @@ public class DeleteTopicService implements DeleteTopicUseCase {
             return AuthorizationResultMapper.handleRejection(permission.status());
 
         RepositoryResult<Topic> result = this.topicRepository.deleteTopic(UUID.fromString(command.id()));
-        if (result.error()) {
+        if (result.error())
             return ApplicationResult.exception("Cannot delete post");
-        }
 
         return ApplicationResult.ok(Optional.of(result.get()));
     }

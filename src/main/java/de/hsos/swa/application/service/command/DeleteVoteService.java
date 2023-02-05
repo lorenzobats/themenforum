@@ -46,13 +46,10 @@ public class DeleteVoteService implements DeleteVoteUseCase {
 
     @Inject
     VoteRepository voteRepository;
-
     @Inject
     PostRepository postRepository;
-
     @Inject
     VoteService voteService;
-
     @Inject
     AuthorizationGateway authorizationGateway;
 

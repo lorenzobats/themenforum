@@ -16,7 +16,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-
 /**
  * Die UseCase Klasse CreateTopicService implementiert das Interface
  * CreateTopicUseCase der Boundary des Application Hexagons.
@@ -30,7 +29,6 @@ import javax.transaction.Transactional;
  * @see UserRepository                  Output-Port zum Laden des anfragenden Nutzers
  * @see TopicRepository                 Output-Port zum Speichern des erzeugten Themas
  * @see AuthorizationGateway            Output-Port zum Speichern des Topic-Inhabers für spätere Zugriffskontrolle
-
  */
 
 @RequestScoped
@@ -42,7 +40,6 @@ public class CreateTopicService implements CreateTopicUseCase {
     UserRepository userRepository;
     @Inject
     TopicRepository topicRepository;
-
     @Inject
     AuthorizationGateway authorizationGateway;
 

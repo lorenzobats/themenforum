@@ -40,7 +40,6 @@ public class DeletePostService implements DeletePostUseCase {
     @Inject
     AuthorizationGateway authorizationGateway;
 
-
     /**
      * Löscht ein Post auf Basis der übergebenen Informationen.
      *

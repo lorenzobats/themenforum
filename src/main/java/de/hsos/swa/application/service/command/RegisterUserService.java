@@ -1,6 +1,8 @@
 package de.hsos.swa.application.service.command;
 
 import de.hsos.swa.application.annotations.ApplicationService;
+import de.hsos.swa.application.input.DisableUserUseCase;
+import de.hsos.swa.application.input.dto.in.DisableUserCommand;
 import de.hsos.swa.application.input.dto.in.RegisterUserCommand;
 import de.hsos.swa.application.input.RegisterUserUseCase;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
@@ -18,6 +20,19 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 
+/**
+ * Die UseCase Klasse RegisterUserService implementiert das Interface
+ * RegisterUserUseCase der Boundary des Application Hexagons.
+ * Es realisiert die Applikationslogik für das Deaktivieren eines Users durch einen Admin
+ *
+ * @author Oliver Schlüter
+ * @author Lorenzo Battiston
+ * @version 1.0
+ * @see RegisterUserUseCase             Korrespondierende Input-Port für diesen Use Case
+ * @see RegisterUserCommand             Korrespondierende Request DTO für diesen Use Case
+ * @see UserRepository                  Output-Port zum Speichern des Forum-Nutzers
+ * @see AuthorizationGateway            Output-Port zum Registrieren eines Users (Zugangsdaten speichern)
+ */
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 @ApplicationService
@@ -28,9 +43,13 @@ public class RegisterUserService implements RegisterUserUseCase {
     @Inject
     AuthorizationGateway authorizationGateway;
 
-    @Inject
-    Logger log;
 
+    /**
+     * Erstellt einen neuen Nutzer und registriert diesen auf Basis der übergebenen Informationen.
+     *
+     * @param command           enthält Nuternamen und Passwort des zu registrierenden Nutzers
+     * @return ApplicationResult<User> enthält erstellten Nutzer bzw. Fehlermeldung bei Misserfolg
+     */
     @Override
     public ApplicationResult<User> registerUser(RegisterUserCommand command) {
         User user = UserFactory.createUser(command.username());
@@ -41,16 +60,14 @@ public class RegisterUserService implements RegisterUserUseCase {
                 user.getId());
 
         AuthorizationResult<Void> registration = this.authorizationGateway.registerUser(createUserAuthRequest);
-       if(registration.denied())
-           return ApplicationResult.notValid(createUserAuthRequest.getUsername() + " is not available as a Username");
+        if (registration.denied())
+            return ApplicationResult.notValid(createUserAuthRequest.getUsername() + " is not available as a Username");
 
 
-       RepositoryResult<User> createUserResponse = this.userRepository.saveUser(user);
+        RepositoryResult<User> createUserResponse = this.userRepository.saveUser(user);
         if (createUserResponse.error())
             return ApplicationResult.exception("Registration failed");
 
-
         return ApplicationResult.ok(createUserResponse.get());
     }
-
 }

@@ -38,13 +38,8 @@ import java.util.UUID;
 public class DeleteCommentService implements DeleteCommentUseCase {
     @Inject
     PostRepository postRepository;
-
-    @Inject
-    CommentRepository commentRepository;
-
     @Inject
     AuthorizationGateway authorizationGateway;
-
 
     /**
      * Löscht (=deaktiviert) ein Kommentar auf Basis der übergebenen Informationen.
