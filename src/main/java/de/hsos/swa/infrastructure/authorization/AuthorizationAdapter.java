@@ -57,6 +57,25 @@ public class AuthorizationAdapter implements AuthorizationGateway {
             return AuthorizationResult.exception();
         }
     }
+
+    @Override
+    public AuthorizationResult<Void> disableUser(String username) {
+        Optional<AuthUser> optionalAuthUser = this.loadUser(username);
+        if(optionalAuthUser.isEmpty())
+            return AuthorizationResult.exception();
+
+        // Deaktivierte Nutzer
+        AuthUser owner = optionalAuthUser.get();
+        owner.disable();
+
+        try{
+            entityManager.merge(owner);
+            return AuthorizationResult.ok();
+        } catch (PersistenceException e) {
+            return AuthorizationResult.exception();
+        }
+    }
+
     public AuthorizationResult<Void> addOwnership(String owningUser, UUID ressourceId){
         Optional<AuthUser> optionalAuthUser = this.loadUser(owningUser);
         if(optionalAuthUser.isEmpty())
@@ -74,6 +93,7 @@ public class AuthorizationAdapter implements AuthorizationGateway {
             return AuthorizationResult.exception();
         }
     }
+    @Override
     public AuthorizationResult<Void> removeOwnership(String owningUser, UUID ressourceId){
         Optional<OwnerOf> optionalOwnerOf = this.loadOwnership(ressourceId);
         if(optionalOwnerOf.isEmpty())
@@ -126,11 +146,13 @@ public class AuthorizationAdapter implements AuthorizationGateway {
     //------------------------------------------------------------------------------------------------------------------
     // DELETE PERMISSION
     @Override
-    public AuthorizationResult<Boolean> canDeleteUser(String accessingUser, UUID userId) {
-        // Admins dürfen alle User löschen
+    public AuthorizationResult<Boolean> canDeleteUser(String accessingUser, String username) {
+        // Nur Admins dürfen User deaktivieren/löschen
         if(isActiveAdmin(accessingUser))
-            return AuthorizationResult.ok();
-
+            // Admins können sich nicht selbst deaktivieren
+            if(!accessingUser.equals(username)){
+                return AuthorizationResult.ok();
+            }
         return AuthorizationResult.notAllowed();
     }
     @Override
@@ -190,7 +212,7 @@ public class AuthorizationAdapter implements AuthorizationGateway {
     }
 
     //------------------------------------------------------------------------------------------------------------------
-    // DELETE PERMISSION
+    // UTILITY METHODS
     private Optional<AuthUser> loadUser(String username) {
         CriteriaBuilder<AuthUser> query = criteriaBuilderFactory.create(entityManager, AuthUser.class);
         query.where("username").eq(username);

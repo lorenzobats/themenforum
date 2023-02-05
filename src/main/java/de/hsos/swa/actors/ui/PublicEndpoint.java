@@ -63,6 +63,8 @@ public class PublicEndpoint {
                 List<VoteWithVotedEntityReference> votes,
                 String username,
                 String selection);
+
+        public static native TemplateInstance error_login();
     }
 
 
@@ -89,6 +91,15 @@ public class PublicEndpoint {
     @Operation(hidden = true)
     public TemplateInstance login() {
         return Templates.login();
+    }
+
+    @GET
+    @Path("/error")
+    @Produces(MediaType.TEXT_HTML)
+    @PermitAll
+    @Operation(hidden = true)
+    public TemplateInstance error() {
+        return Templates.error_login();
     }
 
     @GET
@@ -124,4 +135,6 @@ public class PublicEndpoint {
 
         return Templates.profile(topics.data(), posts.data(), comments.data(), votes.data(), username, selection);
     }
+
+
 }

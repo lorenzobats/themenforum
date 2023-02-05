@@ -51,6 +51,7 @@ public class AuthUser {
     }
 
     public void disable() {
+        this.password = BcryptUtil.bcryptHash(String.valueOf(UUID.randomUUID()));
         this.active = false;
     }
 

@@ -3,19 +3,16 @@ package de.hsos.swa.actors.rest;
 import de.hsos.swa.actors.rest.dto.in.RegisterUserRequestBody;
 import de.hsos.swa.actors.rest.dto.in.validation.ErrorResponse;
 import de.hsos.swa.actors.rest.dto.in.validation.ValidationService;
-import de.hsos.swa.actors.rest.dto.out.CommentDto;
 import de.hsos.swa.actors.rest.dto.out.UserDto;
 import de.hsos.swa.application.annotations.Adapter;
-import de.hsos.swa.application.input.DeleteUserUseCase;
+import de.hsos.swa.application.input.DisableUserUseCase;
 import de.hsos.swa.application.input.GetAllUsersUseCase;
 import de.hsos.swa.application.input.GetUserByNameUseCase;
 import de.hsos.swa.application.input.RegisterUserUseCase;
-import de.hsos.swa.application.input.dto.in.DeleteCommentCommand;
-import de.hsos.swa.application.input.dto.in.DeleteUserCommand;
+import de.hsos.swa.application.input.dto.in.DisableUserCommand;
 import de.hsos.swa.application.input.dto.in.GetUserByNameQuery;
 import de.hsos.swa.application.input.dto.in.RegisterUserCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
-import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.User;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -53,7 +50,7 @@ public class UsersRessource {
     RegisterUserUseCase registerUserUseCase;
 
     @Inject
-    DeleteUserUseCase deleteUserUseCase;
+    DisableUserUseCase disableUserUseCase;
 
     // QUERIES
     @Inject
@@ -154,8 +151,8 @@ public class UsersRessource {
     public Response deleteUser(@PathParam("id") String userid, @Context SecurityContext securityContext) {
         try {
             String username = securityContext.getUserPrincipal().getName();
-            DeleteUserCommand command = new DeleteUserCommand(userid);
-            ApplicationResult<Optional<User>> result = this.deleteUserUseCase.deleteUser(command, username);
+            DisableUserCommand command = new DisableUserCommand(userid);
+            ApplicationResult<Optional<User>> result = this.disableUserUseCase.deleteUser(command, username);
 
             if (result.ok()) {
                 if (result.data().isPresent()) {

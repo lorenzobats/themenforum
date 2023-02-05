@@ -10,20 +10,23 @@ import java.util.UUID;
 public interface AuthorizationGateway {
     AuthorizationResult<Void> registerUser(SaveAuthUserCommand outputPortRequest);
 
+    AuthorizationResult<Void> disableUser(String name);
+
     AuthorizationResult<Void> addOwnership(String owningUser, UUID ressourceId);
 
-    public AuthorizationResult<Void> removeOwnership(String owningUser, UUID ressourceId);
+    AuthorizationResult<Void> removeOwnership(String owningUser, UUID ressourceId);
 
+    //------------------------------------------------------------------------------------------------------------------
+    // READ PERMISSION
     AuthorizationResult<Boolean> canAccessUsers(String accessingUser);
     AuthorizationResult<Boolean> canAccessVotes(String accessingUser);
     AuthorizationResult<Boolean> canAccessVotesBy(String accessingUser, String votesOwner);
 
+    //------------------------------------------------------------------------------------------------------------------
+    // DELETE PERMISSION
+    AuthorizationResult<Boolean> canDeleteUser(String accessingUser, String username);
     AuthorizationResult<Boolean> canDeleteComment(String accessingUser, UUID CommentId);
-
     AuthorizationResult<Boolean> canDeletePost(String accessingUser, UUID PostId);
-
-    AuthorizationResult<Boolean> canDeleteUser(String accessingUser, UUID UserId);
-
     AuthorizationResult<Boolean> canDeleteVote(String accessingUser, UUID VoteId);
     AuthorizationResult<Boolean> canDeleteTopic(String accessingUser, UUID TopicId);
 
