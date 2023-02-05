@@ -1,19 +1,16 @@
 package de.hsos.swa.application.service.command;
 
 import de.hsos.swa.application.annotations.ApplicationService;
-import de.hsos.swa.application.input.DisableUserUseCase;
-import de.hsos.swa.application.input.dto.in.DisableUserCommand;
 import de.hsos.swa.application.input.dto.in.RegisterUserCommand;
 import de.hsos.swa.application.input.RegisterUserUseCase;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.auth.dto.out.SaveAuthUserCommand;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.domain.factory.UserFactory;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
-import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -47,7 +44,7 @@ public class RegisterUserService implements RegisterUserUseCase {
     /**
      * Erstellt einen neuen Nutzer und registriert diesen auf Basis der übergebenen Informationen.
      *
-     * @param command           enthält Nuternamen und Passwort des zu registrierenden Nutzers
+     * @param command           enthält Nutzernamen und Passwort des zu registrierenden Nutzers
      * @return ApplicationResult<User> enthält erstellten Nutzer bzw. Fehlermeldung bei Misserfolg
      */
     @Override

@@ -5,7 +5,7 @@ import de.hsos.swa.application.input.GetPostByCommentIdUseCase;
 import de.hsos.swa.application.input.dto.in.GetPostByCommentIdQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.PostRepository;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.domain.entity.Post;
 
 import javax.enterprise.context.RequestScoped;

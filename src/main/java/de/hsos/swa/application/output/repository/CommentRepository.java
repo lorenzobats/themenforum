@@ -1,6 +1,6 @@
 package de.hsos.swa.application.output.repository;
 
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.domain.entity.Comment;
 
 import java.util.List;

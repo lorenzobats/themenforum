@@ -9,9 +9,8 @@ import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 import de.hsos.swa.application.output.repository.dto.in.VoteQueryDto;
 import de.hsos.swa.application.output.repository.VoteRepository;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.application.service.AuthorizationResultMapper;
-import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;

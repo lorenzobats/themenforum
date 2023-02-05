@@ -5,7 +5,7 @@ import de.hsos.swa.application.input.GetTopicByIdUseCase;
 import de.hsos.swa.application.input.dto.in.GetTopicByIdQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.TopicRepository;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.domain.entity.Topic;
 
 import javax.enterprise.context.RequestScoped;

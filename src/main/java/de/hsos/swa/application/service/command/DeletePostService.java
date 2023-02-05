@@ -6,7 +6,7 @@ import de.hsos.swa.application.input.dto.in.DeletePostCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.PostRepository;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.application.service.AuthorizationResultMapper;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
@@ -44,7 +44,7 @@ public class DeletePostService implements DeletePostUseCase {
      * Löscht ein Post auf Basis der übergebenen Informationen.
      *
      * @param command           enthält ID des zu löschenden Posts
-     * @param requestingUser    enthält den Nutzernamen der Lösch-Anfrage
+     * @param requestingUser    enthält den Nutzernamen der Löschen-Anfrage
      * @return ApplicationResult<Post> enthält gelöschten Beitrag bzw. Fehlermeldung bei Misserfolg
      */
     @Override

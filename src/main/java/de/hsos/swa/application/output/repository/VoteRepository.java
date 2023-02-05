@@ -1,7 +1,7 @@
 package de.hsos.swa.application.output.repository;
 
 import de.hsos.swa.application.output.repository.dto.in.VoteQueryDto;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 
 import java.util.List;
 import java.util.UUID;

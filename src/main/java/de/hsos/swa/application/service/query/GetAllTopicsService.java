@@ -5,7 +5,7 @@ import de.hsos.swa.application.input.GetAllTopicsUseCase;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.output.repository.TopicRepository;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;

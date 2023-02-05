@@ -6,8 +6,6 @@ import de.hsos.swa.application.input.validation.constraints.ValidUsername;
 
 @InputPortRequest
 public record DeleteTopicCommand(
-        @ValidId
-        String id,
-        @ValidUsername
-        String username
+        @ValidId String id,
+        @ValidUsername String username
 ) {}

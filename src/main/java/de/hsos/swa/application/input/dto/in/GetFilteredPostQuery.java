@@ -15,16 +15,5 @@ public record GetFilteredPostQuery(
         @ValidPostFilterParams Map<PostFilterParams, Object> filterParams,
         @NotNull Boolean includeComments,
         @ValidEnumValue(enumClass = SortingParams.class) String sortingParams,
-        @ValidEnumValue(enumClass = OrderParams.class) String orderParams) {
-
-    public GetFilteredPostQuery(
-            Map<PostFilterParams, Object> filterParams,
-            Boolean includeComments,
-            String sortingParams,
-            String orderParams) {
-        this.filterParams = filterParams;
-        this.includeComments = includeComments;
-        this.sortingParams = sortingParams;
-        this.orderParams = orderParams;
-    }
-}
+        @ValidEnumValue(enumClass = OrderParams.class) String orderParams
+) {}

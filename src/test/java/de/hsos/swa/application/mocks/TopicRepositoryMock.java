@@ -2,7 +2,7 @@
 //
 //import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 //import de.hsos.swa.application.output.repository.TopicRepository;
-//import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+//import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 //import de.hsos.swa.domain.entity.Topic;
 //import io.quarkus.test.Mock;
 //

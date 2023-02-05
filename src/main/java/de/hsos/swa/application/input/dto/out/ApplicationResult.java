@@ -1,7 +1,5 @@
 package de.hsos.swa.application.input.dto.out;
 
-import de.hsos.swa.domain.entity.Topic;
-
 public class ApplicationResult<T> {
 
     public enum Status {

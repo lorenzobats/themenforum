@@ -5,7 +5,7 @@ import de.hsos.swa.application.input.GetAllCommentsUseCase;
 import de.hsos.swa.application.input.dto.in.GetAllCommentsQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.CommentRepository;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.domain.entity.Comment;
 
 import javax.enterprise.context.RequestScoped;

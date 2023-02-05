@@ -5,7 +5,7 @@ import de.hsos.swa.application.input.GetFilteredPostsUseCase;
 import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.PostRepository;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.application.service.query.params.OrderParams;
 import de.hsos.swa.application.service.query.params.SortingParams;
 import de.hsos.swa.domain.entity.Post;

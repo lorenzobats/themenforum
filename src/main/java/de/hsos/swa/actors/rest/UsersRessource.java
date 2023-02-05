@@ -87,7 +87,7 @@ public class UsersRessource {
     }
 
     @GET
-    @Path("{username}")
+    @Path("/name/{username}")
     @RolesAllowed({"admin"})
     @Tag(name = "Users", description = "Zugriff auf die Nutzer")
     @Operation(summary = "getUserByName", description = "Holt den User mit dem übergebenen Username")
@@ -140,7 +140,7 @@ public class UsersRessource {
     }
 
     @DELETE
-    @Path("{id}")
+    @Path("/{id}")
     @RolesAllowed("admin")
     @Operation(summary = "deleteUser", description = "Löscht den User mit der übergebenen ID")
     @Tag(name = "Users", description = "Zugriff auf die Nutzer")

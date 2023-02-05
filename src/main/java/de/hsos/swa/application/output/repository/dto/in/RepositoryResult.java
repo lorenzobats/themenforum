@@ -1,4 +1,4 @@
-package de.hsos.swa.application.output.repository.dto.out;
+package de.hsos.swa.application.output.repository.dto.in;
 
 public class RepositoryResult<T> {
     public enum Status {

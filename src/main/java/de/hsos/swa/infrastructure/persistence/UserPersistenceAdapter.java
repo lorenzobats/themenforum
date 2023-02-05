@@ -2,7 +2,7 @@ package de.hsos.swa.infrastructure.persistence;
 
 import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.infrastructure.persistence.model.UserPersistenceModel;
@@ -55,26 +55,6 @@ public class UserPersistenceAdapter implements UserRepository {
         } catch (NoResultException e) {
             return RepositoryResult.notFound();
         } catch (IllegalArgumentException | TransactionRequiredException e) {
-            log.error(e);
-            return RepositoryResult.exception();
-        }
-    }
-
-    @Override
-    public RepositoryResult<User> deleteUser(UUID userId) {
-        try {
-            UserPersistenceModel user = entityManager.find(UserPersistenceModel.class, userId);
-            if (user != null) {
-                entityManager.remove(user);
-                return RepositoryResult.ok(UserPersistenceModel.Converter.toDomainEntity(user));
-            }
-            return RepositoryResult.notFound();
-        } catch (NoResultException e) {
-            return RepositoryResult.notFound();
-        } catch (IllegalArgumentException e) {
-            log.warn(e);
-            return RepositoryResult.exception();
-        } catch (PersistenceException e) {
             log.error(e);
             return RepositoryResult.exception();
         }

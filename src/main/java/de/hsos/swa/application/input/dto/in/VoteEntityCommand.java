@@ -2,7 +2,6 @@ package de.hsos.swa.application.input.dto.in;
 
 import de.hsos.swa.application.annotations.InputPortRequest;
 import de.hsos.swa.application.input.validation.constraints.ValidId;
-import de.hsos.swa.application.input.validation.constraints.ValidUsername;
 import de.hsos.swa.domain.vo.VotedEntityType;
 import de.hsos.swa.domain.vo.VoteType;
 
@@ -13,4 +12,4 @@ public record VoteEntityCommand(
         @ValidId String entityId,
         @NotNull VoteType voteType,
         @NotNull VotedEntityType entityType
-) { }
+) {}

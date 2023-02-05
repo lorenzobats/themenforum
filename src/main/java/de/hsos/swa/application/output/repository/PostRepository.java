@@ -1,6 +1,6 @@
 package de.hsos.swa.application.output.repository;
 
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
 import de.hsos.swa.domain.entity.Post;
 
@@ -23,8 +23,6 @@ public interface PostRepository {
     //------------------------------------------------------------------------------------------------------------------
     // QUERIES
     RepositoryResult<List<Post>> getFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments);
-
-    RepositoryResult<List<Post>> getAllPosts(boolean includeComments);
 
     RepositoryResult<Post> getPostById(UUID postId, boolean includeComments);
 

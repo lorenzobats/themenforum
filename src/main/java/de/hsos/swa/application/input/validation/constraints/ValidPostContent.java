@@ -1,6 +1,5 @@
 package de.hsos.swa.application.input.validation.constraints;
 
-
 import de.hsos.swa.application.input.validation.validator.PostContentValidator;
 
 import javax.validation.Constraint;

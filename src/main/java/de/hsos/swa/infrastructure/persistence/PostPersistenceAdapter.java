@@ -4,7 +4,7 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViewSetting;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.domain.entity.Post;
@@ -95,22 +95,6 @@ public class PostPersistenceAdapter implements PostRepository {
 
     //------------------------------------------------------------------------------------------------------------------
     // QUERIES
-    @Override
-    public RepositoryResult<List<Post>> getAllPosts(boolean includeComments) {
-        try {
-            CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
-            return getPostResultList(includeComments, criteriaBuilder);
-        } catch (NoResultException e) {
-            return RepositoryResult.notFound();
-        } catch (IllegalArgumentException e) {
-            log.warn(e);
-            return RepositoryResult.exception();
-        } catch (PersistenceException e) {
-            log.error(e);
-            return RepositoryResult.exception();
-        }
-    }
-
     @Override
     public RepositoryResult<List<Post>> getFilteredPosts(Map<PostFilterParams, Object> filterParams, boolean includeComments) {
         try {

@@ -7,7 +7,7 @@ import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 import de.hsos.swa.application.output.repository.PostRepository;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.application.service.AuthorizationResultMapper;
 import de.hsos.swa.domain.entity.Post;
 
@@ -44,7 +44,7 @@ public class UpdatePostService implements UpdatePostUseCase {
      * Aktualisiert optional Titel und Inhalt eines bestehenden Beitrags
      * @param command           enthält ID des Posts, sowie optionalen neuen Titel und/oder Content
      * @param requestingUser    enthält den Nutzernamen der Update-Anfrage
-     * @return ApplicationResult<Post>  enthält den Post nachdem dieser optional aktualisiert wurde
+     * @return ApplicationResult<Post>  enthält den Post, nachdem dieser optional aktualisiert wurde
      */
     @Override
     public ApplicationResult<Post> updatePost(UpdatePostCommand command, String requestingUser) {

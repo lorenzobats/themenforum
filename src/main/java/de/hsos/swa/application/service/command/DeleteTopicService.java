@@ -6,7 +6,7 @@ import de.hsos.swa.application.input.dto.in.DeleteTopicCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.TopicRepository;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.application.service.AuthorizationResultMapper;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
@@ -44,7 +44,7 @@ public class DeleteTopicService implements DeleteTopicUseCase {
      * Löscht ein Thema auf Basis der übergebenen Informationen.
      *
      * @param command           enthält ID des zu löschenden Topics
-     * @param requestingUser    enthält den Nutzernamen der Lösch-Anfrage
+     * @param requestingUser    enthält den Nutzernamen der Löschen-Anfrage
      * @return ApplicationResult<Topic> enthält gelöschtes Thema bzw. Fehlermeldung bei Misserfolg
      */
     @Override

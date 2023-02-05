@@ -6,10 +6,9 @@ import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViewSetting;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.output.repository.TopicRepository;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.infrastructure.persistence.model.TopicPersistenceModel;
-import de.hsos.swa.infrastructure.persistence.model.UserPersistenceModel;
 import de.hsos.swa.infrastructure.persistence.view.TopicPersistenceView;
 import org.jboss.logging.Logger;
 
@@ -44,21 +43,6 @@ public class TopicPersistenceAdapter implements TopicRepository {
         TopicPersistenceModel topicPersistenceModel = TopicPersistenceModel.Converter.toPersistenceModel(topic);
         try {
             entityManager.persist(topicPersistenceModel);
-            return RepositoryResult.ok(TopicPersistenceModel.Converter.toDomainEntity(topicPersistenceModel));
-        } catch (IllegalArgumentException e) {
-            log.warn(e);
-            return RepositoryResult.exception();
-        } catch (PersistenceException e) {
-            log.error(e);
-            return RepositoryResult.exception();
-        }
-    }
-
-    @Override
-    public RepositoryResult<Topic> updateTopic(Topic topic) {
-        TopicPersistenceModel topicPersistenceModel = TopicPersistenceModel.Converter.toPersistenceModel(topic);
-        try {
-            entityManager.merge(topicPersistenceModel);
             return RepositoryResult.ok(TopicPersistenceModel.Converter.toDomainEntity(topicPersistenceModel));
         } catch (IllegalArgumentException e) {
             log.warn(e);

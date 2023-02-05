@@ -5,7 +5,7 @@ import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViewSetting;
 import de.hsos.swa.application.output.repository.dto.in.VoteQueryDto;
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.application.output.repository.VoteRepository;
 import de.hsos.swa.infrastructure.persistence.model.VotePersistenceModel;
 import de.hsos.swa.infrastructure.persistence.view.VotePersistenceView;

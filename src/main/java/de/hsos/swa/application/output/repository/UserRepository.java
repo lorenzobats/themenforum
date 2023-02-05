@@ -1,6 +1,6 @@
 package de.hsos.swa.application.output.repository;
 
-import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
+import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.domain.entity.User;
 
 import java.util.List;
@@ -14,7 +14,6 @@ public interface UserRepository {
     // COMMANDS
     RepositoryResult<User> saveUser(User user);
     RepositoryResult<User> updateUser(User user);
-    RepositoryResult<User> deleteUser(UUID userId);
 
     //------------------------------------------------------------------------------------------------------------------
     // QUERIES

@@ -1,6 +1,5 @@
 package de.hsos.swa.application.input.validation.validator;
 
-import de.hsos.swa.application.input.validation.constraints.ValidPostTitle;
 import de.hsos.swa.application.input.validation.constraints.ValidTopicTitle;
 
 import javax.validation.ConstraintValidator;

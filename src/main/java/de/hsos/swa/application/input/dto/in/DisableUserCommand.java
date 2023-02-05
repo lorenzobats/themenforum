@@ -6,4 +6,4 @@ import de.hsos.swa.application.input.validation.constraints.ValidId;
 @InputPortRequest
 public record DisableUserCommand(
         @ValidId String userId
-) { }
+) {}
