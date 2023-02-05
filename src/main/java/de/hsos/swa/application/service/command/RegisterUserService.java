@@ -32,11 +32,11 @@ public class RegisterUserService implements RegisterUserUseCase {
     Logger log;
 
     @Override
-    public ApplicationResult<User> registerUser(RegisterUserCommand request) {
-        User user = UserFactory.createUser(request.username());
+    public ApplicationResult<User> registerUser(RegisterUserCommand command) {
+        User user = UserFactory.createUser(command.username());
         SaveAuthUserCommand createUserAuthRequest = new SaveAuthUserCommand(
-                request.username(),
-                request.password(),
+                command.username(),
+                command.password(),
                 "member",
                 user.getId());
 

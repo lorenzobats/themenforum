@@ -8,5 +8,5 @@ import de.hsos.swa.domain.entity.User;
 import javax.validation.Valid;
 @InputPort
 public interface RegisterUserUseCase {
-    ApplicationResult<User> registerUser(@Valid RegisterUserCommand request);
+    ApplicationResult<User> registerUser(@Valid RegisterUserCommand command);
 }

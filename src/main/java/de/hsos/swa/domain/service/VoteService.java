@@ -9,7 +9,7 @@ import javax.enterprise.context.RequestScoped;
 import java.util.Optional;
 
 @RequestScoped
-public class VoteEntityService {
+public class VoteService {
     public Optional<Vote> vote(VotedEntity entity, User user, VoteType voteType) {
         // User kann seine eigenen Posts/Comments nicht voten
         if (entity.getUser().getId().equals(user.getId())) {
@@ -25,10 +25,12 @@ public class VoteEntityService {
         }
 
         // Fall 2: Aenderung eines bestehenden Votes
-        Vote existingVote = optionalVote.get();
-        if (voteType != existingVote.getVoteType()) {
-            existingVote.setVoteType(voteType);
-            return Optional.of(existingVote);
+        Vote oldVote = optionalVote.get();
+        if (voteType != oldVote.getVoteType()) {
+            entity.removeVote(oldVote);
+            Vote newVote = new Vote(user, voteType);
+            entity.addVote(newVote);
+            return Optional.of(newVote);
         }
 
         return Optional.empty();
@@ -37,12 +39,6 @@ public class VoteEntityService {
     public Optional<Vote> deleteVote(VotedEntity entity, User user) {
         Optional<Vote> optionalVote = entity.findVoteByUser(user.getId());
         if (optionalVote.isEmpty()) {
-            return Optional.empty();
-        }
-        Vote vote = optionalVote.get();
-
-        // User kann nur seine eigenen Votes loeschen
-        if (!vote.getUser().getId().equals(user.getId())) {
             return Optional.empty();
         }
 

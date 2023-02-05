@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 @InputPortRequest
 public record VoteEntityCommand(
         @ValidId String entityId,
-        @ValidUsername String username,
         @NotNull VoteType voteType,
         @NotNull VotedEntityType entityType
 ) { }

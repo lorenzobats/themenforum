@@ -109,7 +109,7 @@ public class VotesRessource {
         try {
             voteValidationService.validate(request);
             String username = securityContext.getUserPrincipal().getName();
-            VoteEntityCommand command = VoteEntityRequestBody.Converter.toInputPortCommand(request, username);
+            VoteEntityCommand command = VoteEntityRequestBody.Converter.toInputPortCommand(request);
             ApplicationResult<Vote> result = this.voteEntityUseCase.vote(command, username);
 
             if (result.ok()) {
@@ -140,7 +140,6 @@ public class VotesRessource {
 
             if (result.ok()) {
                 if (result.data().isPresent()) {
-
                     VoteDto voteDto = VoteDto.Converter.fromDomainEntity(result.data().get());
                     return Response.status(Response.Status.OK).entity(voteDto).build();
                 }

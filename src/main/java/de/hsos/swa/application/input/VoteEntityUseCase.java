@@ -7,5 +7,5 @@ import de.hsos.swa.domain.entity.Vote;
 import javax.validation.Valid;
 @InputPort
 public interface VoteEntityUseCase {
-   ApplicationResult<Vote> vote(@Valid VoteEntityCommand request, String username);
+   ApplicationResult<Vote> vote(@Valid VoteEntityCommand command, String requestingUser);
 }

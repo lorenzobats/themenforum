@@ -31,18 +31,6 @@ INSERT INTO comment_table (id, active, createdat, text, parent_comment_id, user_
 INSERT INTO post_table_comment_table (post_id, comments_id) VALUES ('55a7409f-c0eb-453e-b7ef-89f905963ce9', '9ac4c6fd-68e1-4b41-97fd-817284290411');
 INSERT INTO post_table_comment_table (post_id, comments_id) VALUES ('959b81a0-35b3-4f9d-a08b-4879173a1e2c', 'ee774407-a71f-4d4e-b829-f26d38e2ee81');
 
-INSERT INTO vote_table(id, createdat, votetype, user_id) VALUES ('09f21fbb-1130-446d-b3c2-44dd8a839c12', '2023-01-22 19:29:59.697731', 'UP', 'efac4cf6-4188-4a18-8489-4fc98f3633d6');
-INSERT INTO vote_table(id, createdat, votetype, user_id) VALUES ('09f21fbb-1230-446d-b3c2-44dd8a839c12', '2023-01-22 19:29:59.697731', 'UP', 'efac4cf6-4188-4a18-8489-4fc98f3633d6');
-INSERT INTO vote_table(id, createdat, votetype, user_id) VALUES ('09f21fbb-1330-446d-b3c2-44dd8a839c12', '2023-01-22 19:29:59.697731', 'UP', 'efac4cf6-4188-4a18-8489-4fc98f3633d6');
-INSERT INTO vote_table(id, createdat, votetype, user_id) VALUES ('09f21fbb-1430-446d-b3c2-44dd8a839c12', '2023-01-22 19:29:59.697731', 'UP', 'efac4cf6-4188-4a18-8489-4fc98f3633d6');
-
-INSERT INTO post_vote(post_id, vote_id) VALUES ('55a7409f-c0eb-453e-b7ef-89f905963ce9', '09f21fbb-1130-446d-b3c2-44dd8a839c12');
-INSERT INTO post_vote(post_id, vote_id) VALUES ('4cfe8a99-f71a-476c-a2cb-dae7cb86872e', '09f21fbb-1230-446d-b3c2-44dd8a839c12');
-
-INSERT INTO comment_vote(comment_id, vote_id) VALUES ('5c39bb7f-0ff4-4bff-a89f-03adc03bb72c', '09f21fbb-1330-446d-b3c2-44dd8a839c12');
-INSERT INTO comment_vote(comment_id, vote_id) VALUES ('2c210dd8-ff07-4adb-ad4c-67625ae7c295', '09f21fbb-1430-446d-b3c2-44dd8a839c12');
-
-
 INSERT INTO auth.auth_user_table (id, active, password, role, user_id, username) VALUES ('6b05e5b1-1859-418f-97ba-dd5c8a4f02bf', true, '$2a$10$DwD7QAQ8xBxjG7B3A2I5s.bzU/1bt4YYvR91V1Ob33F4Olb.SnYwi', 'member', '78188b10-4733-4fca-8dfd-e07aee389383', 'oschluet');
 INSERT INTO auth.auth_user_table (id, active, password, role, user_id, username) VALUES ('c91b0e85-abcb-48d4-b344-3229099c84ba', true, '$2a$10$HTWkZDXvW.laYCCBzWo7Qu1xZL2fKWe.EgEeGly9TCLUa0xzqPuS2', 'member', 'efac4cf6-4188-4a18-8489-4fc98f3633d6', 'lbattist');
 INSERT INTO auth.auth_user_table (id, active, password, role, user_id, username) VALUES ('89445af1-beb3-43bf-a80a-ff17119ccbf7', true, '$2a$10$QLCuFmy3kh2stifgZnM9BOpADJ3KPx13xQ9I2O16iN3gxpQSzaoIe', 'admin', 'fafaaa75-64eb-4b5b-96f3-79721048b85f', 'admin');

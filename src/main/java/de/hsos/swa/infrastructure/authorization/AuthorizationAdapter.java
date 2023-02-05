@@ -68,7 +68,7 @@ public class AuthorizationAdapter implements AuthorizationGateway {
 
         try{
             OwnerOf ownerOf = new OwnerOf(owner, ressourceId);
-            entityManager.persist(ownerOf);
+            entityManager.merge(ownerOf);
             return AuthorizationResult.ok();
         } catch (PersistenceException e) {
             return AuthorizationResult.exception();
@@ -171,7 +171,7 @@ public class AuthorizationAdapter implements AuthorizationGateway {
         // Member dürfen ihre eigenen Votes löschen
         if(isActiveRessourceOwner(accessingUser, voteId))
             return AuthorizationResult.ok();
-        return AuthorizationResult.notAuthenticated();
+        return AuthorizationResult.notAllowed();
     }
 
 

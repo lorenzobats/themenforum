@@ -25,8 +25,8 @@ public class VoteEntityRequestBody implements ValidatedRequestBody {
     public VoteEntityRequestBody() {}
 
     public static class Converter {
-        public static VoteEntityCommand toInputPortCommand(VoteEntityRequestBody request, String username) {
-            return new VoteEntityCommand(request.entityId, username, request.voteType, request.entityType);
+        public static VoteEntityCommand toInputPortCommand(VoteEntityRequestBody request) {
+            return new VoteEntityCommand(request.entityId, request.voteType, request.entityType);
         }
     }
 }
