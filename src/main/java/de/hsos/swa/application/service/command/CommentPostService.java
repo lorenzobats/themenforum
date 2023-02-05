@@ -71,7 +71,8 @@ public class CommentPostService implements CommentPostUseCase {
         if (updatedPostResult.error()) {
             return ApplicationResult.exception("Cannot update post " + command.postId());
         }
-        authorizationGateway.addOwnership(requestingUser, comment.getId());
+        if(authorizationGateway.addOwnership(requestingUser, comment.getId()).denied())
+            return ApplicationResult.exception("Cannot create comment");
         return ApplicationResult.ok(comment);
     }
 }

@@ -49,7 +49,7 @@ public class ReplyToCommentService implements ReplyToCommentUseCase {
      *
      * @param command           enthält Kommentartext, Eltern-Kommentar-Id für das zu erstellende Kommentar
      * @param requestingUser    enthält den Nutzernamen des Erstellers
-     * @return ApplicationResult<Commentar> enthält erzeugtes Kommentar bzw. Fehlermeldung bei Misserfolg
+     * @return ApplicationResult<Comment> enthält erzeugtes Kommentar bzw. Fehlermeldung bei Misserfolg
      */
     @Override
     public ApplicationResult<Comment> replyToComment(ReplyToCommentCommand command, String requestingUser) {
@@ -63,7 +63,6 @@ public class ReplyToCommentService implements ReplyToCommentUseCase {
             return ApplicationResult.notValid("Cannot find post " + command.commentId());
         Post post = postResult.get();
 
-
         Comment reply = CommentFactory.createComment(command.commentText(), user);
         if(!post.addReplyToComment(UUID.fromString(command.commentId()), reply)){
             return ApplicationResult.notValid("Comment you want to reply to is a disabled comment");
@@ -71,9 +70,10 @@ public class ReplyToCommentService implements ReplyToCommentUseCase {
 
         RepositoryResult<Post> updatedPostResult = this.postRepository.updatePost(post);
         if (updatedPostResult.error()) {
-            return ApplicationResult.exception("Something went wrong ");
+            return ApplicationResult.exception("Cannot reply to comment");
         }
-        authorizationGateway.addOwnership(requestingUser, reply.getId());
+        if(authorizationGateway.addOwnership(requestingUser, reply.getId()).denied())
+            return ApplicationResult.exception("Cannot reply to comment");
         return ApplicationResult.ok(reply);
     }
 }

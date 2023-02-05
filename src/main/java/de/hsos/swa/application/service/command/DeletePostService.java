@@ -6,12 +6,9 @@ import de.hsos.swa.application.input.dto.in.DeletePostCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.PostRepository;
-import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.service.AuthorizationResultMapper;
 import de.hsos.swa.domain.entity.Post;
-import de.hsos.swa.domain.entity.Topic;
-import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 
 import javax.enterprise.context.RequestScoped;
@@ -53,16 +50,16 @@ public class DeletePostService implements DeletePostUseCase {
      */
     @Override
     public ApplicationResult<Optional<Post>> deletePost(DeletePostCommand command, String requestingUser) {
-        // TODO: Vorher abfragen ob vorhanden
+        RepositoryResult<Post> existingPost = postRepository.getPostById(UUID.fromString(command.postId()), false);
+        if(existingPost.error())
+            return ApplicationResult.noContent(Optional.empty());
+
         AuthorizationResult<Boolean> permission = authorizationGateway.canDeletePost(requestingUser, UUID.fromString(command.postId()));
         if(permission.denied())
             return AuthorizationResultMapper.handleRejection(permission.status());
 
         RepositoryResult<Post> result = this.postRepository.deletePost(UUID.fromString(command.postId()));
         if (result.error()) {
-            if (result.status() == RepositoryResult.Status.ENTITY_NOT_FOUND) {
-                return ApplicationResult.noContent(Optional.empty());
-            }
             return ApplicationResult.exception("Cannot delete post");
         }
 

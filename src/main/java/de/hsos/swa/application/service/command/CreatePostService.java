@@ -74,7 +74,8 @@ public class CreatePostService implements CreatePostUseCase {
         if (useCaseResult.error())
             return ApplicationResult.exception("Cannot save post ");
 
-        authorizationGateway.addOwnership(requestingUser, useCaseResult.get().getId());
+        if(authorizationGateway.addOwnership(requestingUser, useCaseResult.get().getId()).denied())
+            return ApplicationResult.exception("Cannot create post");
         return ApplicationResult.ok(useCaseResult.get());
     }
 }

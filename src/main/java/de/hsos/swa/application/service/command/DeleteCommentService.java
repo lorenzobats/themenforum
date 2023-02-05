@@ -5,13 +5,12 @@ import de.hsos.swa.application.input.DeleteCommentUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteCommentCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
+import de.hsos.swa.application.output.repository.CommentRepository;
 import de.hsos.swa.application.output.repository.PostRepository;
-import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.dto.out.RepositoryResult;
 import de.hsos.swa.application.service.AuthorizationResultMapper;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
-import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 
 import javax.enterprise.context.RequestScoped;
@@ -30,7 +29,7 @@ import java.util.UUID;
  * @version 1.0
  * @see DeleteCommentUseCase            Korrespondierende Input-Port für diesen Use Case
  * @see DeleteCommentCommand            Korrespondierende Request DTO für diesen Use Case
- * @see PostRepository                  Verwendeter Output-Port zum Speichern des Posts nach Hinzufügen des Kommentars
+ * @see PostRepository                  Verwendeter Output-Port zum Speichern des Posts nach Löschen des Kommentars
  * @see AuthorizationGateway            Output-Port zur Zugriffskontrolle für Löschvorgang
  */
 @RequestScoped
@@ -39,6 +38,9 @@ import java.util.UUID;
 public class DeleteCommentService implements DeleteCommentUseCase {
     @Inject
     PostRepository postRepository;
+
+    @Inject
+    CommentRepository commentRepository;
 
     @Inject
     AuthorizationGateway authorizationGateway;
@@ -53,19 +55,18 @@ public class DeleteCommentService implements DeleteCommentUseCase {
      */
     @Override
     public ApplicationResult<Optional<Comment>> deleteComment(DeleteCommentCommand command, String requestingUser) {
+        RepositoryResult<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(command.commentId()));
+        if (postResult.error())
+            return ApplicationResult.notValid("Cannot find post for comment " + command.commentId());
+        Post post = postResult.get();
+
+        Optional<Comment> optionalComment = post.findCommentById(UUID.fromString(command.commentId()));
+        if (optionalComment.isEmpty() || !optionalComment.get().isActive())
+            return ApplicationResult.noContent(Optional.empty());
+
         AuthorizationResult<Boolean> permission = authorizationGateway.canDeleteComment(requestingUser, UUID.fromString(command.commentId()));
         if(permission.denied())
             return AuthorizationResultMapper.handleRejection(permission.status());
-
-        RepositoryResult<Post> postResult = this.postRepository.getPostByCommentId(UUID.fromString(command.commentId()));
-        if (postResult.error())
-            return ApplicationResult.exception("Cannot find post for comment " + command.commentId());
-        Post post = postResult.get();
-
-        // Bei erneutem Löschvorgang
-        Optional<Comment> optionalComment = post.findCommentById(UUID.fromString(command.commentId()));
-        if (optionalComment.isEmpty())
-            return ApplicationResult.noContent(Optional.empty());
 
         Comment comment = optionalComment.get();
         post.delete(comment.getId());
