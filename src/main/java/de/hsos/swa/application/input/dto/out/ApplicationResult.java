@@ -4,7 +4,6 @@ public class ApplicationResult<T> {
 
     public enum Status {
         OK,                     // 200 (OK), 201 (CREATED)
-
         NO_CONTENT,             // 204 (NO Content) -> bei DELETE
         NOT_AUTHORIZED,         // 401 (Unauthorized)
         NO_ACCESS,              // 403 (Forbidden)

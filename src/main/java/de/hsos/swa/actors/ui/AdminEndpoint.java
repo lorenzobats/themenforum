@@ -3,15 +3,13 @@ package de.hsos.swa.actors.ui;
 
 import de.hsos.swa.actors.rest.dto.out.TopicDto;
 import de.hsos.swa.application.annotations.Adapter;
-import de.hsos.swa.application.input.*;
 import de.hsos.swa.application.input.dto.in.GetAllCommentsQuery;
 import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReference;
-import de.hsos.swa.application.service.query.params.OrderParams;
+import de.hsos.swa.application.input.query.*;
 import de.hsos.swa.application.service.query.params.PostFilterParams;
-import de.hsos.swa.application.service.query.params.SortingParams;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.domain.entity.User;

@@ -1,13 +1,13 @@
 package de.hsos.swa.application.service.command;
 
 import de.hsos.swa.application.annotations.ApplicationService;
-import de.hsos.swa.application.input.DeleteCommentUseCase;
+import de.hsos.swa.application.input.command.DeleteCommentUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteCommentCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
-import de.hsos.swa.application.service.AuthorizationResultMapper;
+import de.hsos.swa.application.service.util.AuthorizationResultMapper;
 import de.hsos.swa.domain.entity.Comment;
 import de.hsos.swa.domain.entity.Post;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;

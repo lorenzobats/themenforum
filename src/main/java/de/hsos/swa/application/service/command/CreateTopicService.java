@@ -1,7 +1,7 @@
 package de.hsos.swa.application.service.command;
 
 import de.hsos.swa.application.annotations.ApplicationService;
-import de.hsos.swa.application.input.CreateTopicUseCase;
+import de.hsos.swa.application.input.command.CreateTopicUseCase;
 import de.hsos.swa.application.input.dto.in.CreateTopicCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;

@@ -1,7 +1,7 @@
 package de.hsos.swa.application.service.command;
 
 import de.hsos.swa.application.annotations.ApplicationService;
-import de.hsos.swa.application.input.VoteEntityUseCase;
+import de.hsos.swa.application.input.command.VoteEntityUseCase;
 import de.hsos.swa.application.input.dto.in.VoteEntityCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;

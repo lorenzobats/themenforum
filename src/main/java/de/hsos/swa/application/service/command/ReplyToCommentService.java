@@ -1,7 +1,7 @@
 package de.hsos.swa.application.service.command;
 
 import de.hsos.swa.application.annotations.ApplicationService;
-import de.hsos.swa.application.input.ReplyToCommentUseCase;
+import de.hsos.swa.application.input.command.ReplyToCommentUseCase;
 import de.hsos.swa.application.input.dto.in.ReplyToCommentCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;

@@ -1,8 +1,8 @@
 package de.hsos.swa.actors.ui;
 
 import de.hsos.swa.actors.rest.dto.out.TopicDto;
-import de.hsos.swa.application.input.GetAllTopicsUseCase;
-import de.hsos.swa.application.input.SearchTopicsUseCase;
+import de.hsos.swa.application.input.query.GetAllTopicsUseCase;
+import de.hsos.swa.application.input.query.SearchTopicsUseCase;
 import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;

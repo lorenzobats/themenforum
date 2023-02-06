@@ -1,6 +1,6 @@
 package de.hsos.swa.application;
 
-import de.hsos.swa.application.input.CreateTopicUseCase;
+import de.hsos.swa.application.input.command.CreateTopicUseCase;
 import de.hsos.swa.application.input.dto.in.CreateTopicCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 

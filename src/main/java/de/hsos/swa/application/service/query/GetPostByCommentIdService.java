@@ -1,7 +1,7 @@
 package de.hsos.swa.application.service.query;
 
 import de.hsos.swa.application.annotations.ApplicationService;
-import de.hsos.swa.application.input.GetPostByCommentIdUseCase;
+import de.hsos.swa.application.input.query.GetPostByCommentIdUseCase;
 import de.hsos.swa.application.input.dto.in.GetPostByCommentIdQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.PostRepository;

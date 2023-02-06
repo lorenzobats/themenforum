@@ -1,7 +1,7 @@
 package de.hsos.swa.application.service.query;
 
 import de.hsos.swa.application.annotations.ApplicationService;
-import de.hsos.swa.application.input.GetFilteredPostsUseCase;
+import de.hsos.swa.application.input.query.GetFilteredPostsUseCase;
 import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.PostRepository;

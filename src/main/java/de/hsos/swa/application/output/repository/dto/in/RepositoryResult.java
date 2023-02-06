@@ -4,7 +4,6 @@ public class RepositoryResult<T> {
     public enum Status {
         OK,
         ENTITY_NOT_FOUND,
-        ENTITY_NOT_PERSISTED,
         EXCEPTION
     }
 
@@ -36,10 +35,6 @@ public class RepositoryResult<T> {
 
     public static <T> RepositoryResult<T> notFound() {
         return new RepositoryResult<T>(Status.ENTITY_NOT_FOUND);
-    }
-
-    public static <T> RepositoryResult<T> notPersisted() {
-        return new RepositoryResult<T>(Status.ENTITY_NOT_PERSISTED);
     }
 
     public RepositoryResult<T> setData(T data){

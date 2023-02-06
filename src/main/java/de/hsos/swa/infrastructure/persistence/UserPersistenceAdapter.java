@@ -39,7 +39,7 @@ public class UserPersistenceAdapter implements UserRepository {
             entityManager.persist(userPersistenceModel);
             return RepositoryResult.ok(UserPersistenceModel.Converter.toDomainEntity(userPersistenceModel));
         } catch (EntityExistsException e) {
-            return RepositoryResult.notPersisted();
+            return RepositoryResult.exception();
         } catch (IllegalArgumentException | TransactionRequiredException e) {
             log.error(e);
             return RepositoryResult.exception();

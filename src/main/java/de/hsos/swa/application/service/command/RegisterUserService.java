@@ -1,12 +1,11 @@
 package de.hsos.swa.application.service.command;
 
 import de.hsos.swa.application.annotations.ApplicationService;
-import de.hsos.swa.application.input.dto.in.RegisterUserCommand;
-import de.hsos.swa.application.input.RegisterUserUseCase;
+import de.hsos.swa.application.input.command.RegisterUserUseCase;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.UserRepository;
-import de.hsos.swa.application.output.auth.dto.out.SaveAuthUserCommand;
+import de.hsos.swa.application.output.auth.dto.out.RegisterUserCommand;
 import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.domain.factory.UserFactory;
@@ -26,7 +25,7 @@ import javax.transaction.Transactional;
  * @author Lorenzo Battiston
  * @version 1.0
  * @see RegisterUserUseCase             Korrespondierende Input-Port für diesen Use Case
- * @see RegisterUserCommand             Korrespondierende Request DTO für diesen Use Case
+ * @see de.hsos.swa.application.input.dto.in.RegisterUserCommand             Korrespondierende Request DTO für diesen Use Case
  * @see UserRepository                  Output-Port zum Speichern des Forum-Nutzers
  * @see AuthorizationGateway            Output-Port zum Registrieren eines Users (Zugangsdaten speichern)
  */
@@ -48,9 +47,9 @@ public class RegisterUserService implements RegisterUserUseCase {
      * @return ApplicationResult<User> enthält erstellten Nutzer bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<User> registerUser(RegisterUserCommand command) {
+    public ApplicationResult<User> registerUser(de.hsos.swa.application.input.dto.in.RegisterUserCommand command) {
         User user = UserFactory.createUser(command.username());
-        SaveAuthUserCommand createUserAuthRequest = new SaveAuthUserCommand(
+        RegisterUserCommand createUserAuthRequest = new RegisterUserCommand(
                 command.username(),
                 command.password(),
                 "member",

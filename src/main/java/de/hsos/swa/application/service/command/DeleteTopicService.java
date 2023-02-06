@@ -1,13 +1,13 @@
 package de.hsos.swa.application.service.command;
 
 import de.hsos.swa.application.annotations.ApplicationService;
-import de.hsos.swa.application.input.DeleteTopicUseCase;
+import de.hsos.swa.application.input.command.DeleteTopicUseCase;
 import de.hsos.swa.application.input.dto.in.DeleteTopicCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.repository.TopicRepository;
 import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
-import de.hsos.swa.application.service.AuthorizationResultMapper;
+import de.hsos.swa.application.service.util.AuthorizationResultMapper;
 import de.hsos.swa.domain.entity.Topic;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 

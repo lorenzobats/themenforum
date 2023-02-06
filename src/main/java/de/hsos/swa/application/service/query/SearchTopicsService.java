@@ -1,7 +1,7 @@
 package de.hsos.swa.application.service.query;
 
 import de.hsos.swa.application.annotations.ApplicationService;
-import de.hsos.swa.application.input.SearchTopicsUseCase;
+import de.hsos.swa.application.input.query.SearchTopicsUseCase;
 import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;

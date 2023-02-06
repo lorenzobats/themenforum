@@ -5,14 +5,14 @@ import de.hsos.swa.application.annotations.OutputPortRequest;
 import java.util.UUID;
 
 @OutputPortRequest
-public class SaveAuthUserCommand {
+public class RegisterUserCommand {
     private final String username;
     private final String password;
     private final String role;
     private final UUID userId;
 
 
-    public SaveAuthUserCommand(String username, String password, String role, UUID userId) {
+    public RegisterUserCommand(String username, String password, String role, UUID userId) {
         this.username = username;
         this.password = password;
         this.role = role;

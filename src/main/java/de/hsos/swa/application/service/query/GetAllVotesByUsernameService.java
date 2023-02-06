@@ -1,7 +1,7 @@
 package de.hsos.swa.application.service.query;
 
 import de.hsos.swa.application.annotations.ApplicationService;
-import de.hsos.swa.application.input.GetAllVotesByUsernameUseCase;
+import de.hsos.swa.application.input.query.GetAllVotesByUsernameUseCase;
 import de.hsos.swa.application.input.dto.in.GetAllVotesByUsernameQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReference;
@@ -10,7 +10,7 @@ import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 import de.hsos.swa.application.output.repository.dto.in.VoteQueryDto;
 import de.hsos.swa.application.output.repository.VoteRepository;
 import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
-import de.hsos.swa.application.service.AuthorizationResultMapper;
+import de.hsos.swa.application.service.util.AuthorizationResultMapper;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;

@@ -2,13 +2,13 @@ package de.hsos.swa.application.service.query;
 
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.dto.in.GetUserByNameQuery;
-import de.hsos.swa.application.input.GetUserByNameUseCase;
+import de.hsos.swa.application.input.query.GetUserByNameUseCase;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
-import de.hsos.swa.application.service.AuthorizationResultMapper;
+import de.hsos.swa.application.service.util.AuthorizationResultMapper;
 import de.hsos.swa.domain.entity.User;
 
 import javax.enterprise.context.RequestScoped;

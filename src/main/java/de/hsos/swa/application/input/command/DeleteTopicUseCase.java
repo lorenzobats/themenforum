@@ -1,4 +1,4 @@
-package de.hsos.swa.application.input;
+package de.hsos.swa.application.input.command;
 
 import de.hsos.swa.application.annotations.InputPort;
 import de.hsos.swa.application.input.dto.in.DeleteTopicCommand;

@@ -1,7 +1,7 @@
 package de.hsos.swa.application.service.command;
 
 import de.hsos.swa.application.annotations.ApplicationService;
-import de.hsos.swa.application.input.CreatePostUseCase;
+import de.hsos.swa.application.input.command.CreatePostUseCase;
 import de.hsos.swa.application.input.dto.in.CreatePostCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;

@@ -1,4 +1,4 @@
-package de.hsos.swa.application.service;
+package de.hsos.swa.application.service.util;
 
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;

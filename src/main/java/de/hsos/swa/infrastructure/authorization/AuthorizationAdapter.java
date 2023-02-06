@@ -4,7 +4,7 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
-import de.hsos.swa.application.output.auth.dto.out.SaveAuthUserCommand;
+import de.hsos.swa.application.output.auth.dto.out.RegisterUserCommand;
 import de.hsos.swa.infrastructure.authorization.model.AuthUser;
 import de.hsos.swa.infrastructure.authorization.model.OwnerOf;
 import org.jboss.logging.Logger;
@@ -30,10 +30,12 @@ public class AuthorizationAdapter implements AuthorizationGateway {
     @Inject
     Logger log;
 
+    //------------------------------------------------------------------------------------------------------------------
+    // READ PERMISSION
     @Override
-    public AuthorizationResult<Void> registerUser(SaveAuthUserCommand outputPortRequest) {
+    public AuthorizationResult<Void> registerUser(RegisterUserCommand command) {
         CriteriaBuilder<AuthUser> query = criteriaBuilderFactory.create(entityManager, AuthUser.class);
-        query.where("username").eq(outputPortRequest.getUsername());
+        query.where("username").eq(command.getUsername());
 
         try{
             if(!query.getResultList().isEmpty())
@@ -44,10 +46,10 @@ public class AuthorizationAdapter implements AuthorizationGateway {
         }
 
         AuthUser authUserEntity = new AuthUser(
-                outputPortRequest.getUsername(),
-                outputPortRequest.getPassword(),
-                outputPortRequest.getRole(),
-                outputPortRequest.getUserId());
+                command.getUsername(),
+                command.getPassword(),
+                command.getRole(),
+                command.getUserId());
 
         try {
             entityManager.persist(authUserEntity);
@@ -56,7 +58,6 @@ public class AuthorizationAdapter implements AuthorizationGateway {
             return AuthorizationResult.exception();
         }
     }
-
     @Override
     public AuthorizationResult<Void> disableUser(String username) {
         Optional<AuthUser> optionalAuthUser = this.loadUser(username);
@@ -75,6 +76,8 @@ public class AuthorizationAdapter implements AuthorizationGateway {
         }
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // READ PERMISSION
     public AuthorizationResult<Void> addOwnership(String owningUser, UUID ressourceId){
         Optional<AuthUser> optionalAuthUser = this.loadUser(owningUser);
         if(optionalAuthUser.isEmpty())
@@ -103,7 +106,7 @@ public class AuthorizationAdapter implements AuthorizationGateway {
             entityManager.remove(ownerOf);
             return AuthorizationResult.ok();
         } catch (PersistenceException e) {
-            log.debug(e);
+            log.warn(e);
             return AuthorizationResult.exception();
         }
     }
