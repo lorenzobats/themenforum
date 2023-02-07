@@ -5,7 +5,6 @@ public class AuthorizationResult<T> {
         OK,
         USER_NOT_AUTHENTICATED,
         ACCESS_DENIED,
-
         NO_RESSOURCE,
         ERROR
     }

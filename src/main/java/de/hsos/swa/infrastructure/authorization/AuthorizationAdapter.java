@@ -4,7 +4,7 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
-import de.hsos.swa.application.output.auth.dto.out.RegisterUserCommand;
+import de.hsos.swa.application.output.auth.dto.out.RegisterAuthUserCommand;
 import de.hsos.swa.infrastructure.authorization.model.AuthUser;
 import de.hsos.swa.infrastructure.authorization.model.OwnerOf;
 import org.jboss.logging.Logger;
@@ -33,7 +33,7 @@ public class AuthorizationAdapter implements AuthorizationGateway {
     //------------------------------------------------------------------------------------------------------------------
     // READ PERMISSION
     @Override
-    public AuthorizationResult<Void> registerUser(RegisterUserCommand command) {
+    public AuthorizationResult<Void> registerUser(RegisterAuthUserCommand command) {
         CriteriaBuilder<AuthUser> query = criteriaBuilderFactory.create(entityManager, AuthUser.class);
         query.where("username").eq(command.getUsername());
 

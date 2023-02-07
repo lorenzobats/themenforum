@@ -58,7 +58,6 @@ public class PostPersistenceAdapter implements PostRepository {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.MANDATORY)
     public RepositoryResult<Post> updatePost(Post post) {
         PostPersistenceModel postPersistenceModel = PostPersistenceModel.Converter.toPersistenceModel(post);
         try {

@@ -2,10 +2,11 @@ package de.hsos.swa.application.service.command;
 
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.command.RegisterUserUseCase;
+import de.hsos.swa.application.input.dto.in.RegisterUserCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
+import de.hsos.swa.application.output.auth.dto.out.RegisterAuthUserCommand;
 import de.hsos.swa.application.output.repository.UserRepository;
-import de.hsos.swa.application.output.auth.dto.out.RegisterUserCommand;
 import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.domain.entity.User;
 import de.hsos.swa.domain.factory.UserFactory;
@@ -47,17 +48,19 @@ public class RegisterUserService implements RegisterUserUseCase {
      * @return ApplicationResult<User> enthält erstellten Nutzer bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<User> registerUser(de.hsos.swa.application.input.dto.in.RegisterUserCommand command) {
+    public ApplicationResult<User> registerUser(RegisterUserCommand command) {
         User user = UserFactory.createUser(command.username());
-        RegisterUserCommand createUserAuthRequest = new RegisterUserCommand(
+        RegisterAuthUserCommand createUserAuthRequest = new RegisterAuthUserCommand(
                 command.username(),
                 command.password(),
                 "member",
                 user.getId());
 
-        AuthorizationResult<Void> registration = this.authorizationGateway.registerUser(createUserAuthRequest);
+        AuthorizationResult<Void> registration = this.authorizationGateway
+                .registerUser(createUserAuthRequest);
         if (registration.denied())
-            return ApplicationResult.notValid(createUserAuthRequest.getUsername() + " is not available as a Username");
+            return ApplicationResult.notValid(createUserAuthRequest
+                    .getUsername() + " is not available as a Username");
 
 
         RepositoryResult<User> createUserResponse = this.userRepository.saveUser(user);

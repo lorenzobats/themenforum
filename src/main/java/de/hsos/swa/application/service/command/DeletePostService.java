@@ -48,16 +48,20 @@ public class DeletePostService implements DeletePostUseCase {
      * @return ApplicationResult<Post> enthält gelöschten Beitrag bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Optional<Post>> deletePost(DeletePostCommand command, String requestingUser) {
-        RepositoryResult<Post> existingPost = postRepository.getPostById(UUID.fromString(command.postId()), false);
+    public ApplicationResult<Optional<Post>>
+    deletePost(DeletePostCommand command, String requestingUser) {
+        RepositoryResult<Post> existingPost = postRepository
+                .getPostById(UUID.fromString(command.postId()), false);
         if(existingPost.error())
             return ApplicationResult.noContent(Optional.empty());
 
-        AuthorizationResult<Boolean> permission = authorizationGateway.canDeletePost(requestingUser, UUID.fromString(command.postId()));
+        AuthorizationResult<Boolean> permission = authorizationGateway
+                .canDeletePost(requestingUser, UUID.fromString(command.postId()));
         if(permission.denied())
             return AuthorizationResultMapper.handleRejection(permission.status());
 
-        RepositoryResult<Post> result = this.postRepository.deletePost(UUID.fromString(command.postId()));
+        RepositoryResult<Post> result = this.postRepository
+                .deletePost(UUID.fromString(command.postId()));
         if (result.error()) {
             return ApplicationResult.exception("Cannot delete post");
         }

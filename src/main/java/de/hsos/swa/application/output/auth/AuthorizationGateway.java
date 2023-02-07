@@ -1,14 +1,14 @@
 package de.hsos.swa.application.output.auth;
 
 import de.hsos.swa.application.annotations.OutputPort;
-import de.hsos.swa.application.output.auth.dto.out.RegisterUserCommand;
+import de.hsos.swa.application.output.auth.dto.out.RegisterAuthUserCommand;
 import de.hsos.swa.application.output.auth.dto.in.AuthorizationResult;
 
 import java.util.UUID;
 
 @OutputPort
 public interface AuthorizationGateway {
-    AuthorizationResult<Void> registerUser(RegisterUserCommand command);
+    AuthorizationResult<Void> registerUser(RegisterAuthUserCommand command);
 
     AuthorizationResult<Void> disableUser(String name);
 

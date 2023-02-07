@@ -10,6 +10,7 @@ import io.cucumber.java.en.Then;
 import org.junit.jupiter.api.Assertions;
 
 import javax.inject.Inject;
+import javax.validation.ConstraintViolationException;
 
 public class TopicCreate extends ApplicationTestData {
     @Inject
@@ -23,7 +24,7 @@ public class TopicCreate extends ApplicationTestData {
     @Given("I provide all required data to create a new Topic")
     public void given() {
         CreateTopicCommand createTopicCommand = new CreateTopicCommand(
-                "Mein Thema",
+                "Application",
                 "Meine Beschreibung");
         createTopicResult = this.createTopicUseCase.createTopic(createTopicCommand, "oschluet");
     }
@@ -34,7 +35,7 @@ public class TopicCreate extends ApplicationTestData {
         Assertions.assertTrue(createTopicResult.ok());
         Assertions.assertEquals(ApplicationResult.Status.OK, createTopicResult.status());
         Assertions.assertEquals("", createTopicResult.message());
-        Assertions.assertEquals("Mein Thema", createTopicResult.data().getTitle());
+        Assertions.assertEquals("Application", createTopicResult.data().getTitle());
         Assertions.assertEquals("Meine Beschreibung", createTopicResult.data().getDescription());
         Assertions.assertEquals("oschluet", createTopicResult.data().getOwner().getName());
     }

@@ -12,8 +12,12 @@ import java.util.Map;
 
 @InputPortRequest
 public record GetFilteredPostQuery(
-        @ValidPostFilterParams Map<PostFilterParams, Object> filterParams,
-        @NotNull Boolean includeComments,
-        @ValidEnumValue(enumClass = SortingParams.class) String sortingParams,
-        @ValidEnumValue(enumClass = OrderParams.class) String orderParams
+        @ValidPostFilterParams
+        Map<PostFilterParams, Object> filterParams,
+        @NotNull
+        Boolean includeComments,
+        @ValidEnumValue(enumClass = SortingParams.class)
+        String sortingParams,
+        @ValidEnumValue(enumClass = OrderParams.class)
+        String orderParams
 ) {}

@@ -8,6 +8,7 @@ import de.hsos.swa.domain.entity.Comment;
 import javax.validation.Valid;
 import java.util.List;
 
+
 @InputPort
 public interface GetCommentsByUserUseCase {
     ApplicationResult<List<Comment>> getCommentsByUser(@Valid GetCommentsByUserQuery query);

@@ -60,9 +60,8 @@ public class CreatePostService implements CreatePostUseCase {
 
         RepositoryResult<User> userResult = this.userRepository.getUserByName(requestingUser);
         if (userResult.error())
-                return ApplicationResult.notValid("Cannot find user: " + requestingUser);
+                return ApplicationResult.exception("Cannot find user: " + requestingUser);
         User user = userResult.get();
-
 
         RepositoryResult<Topic> topicResult = this.topicRepository.getTopicById(UUID.fromString(command.topicId()));
         if(topicResult.error())

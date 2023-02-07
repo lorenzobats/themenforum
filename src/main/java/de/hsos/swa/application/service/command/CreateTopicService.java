@@ -52,20 +52,25 @@ public class CreateTopicService implements CreateTopicUseCase {
      * @return ApplicationResult<Topic> enthält erstelltes Thema bzw. Fehlermeldung bei Misserfolg
      */
     @Override
-    public ApplicationResult<Topic> createTopic(CreateTopicCommand command, String requestingUser) {
-        RepositoryResult<Topic> existingTopicResult = this.topicRepository.getTopicByTitle(command.title());
+    public ApplicationResult<Topic>
+    createTopic(CreateTopicCommand command, String requestingUser) {
+        RepositoryResult<Topic> existingTopicResult = this.topicRepository
+                .getTopicByTitle(command.title());
         if(existingTopicResult.ok())
                 return ApplicationResult.notValid(command.title() + " Topic already exists");
 
-        RepositoryResult<User> userResult = this.userRepository.getUserByName(requestingUser);
+        RepositoryResult<User> userResult = this.userRepository
+                .getUserByName(requestingUser);
         if (userResult.error())
-            return ApplicationResult.notValid("Cannot find user: " + requestingUser);
+            return ApplicationResult.exception("Cannot find user: " + requestingUser);
         User user = userResult.get();
 
-        Topic topic = TopicFactory.createTopic(command.title(), command.description(), user);
+        Topic topic = TopicFactory
+                .createTopic(command.title(), command.description(), user);
         RepositoryResult<Topic> useCaseResult = this.topicRepository.saveTopic(topic);
         if (useCaseResult.error())
-            return ApplicationResult.exception("Cannot create topic ");
+            return ApplicationResult
+                    .exception("Cannot create topic ");
 
         if(authorizationGateway.addOwnership(requestingUser, useCaseResult.get().getId()).denied())
             return ApplicationResult.exception("Cannot create topic");

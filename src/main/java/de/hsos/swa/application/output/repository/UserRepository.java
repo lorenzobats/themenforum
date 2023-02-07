@@ -20,5 +20,4 @@ public interface UserRepository {
     RepositoryResult<List<User>> getAllUsers();
     RepositoryResult<User> getUserById(UUID userId);
     RepositoryResult<User> getUserByName(String username);
-
 }

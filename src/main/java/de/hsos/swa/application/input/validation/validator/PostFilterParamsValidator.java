@@ -19,12 +19,11 @@ public class PostFilterParamsValidator implements ConstraintValidator<ValidPostF
     public boolean isValid(Map<PostFilterParams, Object> filterParams, ConstraintValidatorContext context) {
         for (Map.Entry<PostFilterParams, Object> filterParam : filterParams.entrySet()) {
             if (!filterParam.getValue().getClass().equals(filterParam.getKey().getParamType())) {
-                return constraintValidation(context, filterParam.getKey().getParamType().getName() + " doesnt match class type");
+                return constraintValidation(context, filterParam.getValue() + " doesnt match type:" + filterParam.getKey().getParamType().getName());
             }
         }
         return true;
     }
-
     private boolean constraintValidation(ConstraintValidatorContext context, String defaultMessage) {
         context.disableDefaultConstraintViolation();
         context.buildConstraintViolationWithTemplate(defaultMessage)
