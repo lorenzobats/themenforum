@@ -40,6 +40,7 @@ public class GetPostByIdService implements GetPostByIdUseCase {
         Comparator<Comment> sortComparator = new SortByDate<>();
         if (SortingParams.valueOf(query.sortingParams()) == SortingParams.VOTES)
             sortComparator = new SortByUpvotes<>();
+
         boolean descending = OrderParams.valueOf(query.orderParams()) == OrderParams.DESC;
         postResult.get().sortComments(descending, sortComparator);
 

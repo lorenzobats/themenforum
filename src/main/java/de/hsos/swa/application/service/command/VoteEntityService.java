@@ -5,14 +5,13 @@ import de.hsos.swa.application.input.command.VoteEntityUseCase;
 import de.hsos.swa.application.input.dto.in.VoteEntityCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
+import de.hsos.swa.application.output.repository.CommentRepository;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
-import de.hsos.swa.domain.entity.Comment;
-import de.hsos.swa.domain.entity.Post;
-import de.hsos.swa.domain.entity.User;
-import de.hsos.swa.domain.entity.Vote;
+import de.hsos.swa.domain.entity.*;
 import de.hsos.swa.domain.service.VoteService;
+import org.hibernate.boot.model.source.internal.hbm.AbstractPluralAssociationElementSourceImpl;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -67,27 +66,33 @@ public class VoteEntityService implements VoteEntityUseCase {
             return ApplicationResult.exception("Cannot retrieve User");
         User user = userResult.get();
 
+
         RepositoryResult<Post> postResult = new RepositoryResult<>();
-        Optional<Vote> optionalVote = Optional.empty();
+        VotedEntity entityToVote = null;
+
         switch (command.entityType()) {
             case COMMENT -> {
                 postResult = this.postRepository.getPostByCommentId(UUID.fromString(command.entityId()));
-                if (postResult.ok()) {
-                    Optional<Comment> optionalComment = postResult.get().findCommentById(UUID.fromString(command.entityId()));
-                    if (optionalComment.isPresent()) {
-                        optionalVote = this.voteService.vote(optionalComment.get(), user, command.voteType());
-                        if (optionalVote.isEmpty())
-                            return ApplicationResult.notValid("Comment could not be voted");
-                    }
-                }
+                if (postResult.ok())
+                    if(postResult.get().findCommentById(UUID.fromString(command.entityId())).isPresent())
+                        entityToVote = postResult.get().findCommentById(UUID.fromString(command.entityId())).get();
             }
             case POST -> {
                 postResult = this.postRepository.getPostById(UUID.fromString(command.entityId()),true);
-                optionalVote = this.voteService.vote(postResult.get(), user, command.voteType());
-                if (optionalVote.isEmpty())
-                    return ApplicationResult.notValid("Post could not be voted");
+                if(postResult.ok())
+                    entityToVote = postResult.get();
             }
         }
+
+        if(postResult.error()) {
+            return ApplicationResult.notFound("Post not found");
+        }
+
+        if(entityToVote == null) {
+            return ApplicationResult.notFound("Entity to vote not found");
+        }
+
+        Optional<Vote> optionalVote = this.voteService.vote(entityToVote, user, command.voteType());
 
         RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(postResult.get());
         if (updatePostResult.ok() && optionalVote.isPresent()){
