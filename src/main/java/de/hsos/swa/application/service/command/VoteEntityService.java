@@ -53,10 +53,9 @@ public class VoteEntityService implements VoteEntityUseCase {
     AuthorizationGateway authorizationGateway;
 
     /**
-     *
-     * @param command            enthält ID der zu votenden Entität, sowie den Vote-Typ (UP/DOWN)
-     *                           und Entity-Typ (Post/Comment)
-     * @param requestingUser     enthält den Nutzernamen der Vote-Anfrage
+     * @param command        enthält ID der zu votenden Entität, sowie den Vote-Typ (UP/DOWN)
+     *                       und Entity-Typ (Post/Comment)
+     * @param requestingUser enthält den Nutzernamen der Vote-Anfrage
      * @return ApplicationResult<Vote> enthält den getätigten Vote bzw. Fehlermeldung
      */
     @Override
@@ -74,33 +73,36 @@ public class VoteEntityService implements VoteEntityUseCase {
             case COMMENT -> {
                 postResult = this.postRepository.getPostByCommentId(UUID.fromString(command.entityId()));
                 if (postResult.ok())
-                    if(postResult.get().findCommentById(UUID.fromString(command.entityId())).isPresent())
+                    if (postResult.get().findCommentById(UUID.fromString(command.entityId())).isPresent())
                         entityToVote = postResult.get().findCommentById(UUID.fromString(command.entityId())).get();
             }
             case POST -> {
-                postResult = this.postRepository.getPostById(UUID.fromString(command.entityId()),true);
-                if(postResult.ok())
+                postResult = this.postRepository.getPostById(UUID.fromString(command.entityId()), true);
+                if (postResult.ok())
                     entityToVote = postResult.get();
             }
         }
 
-        if(postResult.error()) {
+        if (postResult.error())
             return ApplicationResult.notFound("Post not found");
-        }
 
-        if(entityToVote == null) {
+        if (entityToVote == null)
             return ApplicationResult.notFound("Entity to vote not found");
-        }
 
         Optional<Vote> optionalVote = this.voteService.vote(entityToVote, user, command.voteType());
 
-        RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(postResult.get());
-        if (updatePostResult.ok() && optionalVote.isPresent()){
-            if(authorizationGateway.addOwnership(requestingUser, optionalVote.get().getId()).denied())
-                return ApplicationResult.exception("Cannot create voting");
-            return ApplicationResult.ok(optionalVote.get());
-        }
+        if (optionalVote.isEmpty())
+            return ApplicationResult.noPermission("Cannot create vote");
 
-        return ApplicationResult.exception("Something went wrong during voting");
+        RepositoryResult<Post> updatePostResult = this.postRepository.updatePost(postResult.get());
+        if (updatePostResult.error())
+            return ApplicationResult.exception("Cannot persist voting");
+
+        if (authorizationGateway.addOwnership(requestingUser, optionalVote.get().getId()).denied())
+            return ApplicationResult.exception("Something went wrong during voting");
+
+
+        return ApplicationResult.ok(optionalVote.get());
+
     }
 }
