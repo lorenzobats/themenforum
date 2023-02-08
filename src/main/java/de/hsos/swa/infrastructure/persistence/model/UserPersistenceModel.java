@@ -21,13 +21,11 @@ public class UserPersistenceModel {
     public UserPersistenceModel() {
     }
 
-
     public UserPersistenceModel(UUID id, String name, boolean isActive) {
         this.id = id;
         this.name = name;
         this.active = isActive;
     }
-
     public static class Converter {
         public static User toDomainEntity(UserPersistenceModel persistenceModel) {
             return new User(persistenceModel.id, persistenceModel.name, persistenceModel.active);

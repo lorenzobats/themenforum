@@ -156,9 +156,11 @@ public class PostPersistenceAdapter implements PostRepository {
     }
 
     @Override
+
     public RepositoryResult<Post> getPostByCommentId(UUID commentId) {
         try {
             // Rekursive CTE zur Suche des zur übergebenen commentID zugehörigen Kommentars auf erster Ebene
+            // Quelle https://persistence.blazebit.com/documentation/1.6/core/manual/en_US/#recursive-ctes
             CriteriaBuilder<UUID> subquery = criteriaBuilderFactory.create(entityManager, UUID.class)
                     .withRecursive(CommentCTE.class)
                     .from(CommentPersistenceModel.class, "comment")

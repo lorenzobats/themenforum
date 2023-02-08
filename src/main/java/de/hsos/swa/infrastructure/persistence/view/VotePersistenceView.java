@@ -3,14 +3,11 @@ package de.hsos.swa.infrastructure.persistence.view;
 import com.blazebit.persistence.view.EntityView;
 import com.blazebit.persistence.view.IdMapping;
 import com.blazebit.persistence.view.Mapping;
-import com.blazebit.persistence.view.MappingSubquery;
 import de.hsos.swa.application.output.repository.dto.in.VoteQueryDto;
 import de.hsos.swa.domain.vo.VotedEntityType;
 import de.hsos.swa.domain.entity.Vote;
 import de.hsos.swa.domain.vo.VoteType;
 import de.hsos.swa.infrastructure.persistence.model.VotePersistenceModel;
-import de.hsos.swa.infrastructure.persistence.view.subquery.VotedCommentIdSubqueryProvider;
-import de.hsos.swa.infrastructure.persistence.view.subquery.VotedPostIdSubqueryProvider;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,10 +19,10 @@ public record VotePersistenceView(
         LocalDateTime createdAt,
         VoteType voteType,
 
-        @MappingSubquery(VotedPostIdSubqueryProvider.class)
+        @Mapping("postVote.id")
         UUID votedPostId,
 
-        @MappingSubquery(VotedCommentIdSubqueryProvider.class)
+        @Mapping("commentVote.id")
         UUID votedCommentId
 ) {
     public static Vote toDomainEntity(VotePersistenceView view) {

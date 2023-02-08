@@ -29,16 +29,10 @@ public class CommentPersistenceModel {
     @JoinColumn(name = "parent_comment_id")
     CommentPersistenceModel parentComment;
 
-    @OneToMany(
-            mappedBy = "parentComment",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL)
     List<CommentPersistenceModel> replies = new ArrayList<>();
 
-    @OneToMany(
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(
             name = "comment_vote",
             joinColumns = @JoinColumn(name = "comment_id"),

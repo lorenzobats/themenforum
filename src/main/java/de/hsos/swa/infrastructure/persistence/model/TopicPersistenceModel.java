@@ -30,13 +30,6 @@ public class TopicPersistenceModel {
     UserPersistenceModel userPersistenceModel;
 
 
-    @OneToMany(
-            mappedBy = "topicPersistenceModel",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    List<PostPersistenceModel> posts = new ArrayList<>();
-
     public TopicPersistenceModel() {
     }
 

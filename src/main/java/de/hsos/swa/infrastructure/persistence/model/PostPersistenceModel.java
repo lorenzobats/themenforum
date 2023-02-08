@@ -29,16 +29,10 @@ public class PostPersistenceModel {
     @JoinColumn(name = "user_id")
     UserPersistenceModel userPersistenceModel;
 
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
-
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     List<CommentPersistenceModel> comments = new ArrayList<>();
 
-
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(
             name = "post_vote",
             joinColumns = @JoinColumn(name = "post_id"),
