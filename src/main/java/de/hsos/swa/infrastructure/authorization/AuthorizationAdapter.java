@@ -66,10 +66,9 @@ public class AuthorizationAdapter implements AuthorizationGateway {
 
         // Deaktivierte Nutzer
         AuthUser owner = optionalAuthUser.get();
-        owner.disable();
 
         try{
-            entityManager.merge(owner);
+            entityManager.remove(owner);
             return AuthorizationResult.ok();
         } catch (PersistenceException e) {
             return AuthorizationResult.exception();
@@ -84,8 +83,6 @@ public class AuthorizationAdapter implements AuthorizationGateway {
             return AuthorizationResult.notAuthenticated();
 
         AuthUser owner = optionalAuthUser.get();
-        if(!owner.isActive())
-            return AuthorizationResult.notAllowed();
 
         try{
             OwnerOf ownerOf = new OwnerOf(owner, ressourceId);
@@ -244,7 +241,7 @@ public class AuthorizationAdapter implements AuthorizationGateway {
         Optional<AuthUser> optionalAuthUser = this.loadUser(username);
         if(optionalAuthUser.isPresent()) {
             AuthUser user = optionalAuthUser.get();
-            return user.isActive() && user.getRole().equals("admin");
+            return  user.getRole().equals("admin");
         }
         return false;
     }
@@ -254,7 +251,6 @@ public class AuthorizationAdapter implements AuthorizationGateway {
             CriteriaBuilder<OwnerOf> query = criteriaBuilderFactory.create(entityManager, OwnerOf.class);
             query
                     .where("owner.username").eq(accessingUser)
-                    .where("owner.active").eq(true)
                     .where("ressourceId").eq(ressourceId);
             return !query.getResultList().isEmpty();
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {

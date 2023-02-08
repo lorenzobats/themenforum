@@ -49,6 +49,11 @@ public class RegisterUserService implements RegisterUserUseCase {
      */
     @Override
     public ApplicationResult<User> registerUser(RegisterUserCommand command) {
+        RepositoryResult<User> existingUserResult = this.userRepository.getUserByName(command.username());
+        if (existingUserResult.ok()){
+            return ApplicationResult.notValid(command.username() + " is already uses as a username");
+        }
+
         User user = UserFactory.createUser(command.username());
         RegisterAuthUserCommand createUserAuthRequest = new RegisterAuthUserCommand(
                 command.username(),
@@ -59,8 +64,7 @@ public class RegisterUserService implements RegisterUserUseCase {
         AuthorizationResult<Void> registration = this.authorizationGateway
                 .registerUser(createUserAuthRequest);
         if (registration.denied())
-            return ApplicationResult.notValid(createUserAuthRequest
-                    .getUsername() + " is not available as a Username");
+            return ApplicationResult.exception("Registration failed");
 
 
         RepositoryResult<User> createUserResponse = this.userRepository.saveUser(user);

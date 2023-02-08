@@ -7,6 +7,7 @@ import io.quarkus.security.jpa.Roles;
 import io.quarkus.security.jpa.UserDefinition;
 import io.quarkus.security.jpa.Username;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -32,8 +33,8 @@ public class AuthUser {
     @Column(name = "user_id")
     UUID userId;
 
-    @Basic
-    boolean active = true;
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE)
+    List<OwnerOf> ownedRessources;
 
     public AuthUser() {
     }
@@ -46,14 +47,6 @@ public class AuthUser {
         return role;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
-    public void disable() {
-        this.password = BcryptUtil.bcryptHash(String.valueOf(UUID.randomUUID()));
-        this.active = false;
-    }
 
     public AuthUser(String username, String password, String role, UUID userId) {
         this.username = username;
