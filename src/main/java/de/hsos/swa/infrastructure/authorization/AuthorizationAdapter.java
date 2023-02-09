@@ -170,7 +170,6 @@ public class AuthorizationAdapter implements AuthorizationGateway {
         // Member dürfen ihre eigenen Posts löschen
         if(isActiveRessourceOwner(accessingUser, postId))
             return AuthorizationResult.ok();
-
         return AuthorizationResult.notAllowed();
     }
     @Override

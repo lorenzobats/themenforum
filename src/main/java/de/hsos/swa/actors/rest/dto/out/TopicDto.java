@@ -13,6 +13,8 @@ public class TopicDto {
     public String owner;
     public Long numberOfPosts;
 
+    public TopicDto() {
+    }
 
     public TopicDto(String id, String title, String description, LocalDateTime createdAt, String owner) {
         this.id = id;

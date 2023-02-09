@@ -17,6 +17,8 @@ public class VoteDto {
     public VotedEntityType votedEntityType;
     public UUID votedEntityId;
 
+    public VoteDto() {
+    }
 
     public VoteDto(String id, String user, VoteType voteType, LocalDateTime createdAt, VotedEntityType votedEntityType, UUID votedEntityId) {
         this.id = id;

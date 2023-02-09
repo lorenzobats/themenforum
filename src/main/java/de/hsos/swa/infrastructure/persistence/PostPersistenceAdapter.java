@@ -160,25 +160,28 @@ public class PostPersistenceAdapter implements PostRepository {
     public RepositoryResult<Post> getPostByCommentId(UUID commentId) {
         try {
             // Rekursive CTE zur Suche des zur übergebenen commentID zugehörigen Kommentars auf erster Ebene
+            // Analog implementiert zur Rekursiven Query in der Blaze-Persistence-Dokumentation
             // Quelle https://persistence.blazebit.com/documentation/1.6/core/manual/en_US/#recursive-ctes
             CriteriaBuilder<UUID> subquery = criteriaBuilderFactory.create(entityManager, UUID.class)
-                    .withRecursive(CommentCTE.class)
-                    .from(CommentPersistenceModel.class, "comment")
-                    .bind("id").select("comment.id")
-                    .bind("parentComment").select("comment.parentComment")
-                    .where("id").eq(commentId)
+                    .withRecursive(CommentCTE.class) // Rekursive CTE definieren
+                        .from(CommentPersistenceModel.class, "comment")
+                        .bind("id").select("comment.id")
+                        .bind("parentComment").select("comment.parentComment")
+                        .where("id").eq(commentId)  // Kommentar mit übergebener ID auswaehlen
+                    // Rekursion
                     .unionAll()
-                    .from(CommentPersistenceModel.class, "comment")
-                    .from(CommentCTE.class, "previous_comment")
-                    .bind("id").select("comment.id")
-                    .bind("parentComment").select("comment.parentComment")
-                    .where("comment.id").eqExpression("previous_comment.parentComment.id")
+                        .from(CommentPersistenceModel.class, "comment")
+                        .from(CommentCTE.class, "previous_comment") // Rekursiver Join mit vorheriger Iteration
+                        .bind("id").select("comment.id")
+                        .bind("parentComment").select("comment.parentComment")
+                        .where("comment.id").eqExpression("previous_comment.parentComment.id")  // Ausschließlich Parent-Kommentar auswählen
                     .end()
+                    // Auswahl der ID des zugehoerigen Elternkommentars
                     .where("parentComment").isNull()
                     .from(CommentCTE.class, "first_level_comment")
                     .select("first_level_comment.id");
 
-            // Nutzen der zuvor formulierten Subquery, um Post zu finden
+            // Nutzen der zuvor formulierten Subquery, um Post zu finden.
             CriteriaBuilder<PostPersistenceModel> criteriaBuilder = criteriaBuilderFactory.create(entityManager, PostPersistenceModel.class);
             criteriaBuilder.where("comments").in(subquery).end();
 

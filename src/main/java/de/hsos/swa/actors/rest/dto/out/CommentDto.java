@@ -18,6 +18,9 @@ public class CommentDto {
     public Integer downVoteCount;
     public Integer upVoteCount;
 
+    public CommentDto() {
+    }
+
     public CommentDto(String id, String username, String text, LocalDateTime createdAt, Integer downVoteCount, Integer upVoteCount) {
         this.id = id;
         this.username = username;
