@@ -87,9 +87,9 @@ public class TopicsRessource {
                 List<TopicDto> topicsResponse = result.data().stream().map(TopicDto.Converter::fromInputPortDto).toList();
                 return Response.status(Response.Status.OK).entity(topicsResponse).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -109,9 +109,9 @@ public class TopicsRessource {
                 TopicDto response = TopicDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -139,9 +139,9 @@ public class TopicsRessource {
                 TopicDto topicResponse = TopicDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(topicResponse).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -168,9 +168,9 @@ public class TopicsRessource {
                 }
                 return Response.status(Response.Status.NO_CONTENT).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 }

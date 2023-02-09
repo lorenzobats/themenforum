@@ -30,7 +30,7 @@ public class ErrorResponse {
         ));
     }
 
-    public static Response asResponseFromApplicationResult(ApplicationResult.Status status, String detailMessage) {
+    public static Response fromApplicationResult(ApplicationResult.Status status, String detailMessage) {
         switch (status) {
             case NOT_VALID -> {
                 return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse("Invalid request", detailMessage, 400)).build();
@@ -54,7 +54,7 @@ public class ErrorResponse {
         return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse("Invalid request", detailMessage, 400)).build();
     }
 
-    public static Response asResponseFromConstraintViolation(Set<ConstraintViolation<?>> constraintViolations) {
+    public static Response fromConstraintViolation(Set<ConstraintViolation<?>> constraintViolations) {
         return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(constraintViolations)).build();
     }
 }

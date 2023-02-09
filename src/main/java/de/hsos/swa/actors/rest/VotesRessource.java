@@ -86,9 +86,9 @@ public class VotesRessource {
                 return Response.status(Response.Status.OK).entity(votesResponse).build();
             }
 
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -116,9 +116,9 @@ public class VotesRessource {
                 VoteDto voteDto = VoteDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(voteDto).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -145,9 +145,9 @@ public class VotesRessource {
                 }
                 return Response.status(Response.Status.NO_CONTENT).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 }

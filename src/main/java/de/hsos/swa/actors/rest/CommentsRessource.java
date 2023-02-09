@@ -85,9 +85,9 @@ public class CommentsRessource {
                 List<CommentDto> commentsResponse = result.data().stream().map(CommentDto.Converter::fromDomainEntity).toList();
                 return Response.status(Response.Status.OK).entity(commentsResponse).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -109,9 +109,9 @@ public class CommentsRessource {
                 CommentDto response = CommentDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -142,9 +142,9 @@ public class CommentsRessource {
                 CommentDto response = CommentDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -175,9 +175,9 @@ public class CommentsRessource {
                 CommentDto response = CommentDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(response).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -207,9 +207,9 @@ public class CommentsRessource {
                 }
                 return Response.status(Response.Status.NO_CONTENT).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 }

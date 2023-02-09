@@ -55,13 +55,17 @@ public class TopicsEndpoint {
             isLoggedIn = true;
         }
         if (searchString != null) {
-            ApplicationResult<List<TopicWithPostCountDto>> searchedTopics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(searchString));
-            return Templates.topics(searchedTopics.data().stream().map(TopicDto.Converter::fromInputPortDto).toList(), isLoggedIn, username);
+            ApplicationResult<List<TopicWithPostCountDto>> searchedTopics =
+                    searchTopicsUseCase.searchTopics(new SearchTopicsQuery(searchString));
+            return Templates.topics(searchedTopics.data().stream()
+                    .map(TopicDto.Converter::fromInputPortDto).toList(), isLoggedIn, username);
         }
-        ApplicationResult<List<TopicWithPostCountDto>> allTopics = getAllTopicsUseCase.getAllTopics();
+        ApplicationResult<List<TopicWithPostCountDto>> allTopics
+                = getAllTopicsUseCase.getAllTopics();
         List<TopicDto> topicDtos = new ArrayList<>();
         if (allTopics.ok()) {
-            topicDtos = allTopics.data().stream().map(TopicDto.Converter::fromInputPortDto).toList();
+            topicDtos = allTopics.data().stream()
+                    .map(TopicDto.Converter::fromInputPortDto).toList();
         }
         return Templates.topics(topicDtos, isLoggedIn, username);
     }

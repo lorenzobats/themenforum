@@ -80,9 +80,9 @@ public class UsersRessource {
                 List<UserDto> topicsResponse = result.data().stream().map(UserDto.Converter::fromDomainEntity).toList();
                 return Response.status(Response.Status.OK).entity(topicsResponse).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -103,9 +103,9 @@ public class UsersRessource {
                 UserDto responseDto = UserDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(responseDto).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -133,9 +133,9 @@ public class UsersRessource {
                 UserDto responseDto = UserDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(responseDto).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -161,9 +161,9 @@ public class UsersRessource {
                 }
                 return Response.status(Response.Status.NO_CONTENT).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 }

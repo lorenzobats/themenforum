@@ -17,6 +17,8 @@ public class PostDto {
     public Integer downvoteCount;
     public Integer upvoteCount;
 
+    public PostDto() {
+    }
 
     public PostDto(String id, String title) {
         this.id = id;

@@ -10,7 +10,8 @@ import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class Comment implements SortedEntity, VotedEntity {
+public class
+Comment implements SortedEntity, VotedEntity {
     @Valid
     private UUID id;
     @NotBlank

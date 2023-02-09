@@ -106,9 +106,9 @@ public class PostsRessource {
                 return Response.status(Response.Status.OK).entity(postsResponse).build();
             }
 
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -134,9 +134,9 @@ public class PostsRessource {
                 return Response.status(Response.Status.OK).entity(response).build();
             }
 
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -165,9 +165,11 @@ public class PostsRessource {
                 PostDto postResponse = PostDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(postResponse).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse
+                    .fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.
+                    fromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -196,9 +198,9 @@ public class PostsRessource {
                 PostDto postResponse = PostDto.Converter.fromDomainEntity(result.data());
                 return Response.status(Response.Status.OK).entity(postResponse).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 
@@ -225,9 +227,9 @@ public class PostsRessource {
                 }
                 return Response.status(Response.Status.NO_CONTENT).build();
             }
-            return ErrorResponse.asResponseFromApplicationResult(result.status(), result.message());
+            return ErrorResponse.fromApplicationResult(result.status(), result.message());
         } catch (ConstraintViolationException e) {
-            return ErrorResponse.asResponseFromConstraintViolation(e.getConstraintViolations());
+            return ErrorResponse.fromConstraintViolation(e.getConstraintViolations());
         }
     }
 }
