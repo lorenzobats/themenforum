@@ -11,6 +11,8 @@ import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
 import de.hsos.swa.domain.entity.*;
 import de.hsos.swa.domain.service.VoteService;
+import de.hsos.swa.domain.vo.VoteType;
+import de.hsos.swa.domain.vo.VotedEntityType;
 import org.hibernate.boot.model.source.internal.hbm.AbstractPluralAssociationElementSourceImpl;
 
 import javax.enterprise.context.RequestScoped;
@@ -69,7 +71,7 @@ public class VoteEntityService implements VoteEntityUseCase {
         RepositoryResult<Post> postResult = new RepositoryResult<>();
         VotedEntity entityToVote = null;
 
-        switch (command.entityType()) {
+        switch (VotedEntityType.valueOf(command.entityType())) {
             case COMMENT -> {
                 postResult = this.postRepository.getPostByCommentId(UUID.fromString(command.entityId()));
                 if (postResult.ok())
@@ -89,7 +91,7 @@ public class VoteEntityService implements VoteEntityUseCase {
         if (entityToVote == null)
             return ApplicationResult.notFound("Entity to vote not found");
 
-        Optional<Vote> optionalVote = this.voteService.vote(entityToVote, user, command.voteType());
+        Optional<Vote> optionalVote = this.voteService.vote(entityToVote, user, VoteType.valueOf(command.voteType()));
 
         if (optionalVote.isEmpty())
             return ApplicationResult.noPermission("Cannot create vote");

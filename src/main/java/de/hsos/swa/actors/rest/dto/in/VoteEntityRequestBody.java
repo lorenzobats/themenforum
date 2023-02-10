@@ -13,14 +13,14 @@ import javax.validation.constraints.NotNull;
 @Schema(name = "VoteCreationDto")
 public class VoteEntityRequestBody implements ValidatedRequestBody {
 
-    @NotNull(message = "voteType is empty")
-    public VoteType voteType;
+    @NotBlank(message = "voteType is empty")
+    public String voteType;
 
     @NotBlank(message = "entityId is blank")
     public String entityId;
 
-    @NotNull(message = "entityType is empty")
-    public VotedEntityType entityType;
+    @NotBlank(message = "entityType is empty")
+    public String entityType;
 
     public VoteEntityRequestBody() {}
 
