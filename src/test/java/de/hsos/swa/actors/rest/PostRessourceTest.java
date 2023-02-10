@@ -61,7 +61,6 @@ public class PostRessourceTest {
         response.body("creator", is("oschluet"));
     }
 
-
     @Test
     public void createPostNotAllowed() {
         Map<String, String> postData = new HashMap<>();
@@ -296,4 +295,46 @@ public class PostRessourceTest {
                 .then()
                 .statusCode(204);
     }
+
+    @Test
+    public void updatePostNotAllowed() {
+        String postId = "55a7409f-c0eb-453e-b7ef-89f905963ce9";
+
+        Map<String, String> postData = new HashMap<>();
+        postData.put("title", "Updated Title");
+        postData.put("content", "Updated Content");
+
+        ValidatableResponse response = given()
+                .header("Content-Type", "application/json")
+                .contentType("application/json")
+                .auth().basic("lbattist", "lbattist")
+                .body(postData)
+                .patch(postId)
+                .then()
+                .statusCode(403);
+    }
+
+    @Test
+    public void updatePost() {
+        String postId = "55a7409f-c0eb-453e-b7ef-89f905963ce9";
+
+        Map<String, String> postData = new HashMap<>();
+        postData.put("title", "Updated Title");
+        postData.put("content", "Updated Content");
+
+        ValidatableResponse response = given()
+                .header("Content-Type", "application/json")
+                .contentType("application/json")
+                .auth().basic("oschluet", "oschluet")
+                .body(postData)
+                .patch(postId)
+                .then()
+                .statusCode(200);
+
+        response.body("content", is(postData.get("content")));
+        response.body("creator", is("oschluet"));
+        response.body("title", is(postData.get("title")));
+    }
+
+
 }
