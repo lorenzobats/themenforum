@@ -5,7 +5,6 @@ import de.hsos.swa.application.input.command.VoteEntityUseCase;
 import de.hsos.swa.application.input.dto.in.VoteEntityCommand;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.auth.AuthorizationGateway;
-import de.hsos.swa.application.output.repository.CommentRepository;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.UserRepository;
 import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
@@ -13,7 +12,6 @@ import de.hsos.swa.domain.entity.*;
 import de.hsos.swa.domain.service.VoteService;
 import de.hsos.swa.domain.vo.VoteType;
 import de.hsos.swa.domain.vo.VotedEntityType;
-import org.hibernate.boot.model.source.internal.hbm.AbstractPluralAssociationElementSourceImpl;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -21,17 +19,16 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
-
 /**
- * Die UseCase Klasse VoteEntityService implementiert das Interface
+ * Die Application Service Klasse VoteEntityService implementiert das Interface
  * VoteEntityUseCase der Boundary des Application Hexagons.
  * Es realisiert die Applikationslogik für das Voten von Kommentaren und Posts
  *
- * @author Oliver Schlüter
  * @author Lorenzo Battiston
+ * @author Oliver Schlüter
  * @version 1.0
- * @see VoteEntityUseCase               Korrespondierende Input-Port für diesen Use Case
- * @see VoteEntityCommand               Korrespondierende Request DTO für diesen Use Case
+ * @see VoteEntityUseCase               Korrespondierender Input-Port für diesen Service
+ * @see VoteEntityCommand               Korrespondierendes Request DTO für diesen Service
  * @see VoteService                     Domain Service für das up/downvoten von Kommentaren und Posts
  * @see UserRepository                  Output-Port zum Laden des anfragenden Nutzers
  * @see PostRepository                  Output-Port zum Speichern des erzeugten Beitrags
@@ -103,8 +100,6 @@ public class VoteEntityService implements VoteEntityUseCase {
         if (authorizationGateway.addOwnership(requestingUser, optionalVote.get().getId()).denied())
             return ApplicationResult.exception("Something went wrong during voting");
 
-
         return ApplicationResult.ok(optionalVote.get());
-
     }
 }

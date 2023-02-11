@@ -13,6 +13,19 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.List;
 
+/**
+ * Die Application Service Klasse GetCommentsByUserService implementiert das Interface
+ * GetCommentsByUserUseCase der Boundary des Application-Hexagons.
+ * Es realisiert die Applikationslogik für das Laden aller Kommentare aus dem Kommentar-Repository, die zu dem
+ * übergebenen Nutzer gehören.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see GetCommentsByUserUseCase            Korrespondierender Input-Port für diesen Service
+ * @see GetCommentsByUserQuery              Korrespondierendes Request-DTO für diesen Service
+ * @see CommentRepository                   Output-Port zum Laden des Kommentars
+ */
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 @ApplicationService
@@ -21,6 +34,12 @@ public class GetCommentsByUserService implements GetCommentsByUserUseCase {
     @Inject
     CommentRepository commentRepository;
 
+    /**
+     * Lädt alle Kommentare eines Nutzers aus dem Kommentar-Repository.
+     *
+     * @param query     enthält den Nutzernamen, dessen Kommentare geladen werden sollen
+     * @return ApplicationResult<List<Comment>> enthält die Liste der zum Nutzer gehörenden Kommentare des Themenforums
+     */
     @Override
     public ApplicationResult<List<Comment>> getCommentsByUser(GetCommentsByUserQuery query) {
         RepositoryResult<List<Comment>> result = commentRepository.getCommentsByUser(query.username());

@@ -17,15 +17,15 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
- * Die UseCase Klasse CreateTopicService implementiert das Interface
+ * Die Application Service Klasse CreateTopicService implementiert das Interface
  * CreateTopicUseCase der Boundary des Application Hexagons.
  * Es realisiert die Applikationslogik für das Anlegen eines neuen Themas durch den Nutzer.
  *
- * @author Oliver Schlüter
  * @author Lorenzo Battiston
+ * @author Oliver Schlüter
  * @version 1.0
- * @see CreateTopicUseCase              Korrespondierende Input-Port für diesen Use Case
- * @see CreateTopicCommand              Korrespondierende Request DTO für diesen Use Case
+ * @see CreateTopicUseCase              Korrespondierender Input-Port für diesen Service
+ * @see CreateTopicCommand              Korrespondierendes Request DTO für diesen Service
  * @see UserRepository                  Output-Port zum Laden des anfragenden Nutzers
  * @see TopicRepository                 Output-Port zum Speichern des erzeugten Themas
  * @see AuthorizationGateway            Output-Port zum Speichern des Topic-Inhabers für spätere Zugriffskontrolle

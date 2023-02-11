@@ -59,7 +59,7 @@ public class AuthorizationAdapter implements AuthorizationGateway {
         }
     }
     @Override
-    public AuthorizationResult<Void> disableUser(String username) {
+    public AuthorizationResult<Void> deleteUser(String username) {
         Optional<AuthUser> optionalAuthUser = this.loadUser(username);
         if(optionalAuthUser.isEmpty())
             return AuthorizationResult.exception();

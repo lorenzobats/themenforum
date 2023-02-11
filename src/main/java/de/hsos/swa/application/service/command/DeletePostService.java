@@ -18,15 +18,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Die UseCase Klasse DeletePostService implementiert das Interface
+ * Die Application Service Klasse DeletePostService implementiert das Interface
  * DeletePostUseCase der Boundary des Application Hexagons.
  * Es realisiert die Applikationslogik für das Löschen eines Beitrags durch seinen Ersteller bzw. einen Admin.
  *
- * @author Oliver Schlüter
  * @author Lorenzo Battiston
+ * @author Oliver Schlüter
  * @version 1.0
- * @see DeletePostUseCase               Korrespondierende Input-Port für diesen Use Case
- * @see DeletePostCommand               Korrespondierende Request DTO für diesen Use Case
+ * @see DeletePostUseCase               Korrespondierender Input-Port für diesen Service
+ * @see DeletePostCommand               Korrespondierendes Request DTO für diesen Service
  * @see PostRepository                  Output-Port zum Löschen des Beitrags
  * @see AuthorizationGateway            Output-Port zur Zugriffskontrolle für Löschvorgang
  */
@@ -50,18 +50,15 @@ public class DeletePostService implements DeletePostUseCase {
     @Override
     public ApplicationResult<Optional<Post>>
     deletePost(DeletePostCommand command, String requestingUser) {
-        RepositoryResult<Post> existingPost = postRepository
-                .getPostById(UUID.fromString(command.postId()), false);
+        RepositoryResult<Post> existingPost = postRepository.getPostById(UUID.fromString(command.postId()), false);
         if(existingPost.error())
             return ApplicationResult.noContent(Optional.empty());
 
-        AuthorizationResult<Boolean> permission = authorizationGateway
-                .canDeletePost(requestingUser, UUID.fromString(command.postId()));
+        AuthorizationResult<Boolean> permission = authorizationGateway.canDeletePost(requestingUser, UUID.fromString(command.postId()));
         if(permission.denied())
             return AuthorizationResultMapper.handleRejection(permission.status());
 
-        RepositoryResult<Post> result = this.postRepository
-                .deletePost(UUID.fromString(command.postId()));
+        RepositoryResult<Post> result = this.postRepository.deletePost(UUID.fromString(command.postId()));
         if (result.error()) {
             return ApplicationResult.exception("Cannot delete post");
         }

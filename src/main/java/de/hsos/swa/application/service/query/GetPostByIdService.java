@@ -18,6 +18,18 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.*;
 
+/**
+ * Die Application Service Klasse GetPostByIdService implementiert das Interface
+ * GetPostByIdUseCase der Boundary des Application-Hexagons.
+ * Es realisiert die Applikationslogik für das Laden des Posts mit der übergebenen ID
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see GetPostByIdUseCase                      Korrespondierender Input-Port für diesen Service
+ * @see GetPostByIdQuery                        Korrespondierendes Request-DTO für diesen Service
+ * @see PostRepository                          Output-Port zum Laden des Posts
+ */
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 @ApplicationService
@@ -26,10 +38,16 @@ public class GetPostByIdService implements GetPostByIdUseCase {
     @Inject
     PostRepository postRepository;
 
+    /**
+     * Lädt den Posts zu der übergebenen ID aus dem Post-Repository
+     *
+     * @param query enthält die Post-ID des Posts, der geladen werden soll, sowie Parameter zur Sortierung der
+     *              Kommentare des gefundenen Posts
+     * @return ApplicationResult<Post> den gefundenen Post, oder alternativ Fehlermeldung
+     */
     @Override
     public ApplicationResult<Post> getPostById(GetPostByIdQuery query) {
-        RepositoryResult<Post> postResult = postRepository
-                .getPostById(UUID.fromString(query.id()), query.includeComments());
+        RepositoryResult<Post> postResult = postRepository.getPostById(UUID.fromString(query.id()), query.includeComments());
 
         if(postResult.status().equals(RepositoryResult.Status.ENTITY_NOT_FOUND))
             return ApplicationResult.notFound(query.id() + "not found");

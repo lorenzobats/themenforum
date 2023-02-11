@@ -1,6 +1,6 @@
+INSERT INTO user_table (id, user_name, active) VALUES ('fafaaa75-64eb-4b5b-96f3-79721048b85f', 'admin', true);
 INSERT INTO user_table (id, user_name, active) VALUES ('78188b10-4733-4fca-8dfd-e07aee389383', 'oschluet', true);
 INSERT INTO user_table (id, user_name, active) VALUES ('efac4cf6-4188-4a18-8489-4fc98f3633d6', 'lbattist', true);
-INSERT INTO user_table (id, user_name, active) VALUES ('fafaaa75-64eb-4b5b-96f3-79721048b85f', 'admin', true);
 INSERT INTO user_table (id, user_name, active) VALUES ('c8f79ffc-7ce0-4673-a22c-5cf210b83f13', 'afuchs', true);
 INSERT INTO user_table (id, user_name, active) VALUES ('7adc0aa2-5532-4233-a8b4-2d0debd6a053', 'bdierken', true);
 INSERT INTO user_table (id, user_name, active) VALUES ('8be3a431-5b87-4223-ab76-bd3308da4cfd', 'ckaiser', true);
@@ -30,6 +30,11 @@ INSERT INTO comment_table (id, active, createdat, text, parent_comment_id, user_
 
 INSERT INTO post_table_comment_table (post_id, comments_id) VALUES ('55a7409f-c0eb-453e-b7ef-89f905963ce9', '9ac4c6fd-68e1-4b41-97fd-817284290411');
 INSERT INTO post_table_comment_table (post_id, comments_id) VALUES ('959b81a0-35b3-4f9d-a08b-4879173a1e2c', 'ee774407-a71f-4d4e-b829-f26d38e2ee81');
+
+
+
+
+
 
 INSERT INTO auth.auth_user_table (id, password, role, user_id, username) VALUES ('6b05e5b1-1859-418f-97ba-dd5c8a4f02bf', '$2a$10$DwD7QAQ8xBxjG7B3A2I5s.bzU/1bt4YYvR91V1Ob33F4Olb.SnYwi', 'member', '78188b10-4733-4fca-8dfd-e07aee389383', 'oschluet');
 INSERT INTO auth.auth_user_table (id, password, role, user_id, username) VALUES ('c91b0e85-abcb-48d4-b344-3229099c84ba', '$2a$10$HTWkZDXvW.laYCCBzWo7Qu1xZL2fKWe.EgEeGly9TCLUa0xzqPuS2', 'member', 'efac4cf6-4188-4a18-8489-4fc98f3633d6', 'lbattist');

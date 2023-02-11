@@ -17,16 +17,17 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.UUID;
+
 /**
- * Die UseCase Klasse ReplyToCommentService implementiert das Interface
+ * Die ApplicationService Klasse ReplyToCommentService implementiert das Interface
  * ReplyToCommentUseCase der Boundary des Application Hexagons.
  * Es realisiert die Applikationslogik für das Hinzufügen einer Antwort zu einem Kommentar durch den Nutzer.
  *
- * @author Oliver Schlüter
  * @author Lorenzo Battiston
+ * @author Oliver Schlüter
  * @version 1.0
- * @see ReplyToCommentUseCase               Korrespondierende Input-Port für diesen Use Case
- * @see ReplyToCommentCommand               Korrespondierende Request DTO für diesen Use Case
+ * @see ReplyToCommentUseCase               Korrespondierender Input-Port für diesen Service
+ * @see ReplyToCommentCommand               Korrespondierendes Request DTO für diesen Service
  * @see UserRepository                      Output-Port zum Laden des anfragenden Nutzers
  * @see PostRepository                      Output-Port zum Speichern des Posts nach Hinzufügen des Kommentars
  * @see AuthorizationGateway                Output-Port zum Speichern des Kommentar-Inhabers für spätere Zugriffskontrolle
@@ -49,7 +50,7 @@ public class ReplyToCommentService implements ReplyToCommentUseCase {
      *
      * @param command           enthält Kommentartext, Eltern-Kommentar-Id für das zu erstellende Kommentar
      * @param requestingUser    enthält den Nutzernamen des Erstellers
-     * @return ApplicationResult<Comment> enthält erzeugtes Kommentar bzw. Fehlermeldung bei Misserfolg
+     * @return ApplicationResult<Comment> enthält erzeugten Kommentar bzw. Fehlermeldung bei Misserfolg
      */
     @Override
     public ApplicationResult<Comment> replyToComment(ReplyToCommentCommand command, String requestingUser) {

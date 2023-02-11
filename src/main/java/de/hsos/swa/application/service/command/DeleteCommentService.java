@@ -19,15 +19,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Die UseCase Klasse DeleteCommentService implementiert das Interface
+ * Die Application Service Klasse DeleteCommentService implementiert das Interface
  * DeleteCommentUseCase der Boundary des Application Hexagons.
  * Es realisiert die Applikationslogik für das Löschen (=Dekativieren) eines Kommentars durch seinen Ersteller bzw. einen Admin.
  *
- * @author Oliver Schlüter
  * @author Lorenzo Battiston
+ * @author Oliver Schlüter
  * @version 1.0
- * @see DeleteCommentUseCase            Korrespondierende Input-Port für diesen Use Case
- * @see DeleteCommentCommand            Korrespondierende Request DTO für diesen Use Case
+ * @see DeleteCommentUseCase            Korrespondierender Input-Port für diesen Service
+ * @see DeleteCommentCommand            Korrespondierendes Request DTO für diesen Service
  * @see PostRepository                  Verwendeter Output-Port zum Speichern des Posts nach Löschen des Kommentars
  * @see AuthorizationGateway            Output-Port zur Zugriffskontrolle für Löschvorgang
  */

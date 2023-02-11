@@ -16,17 +16,16 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-
 /**
- * Die UseCase Klasse RegisterUserService implementiert das Interface
+ * Die Application Service Klasse RegisterUserService implementiert das Interface
  * RegisterUserUseCase der Boundary des Application Hexagons.
  * Es realisiert die Applikationslogik für das Deaktivieren eines Users durch einen Admin
  *
- * @author Oliver Schlüter
  * @author Lorenzo Battiston
+ * @author Oliver Schlüter
  * @version 1.0
- * @see RegisterUserUseCase             Korrespondierende Input-Port für diesen Use Case
- * @see de.hsos.swa.application.input.dto.in.RegisterUserCommand             Korrespondierende Request DTO für diesen Use Case
+ * @see RegisterUserUseCase             Korrespondierender Input-Port für diesen Service
+ * @see RegisterUserCommand             Korrespondierendes Request DTO für diesen Service
  * @see UserRepository                  Output-Port zum Speichern des Forum-Nutzers
  * @see AuthorizationGateway            Output-Port zum Registrieren eines Users (Zugangsdaten speichern)
  */
@@ -44,7 +43,7 @@ public class RegisterUserService implements RegisterUserUseCase {
     /**
      * Erstellt einen neuen Nutzer und registriert diesen auf Basis der übergebenen Informationen.
      *
-     * @param command           enthält Nutzernamen und Passwort des zu registrierenden Nutzers
+     * @param command enthält Nutzernamen und Passwort des zu registrierenden Nutzers
      * @return ApplicationResult<User> enthält erstellten Nutzer bzw. Fehlermeldung bei Misserfolg
      */
     @Override
@@ -61,8 +60,7 @@ public class RegisterUserService implements RegisterUserUseCase {
                 "member",
                 user.getId());
 
-        AuthorizationResult<Void> registration = this.authorizationGateway
-                .registerUser(createUserAuthRequest);
+        AuthorizationResult<Void> registration = this.authorizationGateway.registerUser(createUserAuthRequest);
         if (registration.denied())
             return ApplicationResult.exception("Registration failed");
 

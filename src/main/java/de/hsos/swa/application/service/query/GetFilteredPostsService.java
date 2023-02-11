@@ -20,6 +20,19 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Die Application Service Klasse GetFilteredPostsService implementiert das Interface
+ * GetFilteredPostsUseCase der Boundary des Application-Hexagons.
+ * Es realisiert die Applikationslogik für das Laden aller Posts aus dem Post-Repository, die bei Bedarf nach
+ * verschiedenen Kriterien gefiltert werden können.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see GetFilteredPostsUseCase             Korrespondierender Input-Port für diesen Service
+ * @see GetFilteredPostQuery                Korrespondierendes Request-DTO für diesen Service
+ * @see PostRepository                      Output-Port zum Laden der Posts
+ */
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 @ApplicationService
@@ -28,26 +41,31 @@ public class GetFilteredPostsService implements GetFilteredPostsUseCase {
     @Inject
     PostRepository postRepository;
 
+    /**
+     * Lädt alle gefilterten Posts aus dem Post-Repository und sortiert diese optional.
+     *
+     * @param query     enthält verschiedene Filter-Parameter und Sortier-Parameter
+     * @return ApplicationResult<List<Post>> enthält die gefilterte/sortierte Liste aller Posts des Themenforums
+     */
     @Override
-    public ApplicationResult<List<Post>> getFilteredPosts(GetFilteredPostQuery request) {
-        RepositoryResult<List<Post>> postsResult = postRepository.getFilteredPosts(request.filterParams(), request.includeComments());
+    public ApplicationResult<List<Post>> getFilteredPosts(GetFilteredPostQuery query) {
+        RepositoryResult<List<Post>> postsResult = postRepository.getFilteredPosts(query.filterParams(), query.includeComments());
 
-        if (postsResult.ok()) {
-            List<Post> sortedPosts = new ArrayList<>(postsResult.get());
+        if (postsResult.error())
+            return ApplicationResult.exception();
 
-            switch (SortingParams.valueOf(request.sortingParams())) {
-                case VOTES -> {
-                    sortPosts(sortedPosts, OrderParams.valueOf(request.orderParams()) == OrderParams.ASC, new SortByUpvotes<>());
-                }
-                case DATE -> {
-                    sortPosts(sortedPosts, OrderParams.valueOf(request.orderParams()) == OrderParams.ASC, new SortByDate<>());
-                }
-                default -> throw new IllegalArgumentException("Cant sort posts");
+
+        List<Post> sortedPosts = new ArrayList<>(postsResult.get());
+        switch (SortingParams.valueOf(query.sortingParams())) {
+            case VOTES ->
+                    sortPosts(sortedPosts, OrderParams.valueOf(query.orderParams()) == OrderParams.ASC, new SortByUpvotes<>());
+            case DATE ->
+                    sortPosts(sortedPosts, OrderParams.valueOf(query.orderParams()) == OrderParams.ASC, new SortByDate<>());
+            default -> {
+                return ApplicationResult.notValid("Invalid sorting param: " + query.sortingParams());
             }
-            return ApplicationResult.ok(sortedPosts);
         }
-
-        return ApplicationResult.exception("Cannot find Posts");
+        return ApplicationResult.ok(sortedPosts);
     }
 
     private void sortPosts(List<Post> posts, boolean reversed, Comparator<Post> comparator) {

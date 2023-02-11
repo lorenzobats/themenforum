@@ -21,15 +21,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Die UseCase Klasse DeleteVoteService implementiert das Interface
+ * Die Application Service Klasse DeleteVoteService implementiert das Interface
  * DeleteVoteUseCase der Boundary des Application Hexagons.
  * Es realisiert die Applikationslogik für das Löschen eines Themas durch einen Admin.
  *
- * @author Oliver Schlüter
  * @author Lorenzo Battiston
+ * @author Oliver Schlüter
  * @version 1.0
- * @see DeleteVoteUseCase               Korrespondierende Input-Port für diesen Use Case
- * @see DeleteVoteCommand               Korrespondierende Request DTO für diesen Use Case
+ * @see DeleteVoteUseCase               Korrespondierender Input-Port für diesen Service
+ * @see DeleteVoteCommand               Korrespondierendes Request DTO für diesen Service
  * @see VoteRepository                  Output-Port zum Finden des Votes
  * @see PostRepository                  Output-Port zum Updaten des Posts nach Löschen des Votes
  * @see VoteService                     Domain Service für das Löschen von Votes
@@ -50,6 +50,7 @@ public class DeleteVoteService implements DeleteVoteUseCase {
     AuthorizationGateway authorizationGateway;
 
     /**
+     * Löscht einen Vote auf Basis der übergebenen Informationen.
      *
      * @param command            enthält ID des zu löschenden Votes
      * @param requestingUser     enthält den Nutzernamen der Löschen-Anfrage

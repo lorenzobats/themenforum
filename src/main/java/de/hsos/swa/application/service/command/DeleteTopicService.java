@@ -18,15 +18,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Die UseCase Klasse DeleteTopicService implementiert das Interface
+ * Die Application Service Klasse DeleteTopicService implementiert das Interface
  * DeleteTopicUseCase der Boundary des Application Hexagons.
  * Es realisiert die Applikationslogik für das Löschen eines Themas durch einen Admin.
  *
- * @author Oliver Schlüter
  * @author Lorenzo Battiston
+ * @author Oliver Schlüter
  * @version 1.0
- * @see DeleteTopicUseCase              Korrespondierende Input-Port für diesen Use Case
- * @see DeleteTopicCommand              Korrespondierende Request DTO für diesen Use Case
+ * @see DeleteTopicUseCase              Korrespondierender Input-Port für diesen Service
+ * @see DeleteTopicCommand              Korrespondierendes Request DTO für diesen Service
  * @see TopicRepository                 Output-Port zum Löschen des Themas
  * @see AuthorizationGateway            Output-Port zur Zugriffskontrolle für Löschvorgang
  */

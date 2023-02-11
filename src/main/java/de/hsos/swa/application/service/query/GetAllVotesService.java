@@ -16,6 +16,18 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.List;
 
+/**
+ * Die Application Service Klasse GetAllVotesService implementiert das Interface
+ * GetAllVotesUseCase der Boundary des Application-Hexagons.
+ * Es realisiert die Applikationslogik für das Laden aller Votes aus dem Vote-Repository.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see GetAllVotesUseCase                  Korrespondierender Input-Port für diesen Service
+ * @see VoteRepository                      Output-Port zum Laden der Votes
+ * @see AuthorizationGateway                Output-Port zum Prüfen der Leseberechtigung
+ */
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 @ApplicationService
@@ -27,6 +39,13 @@ public class GetAllVotesService implements GetAllVotesUseCase {
     @Inject
     AuthorizationGateway authorizationGateway;
 
+    /**
+     * Lädt alle Votes aus dem Vote-Repository.
+     *
+     * @param requestingUser der anfragende Nutzer, der vom Authorization Gateway berechtigt wird für den Lesezugriff
+     * @return ApplicationResult<List<VoteWithVotedEntityReference>> enthält die Liste aller Votes des Themenforums,
+     * inklusive der ID und des Typs der referenzierten Entität.
+     */
     @Override
     public ApplicationResult<List<VoteWithVotedEntityReference>> getAllVotes(String requestingUser) {
         AuthorizationResult<Boolean> access = authorizationGateway.canAccessVotes(requestingUser);

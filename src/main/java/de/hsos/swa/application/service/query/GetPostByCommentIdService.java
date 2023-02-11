@@ -13,6 +13,18 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.UUID;
 
+/**
+ * Die Application Service Klasse GetPostByCommentIdService implementiert das Interface
+ * GetPostByCommentIdUseCase der Boundary des Application-Hexagons.
+ * Es realisiert die Applikationslogik für das Laden des Posts, der zu dem übergebenen Kommentar gehört
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see GetPostByCommentIdUseCase               Korrespondierender Input-Port für diesen Service
+ * @see GetPostByCommentIdQuery                 Korrespondierendes Request-DTO für diesen Service
+ * @see PostRepository                          Output-Port zum Laden des Posts
+ */
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 @ApplicationService
@@ -21,6 +33,12 @@ public class GetPostByCommentIdService implements GetPostByCommentIdUseCase {
     @Inject
     PostRepository postRepository;
 
+    /**
+     * Lädt den Posts zu der übergebenen Kommentar-ID aus dem Post-Repository
+     *
+     * @param query enthält die Kommentar-ID zu welcher der Post gefunden werden soll
+     * @return ApplicationResult<Post> den gefundenen Post, oder alternativ Fehlermeldung
+     */
     @Override
     public ApplicationResult<Post> getPostByCommentId(GetPostByCommentIdQuery query) {
         RepositoryResult<Post> result = postRepository.getPostByCommentId(UUID.fromString(query.id()));

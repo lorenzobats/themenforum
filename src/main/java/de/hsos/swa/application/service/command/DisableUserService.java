@@ -18,17 +18,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Die UseCase Klasse DisableUserService implementiert das Interface
+ * Die Application Service Klasse DisableUserService implementiert das Interface
  * DisableUserUseCase der Boundary des Application Hexagons.
  * Es realisiert die Applikationslogik für das Deaktivieren eines Users durch einen Admin
  *
- * @author Oliver Schlüter
  * @author Lorenzo Battiston
+ * @author Oliver Schlüter
  * @version 1.0
- * @see DisableUserUseCase              Korrespondierende Input-Port für diesen Use Case
- * @see DisableUserCommand              Korrespondierende Request DTO für diesen Use Case
- * @see UserRepository                  Output-Port zum Finden und Updaten des Users
- * @see AuthorizationGateway            Output-Port zum Deaktivieren des Users
+ * @see DisableUserUseCase              Korrespondierender Input-Port für diesen Service
+ * @see DisableUserCommand              Korrespondierendes Request DTO für diesen Service
+ * @see UserRepository                  Output-Port zum Finden und Updaten des Users nach Deaktivierung
+ * @see AuthorizationGateway            Output-Port zum Löschen der Zugangsdaten
  */
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
@@ -42,8 +42,9 @@ public class DisableUserService implements DisableUserUseCase {
 
     /**
      * Deaktiviert einen User auf Basis der übergebenen Informationen.
-     * @param command enthält Themen-ID und Nutzernamen der Löschen-Anfrage
-     * @return ApplicationResult<Topic> enthält gelöschtes Thema bzw. Fehlermeldung bei Misserfolg
+     *
+     * @param command enthält ID des zu löschenden/deaktivierenden Users
+     * @return ApplicationResult<Optional<User>> enthält deaktivierten User bzw. Fehlermeldung bei Misserfolg
      */
     @Override
     public ApplicationResult<Optional<User>> deleteUser(DisableUserCommand command, String requestingUser) {
@@ -60,7 +61,7 @@ public class DisableUserService implements DisableUserUseCase {
         if(permission.denied())
             return AuthorizationResultMapper.handleRejection(permission.status());
 
-        authorizationGateway.disableUser(user.getName());
+        authorizationGateway.deleteUser(user.getName());
         user.disable();
 
         RepositoryResult<User> updateUserResult = this.userRepository.updateUser(user);

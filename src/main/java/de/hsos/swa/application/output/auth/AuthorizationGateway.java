@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface AuthorizationGateway {
     AuthorizationResult<Void> registerUser(RegisterAuthUserCommand command);
 
-    AuthorizationResult<Void> disableUser(String name);
+    AuthorizationResult<Void> deleteUser(String name);
 
     AuthorizationResult<Void> addOwnership(String owningUser, UUID ressourceId);
 

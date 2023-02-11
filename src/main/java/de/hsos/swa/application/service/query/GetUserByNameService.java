@@ -15,6 +15,19 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+/**
+ * Die Application Service Klasse GetUserByNameService implementiert das Interface
+ * GetUserByNameUseCase der Boundary des Application-Hexagons.
+ * Es realisiert die Applikationslogik für das Laden des Users zum übergebenen Namen aus dem User-Repository.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see GetUserByNameUseCase                    Korrespondierender Input-Port für diesen Service
+ * @see GetUserByNameQuery                      Korrespondierendes Request-DTO für diesen Service
+ * @see UserRepository                          Output-Port zum Laden der User
+ * @see AuthorizationGateway                    Output-Port zum Prüfen der Leseberechtigung
+ */
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 @ApplicationService
@@ -25,6 +38,14 @@ public class GetUserByNameService implements GetUserByNameUseCase {
 
     @Inject
     AuthorizationGateway authorizationGateway;
+
+    /**
+     * Lädt einen User aus dem User-Repository zum übergebenen Nutzernamen.
+     *
+     * @param query             der Name des Nutzers dessen Daten geladen werden sollen
+     * @param requestingUser    der anfragende Nutzer, der vom Authorization Gateway berechtigt wird für den Lesezugriff
+     * @return ApplicationResult<User> enthält den gesuchten Nutzer zum übergebenen Namen
+     */
     @Override
     public ApplicationResult<User> getUserByName(GetUserByNameQuery query, String requestingUser) {
         AuthorizationResult<Boolean> access = authorizationGateway.canAccessUsers(requestingUser);

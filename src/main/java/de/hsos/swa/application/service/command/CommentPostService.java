@@ -19,15 +19,15 @@ import javax.transaction.Transactional;
 import java.util.UUID;
 
 /**
- * Die UseCase Klasse CommentPostService implementiert das Interface
- * CommentPostUseCase der Boundary des Application Hexagons.
+ * Die Application Service Klasse CommentPostService implementiert das Interface
+ * CommentPostUseCase der Boundary des Application-Hexagons.
  * Es realisiert die Applikationslogik für das Hinzufügen eines Kommentars zu einem Beitrag durch den Nutzer.
  *
- * @author Oliver Schlüter
  * @author Lorenzo Battiston
+ * @author Oliver Schlüter
  * @version 1.0
- * @see CommentPostUseCase              Korrespondierende Input-Port für diesen Use Case
- * @see CommentPostCommand              Korrespondierende Request DTO für diesen Use Case
+ * @see CommentPostUseCase              Korrespondierender Input-Port für diesen Service
+ * @see CommentPostCommand              Korrespondierendes Request DTO für diesen Service
  * @see UserRepository                  Output-Port zum Laden des anfragenden Nutzers
  * @see PostRepository                  Output-Port zum Speichern des Posts nach Hinzufügen des Kommentars
  * @see AuthorizationGateway            Output-Port zum Speichern des Kommentar-Inhabers für spätere Zugriffskontrolle
@@ -49,7 +49,7 @@ public class CommentPostService implements CommentPostUseCase {
      *
      * @param command           enthält Kommentartext, Beitrags-Id für das zu erstellende Kommentar
      * @param requestingUser    enthält den Nutzernamen des Erstellers
-     * @return ApplicationResult<Commentar> enthält erzeugtes Kommentar bzw. Fehlermeldung bei Misserfolg
+     * @return ApplicationResult<Comment> enthält erzeugtes Kommentar bzw. Fehlermeldung bei Misserfolg
      */
     @Override
     public ApplicationResult<Comment> commentPost(CommentPostCommand command, String requestingUser) {

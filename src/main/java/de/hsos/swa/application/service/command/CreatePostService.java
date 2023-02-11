@@ -20,15 +20,15 @@ import javax.transaction.Transactional;
 import java.util.UUID;
 
 /**
- * Die UseCase Klasse CreatePostService implementiert das Interface
+ * Die Application Service Klasse CreatePostService implementiert das Interface
  * CreatePostUseCase der Boundary des Application Hexagons.
  * Es realisiert die Applikationslogik für das Anlegen eines neuen Beitrags durch den Nutzer.
  *
- * @author Oliver Schlüter
  * @author Lorenzo Battiston
+ * @author Oliver Schlüter
  * @version 1.0
- * @see CreatePostUseCase               Korrespondierende Input-Port für diesen Use Case
- * @see CreatePostCommand               Korrespondierende Request DTO für diesen Use Case
+ * @see CreatePostUseCase               Korrespondierender Input-Port für diesen Servive
+ * @see CreatePostCommand               Korrespondierendes Request DTO für diesen Service
  * @see UserRepository                  Output-Port zum Laden des anfragenden Nutzers
  * @see TopicRepository                 Output-Port zum Laden des Themas für den Beitrag
  * @see PostRepository                  Output-Port zum Speichern des erzeugten Beitrags

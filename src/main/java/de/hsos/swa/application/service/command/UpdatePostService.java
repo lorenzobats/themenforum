@@ -17,15 +17,15 @@ import javax.transaction.Transactional;
 import java.util.UUID;
 
 /**
- * Die UseCase Klasse UpdatePostService implementiert das Interface
+ * Die Application Service Klasse UpdatePostService implementiert das Interface
  * UpdatePostUseCase der Boundary des Application Hexagons.
  * Es realisiert die Applikationslogik für das Voten von Kommentaren und Posts
  *
- * @author Oliver Schlüter
  * @author Lorenzo Battiston
+ * @author Oliver Schlüter
  * @version 1.0
- * @see UpdatePostUseCase               Korrespondierende Input-Port für diesen Use Case
- * @see UpdatePostCommand               Korrespondierende Request DTO für diesen Use Case
+ * @see UpdatePostUseCase               Korrespondierender Input-Port für diesen Service
+ * @see UpdatePostCommand               Korrespondierendes Request DTO für diesen Service
  * @see PostRepository                  Output-Port zum Speichern des angepassten Beitrags
  * @see AuthorizationGateway            Output-Port zur Zugriffskontrolle für UpdateVorgang
  */
@@ -41,7 +41,7 @@ public class UpdatePostService implements UpdatePostUseCase {
     AuthorizationGateway authorizationGateway;
 
     /**
-     * Aktualisiert optional Titel und Inhalt eines bestehenden Beitrags
+     * Aktualisiert optional Titel und Inhalt zum Aktualisieren eines bestehenden Beitrags
      * @param command           enthält ID des Posts, sowie optionalen neuen Titel und/oder Content
      * @param requestingUser    enthält den Nutzernamen der Update-Anfrage
      * @return ApplicationResult<Post>  enthält den Post, nachdem dieser optional aktualisiert wurde

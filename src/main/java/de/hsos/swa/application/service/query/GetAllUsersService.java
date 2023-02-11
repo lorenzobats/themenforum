@@ -15,6 +15,18 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.List;
 
+/**
+ * Die Application Service Klasse GetAllUsersService implementiert das Interface
+ * GetAllUsersUseCase der Boundary des Application-Hexagons.
+ * Es realisiert die Applikationslogik für das Laden aller User aus dem User-Repository.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see GetAllUsersUseCase                 Korrespondierender Input-Port für diesen Service
+ * @see UserRepository                     Output-Port zum Laden der User
+ * @see AuthorizationGateway               Output-Port zum Prüfen der Leseberechtigung
+ */
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 @ApplicationService
@@ -23,6 +35,13 @@ public class GetAllUsersService implements GetAllUsersUseCase {
     UserRepository userRepository;
     @Inject
     AuthorizationGateway authorizationGateway;
+
+    /**
+     * Lädt alle User aus dem User-Repository.
+     *
+     * @param requestingUser der anfragende Nutzer, der vom Authorization Gateway berechtigt wird für den Lesezugriff
+     * @return ApplicationResult<List<User>> enthält die Liste aller Nutzer des Themenforums
+     */
     @Override
     public ApplicationResult<List<User>> getAllUsers(String requestingUser) {
         AuthorizationResult<Boolean> access = authorizationGateway.canAccessUsers(requestingUser);
