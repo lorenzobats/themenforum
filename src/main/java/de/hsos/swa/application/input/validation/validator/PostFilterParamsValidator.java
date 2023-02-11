@@ -7,6 +7,14 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Map;
 
+/**
+ * Die Klasse PostFilterParamsValidator implementiert die Validierung eines annotierten Request-DTO-Feldes.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see ValidPostFilterParams    Die zugehörige Annotation
+ */
 public class PostFilterParamsValidator implements ConstraintValidator<ValidPostFilterParams, Map<PostFilterParams, Object>> {
     private String message;
 

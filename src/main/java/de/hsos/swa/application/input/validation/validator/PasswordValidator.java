@@ -5,6 +5,14 @@ import de.hsos.swa.application.input.validation.constraints.ValidPassword;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+/**
+ * Die Klasse PasswordValidator implementiert die Validierung eines annotierten Request-DTO-Feldes.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see ValidPassword    Die zugehörige Annotation
+ */
 public class PasswordValidator implements ConstraintValidator<ValidPassword, String> {
     private String message;
 

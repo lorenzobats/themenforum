@@ -5,6 +5,14 @@ import de.hsos.swa.application.input.validation.constraints.ValidTopicDescriptio
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+/**
+ * Die Klasse TopicDescriptionValidator implementiert die Validierung eines annotierten Request-DTO-Feldes.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see ValidTopicDescription    Die zugehörige Annotation
+ */
 public class TopicDescriptionValidator implements ConstraintValidator<ValidTopicDescription, String> {
     private String message;
 

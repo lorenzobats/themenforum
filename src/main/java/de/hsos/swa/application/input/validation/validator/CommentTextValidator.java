@@ -5,6 +5,14 @@ import de.hsos.swa.application.input.validation.constraints.ValidCommentText;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+/**
+ * Die Klasse CommentTextValidator implementiert die Validierung eines annotierten Request-DTO-Feldes.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see ValidCommentText    Die zugehörige Annotation
+ */
 public class CommentTextValidator implements ConstraintValidator<ValidCommentText, String> {
     private String message;
 

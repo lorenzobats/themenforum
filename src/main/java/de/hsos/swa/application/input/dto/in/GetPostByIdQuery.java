@@ -8,6 +8,14 @@ import de.hsos.swa.application.service.query.params.SortingParams;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * Der Record GetPostByIdQuery definiert das validierte Request-DTO für den Input Port GetPostByIdUseCase.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see de.hsos.swa.application.input.query.GetPostByIdUseCase         Nutzt dieses Request-DTO
+ */
 @InputPortRequest
 public record GetPostByIdQuery(
         @ValidId String id,

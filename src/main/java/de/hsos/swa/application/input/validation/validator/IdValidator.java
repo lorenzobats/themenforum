@@ -6,6 +6,14 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.UUID;
 
+/**
+ * Die Klasse IdValidator implementiert die Validierung eines annotierten Request-DTO-Feldes.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see ValidId    Die zugehörige Annotation
+ */
 public class IdValidator implements ConstraintValidator<ValidId, String> {
     private String message;
 

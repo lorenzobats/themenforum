@@ -2,7 +2,7 @@ package de.hsos.swa.application.service.query;
 
 import de.hsos.swa.application.annotations.ApplicationService;
 import de.hsos.swa.application.input.query.GetFilteredPostsUseCase;
-import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
+import de.hsos.swa.application.input.dto.in.GetFilteredPostsQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.output.repository.PostRepository;
 import de.hsos.swa.application.output.repository.dto.in.RepositoryResult;
@@ -30,7 +30,7 @@ import java.util.List;
  * @author Oliver Schlüter
  * @version 1.0
  * @see GetFilteredPostsUseCase             Korrespondierender Input-Port für diesen Service
- * @see GetFilteredPostQuery                Korrespondierendes Request-DTO für diesen Service
+ * @see GetFilteredPostsQuery                Korrespondierendes Request-DTO für diesen Service
  * @see PostRepository                      Output-Port zum Laden der Posts
  */
 @RequestScoped
@@ -48,7 +48,7 @@ public class GetFilteredPostsService implements GetFilteredPostsUseCase {
      * @return ApplicationResult<List<Post>> enthält die gefilterte/sortierte Liste aller Posts des Themenforums
      */
     @Override
-    public ApplicationResult<List<Post>> getFilteredPosts(GetFilteredPostQuery query) {
+    public ApplicationResult<List<Post>> getFilteredPosts(GetFilteredPostsQuery query) {
         RepositoryResult<List<Post>> postsResult = postRepository.getFilteredPosts(query.filterParams(), query.includeComments());
 
         if (postsResult.error())

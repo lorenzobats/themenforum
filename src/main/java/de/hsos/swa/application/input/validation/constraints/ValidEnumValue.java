@@ -9,7 +9,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-//Quelle https://www.baeldung.com/javax-validations-enums
+/**
+ * Die Annotation ValidEnumValue definiert die Annotation zur Validierung eines Request-DTO-Feldes.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see EnumValueValidator                           Implementierende Validator-Klasse
+ */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = EnumValueValidator.class)

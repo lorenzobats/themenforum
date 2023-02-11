@@ -1,6 +1,6 @@
 package de.hsos.swa.actors.ui;
 
-import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
+import de.hsos.swa.application.input.dto.in.GetFilteredPostsQuery;
 import de.hsos.swa.application.input.dto.in.GetPostByCommentIdQuery;
 import de.hsos.swa.application.input.dto.in.GetPostByIdQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
@@ -79,7 +79,7 @@ public class PostsEndpoint {
         if (username != null)   // Profiltemplate?
             filterParams.put(PostFilterParams.USERNAME, username);
 
-        GetFilteredPostQuery request = new GetFilteredPostQuery(filterParams, true, sortBy, orderBy);
+        GetFilteredPostsQuery request = new GetFilteredPostsQuery(filterParams, true, sortBy, orderBy);
         ApplicationResult<List<Post>> filteredPosts = getFilteredPostsUseCase.getFilteredPosts(request);
 
         if (filterParams.containsKey(PostFilterParams.TOPIC)) {

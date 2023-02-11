@@ -4,7 +4,7 @@ package de.hsos.swa.actors.ui;
 import de.hsos.swa.actors.rest.dto.out.TopicDto;
 import de.hsos.swa.application.annotations.Adapter;
 import de.hsos.swa.application.input.dto.in.GetAllCommentsQuery;
-import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
+import de.hsos.swa.application.input.dto.in.GetFilteredPostsQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
 import de.hsos.swa.application.input.dto.out.VoteWithVotedEntityReference;
@@ -90,7 +90,7 @@ public class AdminEndpoint {
     public TemplateInstance posts(@Context SecurityContext securityContext) {
         String adminName = adminName(securityContext);
         Map<PostFilterParams, Object> filterParams = new HashMap<>();
-        ApplicationResult<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostQuery(filterParams, false, "DATE", "DESC"));
+        ApplicationResult<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostsQuery(filterParams, false, "DATE", "DESC"));
         return Templates.posts(posts.data(), adminName);
     }
 

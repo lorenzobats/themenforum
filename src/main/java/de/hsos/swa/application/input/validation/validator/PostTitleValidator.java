@@ -5,6 +5,14 @@ import de.hsos.swa.application.input.validation.constraints.ValidPostTitle;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+/**
+ * Die Klasse PostTitleValidator implementiert die Validierung eines annotierten Request-DTO-Feldes.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see ValidPostTitle    Die zugehörige Annotation
+ */
 public class PostTitleValidator implements ConstraintValidator<ValidPostTitle, String> {
     private String message;
     private boolean nullable;

@@ -98,7 +98,7 @@ public class PostsRessource {
             if (topicId != null)
                 filterParams.put(PostFilterParams.TOPICID, topicId);
 
-            GetFilteredPostQuery query = new GetFilteredPostQuery(filterParams, includeComments, sortBy, orderBy);
+            GetFilteredPostsQuery query = new GetFilteredPostsQuery(filterParams, includeComments, sortBy, orderBy);
             ApplicationResult<List<Post>> result = this.getFilteredPostsUseCase.getFilteredPosts(query);
 
             if (result.ok()) {

@@ -1,5 +1,14 @@
 package de.hsos.swa.application.input.dto.out;
 
+/**
+ * Die generische Klasse ApplicationResult kapselt die Rückgabe der Daten aus dem Application-Hexagon an die
+ * Anfragenden Infrastrukturadapter und ermöglicht so zusätzlich die Rückgabe eines Status-Codes, sowie einer
+ * zusätzlichen Error-Message.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ */
 public class ApplicationResult<T> {
 
     public enum Status {

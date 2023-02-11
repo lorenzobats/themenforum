@@ -8,6 +8,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Die Klasse EnumValueValidator implementiert die Validierung eines annotierten Request-DTO-Feldes.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see ValidEnumValue    Die zugehörige Annotation
+ */
 public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, String> {
     private List<String> acceptedValues;
     @Override

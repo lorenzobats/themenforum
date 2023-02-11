@@ -5,6 +5,14 @@ import de.hsos.swa.application.input.validation.constraints.ValidUsername;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+/**
+ * Die Klasse UsernameValidator implementiert die Validierung eines annotierten Request-DTO-Feldes.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see ValidUsername    Die zugehörige Annotation
+ */
 public class UsernameValidator implements ConstraintValidator<ValidUsername, String> {
     private String message;
 

@@ -5,7 +5,7 @@ import de.hsos.swa.application.input.query.GetFilteredPostsUseCase;
 import de.hsos.swa.application.input.query.SearchTopicsUseCase;
 import de.hsos.swa.application.input.dto.in.GetAllVotesByUsernameQuery;
 import de.hsos.swa.application.input.dto.in.GetCommentsByUserQuery;
-import de.hsos.swa.application.input.dto.in.GetFilteredPostQuery;
+import de.hsos.swa.application.input.dto.in.GetFilteredPostsQuery;
 import de.hsos.swa.application.input.dto.in.SearchTopicsQuery;
 import de.hsos.swa.application.input.dto.out.ApplicationResult;
 import de.hsos.swa.application.input.dto.out.TopicWithPostCountDto;
@@ -127,7 +127,7 @@ public class PublicEndpoint {
             filterParams.put(PostFilterParams.USERNAME, username);
 
         ApplicationResult<List<TopicWithPostCountDto>> topics = searchTopicsUseCase.searchTopics(new SearchTopicsQuery(username));
-        ApplicationResult<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostQuery(filterParams, false, "DATE", "DESC"));
+        ApplicationResult<List<Post>> posts = getFilteredPostsUseCase.getFilteredPosts(new GetFilteredPostsQuery(filterParams, false, "DATE", "DESC"));
         ApplicationResult<List<Comment>> comments = getCommentsByUserUseCase.getCommentsByUser(new GetCommentsByUserQuery(username));
         ApplicationResult<List<VoteWithVotedEntityReference>> votes = getAllVotesByUsernameUseCase.getAllVotesByUsername(new GetAllVotesByUsernameQuery(username), username);
 

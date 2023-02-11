@@ -5,6 +5,14 @@ import de.hsos.swa.application.input.validation.constraints.ValidPostContent;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+/**
+ * Die Klasse PostContentValidator implementiert die Validierung eines annotierten Request-DTO-Feldes.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see ValidPostContent    Die zugehörige Annotation
+ */
 public class PostContentValidator implements ConstraintValidator<ValidPostContent, String> {
     private String message;
     private boolean nullable;

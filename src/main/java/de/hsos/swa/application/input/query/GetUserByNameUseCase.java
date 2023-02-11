@@ -7,6 +7,16 @@ import de.hsos.swa.domain.entity.User;
 
 import javax.validation.Valid;
 
+/**
+ * Das Interface GetUserByNameUseCase definiert den Input Port für InteraktionsAdapter zur Nutzung des
+ * GetUserByNameService im Application-Hexagon.
+ *
+ * @author Lorenzo Battiston
+ * @author Oliver Schlüter
+ * @version 1.0
+ * @see de.hsos.swa.application.service.query.GetUserByNameService    Implementierender Service dieses Input Ports
+ * @see GetUserByNameQuery                                            Übergebenes Request-DTO an diesen Input Port
+ */
 @InputPort
 public interface GetUserByNameUseCase {
    ApplicationResult<User> getUserByName(@Valid GetUserByNameQuery query, String requestingUser);
