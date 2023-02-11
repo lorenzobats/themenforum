@@ -96,8 +96,10 @@ public class PostRessourceTest {
         JsonPath jsonPath = response.extract().jsonPath();
         List<Map<String, String>> errors = jsonPath.getList("errors");
 
-        Assertions.assertEquals(errors.get(0).get("message"), "Invalid request");
-        Assertions.assertEquals(errors.get(0).get("detail"), "title is blank");
+        Assertions.assertEquals(errors.get(0).get("message"),
+                "Invalid request");
+        Assertions.assertEquals(errors.get(0).get("detail"),
+                "title is blank");
     }
 
     @Test

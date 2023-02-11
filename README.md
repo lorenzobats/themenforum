@@ -1,56 +1,60 @@
-# hausarbeit Project
+# Themenforum API
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Hochschule Osnabrück, Prüfungsleistung im Modul SWA, WS22/23
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+Das Themenforum bietet eine Plattform, auf der Nutzer Beiträge posten und kommentieren können.
+Posts und Kommentare können mit Up- und Downvotes von den Nutzern bewertet werden. Die
+geposteten Beiträge sind immer einem Thema zugeordnet. Diese Oberthemen können ebenfalls von
+den Nutzern erstellt werden, und sind dann für alle anderen zugänglich. Als nicht registrierter Nutzer kann man alle Beiträge und Kommentare sehen. Möchte man selbst
+einen Post erstellen oder kommentieren, benötigt man einen Account.
 
-## Running the application in dev mode
 
-You can run your application in dev mode that enables live coding using:
+## Starten der Anwendung im Devmode
+
+Die Anwendung kann mit folgendem Befehl gestartet werden
 ```shell script
-./mvnw compile quarkus:dev
+./mvnw quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
+> Die Swagger-Dokumentation ist verfügbar unter:  http://localhost:8080/q/swagger-ui.
+              
+### Insomnia
+Nach dem Start lässt sich die Anwendung über die bereitgestellte Insomnia - Collection testen (packagepfad angeben). 
+           
+### Webfrontend
+> Das Webfrontend ist verfügbar unter:  http://localhost:8080/ui/public.
 
-## Packaging and running the application
+Hier kann man zunächst die Funktionen als nicht-registrierter Nutzer testen und die Posts und Themen ansehen (Browse Topics, Browse Posts).
 
-The application can be packaged using:
+Registriert man sich auf dem Forum, kann man Posts und Themen erstellen und Kommentare und Bewertungen (Up-/Downvotes) abgeben.
+Bewertungen werden über die Buttons links neben dem Post oder Kommentar abgegeben und können dort über das "X" wieder entfernt werden.
+Kommentare können über das Formular unter einem Post erstellt werden. 
+Über die Schaltfläche "reply" kann auf ein Kommentar geantwortet werden (hier gerne die Sortierung über verschiedene Kommentar-Ebenen testen). 
+
+Posts und Kommentare können über die Buttons "Popular" und "New" sortiert werden.
+
+Selbst erstellte Inhalte können über die "delete"-Schaltfläche gelöscht werden.
+Auf der privaten Profilübersicht (Schaltfläche oben rechts) werden die eigenen Inhalte im Forum verwaltet.
+Diese sind entsprechend verlinkt.
+
+> Die Admin-Übersicht ist verfügbar unter:  http://localhost:8080/ui/admin.
+> Hier können alle Inhalte des Forums verwaltet werden.
+
+#### Bereitgestellte Accounts
+Folgende Accounts sind bereits im Themenforum vorhanden und mit Inhalten gefüllt (Passwort entspricht Namen).
+- oschluet
+- lbattist
+- admin (Admin-UI nur mit diesem Nutzer erreichbar)
+
+## Testen der Anwendung 
+Die Rest-Assured Tests werden mit folgendem Befehl ausgeführt
 ```shell script
-./mvnw package
-```
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-```shell script
-./mvnw package -Dquarkus.package.type=uber-jar
+./mvnw test
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+## Autoren
 
-## Creating a native executable
+- Oliver Schlüter, 914726 - oliver.schlueter@hs-osnabrueck.de
 
-You can create a native executable using: 
-```shell script
-./mvnw package -Pnative
-```
+- Lorenzo Battiston, 919355 - lorenzo.battiston@hs-osnabrueck.de
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
-```shell script
-./mvnw package -Pnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/hausarbeit-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
-
-## Provided Code
-
-### RESTEasy Reactive
-
-Easily start your Reactive RESTful Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
