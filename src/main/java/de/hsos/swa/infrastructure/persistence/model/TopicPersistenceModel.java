@@ -29,6 +29,13 @@ public class TopicPersistenceModel {
     @JoinColumn(name = "user_id")
     UserPersistenceModel userPersistenceModel;
 
+    @OneToMany(
+            mappedBy = "topicPersistenceModel",
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true)
+    List<PostPersistenceModel> posts = new ArrayList<>();
+
+
 
     public TopicPersistenceModel() {
     }
