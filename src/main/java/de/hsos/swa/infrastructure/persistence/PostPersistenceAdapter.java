@@ -105,7 +105,7 @@ public class PostPersistenceAdapter implements PostRepository {
                         .where("userPersistenceModel.active").eq(true);
 
             if (filterParams.containsKey(PostFilterParams.USERID))
-                criteriaBuilder.where("userPersistenceModel.entityId").eq(filterParams.get(PostFilterParams.USERID));
+                criteriaBuilder.where("userPersistenceModel.id").eq(filterParams.get(PostFilterParams.USERID));
 
             if (filterParams.containsKey(PostFilterParams.TOPIC))
                 criteriaBuilder.where("topicPersistenceModel.title").eq(filterParams.get(PostFilterParams.TOPIC));
