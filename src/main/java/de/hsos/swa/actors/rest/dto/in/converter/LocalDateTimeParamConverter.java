@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatterBuilder;
 
 public class LocalDateTimeParamConverter implements ParamConverter<LocalDateTime> {
     DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-            .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
             .toFormatter();
     @Override
     public LocalDateTime fromString(String value) {
