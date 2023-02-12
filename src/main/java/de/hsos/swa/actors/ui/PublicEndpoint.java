@@ -27,8 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-//TODO Error Templates erstellen
 @Path("/ui")
 @PermitAll
 public class PublicEndpoint {
