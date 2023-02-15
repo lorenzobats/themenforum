@@ -19,7 +19,8 @@ Die Anwendung kann mit folgendem Befehl gestartet werden
 > Die Swagger-Dokumentation ist verfügbar unter:  http://localhost:8080/q/swagger-ui.
               
 ### Insomnia
-Nach dem Start lässt sich die Anwendung über die bereitgestellte Insomnia - Collection testen (packagepfad angeben). 
+Nach dem Start lässt sich die Anwendung über das bereitgestellte Insomnia-Dokument manuell testen. 
+
            
 ### Webfrontend
 > Das Webfrontend ist verfügbar unter:  http://localhost:8080/ui/public.
